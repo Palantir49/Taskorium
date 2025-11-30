@@ -13,7 +13,9 @@
 ### 2.1 Использование Opentelemetry для логов, трэйсов и метрик
 
 - пример
-  `builder.Services.AddOpenTelemetry()
+
+```csharp
+  builder.Services.AddOpenTelemetry()
   .ConfigureResource(resource => resource
   .AddService(serviceName: builder.Environment.ApplicationName))
   .WithTracing(tracing => tracing
@@ -31,7 +33,8 @@
   .AddOtlpExporter(options =>
   {
   options.Endpoint = new Uri(builder.Configuration["Otlp:Endpoint"]);
-  }));`
+  }));
+  ```
 
 ### 2.2 Логирование
 
@@ -51,7 +54,6 @@
 ## 4. Docker требования
 
 - наличие multistage docker файла;
-- наличие файла .dockerignore
-  
+- наличие файла .dockerignore 
 
 

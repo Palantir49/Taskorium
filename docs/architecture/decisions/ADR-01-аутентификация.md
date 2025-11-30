@@ -91,3 +91,4 @@ const keycloak = new Keycloak({
     realm: 'taskorium',
     clientId: 'taskorium-web'
 });
+```
