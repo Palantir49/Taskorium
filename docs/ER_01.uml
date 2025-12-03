@@ -1,0 +1,49 @@
+@startuml
+
+entity "User" as user {
+  * user_id : int <<PK>>
+  --
+  name : varchar
+  email : varchar
+  password_hash : varchar
+  created_at : datetime
+}
+
+entity "Project" as project {
+  * project_id : int <<PK>>
+  --
+  name : varchar
+  description : text
+  created_at : datetime
+  owner_id : int <<FK>>
+}
+
+entity "TaskType" as tasktype {
+  * task_type_id : int <<PK>>
+  --
+  name : varchar
+  description : text
+}
+
+entity "Task" as task {
+  * task_id : int <<PK>>
+  --
+  title : varchar
+  description : text
+  status : varchar
+  due_date : datetime
+  created_at : datetime
+  project_id : int <<FK>>
+  assignee_id : int <<FK>>
+  author_id : int <<FK>>
+  task_type_id : int <<FK>>
+}
+
+' Связи
+user ||--o{ project : "owns"
+project ||--o{ task : "has"
+user ||--o{ task : "assigned to (assignee)"
+user ||--o{ task : "created (author)"
+tasktype ||--o{ task : "type"
+
+@enduml
