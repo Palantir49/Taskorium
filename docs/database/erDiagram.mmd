@@ -1,0 +1,154 @@
+erDiagram
+Users {
+    bigint id PK
+    varchar(50) login
+    varchar(100) email
+    varchar(50) username "Отображаемое имя"
+    char(60) password_hash
+    timestamp created_at
+}
+    
+Notification{
+    bigint id PK
+    bigint system_id FK
+    varchar(250) data
+}
+
+NotificationSystem{
+    bigint id PK
+    varchar(50) name
+    varchar(250) system_data
+}
+
+Workspaces {
+    bigint id PK
+    varchar(100) name
+    %% нужно ли тут?
+    bigint owner_id FK
+    timestamp created_at
+}
+
+WorkspaceMembers {
+    bigint workspace_id PK,FK
+    bigint user_id PK,FK
+    varchar(10) role "member | admin"
+    timestamp joined_at
+}
+
+Projects {
+    bigint id PK
+    bigint workspace_id FK
+    varchar(100) name
+    text description
+    timestamp created_at
+}
+
+ProjectMembers {
+    bigint project_id PK,FK
+    bigint user_id PK,FK
+    varchar(10) role "viewer | member | admin"
+    timestamp joined_at
+}
+  
+IssueTypes {
+    bigint id PK
+    bigint workspace_id FK
+    varchar(50) name
+    char(7) color
+    boolean is_default
+}
+
+  Statuses {
+    bigint id PK
+    bigint workspace_id FK
+    varchar(50) name
+    varchar(20) category "todo | in_progress | done"
+    int position
+    char(7) color
+  }
+ 
+
+  Issues {
+    bigint id PK
+    bigint project_id FK
+    %%varchar(20) key "например: PROJ-123"
+    varchar(255) summary
+    text description
+    bigint issue_type_id FK
+    bigint status_id FK
+    bigint assignee_id FK "NULL"
+    bigint reporter_id FK
+    timestamp created_at
+    timestamp updated_at
+    timestamp resolved_at "NULL"
+  }
+  
+  Comments {
+    bigint id PK
+    bigint issue_id FK
+    bigint author_id FK
+    text content
+    timestamp created_at
+    timestamp updated_at "NULL"
+  }
+
+  Attachments {
+    bigint id PK
+    bigint issue_id FK
+    bigint uploader_id FK
+    varchar(512) storage_path
+  }
+  
+  %% Идея на будущее
+  %% Например, дать рабочей области задавать дефолтные значения
+  DefaultIssueTypes {
+    int id PK
+    varchar(50) name
+    char(7) color
+  }
+
+  DefaultStatuses {
+    int id PK
+    varchar(50) name
+    varchar(20) category
+    char(7) color
+    int position
+  }
+   
+  StatusTransitions {
+    bigint id PK
+    bigint workspace_id FK
+    bigint from_status_id FK "→ Statuses.id"
+    bigint to_status_id FK "→ Statuses.id"
+    varchar(10) allowed_role "NULL = любой"
+  }
+
+  Workspaces ||--o{ Projects : "содержит проекты"
+  Workspaces }o--|| Users : "владеет областью"
+  Workspaces ||--o{ WorkspaceMembers : " задает участников"
+  %%Workspaces ||--o{ DefaultIssueTypes : " задает дефолтные типы"
+  %%Workspaces ||--o{ DefaultStatuses : " задает дефолтные статусы"
+
+  %%Workspaces ||--o{ IssueTypes : "определяет типы"
+  %%Workspaces ||--o{ Statuses : "определяет статусы"
+  %%Workspaces ||--o{ StatusTransitions : "определяет переходы"
+  
+  %%Projects }o--|| Workspaces : "Содержит"
+  Projects ||--o{ ProjectMembers : "задает участников"
+  Projects ||--o{ Issues : "содержит задачи"
+  %%Projects ||--o{ StatusTransitions : "определяет переходы"
+  
+  Users ||--o{ Issues : "создал / назначен"
+  Users ||--o{ WorkspaceMembers : "владеет? / участвует"
+  Users ||--o{ ProjectMembers : "участвует"
+  Users ||--o{ Comments : "автор"
+  Users ||--o{ Attachments : "загрузил"
+  
+  Issues ||--o{ Comments : "содержит коментарии"
+  Issues ||--o{ Attachments : "содержит файлы"
+  Issues ||--o{ Statuses : "определяет статусы"
+  Issues ||--o{ IssueTypes : "определяет типы"
+
+  Users ||--o{ Notification : "задает"
+  Notification ||--o{ NotificationSystem : "взаимодействует"
+  

@@ -492,5 +492,6 @@ $RECYCLE.BIN/
 /user.json
 .azure
 /docs/.obsidian
+/docs/database/БД.md
 /docs/infrastructure/services.md
 appsettings.Production.json
