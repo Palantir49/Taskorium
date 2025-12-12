@@ -9,5 +9,4 @@
     <Folder Name="/Services/">
         <Project Path="Services/Taskorium.TaskService/Taskorium.TaskService.csproj"/>
     </Folder>
-    <Folder Name="/tests/"/>
 </Solution>
