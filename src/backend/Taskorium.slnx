@@ -1,12 +1,18 @@
 <Solution>
+    <Folder Name="/Services/Task/">
+        <File Path="Services/Task/Readme.md" />
+        <Project Path="Services/Task/TaskService.Api/TaskService.Api.csproj" />
+        <Project Path="Services/Task/TaskService.Application/TaskService.Application.csproj" />
+        <Project Path="Services/Task/TaskService.Contracts/TaskService.Contracts.csproj" />
+        <Project Path="Services/Task/TaskService.Domain/TaskService.Domain.csproj" />
+        <Project Path="Services/Task/TaskService.Infrastructure/TaskService.Infrastructure.csproj" />
+    </Folder>
      <Folder Name="/Solution Items/">
-        <File Path=".editorconfig"/>
-        <File Path="Directory.Packages.props"/>
-        <File Path="Directory.Build.props"/>"
-        <File Path="NuGet.config"/>
-        <File Path="global.json"/>
+        <File Path=".editorconfig" />
+        <File Path="Directory.Packages.props" />
+        <File Path="Directory.Build.props" />"
+        <File Path="NuGet.config" />
+        <File Path="global.json" />
     </Folder>
-    <Folder Name="/Services/">
-        <Project Path="Services/Taskorium.TaskService/Taskorium.TaskService.csproj"/>
-    </Folder>
+    <Folder Name="/Services/" />
 </Solution>
