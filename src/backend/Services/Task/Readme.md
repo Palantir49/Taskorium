@@ -1,4 +1,4 @@
-﻿# 🏗️ Структура решения (Solution Structure)
+﻿# 🏗️ Структура решения
 
 TaskManagement.sln  
 ├── Services/  
@@ -17,6 +17,7 @@ TaskManagement.sln
 
 
 ## 📦 Подробная структура проектов
+## **TaskService** - проект управления задачами
 ### 1. TaskService.Api - Презентационный слой
 Назначение: Обработка HTTP запросов, аутентификация/авторизация, маппинг DTO, валидация входящих данных.
 
@@ -63,8 +64,8 @@ TaskService.Application/
 │   ├── Behaviors/                           # Pipeline Behaviors  
 │   ├── Exceptions/                          # Исключения приложения  
 │   └── Models/                              # Общие модели  
-├── Validators/                              # FluentValidation валидаторы
-└── Extensions                   # Регистрация зависимостей Application слоя  
+├── Validators/                              # FluentValidation валидаторы  
+└── Extensions                   # Регистрация зависимостей Application слоя   
 
 
 ### 3. TaskService.Contracts - Слой контрактов
@@ -82,17 +83,17 @@ TaskService.Contracts/
 Назначение: Чистая бизнес-логика, доменные модели.
 
 TaskService.Domain/  
-├── Entities/                                # Агрегаты и сущности
-├── ValueObjects/                            # Объекты-значения   
+├── Entities/                                # Агрегаты и сущности  
+├── ValueObjects/                            # Объекты-значения     
 ├── Enums/                                   # Перечисления   
-├── Events/                                  # Доменные события  
+├── Events/                                  # Доменные события   
 │   ├── TaskCreatedEvent.cs  
 │   ├── TaskAssignedEvent.cs  
 │   ├── TaskStatusChangedEvent.cs  
 │   └── IDomainEvent.cs  
 ├── Exceptions/                              # Доменные исключения  
 │   ├── DomainException.cs                   # Базовое исключение  
-│   ├── TaskNotFoundException.cs
+│   ├── TaskNotFoundException.cs  
 │   ├── InvalidTaskStateException.cs  
 │   └── BusinessRuleViolationException.cs  
 └── Extensions                               # Регистрация зависимостей  
@@ -118,3 +119,5 @@ TaskService.Infrastructure/
 │   └── Caching/   
 ├── Logging/                                 # Логирование   
 └── Extensions                  # Регистрация зависимостей инфраструктуры  
+
+## **StorageService** - проект для взаимодействия с хранилищем
