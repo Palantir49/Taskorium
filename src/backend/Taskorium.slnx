@@ -1,6 +1,5 @@
 <Solution>
     <Folder Name="/Services/Task/">
-        <File Path="Services/Task/Readme.md" />
         <Project Path="Services/Task/TaskService.Api/TaskService.Api.csproj" />
         <Project Path="Services/Task/TaskService.Application/TaskService.Application.csproj" />
         <Project Path="Services/Task/TaskService.Contracts/TaskService.Contracts.csproj" />
@@ -13,6 +12,7 @@
         <File Path="Directory.Build.props" />"
         <File Path="NuGet.config" />
         <File Path="global.json" />
+         <File Path="Readme.md" />
     </Folder>
     <Folder Name="/Services/" />
 </Solution>
