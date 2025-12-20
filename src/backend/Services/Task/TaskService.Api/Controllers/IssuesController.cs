@@ -31,7 +31,7 @@ public class IssuesController : Controller
     {
         return Ok(new IssueResponse
         {
-            Id = Guid.CreateVersion7(),
+            Id = new Guid("123e4567-e89b-12d3-a456-426614174000"), //Guid.CreateVersion7(),
             Key = "DEV-123",
             Summary = "Test"
         });
