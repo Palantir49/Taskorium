@@ -27,7 +27,7 @@ public class IssuesController : Controller
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid  id)
+    public async Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
     {
         return Ok(new IssueResponse
         {
