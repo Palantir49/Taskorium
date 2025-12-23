@@ -496,3 +496,4 @@ $RECYCLE.BIN/
 /docs/infrastructure/services.md
 appsettings.Production.json
 /src/backend/Services/Task/TaskService.Infrastructure/Migrations
+.vscode/
