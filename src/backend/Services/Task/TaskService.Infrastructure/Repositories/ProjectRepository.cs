@@ -3,35 +3,27 @@ using TaskService.Domain.Entities;
 using TaskService.Domain.IRepositories;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Infrastructure.Repositories
+namespace TaskService.Infrastructure.Repositories;
+
+internal class ProjectRepository(TaskServiceDbContext context) : IProjectRepository
 {
-    internal class ProjectRepository : IProjectRepository
+    public async Task AddAsync(Project project, CancellationToken ct = default)
     {
-        private readonly TaskServiceDbContext _context;
+        await context.AddAsync(project, ct);
+    }
 
-        public ProjectRepository(TaskServiceDbContext context)
-        {
-            _context = context;
-        }
+    public async Task<Project?> GetByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        return await context.Projects.FindAsync([id], ct);
+    }
 
-        public async Task AddAsync(Project project, CancellationToken ct = default)
-        {
-            await _context.AddAsync(project, ct);
-        }
+    public async Task<List<Project>> GetByWorkspaceIdAsync(Guid workspaceId, CancellationToken ct = default)
+    {
+        return await context.Projects.Where(x => x.WorkspaceId == workspaceId).ToListAsync(ct);
+    }
 
-        public async Task<Project?> GetByIdAsync(Guid id, CancellationToken ct = default)
-        {
-            return await _context.Projects.FindAsync(new object[] { id }, ct);
-        }
-
-        public async Task<List<Project>> GetByWorkspaceIdAsync(Guid workspaceId, CancellationToken ct = default)
-        {
-            return await _context.Projects.Where(x => x.WorkspaceId == workspaceId).ToListAsync(ct);
-        }
-
-        public async Task SaveChangesAsync(CancellationToken ct = default)
-        {
-            await _context.SaveChangesAsync(ct);
-        }
+    public async Task SaveChangesAsync(CancellationToken ct = default)
+    {
+        await context.SaveChangesAsync(ct);
     }
 }

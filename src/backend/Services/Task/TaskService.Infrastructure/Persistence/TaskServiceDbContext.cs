@@ -2,15 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using TaskService.Domain.Entities;
 
-
 namespace TaskService.Infrastructure.Persistence;
 
-public class TaskServiceDbContext : DbContext
+public class TaskServiceDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Issue> Issues { get; set; } = null!;
     public DbSet<Project> Projects { get; set; } = null!;
-
-    public TaskServiceDbContext(DbContextOptions options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
