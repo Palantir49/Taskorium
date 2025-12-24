@@ -1,8 +1,15 @@
 ﻿using Microsoft.OpenApi;
 using Scalar.AspNetCore;
+using TaskService.Application.Extensions;
 using TaskService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", false, true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true)
+    .AddEnvironmentVariables()
+    .Build();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -27,10 +34,10 @@ builder.Services.AddOpenApi(options =>
         return Task.CompletedTask;
     });
 });
-
 builder.Services.AddControllers();
 //configure infrastructure layer
 builder.Services.ConfigureInfrastructureLayer(builder.Configuration);
+builder.Services.ConfigureApplicationLayer();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
