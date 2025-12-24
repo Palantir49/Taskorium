@@ -7,9 +7,9 @@ namespace TaskService.Domain.Entities.BaseEntity
     public abstract class BaseEntityTask
     {
         public Guid Id { get; }
-        
+
         public string Name { get; protected set; }
-        
+
         public DateTimeOffset CreatedDate { get; }
         protected BaseEntityTask(Guid id, string name, DateTimeOffset createdDate)
         {
@@ -26,7 +26,7 @@ namespace TaskService.Domain.Entities.BaseEntity
                 throw new ArgumentException("Наименование задачи не может быть пустым",
                 nameof(value));
         }
-        
+
         public virtual void UpdateName(string newName)
         {
             Name = newName.Trim();
