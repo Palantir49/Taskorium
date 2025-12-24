@@ -1,6 +1,6 @@
 ﻿using TaskService.Domain.Entities;
 
-namespace TaskService.Domain.IRepositories;
+namespace TaskService.Domain.Repositories;
 
 public interface IIssueRepository
 {

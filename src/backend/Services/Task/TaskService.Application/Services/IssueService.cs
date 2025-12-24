@@ -2,7 +2,7 @@
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
-using TaskService.Domain.IRepositories;
+using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Services;
 

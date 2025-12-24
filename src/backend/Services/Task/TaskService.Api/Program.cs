@@ -1,11 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi;
+﻿using Microsoft.OpenApi;
 using Scalar.AspNetCore;
-using TaskService.Application.Interfaces;
-using TaskService.Application.Services;
-using TaskService.Domain.IRepositories;
-using TaskService.Infrastructure.Persistence;
-using TaskService.Infrastructure.Repositories;
+using TaskService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,12 +29,8 @@ builder.Services.AddOpenApi(options =>
 });
 
 builder.Services.AddControllers();
-//TODO: явно не верно, что я сюда притянул посгри. как сделать правильно?
-builder.Services.AddDbContext<TaskServiceDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection"))); //.UseSnakeCaseNamingConvention()
-builder.Services.AddScoped<IIssueService, IssueService>();
-builder.Services.AddScoped<IIssueRepository, IssueRepository>();
+//configure infrastructure layer
+builder.Services.ConfigureInfrastructureLayer(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
