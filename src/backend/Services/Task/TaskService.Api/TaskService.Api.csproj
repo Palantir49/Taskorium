@@ -3,6 +3,7 @@
   <PropertyGroup>
 
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <UserSecretsId>f8f21e4e-bbce-44cf-84bc-c38690673bd0</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -14,19 +15,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Scalar.AspNetCore"/>
+    <PackageReference Include="Scalar.AspNetCore" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <ProjectReference Include="..\TaskService.Application\TaskService.Application.csproj"/>
-    <ProjectReference Include="..\TaskService.Contracts\TaskService.Contracts.csproj"/>
-    <ProjectReference Include="..\TaskService.Infrastructure\TaskService.Infrastructure.csproj"/>
+    <ProjectReference Include="..\TaskService.Application\TaskService.Application.csproj" />
+    <ProjectReference Include="..\TaskService.Contracts\TaskService.Contracts.csproj" />
+    <ProjectReference Include="..\TaskService.Infrastructure\TaskService.Infrastructure.csproj" />
   </ItemGroup>
 
 
