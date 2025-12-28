@@ -8,5 +8,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>14</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 </Project>
