@@ -3,7 +3,7 @@
 namespace TaskService.Application.Wrapper
 {
     public class RepositoryWrapper : IRepositoryWrapper
-    {
+    {//TODO: перенести в инфраструктуру
         private readonly IIssueRepository _issue;
         private readonly IProjectRepository _project;
         private readonly IWorkspaceRepository _workspace;

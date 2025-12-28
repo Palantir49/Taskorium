@@ -99,8 +99,6 @@ public class IssuesController(CreateIssueHandler createIssueHandler) : Controlle
             return Problem(type: "BadRequest", title: "Invalid request", detail: "Некорректный запрос",
                 statusCode: StatusCodes.Status400BadRequest);
         }
-
-        //var response = new IssueResponse { Id = Guid.CreateVersion7(), Key = "DEV-123", Summary = "Test" };
         return Ok();
     }
 

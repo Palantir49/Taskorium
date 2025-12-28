@@ -16,15 +16,14 @@ public class CreateIssueHandler
 
     public async Task<IssueResponse> HandleAsync(CreateIssueCommand command, CancellationToken ct = default)
     {
-        //FAQ: нужно ли тут делать проверки, если у нас есть ограничения на уровне базы данных
-        var project = await _wrapper.Projects.GetByIdAsync(command.ProjectId);
+        Project? project = await _wrapper.Projects.GetByIdAsync(command.ProjectId);
         //TODO: проверка существования статуса
         //TODO: проверка существования типа
         //TODO: проверка существования юзера
 
         if (project == null)
-        {//FAQ: как я понимаю нужно создавать свои исключения типа NotFoundException?
-            throw new Exception("Project not found.");
+        {//FAQ: как я понимаю нужно создавать свои исключения типа NotFoundException? +- как захочется
+            throw new ArgumentNullException("Project not found.");
         }
 
         var issue = Issue.Create(
@@ -39,8 +38,8 @@ public class CreateIssueHandler
         await _wrapper.Issues.AddAsync(issue, ct);
         await _wrapper.SaveChangesAsync(ct);
 
-        return new IssueResponse(Id:issue.Id, Name: issue.Name,ProjectId:issue.ProjectId, TaskTypeId:issue.TaskTypeId, TaskStatusId:issue.TaskStatusId, 
-            CreatedDate:issue.CreatedDate, Description:issue.Description,ReporterId:issue.ReporterId, UpdatedDate:issue.UpdatedDate, DueDate:issue.DueDate, 
-            ResolvedDate:issue.ResolvedDate);
+        return new IssueResponse(Id: issue.Id, Name: issue.Name, ProjectId: issue.ProjectId, TaskTypeId: issue.TaskTypeId, TaskStatusId: issue.TaskStatusId,
+            CreatedDate: issue.CreatedDate, Description: issue.Description, ReporterId: issue.ReporterId, UpdatedDate: issue.UpdatedDate, DueDate: issue.DueDate,
+            ResolvedDate: issue.ResolvedDate);
     }
 }

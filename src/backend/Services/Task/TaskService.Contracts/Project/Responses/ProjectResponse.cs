@@ -5,9 +5,9 @@ using System.Text;
 namespace TaskService.Contracts.Project.Responses
 {
     public record ProjectResponse(
-        Guid Id, 
-        string Name, 
-        string? Description, 
-        Guid WorkspaceId, 
+        Guid Id,
+        string Name,
+        string? Description,
+        Guid WorkspaceId,
         DateTimeOffset CreatedDate);
 }
