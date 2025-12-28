@@ -1,7 +1,15 @@
 ﻿using Microsoft.OpenApi;
 using Scalar.AspNetCore;
+using TaskService.Application.Extensions;
+using TaskService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", false, true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true)
+    .AddEnvironmentVariables()
+    .Build();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -9,17 +17,16 @@ builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer((document, context, cancellationToken) =>
     {
-        document.Info.Version = "Версия документа OpenAPI";
+        document.Info.Version = "1.0.0-alpha.1";
         document.Info.Title = "Task Service API";
-        document.Info.Description = "API для управления задачами";
-        document.Info.TermsOfService = new Uri("https://mycompany.com/terms");
+        document.Info.Description = "API для управления проектами и задачами";
         document.Info.Contact = new OpenApiContact
         {
             Name = "https://github.com/Palantir49",
             Email = "Vadim Ryzhenkov",
-            Url = new Uri("https://github.com/Palantir49"), 
+            Url = new Uri("https://github.com/Palantir49")
         };
-      
+
         document.Info.License = new OpenApiLicense
         {
             Name = "MIT License",
@@ -41,6 +48,9 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
+//configure infrastructure layer
+builder.Services.ConfigureInfrastructureLayer(builder.Configuration);
+builder.Services.ConfigureApplicationLayer();
 var app = builder.Build();
 
 // Включение CORS
@@ -52,8 +62,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
-
-

@@ -1,20 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaskService.Application.Interfaces;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
+using CreateIssueRequest = TaskService.Contracts.Issue.Requests.CreateIssueRequest;
 
 namespace TaskService.Api.Controllers;
 
 /// <summary>
-///     Tasks
+///     Контроллер для работы с задачами
 /// </summary>
+/// <param name="issueService">Сервис для работы с задачами</param>
 [ApiController]
 [Route("api/v1/[controller]")]
-public class IssuesController : Controller
+public class IssuesController(IIssueService issueService) : Controller
 {
     /// <summary>
     ///     Получить данные задачи по Id
     /// </summary>
-    /// /// <remarks>
+    /// ///
+    /// <remarks>
     ///     Пример запроса:
     ///     GET /api/v1/Issues/guid
     /// </remarks>
@@ -27,14 +31,15 @@ public class IssuesController : Controller
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid  id)
+    public async Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
     {
-        return Ok(new IssueResponse
+        var taskResponse = await issueService.GetTaskByIdAsync(id);
+        if (taskResponse == null)
         {
-            Id = new Guid("123e4567-e89b-12d3-a456-426614174000"), //Guid.CreateVersion7(),
-            Key = "DEV-123",
-            Summary = "Test"
-        });
+            return NotFound();
+        }
+
+        return Ok(taskResponse);
     }
 
     /// <summary>
@@ -44,7 +49,6 @@ public class IssuesController : Controller
     ///     Пример запроса:
     ///     POST /api/v1/Issues
     ///     {
-    ///  
     ///     }
     /// </remarks>
     /// <param name="createIssueRequest">Данные о новой задаче</param>
@@ -57,14 +61,8 @@ public class IssuesController : Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromBody] CreateIssueRequest createIssueRequest)
     {
-
-        var issueResponse = new IssueResponse
-        {
-            Id = Guid.CreateVersion7(),
-            Key = "DEV-123",
-            Summary = "Test"
-        };
-        return CreatedAtAction(nameof(GetTaskByIdAsync), new { id = issueResponse.Id }, issueResponse);
+        var taskResponse = await issueService.CreateTaskAsync(createIssueRequest);
+        return CreatedAtAction(nameof(GetTaskByIdAsync), new { id = taskResponse.Id }, taskResponse);
     }
 
 
@@ -75,7 +73,6 @@ public class IssuesController : Controller
     ///     Пример запроса:
     ///     PUT /api/v1/Issues/guid
     ///     {
-    ///     
     ///     }
     /// </remarks>
     /// <param name="id">Идентификатор задачи</param>
@@ -93,15 +90,13 @@ public class IssuesController : Controller
         [FromBody] UpdateIssueRequest? updateIssueRequest)
     {
         if (updateIssueRequest is null)
+        {
             return Problem(type: "BadRequest", title: "Invalid request", detail: "Некорректный запрос",
                 statusCode: StatusCodes.Status400BadRequest);
-        var response = new IssueResponse
-        {
-            Id = Guid.CreateVersion7(),
-            Key = "DEV-123",
-            Summary = "Test"
-        };
-        return Ok(response);
+        }
+
+        //var response = new IssueResponse { Id = Guid.CreateVersion7(), Key = "DEV-123", Summary = "Test" };
+        return Ok();
     }
 
 
@@ -123,5 +118,4 @@ public class IssuesController : Controller
     {
         return NoContent();
     }
-
 }
