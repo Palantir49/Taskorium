@@ -100,7 +100,7 @@ public class IssuesController(CreateIssueHandler createIssueHandler) : Controlle
                 detail: "Некорректный запрос",
                 statusCode: StatusCodes.Status400BadRequest));
         }
-        return Ok();
+        return Task.FromResult<ActionResult<IssueResponse>>(Ok());
     }
 
 
