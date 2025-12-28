@@ -86,17 +86,18 @@ public class IssuesController(IIssueService issueService) : Controller
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> UpdateIssueAsync(Guid id,
+    public Task<ActionResult<IssueResponse>> UpdateIssueAsync(Guid id,
         [FromBody] UpdateIssueRequest? updateIssueRequest)
     {
         if (updateIssueRequest is null)
         {
-            return Problem(type: "BadRequest", title: "Invalid request", detail: "Некорректный запрос",
-                statusCode: StatusCodes.Status400BadRequest);
+            return Task.FromResult<ActionResult<IssueResponse>>(Problem(type: "BadRequest", title: "Invalid request",
+                detail: "Некорректный запрос",
+                statusCode: StatusCodes.Status400BadRequest));
         }
 
         //var response = new IssueResponse { Id = Guid.CreateVersion7(), Key = "DEV-123", Summary = "Test" };
-        return Ok();
+        return Task.FromResult<ActionResult<IssueResponse>>(Ok());
     }
 
 
@@ -114,8 +115,8 @@ public class IssuesController(IIssueService issueService) : Controller
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteIssueAsync(Guid id)
+    public Task<IActionResult> DeleteIssueAsync(Guid id)
     {
-        return NoContent();
+        return Task.FromResult<IActionResult>(NoContent());
     }
 }
