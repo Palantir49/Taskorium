@@ -1,0 +1,33 @@
+.kanban-board {
+  padding: 2rem;
+  overflow: hidden;
+  min-height: calc(100vh - 200px);
+  width: 100%;
+  position: relative;
+}
+
+.kanban-board-content {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.kanban-board-content.sidebar-open {
+  transform: scale(0.7);
+}
+
+@media (max-width: 768px) {
+  .kanban-board {
+    padding: 1rem;
+  }
+
+  .kanban-board-content {
+    gap: 0.75rem;
+  }
+}
+
+
