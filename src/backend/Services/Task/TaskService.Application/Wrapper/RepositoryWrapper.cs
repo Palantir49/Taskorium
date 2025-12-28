@@ -28,6 +28,8 @@ namespace TaskService.Application.Wrapper
 
         public IWorkspaceRepository Workspaces => _workspace;
 
+        public IUnitOfWork UnitOfWork => _unitOfWork;
+
         public void SaveChangesAsync(CancellationToken ct = default)
         {
             _unitOfWork.SaveChangesAsync(ct);

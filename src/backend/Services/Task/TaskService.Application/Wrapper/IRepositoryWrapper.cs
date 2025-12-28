@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TaskService.Domain.Repositories;
+﻿using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Wrapper
 {
@@ -10,6 +7,7 @@ namespace TaskService.Application.Wrapper
         IIssueRepository Issues { get; }
         IProjectRepository Projects { get; }
         IWorkspaceRepository Workspaces { get; }
+        IUnitOfWork UnitOfWork { get; }
 
         void SaveChangesAsync(CancellationToken ct = default);
     }
