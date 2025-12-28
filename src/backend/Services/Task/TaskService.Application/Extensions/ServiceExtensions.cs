@@ -13,7 +13,6 @@ public static class ServiceExtensions
     {
         public void ConfigureApplicationLayer()
         {
-            //services.AddScoped<IIssueService, IssueService>();
             services.AddScoped<IWorkspaceService, WorkspaceService>();
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 
