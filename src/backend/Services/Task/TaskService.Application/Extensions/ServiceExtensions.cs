@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Services;
-using TaskService.Domain.IRepositories;
 
 namespace TaskService.Application.Extensions;
 

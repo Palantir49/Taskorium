@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TaskService.Domain.Entities;
+﻿using TaskService.Domain.Entities;
 
 namespace TaskService.Domain.Repositories;
 

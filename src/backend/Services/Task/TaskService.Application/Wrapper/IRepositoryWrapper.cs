@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TaskService.Domain.IRepositories;
 using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Wrapper

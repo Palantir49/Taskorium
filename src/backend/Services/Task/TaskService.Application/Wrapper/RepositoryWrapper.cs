@@ -1,5 +1,4 @@
-﻿using TaskService.Domain.IRepositories;
-using TaskService.Domain.Repositories;
+﻿using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Wrapper
 {

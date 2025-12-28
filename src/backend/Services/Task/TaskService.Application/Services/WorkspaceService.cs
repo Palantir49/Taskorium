@@ -5,7 +5,7 @@ using TaskService.Application.Interfaces;
 using TaskService.Contracts.Workspace.Request;
 using TaskService.Contracts.Workspace.Response;
 using TaskService.Domain.Entities;
-using TaskService.Domain.IRepositories;
+using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Services
 {
