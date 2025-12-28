@@ -5,27 +5,14 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Repositories;
 
-public class IssueRepository(TaskServiceDbContext context) : IIssueRepository
+public class IssueRepository : RepositoryBase<Issue>, IIssueRepository
 {
-    public async Task AddAsync(Issue task, CancellationToken ct = default)
-    {
-        await context.AddAsync(task, ct);
-    }
-
-    public async Task<Issue?> GetByIdAsync(Guid id, CancellationToken ct = default)
-    {
-        return await context.Issues.FindAsync([id], ct);
-    }
+    protected IssueRepository(TaskServiceDbContext context) : base(context) { }
 
     public async Task<List<Issue>> GetByProjectIdAsync(Guid projectId, CancellationToken ct = default)
     {
-        return await context.Issues
+        return await _context.Issues
             .Where(i => i.ProjectId == projectId)
             .ToListAsync(ct);
-    }
-
-    public async Task SaveChangesAsync(CancellationToken ct = default)
-    {
-        await context.SaveChangesAsync(ct);
     }
 }

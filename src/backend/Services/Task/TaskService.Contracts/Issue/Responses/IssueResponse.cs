@@ -1,6 +1,5 @@
 ﻿namespace TaskService.Contracts.Issue.Responses;
 
-//TODO: а не должен ли тут быть конструктор, который принимает в параметры объект и из него собирает уже свойства?
 public record IssueResponse(
     Guid Id,
     string Name,

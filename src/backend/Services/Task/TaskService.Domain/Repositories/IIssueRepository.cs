@@ -1,11 +1,9 @@
 ﻿using TaskService.Domain.Entities;
+using TaskService.Domain.IRepositories;
 
 namespace TaskService.Domain.Repositories;
 
-public interface IIssueRepository
+public interface IIssueRepository : IRepositoryBase<Issue>
 {
-    Task AddAsync(Issue issue, CancellationToken ct = default);
-    Task<Issue?> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task<List<Issue>> GetByProjectIdAsync(Guid projectId, CancellationToken ct = default);
-    Task SaveChangesAsync(CancellationToken ct = default);
 }
