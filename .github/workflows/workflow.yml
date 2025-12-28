@@ -1,16 +1,14 @@
 ﻿name: Taskorium workflow
 
 on:
-  push:
+  pull_request:
     branches: [ "main", "dev" ]
     paths:
       - 'src**'
       - '.github/workflows/workflow.yml'
-  pull_request:
-    branches: [ "main", "dev" ]
 
 jobs:
-  format:
+  format-build-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,4 +26,7 @@ jobs:
       - name: Build
         working-directory: ./src/backend
         run: dotnet build --no-restore
+      - name: Test
+        working-directory: ./src/backend/Services/Task/TaskService.Tests
+        run: dotnet test --no-build --verbosity normal
     
