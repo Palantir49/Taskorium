@@ -12,7 +12,7 @@ namespace TaskService.Application.Handlers.Projects
         {
             return new CreateProjectCommand(
                 Name: request.Name,
-                Description:request.Description,
+                Description: request.Description,
                 WorkspaceId: request.WorkspaceId
                 );
         }

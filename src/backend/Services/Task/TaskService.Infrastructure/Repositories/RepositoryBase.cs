@@ -12,7 +12,7 @@ namespace TaskService.Infrastructure.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public virtual async Task<T?> GetByIdAsync( Guid id, CancellationToken ct = default)
+        public virtual async Task<T?> GetByIdAsync(Guid id, CancellationToken ct = default)
         {
             return await _context.Set<T>().FindAsync(new object[] { id }, ct);
         }
