@@ -34,7 +34,7 @@ public class IssuesController(CreateIssueHandler createIssueHandler) : Controlle
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
+    public Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
     {
         //var taskResponse = await issueService.GetTaskByIdAsync(id);
         //if (taskResponse == null)
@@ -43,7 +43,7 @@ public class IssuesController(CreateIssueHandler createIssueHandler) : Controlle
         //}
 
         //return Ok(taskResponse);
-        return Ok();
+        return Task.FromResult<ActionResult<IssueResponse>>(Ok());
     }
 
     /// <summary>
