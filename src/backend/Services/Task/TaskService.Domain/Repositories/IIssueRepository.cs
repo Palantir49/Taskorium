@@ -1,5 +1,4 @@
 ﻿using TaskService.Domain.Entities;
-using TaskService.Domain.IRepositories;
 
 namespace TaskService.Domain.Repositories;
 

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TaskService.Domain.Entities;
-using TaskService.Domain.IRepositories;
+using TaskService.Domain.Repositories;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Repositories

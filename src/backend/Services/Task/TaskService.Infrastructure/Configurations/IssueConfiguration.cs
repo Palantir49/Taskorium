@@ -12,7 +12,6 @@ namespace TaskService.Infrastructure.Configurations
 
             builder.Property(t => t.Id).ValueGeneratedNever();
 
-            //TODO: ограничиваем по длине?
             builder.Property(t => t.Name).IsRequired().HasMaxLength(225);
             builder.Property(t => t.Description).HasMaxLength(2000);
 
