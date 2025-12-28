@@ -14,11 +14,11 @@ namespace TaskService.Infrastructure.Configurations
             builder.HasKey(t => t.Id);
 
             builder.Property(t => t.Id).ValueGeneratedNever();
-   
+
             builder.Property(t => t.Name).IsRequired().HasMaxLength(225);
-            
+
             builder.Property(t => t.CreatedDate).IsRequired();
-            
+
             builder.Property(t => t.OwnerId);
 
         }
