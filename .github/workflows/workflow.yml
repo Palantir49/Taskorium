@@ -1,4 +1,4 @@
-﻿name: .NET
+﻿name: Taskorium workflow
 
 on:
   push:
@@ -10,8 +10,7 @@ on:
     branches: [ "main", "dev" ]
 
 jobs:
-  build:
-
+  format:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,3 +22,10 @@ jobs:
       - name: Format code
         working-directory: ./src/backend
         run: dotnet format --verify-no-changes
+      - name: Restore dependencies
+        working-directory: ./src/backend
+        run: dotnet restore
+      - name: Build
+        working-directory: ./src/backend
+        run: dotnet build --no-restore
+    

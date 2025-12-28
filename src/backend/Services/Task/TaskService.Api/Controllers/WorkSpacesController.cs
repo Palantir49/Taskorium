@@ -59,7 +59,8 @@ public class WorkSpacesController(IWorkspaceService workspaceService) : Controll
     [ProducesResponseType(typeof(WorkspaceResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<WorkspaceResponse>> CreateWorkspaceAsync([FromBody] CreateWorkspaceRequest createWorkspaceRequest)
+    public async Task<ActionResult<WorkspaceResponse>> CreateWorkspaceAsync(
+        [FromBody] CreateWorkspaceRequest createWorkspaceRequest)
     {
         var workspaceResponse = await workspaceService.CreateWorkspaceAsync(createWorkspaceRequest);
         return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { id = workspaceResponse.Id }, workspaceResponse);
@@ -79,8 +80,8 @@ public class WorkSpacesController(IWorkspaceService workspaceService) : Controll
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteWorkspaceAsync(Guid id)
+    public Task<IActionResult> DeleteWorkspaceAsync(Guid id)
     {
-        return NoContent();
+        return Task.FromResult<IActionResult>(NoContent());
     }
 }
