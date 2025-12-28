@@ -34,7 +34,7 @@ public class IssuesController(CreateIssueHandler createIssueHandler) : Controlle
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
+    public Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
     {
         //var taskResponse = await issueService.GetTaskByIdAsync(id);
         //if (taskResponse == null)
@@ -43,7 +43,7 @@ public class IssuesController(CreateIssueHandler createIssueHandler) : Controlle
         //}
 
         //return Ok(taskResponse);
-        return Ok();
+        return Task.FromResult<ActionResult<IssueResponse>>(Ok());
     }
 
     /// <summary>
@@ -91,13 +91,14 @@ public class IssuesController(CreateIssueHandler createIssueHandler) : Controlle
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> UpdateIssueAsync(Guid id,
+    public Task<ActionResult<IssueResponse>> UpdateIssueAsync(Guid id,
         [FromBody] UpdateIssueRequest? updateIssueRequest)
     {
         if (updateIssueRequest is null)
         {
-            return Problem(type: "BadRequest", title: "Invalid request", detail: "Некорректный запрос",
-                statusCode: StatusCodes.Status400BadRequest);
+            return Task.FromResult<ActionResult<IssueResponse>>(Problem(type: "BadRequest", title: "Invalid request",
+                detail: "Некорректный запрос",
+                statusCode: StatusCodes.Status400BadRequest));
         }
         return Ok();
     }
@@ -117,8 +118,8 @@ public class IssuesController(CreateIssueHandler createIssueHandler) : Controlle
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteIssueAsync(Guid id)
+    public Task<IActionResult> DeleteIssueAsync(Guid id)
     {
-        return NoContent();
+        return Task.FromResult<IActionResult>(NoContent());
     }
 }

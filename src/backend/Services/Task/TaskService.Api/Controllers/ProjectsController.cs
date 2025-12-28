@@ -59,7 +59,7 @@ public class ProjectsController(CreateProjectHandler createProjectHandler) : Con
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<ProjectResponse>> GetProjectByIdAsync(Guid id)
+    public Task<ActionResult<ProjectResponse>> GetProjectByIdAsync(Guid id)
     {
         //var taskResponse = await issueService.GetTaskByIdAsync(id);
         //if (taskResponse == null)
@@ -68,6 +68,6 @@ public class ProjectsController(CreateProjectHandler createProjectHandler) : Con
         //}
 
         //return Ok(taskResponse);
-        return Ok();
+        return Task.FromResult<ActionResult<ProjectResponse>>(Ok());
     }
 }
