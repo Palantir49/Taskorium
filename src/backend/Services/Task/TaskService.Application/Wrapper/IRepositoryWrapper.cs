@@ -2,13 +2,13 @@
 
 namespace TaskService.Application.Wrapper
 {
-    internal interface IRepositoryWrapper
+    public interface IRepositoryWrapper
     {
         IIssueRepository Issues { get; }
         IProjectRepository Projects { get; }
         IWorkspaceRepository Workspaces { get; }
         IUnitOfWork UnitOfWork { get; }
 
-        void SaveChangesAsync(CancellationToken ct = default);
+        Task<int> SaveChangesAsync(CancellationToken ct = default);
     }
 }

@@ -13,7 +13,6 @@ namespace TaskService.Domain.Entities
         public string? Description { get; private set; }
         public Guid? ReporterId { get; private set; }
         //TODO: возможно стоит добавить дату начала, чтобы условно выводить промежуток, котогда она в работе
-        //или обдумать сохранение какой-то истории. Возможно это будет в аналитике
         //+ когда назначена и когда в работу взяли
         public DateTimeOffset? ResolvedDate { get; private set; }
         public DateTimeOffset? UpdatedDate { get; private set; }

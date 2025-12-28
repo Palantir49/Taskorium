@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaskService.Application.Handlers.Issues;
+using TaskService.Application.Handlers.Issues.Command;
+using TaskService.Application.Handlers.Issues.Handler;
 using TaskService.Application.Interfaces;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
@@ -9,11 +12,11 @@ namespace TaskService.Api.Controllers;
 /// <summary>
 ///     Контроллер для работы с задачами
 /// </summary>
-/// <param name="issueService">Сервис для работы с задачами</param>
 [ApiController]
 [Route("api/v1/[controller]")]
-public class IssuesController(IIssueService issueService) : Controller
+public class IssuesController(CreateIssueHandler createIssueHandler) : Controller
 {
+    //FAQ: спросить про Minimal API и его документирования
     /// <summary>
     ///     Получить данные задачи по Id
     /// </summary>
@@ -33,13 +36,14 @@ public class IssuesController(IIssueService issueService) : Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
     {
-        var taskResponse = await issueService.GetTaskByIdAsync(id);
-        if (taskResponse == null)
-        {
-            return NotFound();
-        }
+        //var taskResponse = await issueService.GetTaskByIdAsync(id);
+        //if (taskResponse == null)
+        //{
+        //    return NotFound();
+        //}
 
-        return Ok(taskResponse);
+        //return Ok(taskResponse);
+        return Ok();
     }
 
     /// <summary>
@@ -61,10 +65,11 @@ public class IssuesController(IIssueService issueService) : Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromBody] CreateIssueRequest createIssueRequest)
     {
-        var taskResponse = await issueService.CreateTaskAsync(createIssueRequest);
-        return CreatedAtAction(nameof(GetTaskByIdAsync), new { id = taskResponse.Id }, taskResponse);
+        CreateIssueCommand createIssueCommand = createIssueRequest.ToCommand();
+        IssueResponse response = await createIssueHandler.HandleAsync(createIssueCommand);
+        return CreatedAtAction(nameof(GetTaskByIdAsync), new { id = response.Id }, response);
+        //FAQ: как ловить ошибки? я читал что-то через middleware
     }
-
 
     /// <summary>
     ///     Обновить данные задачи по Id

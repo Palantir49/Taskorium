@@ -15,8 +15,11 @@ public static class ServiceExtensions
         {
             services.AddDbContext<TaskServiceDbContext>(options => options.UseNpgsql(
                 configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<IIssueRepository, IssueRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }

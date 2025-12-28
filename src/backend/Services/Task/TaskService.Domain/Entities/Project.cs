@@ -4,9 +4,6 @@ namespace TaskService.Domain.Entities;
 
 public class Project : BaseEntityTask
 {
-    //TODO:будем ли тут фиксировать дату изменения
-    //Если да, являются ли изменения дочерних объектов тоже изменением проекта?
-
     //TODO: дату когда закончилось и началось
     private Project(Guid id, string name, string? description, Guid workspaceId, DateTimeOffset createdDate)
         : base(id, name, createdDate)

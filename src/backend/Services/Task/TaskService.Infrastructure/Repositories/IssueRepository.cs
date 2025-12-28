@@ -7,7 +7,7 @@ namespace TaskService.Infrastructure.Repositories;
 
 public class IssueRepository : RepositoryBase<Issue>, IIssueRepository
 {
-    protected IssueRepository(TaskServiceDbContext context) : base(context) { }
+    public IssueRepository(TaskServiceDbContext context) : base(context) { }
 
     public async Task<List<Issue>> GetByProjectIdAsync(Guid projectId, CancellationToken ct = default)
     {

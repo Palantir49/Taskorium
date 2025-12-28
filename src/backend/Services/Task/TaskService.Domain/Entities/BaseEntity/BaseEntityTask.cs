@@ -7,7 +7,7 @@ namespace TaskService.Domain.Entities.BaseEntity
     public abstract class BaseEntityTask
     {
         public Guid Id { get; }
-
+        //TODO: переделать под valueObjects
         public string Name { get; protected set; }
 
         public DateTimeOffset CreatedDate { get; }
@@ -21,7 +21,6 @@ namespace TaskService.Domain.Entities.BaseEntity
 
         private void IsValidName(string? value)
         {
-            //TODO: уточнить за ошибки на русском
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentException("Наименование задачи не может быть пустым",
                 nameof(value));

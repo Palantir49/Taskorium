@@ -2,9 +2,8 @@
 
 namespace TaskService.Application.Wrapper
 {
-    internal class RepositoryWrapper : IRepositoryWrapper
+    public class RepositoryWrapper : IRepositoryWrapper
     {
-
         private readonly IIssueRepository _issue;
         private readonly IProjectRepository _project;
         private readonly IWorkspaceRepository _workspace;
@@ -30,9 +29,9 @@ namespace TaskService.Application.Wrapper
 
         public IUnitOfWork UnitOfWork => _unitOfWork;
 
-        public void SaveChangesAsync(CancellationToken ct = default)
+        public Task<int> SaveChangesAsync(CancellationToken ct = default)
         {
-            _unitOfWork.SaveChangesAsync(ct);
+            return _unitOfWork.SaveChangesAsync(ct);
         }
     }
 }
