@@ -4,7 +4,6 @@ namespace TaskService.Domain.Entities;
 
 public class Project : BaseEntities
 {
-    //TODO: дату когда закончилось и началось
     private Project(Guid id, string name, string? description, Guid workspaceId, DateTimeOffset createdDate)
         : base(id, name, createdDate)
     {
@@ -15,6 +14,10 @@ public class Project : BaseEntities
     public Guid WorkspaceId { get; }
 
     public string? Description { get; private set; }
+
+    public DateTimeOffset? StartDate { get; private set; }
+
+    public DateTimeOffset? FinishDate { get; private set; }
 
     public static Project Create(string name, string? description, Guid workspaceId)
     {
