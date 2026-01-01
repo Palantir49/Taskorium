@@ -1,7 +1,7 @@
 ﻿using TaskService.Application.Handlers.Issues.Command;
-using TaskService.Domain.Repositories;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
+using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Handlers.Issues.Handler;
 

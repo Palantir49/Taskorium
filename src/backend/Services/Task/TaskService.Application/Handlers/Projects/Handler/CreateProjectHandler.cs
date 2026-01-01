@@ -1,7 +1,7 @@
 ﻿using TaskService.Application.Handlers.Projects.Command;
-using TaskService.Domain.Repositories;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
+using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Handlers.Projects.Handler;
 
