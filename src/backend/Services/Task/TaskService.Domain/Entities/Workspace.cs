@@ -4,6 +4,8 @@ namespace TaskService.Domain.Entities
 {
     public class Workspace : BaseEntities
     {
+        protected Workspace() { }
+
         private Workspace(Guid id, string name, DateTimeOffset createdDate, Guid? ownerId) : base(id, name, createdDate)
         {
             OwnerId = ownerId;

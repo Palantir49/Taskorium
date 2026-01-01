@@ -4,6 +4,8 @@ namespace TaskService.Domain.Entities;
 
 public class Project : BaseEntities
 {
+    protected Project() { }
+
     private Project(Guid id, string name, string? description, Guid workspaceId, DateTimeOffset createdDate)
         : base(id, name, createdDate)
     {

@@ -14,6 +14,11 @@ namespace TaskService.Domain.Entities.BaseEntity
 
         public DateTimeOffset CreatedDate { get; }
 
+        protected BaseEntities()
+        {
+            Name = null!;
+        }
+
         protected BaseEntities(Guid id, string name, DateTimeOffset createdDate)
         {
             Id = id;

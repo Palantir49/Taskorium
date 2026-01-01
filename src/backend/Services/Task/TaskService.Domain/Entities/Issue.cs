@@ -22,6 +22,8 @@ namespace TaskService.Domain.Entities
         //сокращение проекта + номер задачи по порядку
         //         //public varchar(20) key "PROJ-123"
 
+        protected Issue() { }
+
         private Issue(Guid id, string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId,
         Guid? reporterId, DateTimeOffset createdDate, DateTimeOffset? updatedDate, DateTimeOffset? dueDate,
         DateTimeOffset? resolvedDate) : base(id, name, createdDate)
