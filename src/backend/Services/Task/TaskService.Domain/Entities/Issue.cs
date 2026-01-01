@@ -26,8 +26,8 @@ namespace TaskService.Domain.Entities
         protected Issue() { }
 
         private Issue(Guid id, string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId,
-        Guid? reporterId, DateTimeOffset createdDate, DateTimeOffset? updatedDate, DateTimeOffset? dueDate,
-        DateTimeOffset? resolvedDate) : base(id, name, createdDate)
+        Guid? reporterId, DateTimeOffset? updatedDate, DateTimeOffset? dueDate,
+        DateTimeOffset? resolvedDate) : base(id, name)
         {
             ProjectId = projectId;
             TaskTypeId = taskTypeId;
@@ -43,7 +43,7 @@ namespace TaskService.Domain.Entities
         Guid? reporterId, DateTimeOffset? dueDate)
         {
             return new Issue(Guid.CreateVersion7(), name, description, projectId, taskTypeId, taskStatusId, reporterId,
-            DateTimeOffset.UtcNow, null, null, dueDate);
+                null, null, dueDate);
         }
 
         public override void UpdateName(string newName)

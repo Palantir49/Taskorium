@@ -6,8 +6,8 @@ public class Project : BaseEntities
 {
     protected Project() { }
 
-    private Project(Guid id, string name, string? description, Guid workspaceId, DateTimeOffset createdDate)
-        : base(id, name, createdDate)
+    private Project(Guid id, string name, string? description, Guid workspaceId)
+        : base(id, name)
     {
         WorkspaceId = workspaceId;
         Description = description;
@@ -23,6 +23,6 @@ public class Project : BaseEntities
 
     public static Project Create(string name, string? description, Guid workspaceId)
     {
-        return new Project(Guid.CreateVersion7(), name, description, workspaceId, DateTimeOffset.UtcNow);
+        return new Project(Guid.CreateVersion7(), name, description, workspaceId);
     }
 }

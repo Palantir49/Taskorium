@@ -6,7 +6,7 @@ namespace TaskService.Domain.Entities
     {
         protected Workspace() { }
 
-        private Workspace(Guid id, string name, DateTimeOffset createdDate, Guid? ownerId) : base(id, name, createdDate)
+        private Workspace(Guid id, string name, Guid? ownerId) : base(id, name)
         {
             OwnerId = ownerId;
         }
@@ -15,7 +15,7 @@ namespace TaskService.Domain.Entities
 
         public static Workspace Create(string name, Guid? ownerId = null)
         {
-            return new Workspace(Guid.CreateVersion7(), name, DateTimeOffset.UtcNow, ownerId);
+            return new Workspace(Guid.CreateVersion7(), name, ownerId);
         }
     }
 }
