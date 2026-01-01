@@ -15,8 +15,8 @@ namespace TaskService.Infrastructure.Configurations
             builder.Property(t => t.Description);
             builder.Property(t => t.CreatedDate).IsRequired();
             builder.Property(t => t.WorkspaceId).IsRequired();
-            builder.Property(t => t.StartDate).IsRequired();
-            builder.Property(t => t.FinishDate).IsRequired();
+            builder.Property(t => t.StartDate);
+            builder.Property(t => t.FinishDate);
         }
     }
 }
