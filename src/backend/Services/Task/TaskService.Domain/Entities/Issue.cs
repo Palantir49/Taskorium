@@ -23,8 +23,6 @@ namespace TaskService.Domain.Entities
         //дата взятия в работу 
         //FAQ: а какой жизненный цикл у этого свойства? ведь может быть ситуация случайного перевода в рабочий статус и обратная ситуация, когда случайно перенесли в рабочую
 
-        //FAQ: спросить у Вадима, как правильно описывать в документации поведение объекта, какую-то стурктуру и поведение при изменениях
-
         protected Issue() { }
 
         private Issue(Guid id, string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId,
