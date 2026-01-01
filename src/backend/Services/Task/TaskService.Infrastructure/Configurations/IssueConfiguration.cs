@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
+using TaskService.Domain.ValueObjects;
 
 namespace TaskService.Infrastructure.Configurations
 {
@@ -12,7 +13,11 @@ namespace TaskService.Infrastructure.Configurations
 
             builder.Property(t => t.Id).ValueGeneratedNever();
 
-            builder.Property(t => t.Name).IsRequired().HasMaxLength(225);
+            builder.Property(t => t.Name).HasConversion(
+                name => name.Value,
+                value => new BaseEntityName(value))
+                .IsRequired().HasMaxLength(225);
+
             builder.Property(t => t.Description).HasMaxLength(2000);
 
             builder.Property(t => t.CreatedDate).IsRequired();
