@@ -2,7 +2,7 @@
 
 namespace TaskService.Domain.Entities;
 
-public class Project : BaseEntityTask
+public class Project : BaseEntities
 {
     //TODO: дату когда закончилось и началось
     private Project(Guid id, string name, string? description, Guid workspaceId, DateTimeOffset createdDate)

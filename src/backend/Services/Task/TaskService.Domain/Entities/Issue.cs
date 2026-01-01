@@ -5,7 +5,7 @@ using TaskService.Domain.Entities.BaseEntity;
 
 namespace TaskService.Domain.Entities
 {
-    public class Issue : BaseEntityTask
+    public class Issue : BaseEntities
     {
         public Guid ProjectId { get; }
         public Guid TaskTypeId { get; private set; }

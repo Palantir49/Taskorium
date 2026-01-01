@@ -31,6 +31,6 @@ public class CreateProjectHandler
         await _wrapper.Projects.AddAsync(project, ct);
         await _wrapper.SaveChangesAsync(ct);
 
-        return new ProjectResponse(Id: project.Id, Name: project.Name, Description: project.Description, WorkspaceId: project.WorkspaceId, CreatedDate: project.CreatedDate);
+        return new ProjectResponse(Id: project.Id, Name: project.Name.ToString(), Description: project.Description, WorkspaceId: project.WorkspaceId, CreatedDate: project.CreatedDate);
     }
 }
