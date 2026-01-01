@@ -39,7 +39,6 @@ public class ProjectsController(CreateProjectHandler createProjectHandler) : Con
         CreateProjectCommand createProjectCommand = createProjectRequest.ToCommand();
         ProjectResponse response = await createProjectHandler.HandleAsync(createProjectCommand);
         return CreatedAtAction(nameof(GetProjectByIdAsync), new { id = response.Id }, response);
-        //FAQ: как ловить ошибки? я читал что-то через middleware, но нефига не понял
     }
 
     /// <summary>

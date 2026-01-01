@@ -16,15 +16,14 @@ public class CreateIssueHandler
 
     public async Task<IssueResponse> HandleAsync(CreateIssueCommand command, CancellationToken ct = default)
     {
-        //FAQ: нужно ли тут делать проверки, если у нас есть ограничения на уровне базы данных
         var project = await _wrapper.Projects.GetByIdAsync(command.ProjectId);
         //TODO: проверка существования статуса
         //TODO: проверка существования типа
         //TODO: проверка существования юзера
 
         if (project == null)
-        {//FAQ: как я понимаю нужно создавать свои исключения типа NotFoundException?
-            throw new Exception("Project not found.");
+        {
+            throw new InvalidOperationException("Project not found.");
         }
 
         var issue = Issue.Create(

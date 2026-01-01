@@ -12,15 +12,18 @@ namespace TaskService.Domain.Entities
         public Guid TaskStatusId { get; private set; }
         public string? Description { get; private set; }
         public Guid? ReporterId { get; private set; }
-        //TODO: возможно стоит добавить дату начала, чтобы условно выводить промежуток, котогда она в работе
-        //+ когда назначена и когда в работу взяли
         public DateTimeOffset? ResolvedDate { get; private set; }
         public DateTimeOffset? UpdatedDate { get; private set; }
         public DateTimeOffset? DueDate { get; private set; }
 
-        //TODO: уточтить за ключ
-        //сокращение проекта + номер задачи по порядку
-        //         //public varchar(20) key "PROJ-123"
+        //TODO: Добавление свойств:
+        //ключ 
+        //FAQ: как его создавать? возможно в хенделере запрашить проект, брать его короткое имя и количество задач в нем. "PROJ-123"
+        //дата назначения
+        //дата взятия в работу 
+        //FAQ: а какой жизненный цикл у этого свойства? ведь может быть ситуация случайного перевода в рабочий статус и обратная ситуация, когда случайно перенесли в рабочую
+
+        //FAQ: спросить у Вадима, как правильно описывать в документации поведение объекта, какую-то стурктуру и поведение при изменениях
 
         protected Issue() { }
 
@@ -63,8 +66,7 @@ namespace TaskService.Domain.Entities
             UpdatedDate = DateTimeOffset.UtcNow;
         }
 
-        //TODO: а как изменять ResolvedDate? по сути оно должно ставится с соответствующим статусом.
-        //уточнить этот момент, а пока bool
+        //DESIGN: статус должен иметь значение, которое будет указывать, является ли он завершающим или начальным для изменения дат начала и завершения задачи.
         public void ChangeStatus(Guid newTaskStatusId, bool resolved = false)
         {
             TaskStatusId = newTaskStatusId;

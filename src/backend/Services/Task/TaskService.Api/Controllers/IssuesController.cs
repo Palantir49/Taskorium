@@ -15,7 +15,6 @@ namespace TaskService.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class IssuesController(CreateIssueHandler createIssueHandler) : Controller
 {
-    //FAQ: спросить про Minimal API и его документирования
     /// <summary>
     ///     Получить данные задачи по Id
     /// </summary>
@@ -67,7 +66,6 @@ public class IssuesController(CreateIssueHandler createIssueHandler) : Controlle
         CreateIssueCommand createIssueCommand = createIssueRequest.ToCommand();
         IssueResponse response = await createIssueHandler.HandleAsync(createIssueCommand);
         return CreatedAtAction(nameof(GetTaskByIdAsync), new { id = response.Id }, response);
-        //FAQ: как ловить ошибки? я читал что-то через middleware
     }
 
     /// <summary>
