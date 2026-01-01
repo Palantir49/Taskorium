@@ -3,7 +3,8 @@ using TaskService.Application.Handlers.Issues.Handler;
 using TaskService.Application.Handlers.Projects.Handler;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Services;
-using TaskService.Application.Wrapper;
+using TaskService.Domain.Repositories;
+using TaskService.Infrastructure.Repositories;
 
 namespace TaskService.Application.Extensions;
 

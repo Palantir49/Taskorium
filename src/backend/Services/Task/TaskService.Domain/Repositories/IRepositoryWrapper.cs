@@ -1,14 +1,11 @@
-﻿using TaskService.Domain.Repositories;
+﻿namespace TaskService.Domain.Repositories;
 
-namespace TaskService.Application.Wrapper
+public interface IRepositoryWrapper
 {
-    public interface IRepositoryWrapper
-    {
-        IIssueRepository Issues { get; }
-        IProjectRepository Projects { get; }
-        IWorkspaceRepository Workspaces { get; }
-        IUnitOfWork UnitOfWork { get; }
+    IIssueRepository Issues { get; }
+    IProjectRepository Projects { get; }
+    IWorkspaceRepository Workspaces { get; }
+    IUnitOfWork UnitOfWork { get; }
 
-        Task<int> SaveChangesAsync(CancellationToken ct = default);
-    }
+    Task<int> SaveChangesAsync(CancellationToken ct = default);
 }

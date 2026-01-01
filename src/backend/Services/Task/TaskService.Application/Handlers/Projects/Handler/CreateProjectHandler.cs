@@ -1,5 +1,5 @@
 ﻿using TaskService.Application.Handlers.Projects.Command;
-using TaskService.Application.Wrapper;
+using TaskService.Domain.Repositories;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
 
