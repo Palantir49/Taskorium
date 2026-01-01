@@ -1,14 +1,17 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using TaskService.Domain.Entities;
 
 namespace TaskService.Infrastructure.Persistence;
 
-public class TaskServiceDbContext(DbContextOptions options) : DbContext(options)
+internal class TaskServiceDbContext : DbContext
 {
-    public DbSet<Issue> Issues { get; set; } = null!;
-    public DbSet<Project> Projects { get; set; } = null!;
-    public DbSet<Workspace> Workspaces { get; set; } = null!;
+    public TaskServiceDbContext(DbContextOptions options) : base(options) { }
+
+    internal DbSet<Issue> Issues { get; set; } = null!;
+    internal DbSet<Project> Projects { get; set; } = null!;
+    internal DbSet<Workspace> Workspaces { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

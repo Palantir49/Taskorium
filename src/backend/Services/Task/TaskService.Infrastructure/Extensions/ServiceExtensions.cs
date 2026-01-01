@@ -20,6 +20,8 @@ public static class ServiceExtensions
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
         }
     }
 }

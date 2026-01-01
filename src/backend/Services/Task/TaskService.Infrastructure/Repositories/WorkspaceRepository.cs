@@ -5,7 +5,7 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Repositories
 {
-    public class WorkspaceRepository : IWorkspaceRepository
+    internal class WorkspaceRepository : IWorkspaceRepository
     {
         private readonly TaskServiceDbContext _context;
 

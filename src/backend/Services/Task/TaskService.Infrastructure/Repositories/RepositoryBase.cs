@@ -5,9 +5,9 @@ namespace TaskService.Infrastructure.Repositories;
 
 public class RepositoryBase<T> : IRepositoryBase<T> where T : class
 {
-    protected readonly TaskServiceDbContext _context;
+    internal readonly TaskServiceDbContext _context;
 
-    protected RepositoryBase(TaskServiceDbContext context)
+    internal RepositoryBase(TaskServiceDbContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
