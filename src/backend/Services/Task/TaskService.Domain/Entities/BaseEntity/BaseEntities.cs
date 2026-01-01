@@ -9,10 +9,11 @@ namespace TaskService.Domain.Entities.BaseEntity
     public abstract class BaseEntities
     {
         public Guid Id { get; }
-        //TODO: переделать под valueObjects
+
         public BaseEntityName Name { get; protected set; }
 
         public DateTimeOffset CreatedDate { get; }
+
         protected BaseEntities(Guid id, string name, DateTimeOffset createdDate)
         {
             Id = id;
