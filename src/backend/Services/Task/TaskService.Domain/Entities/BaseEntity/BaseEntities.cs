@@ -11,7 +11,7 @@ namespace TaskService.Domain.Entities.BaseEntity
         public Guid Id { get; }
 
         public BaseEntityName Name { get; protected set; }
-
+        //FAQ: Вычитал, что можно добавить аля ISystemClock, который будет хранить в себе дату для упрощения тестов и типа аля это лучше (вот почему лучше то?)
         public DateTimeOffset CreatedDate { get; }
 
         protected BaseEntities()
@@ -19,11 +19,11 @@ namespace TaskService.Domain.Entities.BaseEntity
             Name = null!;
         }
 
-        protected BaseEntities(Guid id, string name, DateTimeOffset createdDate)
+        protected BaseEntities(Guid id, string name)
         {
             Id = id;
             Name = new BaseEntityName(name);
-            CreatedDate = createdDate;
+            CreatedDate = DateTimeOffset.UtcNow;
         }
 
 
