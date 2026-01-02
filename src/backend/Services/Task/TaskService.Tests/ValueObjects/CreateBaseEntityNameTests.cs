@@ -1,13 +1,14 @@
-﻿using TaskService.Domain.ValueObjects;
+﻿using System.Xml.Linq;
+using TaskService.Domain.ValueObjects;
 
 namespace TaskService.Tests.ValueObjects;
 
-public class BaseEntityNameTest
+public class CreateBaseEntityNameTests
 {
     [Theory]
     [InlineData("Test")]
     [InlineData("  SpaceTest  ")]
-    public void Valid_Create(string name)
+    public void BaseEntityName_CreateValidName_TrimedAndValid(string name)
     {
         BaseEntityName VOName = new BaseEntityName(name);
         Assert.NotNull(VOName);
@@ -17,9 +18,8 @@ public class BaseEntityNameTest
     [Theory]
     [InlineData("")]
     [InlineData("    ")]
-    public void Not_Valid_Create(string name)
+    public void BaseEntityName_CreateEmptyName_ArgumentNullException(string name)
     {
-        var act = () => new BaseEntityName(name);
-        Assert.Throws<ArgumentNullException>(act);
+        Assert.Throws<ArgumentNullException>(() => new BaseEntityName(name));
     }
 }

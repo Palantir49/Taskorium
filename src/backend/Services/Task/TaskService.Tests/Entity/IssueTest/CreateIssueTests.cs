@@ -1,25 +1,41 @@
-﻿using System.Xml.Linq;
-using TaskService.Domain.Entities;
-namespace TaskService.Tests.Entity.IssueTest;
+﻿using TaskService.Domain.Entities;
 
-
-public class CreateIssueTests
+namespace TaskService.Tests.Entity.IssueTest
 {
-    [Theory]
-    [InlineData("Test")]
-    [InlineData("  SpaceTest  ")]
-    public void Valid_Create_Issue(string name)
+    public class CreateIssueTests
     {
-        Issue issue = Issue.Create(name, "", Guid.CreateVersion7(), Guid.CreateVersion7(), Guid.CreateVersion7(), Guid.CreateVersion7(), null);
-        Assert.NotNull(issue);
-        Assert.Equal(issue.Name.ToString(), name.Trim());
+        [Fact]
+        public void Create_WithValidData_SetsAllPropertiesCorrectly()
+        {
+            Guid projectId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-567890abcdef");
+            Guid typeId = Guid.Parse("b2c3d4e5-e5f6-7890-1234-567890abcdef");
+            Guid statusId = Guid.Parse("c3d4e5f6-e5f6-7890-1234-567890abcdef");
 
-    }
+            Issue issue = Issue.Create("Task", "Desc", projectId, typeId, statusId, null, null);
 
-    [Fact]
-    public void Valid_Null_ReporterId_Issue()
-    {
-        Issue issue = Issue.Create("Test", "", Guid.CreateVersion7(), Guid.CreateVersion7(), Guid.CreateVersion7(), null, null);
-        Assert.Null(issue.ReporterId);
+            Assert.Equal("Task", issue.Name.Value);
+            Assert.Equal("Desc", issue.Description);
+            Assert.Equal(projectId, issue.ProjectId);
+            Assert.Equal(typeId, issue.TaskTypeId);
+            Assert.Equal(statusId, issue.TaskStatusId);
+            Assert.Null(issue.ReporterId);
+            Assert.Null(issue.ResolvedDate);
+            Assert.Null(issue.UpdatedDate);
+            Assert.NotEqual(default, issue.CreatedDate);
+        }
+
+        [Fact]
+        public void Create_WithReporter_ValidReporterId()
+        {
+            Issue issue = Issue.Create("Old", "", Guid.CreateVersion7(), Guid.CreateVersion7(), Guid.CreateVersion7(), Guid.Parse("019b659f-0a03-7fe3-be92-5b162c2c824c"), null);
+            Assert.NotNull(issue.ReporterId);
+        }
+
+        [Fact]
+        public void Create_WithoutReporter_NullReporterId()
+        {
+            Issue issue = Issue.Create("Old", "", Guid.CreateVersion7(), Guid.CreateVersion7(), Guid.CreateVersion7(), null, null);
+            Assert.Null(issue.ReporterId);
+        }
     }
 }

@@ -45,7 +45,7 @@ namespace TaskService.Domain.Entities
             return new Issue(Guid.CreateVersion7(), name, description, projectId, taskTypeId, taskStatusId, reporterId,
                 null, null, dueDate);
         }
-
+        //FAQ: а как мы смотрим на изменения без изменений? если на вход идет такая-же строка, мы ее пересоздаем?
         public override void UpdateName(string newName)
         {
             base.UpdateName(newName);
@@ -54,7 +54,7 @@ namespace TaskService.Domain.Entities
 
         public void UpdateDescription(string? newDescription)
         {
-            Description = newDescription;
+            Description = newDescription?.Trim();
             UpdatedDate = DateTimeOffset.UtcNow;
         }
 

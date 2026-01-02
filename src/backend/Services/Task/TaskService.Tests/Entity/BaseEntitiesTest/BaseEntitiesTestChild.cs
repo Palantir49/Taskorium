@@ -5,8 +5,8 @@ using TaskService.Domain.Entities.BaseEntity;
 
 namespace TaskService.Tests.Entity.BaseEntitiesTest
 {
-    internal class BaseEntitiesChild : BaseEntities
+    internal class BaseEntitiesTestChild : BaseEntities
     {
-        public BaseEntitiesChild(Guid id, string name, DateTimeOffset createdDate) : base(id, name, createdDate) { }
+        public BaseEntitiesTestChild(Guid id, string name) : base(id, name) { }
     }
 }
