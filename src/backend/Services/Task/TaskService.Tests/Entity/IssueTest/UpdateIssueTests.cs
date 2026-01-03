@@ -16,7 +16,7 @@ public class UpdateIssueTests
     [Theory]
     [InlineData("new")]
     [InlineData("   space    ")]
-    public void Update_WithValidName_UpdateNameAndUpdateDate(string name)
+    public void Update_WithValidName_ChangeNameAndUpdateDate(string name)
     {
         DateTimeOffset? old = Issue.UpdatedDate;
 
@@ -29,13 +29,13 @@ public class UpdateIssueTests
     [Theory]
     [InlineData("")]
     [InlineData("    ")]
-    public void Update_WithEmptyName_UpdateNameAndUpdateDate(string name)
+    public void Update_WithEmptyName_ChangeNameAndUpdateDate(string name)
     {
         Assert.Throws<ArgumentNullException>(() => Issue.UpdateName(name));
     }
 
     [Fact]
-    public void Update_WithChangeThePropertyTwice_UpdateDateChangeTwice()
+    public void Update_WithChangeThePropertyTwice_ChangeDateChangeTwice()
     {
         DateTimeOffset? old = Issue.UpdatedDate;
 
