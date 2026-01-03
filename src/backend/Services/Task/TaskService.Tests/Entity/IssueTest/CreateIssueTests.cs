@@ -27,8 +27,10 @@ namespace TaskService.Tests.Entity.IssueTest
         [Fact]
         public void Create_WithReporter_ValidReporterId()
         {
-            Issue issue = Issue.Create("Old", "", Guid.CreateVersion7(), Guid.CreateVersion7(), Guid.CreateVersion7(), Guid.Parse("019b659f-0a03-7fe3-be92-5b162c2c824c"), null);
+            Guid guid = Guid.Parse("019b659f-0a03-7fe3-be92-5b162c2c824c");
+            Issue issue = Issue.Create("Old", "", Guid.CreateVersion7(), Guid.CreateVersion7(), Guid.CreateVersion7(), guid, null);
             Assert.NotNull(issue.ReporterId);
+            Assert.Equal(guid, issue.ReporterId);
         }
 
         [Fact]
