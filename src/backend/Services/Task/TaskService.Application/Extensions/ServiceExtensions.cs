@@ -1,11 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using TaskService.Application.Abstractions;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using TaskService.Application.Commands.Issues.Handler;
 using TaskService.Application.Commands.Projects.Handler;
-using TaskService.Application.Commands.Users.Create;
-using TaskService.Application.Commands.Users.Get;
 using TaskService.Application.Commands.Workspaces.Create;
-using TaskService.Application.Commands.Workspaces.Get;
 using TaskService.Application.Mediator;
 
 namespace TaskService.Application.Extensions;
@@ -16,13 +13,15 @@ public static class ServiceExtensions
     {
         public void ConfigureApplicationLayer()
         {
-            services.AddScoped<CreateWorkspaceHandler>();
+            services.AddScoped<IDispatcher, Dispatcher>();
             services.AddScoped<CreateIssueHandler, CreateIssueHandler>();
             services.AddScoped<CreateProjectHandler, CreateProjectHandler>();
-            services.AddScoped<ICommandDispatcher, CommandDispatcher>();
-            services.AddScoped<IQueryDispatcher, QueryDispatcher>();
-            services.AddScoped<ICommandHandler<CreateWorkspaceCommand, CreateWorkspaceResult>, CreateWorkspaceHandler>();
-            services.AddScoped<IQueryHandler<GetWorkspaceByIdQuery, GetWorkspacebyIdResult>, GetWorkspaceHandler>();
+            var assembly = Assembly.GetExecutingAssembly();
+            services.Scan(selector =>
+                    selector.FromAssemblies(Assembly.GetExecutingAssembly())
+                             .AddClasses(filter => filter.AssignableTo(typeof(IRequestHandler<,>)))
+                             .AsImplementedInterfaces()
+                             .WithScopedLifetime());
             //services.AddScoped<ICommandHandler<CreateUserCommand, CreateUserResult>, CreateUserHandler>();
         }
     }
