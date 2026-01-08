@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Handlers.Issues;
-using TaskService.Application.Handlers.Issues.Command;
-using TaskService.Application.Handlers.Issues.Handler;
+using TaskService.Application.Commands.Issues;
+using TaskService.Application.Commands.Issues.Command;
+using TaskService.Application.Commands.Issues.Handler;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
 using CreateIssueRequest = TaskService.Contracts.Issue.Requests.CreateIssueRequest;

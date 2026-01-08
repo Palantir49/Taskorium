@@ -8,7 +8,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private readonly IProjectRepository _project;
     private readonly IWorkspaceRepository _workspace;
     private readonly IUnitOfWork _unitOfWork;
-
+    //private readonly IUserRepository _users;
     public RepositoryWrapper(
         IIssueRepository issue,
         IProjectRepository project,
@@ -19,8 +19,9 @@ public class RepositoryWrapper : IRepositoryWrapper
         _project = project;
         _workspace = workspace;
         _unitOfWork = unitOfWork;
+        //_users = users;
     }
-
+    //public IUserRepository Users => _users;
     public IIssueRepository Issues => _issue;
 
     public IProjectRepository Projects => _project;

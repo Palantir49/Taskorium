@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Handlers.Issues.Command;
-using TaskService.Application.Handlers.Issues.Handler;
-using TaskService.Application.Handlers.Projects;
-using TaskService.Application.Handlers.Projects.Command;
-using TaskService.Application.Handlers.Projects.Handler;
-using TaskService.Contracts.Issue.Responses;
+using TaskService.Application.Commands.Projects;
+using TaskService.Application.Commands.Projects.Command;
+using TaskService.Application.Commands.Projects.Handler;
 using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 

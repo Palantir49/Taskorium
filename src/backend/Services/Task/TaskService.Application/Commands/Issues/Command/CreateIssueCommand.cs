@@ -1,4 +1,4 @@
-﻿namespace TaskService.Application.Handlers.Issues.Command;
+﻿namespace TaskService.Application.Commands.Issues.Command;
 
 public record CreateIssueCommand(string Name,
     Guid ProjectId,

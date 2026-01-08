@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Interfaces;
+using TaskService.Application.Abstractions;
+using TaskService.Application.Commands.Workspaces;
+using TaskService.Application.Commands.Workspaces.Create;
+using TaskService.Application.Commands.Workspaces.Get;
+using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.Workspace.Request;
 using TaskService.Contracts.Workspace.Response;
@@ -9,10 +13,9 @@ namespace TaskService.Api.Controllers;
 /// <summary>
 ///     Контроллер для работы с рабочими пространствами
 /// </summary>
-/// <param name="workspaceService">Сервис для работы с задачами</param>
 [ApiController]
 [Route("api/v1/[controller]")]
-public class WorkSpacesController(IWorkspaceService workspaceService) : Controller
+public class WorkSpacesController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher) : Controller
 {
     /// <summary>
     ///     Получить рабочей области по Id
@@ -33,13 +36,14 @@ public class WorkSpacesController(IWorkspaceService workspaceService) : Controll
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<IssueResponse>> GetWorkspaceByIdAsync(Guid id)
     {
-        var taskResponse = await workspaceService.GetWorkspaceByIdAsync(id);
-        if (taskResponse == null)
+        var query = new GetWorkspaceByIdQuery(id);
+        var workspaceResponse = await queryDispatcher.SendAsync<GetWorkspaceByIdQuery, GetWorkspacebyIdResult>(query);
+        if (workspaceResponse == null)
         {
             return NotFound();
         }
 
-        return Ok(taskResponse);
+        return Ok(workspaceResponse);
     }
 
     /// <summary>
@@ -62,8 +66,8 @@ public class WorkSpacesController(IWorkspaceService workspaceService) : Controll
     public async Task<ActionResult<WorkspaceResponse>> CreateWorkspaceAsync(
         [FromBody] CreateWorkspaceRequest createWorkspaceRequest)
     {
-        var workspaceResponse = await workspaceService.CreateWorkspaceAsync(createWorkspaceRequest);
-        return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { id = workspaceResponse.Id }, workspaceResponse);
+        var workspaceResponse = await commandDispatcher.SendAsync<CreateWorkspaceCommand, CreateWorkspaceResult>(createWorkspaceRequest.ToCommand());
+        return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { id = workspaceResponse.id }, workspaceResponse);
     }
 
     /// <summary>

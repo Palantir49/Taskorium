@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TaskService.Application.Handlers.Projects.Command;
+using TaskService.Application.Commands.Projects.Command;
 using TaskService.Contracts.Project.Requests;
 
-namespace TaskService.Application.Handlers.Projects
+namespace TaskService.Application.Commands.Projects
 {
     public static class ProjectMapping
     {

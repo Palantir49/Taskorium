@@ -1,9 +1,9 @@
-﻿using TaskService.Application.Handlers.Issues.Command;
+﻿using TaskService.Application.Commands.Issues.Command;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
 using TaskService.Domain.Repositories;
 
-namespace TaskService.Application.Handlers.Issues.Handler;
+namespace TaskService.Application.Commands.Issues.Handler;
 
 public class CreateIssueHandler
 {

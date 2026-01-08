@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TaskService.Application.Handlers.Projects.Command
+namespace TaskService.Application.Commands.Projects.Command
 {
     public record CreateProjectCommand(
     string Name,

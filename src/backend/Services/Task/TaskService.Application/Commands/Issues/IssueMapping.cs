@@ -1,7 +1,7 @@
-﻿using TaskService.Application.Handlers.Issues.Command;
+﻿using TaskService.Application.Commands.Issues.Command;
 using TaskService.Contracts.Issue.Requests;
 
-namespace TaskService.Application.Handlers.Issues
+namespace TaskService.Application.Commands.Issues
 {
     public static class IssueMapping
     {

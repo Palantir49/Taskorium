@@ -1,9 +1,9 @@
-﻿using TaskService.Application.Handlers.Projects.Command;
+﻿using TaskService.Application.Commands.Projects.Command;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
 using TaskService.Domain.Repositories;
 
-namespace TaskService.Application.Handlers.Projects.Handler;
+namespace TaskService.Application.Commands.Projects.Handler;
 
 public class CreateProjectHandler
 {
