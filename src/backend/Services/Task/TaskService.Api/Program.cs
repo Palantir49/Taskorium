@@ -2,6 +2,7 @@
 using Scalar.AspNetCore;
 using Taskorium.ServiceDefaults;
 using TaskService.Api.Middlewares;
+using TaskService.Api.Handlers;
 using TaskService.Application.Extensions;
 using TaskService.Infrastructure.Extensions;
 
@@ -10,6 +11,9 @@ builder.Configuration.Setup(builder.Environment.EnvironmentName);
 builder.Host.ValidateServices();
 builder.Services.AddServiceDefaults(builder.Configuration);
 builder.Services.AddScoped<RequestObservabilityMiddleware>();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -42,8 +46,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp", policy =>
     {
         policy.WithOrigins("http://localhost:5000")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -63,6 +67,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseExceptionHandler();
 app.UseServiceDefaults(builder.Configuration);
 app.UseHttpsRedirection();
 app.MapControllers();
