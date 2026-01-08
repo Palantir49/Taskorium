@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TaskService.Application.Mediator;
 
-public interface ICommand<TResult>
+public interface ICommand<out TResult> : IRequest<TResult>
 {
 
 }

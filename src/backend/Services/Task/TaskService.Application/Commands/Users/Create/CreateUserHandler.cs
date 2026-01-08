@@ -1,9 +1,4 @@
-﻿using TaskService.Application.Abstractions;
-using TaskService.Contracts.User.Responses;
-using TaskService.Domain.Entities;
-using TaskService.Domain.Repositories;
-
-namespace TaskService.Application.Commands.Users.Create;
+﻿namespace TaskService.Application.Commands.Users.Create;
 
 //public class CreateUserHandler : ICommandHandler<CreateUserCommand, CreateUserResult>
 //{

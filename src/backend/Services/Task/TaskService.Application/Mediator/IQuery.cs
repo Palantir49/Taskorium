@@ -4,6 +4,6 @@ using System.Text;
 
 namespace TaskService.Application.Mediator;
 
-public interface IQuery<TResult>
+public interface IQuery<out TResult> : IRequest<TResult>
 {
 }

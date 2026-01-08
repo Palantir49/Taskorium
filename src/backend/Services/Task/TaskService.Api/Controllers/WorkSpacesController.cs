@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Abstractions;
 using TaskService.Application.Commands.Workspaces;
-using TaskService.Application.Commands.Workspaces.Create;
 using TaskService.Application.Commands.Workspaces.Get;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
@@ -15,7 +13,7 @@ namespace TaskService.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
-public class WorkSpacesController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher) : Controller
+public class WorkSpacesController(IDispatcher dispatcher) : Controller
 {
     /// <summary>
     ///     Получить рабочей области по Id
@@ -37,7 +35,7 @@ public class WorkSpacesController(IQueryDispatcher queryDispatcher, ICommandDisp
     public async Task<ActionResult<IssueResponse>> GetWorkspaceByIdAsync(Guid id)
     {
         var query = new GetWorkspaceByIdQuery(id);
-        var workspaceResponse = await queryDispatcher.SendAsync<GetWorkspaceByIdQuery, GetWorkspacebyIdResult>(query);
+        var workspaceResponse = await dispatcher.SendAsync(query);
         if (workspaceResponse == null)
         {
             return NotFound();
@@ -66,7 +64,7 @@ public class WorkSpacesController(IQueryDispatcher queryDispatcher, ICommandDisp
     public async Task<ActionResult<WorkspaceResponse>> CreateWorkspaceAsync(
         [FromBody] CreateWorkspaceRequest createWorkspaceRequest)
     {
-        var workspaceResponse = await commandDispatcher.SendAsync<CreateWorkspaceCommand, CreateWorkspaceResult>(createWorkspaceRequest.ToCommand());
+        var workspaceResponse = await dispatcher.SendAsync(createWorkspaceRequest.ToCommand());
         return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { id = workspaceResponse.id }, workspaceResponse);
     }
 

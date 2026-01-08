@@ -6,7 +6,7 @@ using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Commands.Workspaces.Get;
 
-public class GetWorkspaceHandler : IQueryHandler<GetWorkspaceByIdQuery, GetWorkspacebyIdResult>
+public class GetWorkspaceHandler : IRequestHandler<GetWorkspaceByIdQuery, GetWorkspacebyIdResult>
 {
     private readonly IRepositoryWrapper _wrapper;
 

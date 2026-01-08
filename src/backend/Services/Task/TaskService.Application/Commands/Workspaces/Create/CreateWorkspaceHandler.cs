@@ -5,7 +5,7 @@ using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Commands.Workspaces.Create;
 
-public class CreateWorkspaceHandler : ICommandHandler<CreateWorkspaceCommand, CreateWorkspaceResult>
+public class CreateWorkspaceHandler : IRequestHandler<CreateWorkspaceCommand, CreateWorkspaceResult>
 {
     private readonly IRepositoryWrapper _wrapper;
 
