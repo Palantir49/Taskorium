@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using TaskService.Application.Exceptions;
 
 namespace TaskService.Api.Handlers;
 
@@ -17,8 +18,7 @@ internal sealed class GlobalExceptionHandler(
         {
             UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
             ValidationException => StatusCodes.Status400BadRequest,
-            //TODO conflict exception
-            //ConflictException => StatusCodes.Status409Conflict,
+            ConflictException => StatusCodes.Status409Conflict,
             KeyNotFoundException => StatusCodes.Status404NotFound,
             _ => StatusCodes.Status500InternalServerError
         };
