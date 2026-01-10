@@ -10,6 +10,7 @@ builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", false, true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true)
+    .AddUserSecrets(typeof(Program).Assembly)
     .AddEnvironmentVariables()
     .Build();
 
