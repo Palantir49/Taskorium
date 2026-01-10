@@ -6,14 +6,7 @@ using TaskService.Application.Extensions;
 using TaskService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", false, true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true)
-    .AddUserSecrets(typeof(Program).Assembly)
-    .AddEnvironmentVariables()
-    .Build();
-
+builder.Configuration.Setup(builder.Environment.EnvironmentName);
 builder.Host.ValidateServices();
 builder.Services.AddServiceDefaults(builder.Configuration);
 builder.Services.AddScoped<RequestObservabilityMiddleware>();
