@@ -1,5 +1,6 @@
 ﻿using Microsoft.OpenApi;
 using Scalar.AspNetCore;
+using TaskService.Api.Handlers;
 using Taskorium.ServiceDefaults;
 using TaskService.Api.Middlewares;
 using TaskService.Api.Handlers;
@@ -7,11 +8,6 @@ using TaskService.Application.Extensions;
 using TaskService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.Setup(builder.Environment.EnvironmentName);
-builder.Host.ValidateServices();
-builder.Services.AddServiceDefaults(builder.Configuration);
-builder.Services.AddScoped<RequestObservabilityMiddleware>();
-
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
@@ -46,8 +42,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp", policy =>
     {
         policy.WithOrigins("http://localhost:5000")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 
@@ -67,6 +63,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseExceptionHandler();
 app.UseExceptionHandler();
 app.UseServiceDefaults(builder.Configuration);
 app.UseHttpsRedirection();
