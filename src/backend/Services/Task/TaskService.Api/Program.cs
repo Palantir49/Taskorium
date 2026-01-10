@@ -1,13 +1,16 @@
 ﻿using Microsoft.OpenApi;
 using Scalar.AspNetCore;
-using TaskService.Api.Handlers;
 using Taskorium.ServiceDefaults;
-using TaskService.Api.Middlewares;
 using TaskService.Api.Handlers;
+using TaskService.Api.Middlewares;
 using TaskService.Application.Extensions;
 using TaskService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.Setup(builder.Environment.EnvironmentName);
+builder.Host.ValidateServices();
+builder.Services.AddServiceDefaults(builder.Configuration);
+builder.Services.AddScoped<RequestObservabilityMiddleware>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
@@ -29,8 +32,7 @@ builder.Services.AddOpenApi(options =>
 
         document.Info.License = new OpenApiLicense
         {
-            Name = "MIT License",
-            Url = new Uri("https://opensource.org/licenses/MIT")
+            Name = "MIT License", Url = new Uri("https://opensource.org/licenses/MIT")
         };
         return Task.CompletedTask;
     });
@@ -63,7 +65,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseExceptionHandler();
 app.UseExceptionHandler();
 app.UseServiceDefaults(builder.Configuration);
 app.UseHttpsRedirection();
