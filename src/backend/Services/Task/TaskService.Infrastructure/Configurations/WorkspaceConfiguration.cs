@@ -12,19 +12,21 @@ namespace TaskService.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Workspace> builder)
         {
-            builder.HasKey(t => t.Id);
+            builder.HasKey(w => w.Id);
 
-            builder.Property(t => t.Id).ValueGeneratedNever();
+            builder.Property(w => w.Id).ValueGeneratedNever();
 
-            builder.Property(t => t.Name).HasConversion(
-                name => name.Value,
-                value => new BaseEntityName(value))
-                .IsRequired().HasMaxLength(225);
+            builder.Property(w => w.Name)
+                .HasConversion(name => name.Value, value => new BaseEntityName(value))
+                .IsRequired()
+                .HasMaxLength(225);
 
-            builder.Property(t => t.CreatedDate).IsRequired();
+            builder.Property(w => w.CreatedDate).IsRequired();
 
-            builder.Property(t => t.OwnerId);
-
+            builder.Property(w => w.OwnerId);
+            builder.HasOne(w => w.User)
+                .WithMany(u => u.Workspaces)
+                .HasForeignKey(w => w.OwnerId);
         }
     }
 }

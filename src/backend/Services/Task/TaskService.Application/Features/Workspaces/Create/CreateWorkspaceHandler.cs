@@ -5,23 +5,16 @@ using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Commands.Workspaces.Create;
 
-public class CreateWorkspaceHandler : IRequestHandler<CreateWorkspaceCommand, CreateWorkspaceResult>
+public class CreateWorkspaceHandler(IRepositoryWrapper wrapper) : IRequestHandler<CreateWorkspaceCommand, CreateWorkspaceResult>
 {
-    private readonly IRepositoryWrapper _wrapper;
-
-    public CreateWorkspaceHandler(IRepositoryWrapper wrapper)
-    {
-        _wrapper = wrapper;
-    }
-
     public async Task<CreateWorkspaceResult> Handle(CreateWorkspaceCommand command, CancellationToken cancellationToken = default)
     {
         var workspace = Workspace.Create(
             name: command.Name,
             ownerId: command.ownerId
         );
-        await _wrapper.Workspaces.AddAsync(workspace, cancellationToken);
-        await _wrapper.SaveChangesAsync(cancellationToken);
+        await wrapper.Workspaces.AddAsync(workspace, cancellationToken);
+        await wrapper.SaveChangesAsync(cancellationToken);
 
         return new CreateWorkspaceResult(
             id: workspace.Id,

@@ -1,21 +1,21 @@
 ﻿using TaskService.Domain.Entities.BaseEntity;
 
-namespace TaskService.Domain.Entities
+namespace TaskService.Domain.Entities;
+
+public class Workspace : BaseEntities
 {
-    public class Workspace : BaseEntities
+    protected Workspace() { }
+
+    private Workspace(Guid id, string name, Guid ownerId) : base(id, name)
     {
-        protected Workspace() { }
+        OwnerId = ownerId;
+    }
+    public User? User { get; private set; }
+    public ICollection<Project> Projects { get; private set; } = new List<Project>();
+    public Guid OwnerId { get; private set; }
 
-        private Workspace(Guid id, string name, Guid? ownerId) : base(id, name)
-        {
-            OwnerId = ownerId;
-        }
-
-        public Guid? OwnerId { get; private set; }
-
-        public static Workspace Create(string name, Guid? ownerId = null)
-        {
-            return new Workspace(Guid.CreateVersion7(), name, ownerId);
-        }
+    public static Workspace Create(string name, Guid ownerId)
+    {
+        return new Workspace(Guid.CreateVersion7(), name, ownerId);
     }
 }

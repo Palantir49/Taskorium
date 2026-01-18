@@ -13,6 +13,7 @@ public class Project : BaseEntities
         Description = description;
     }
 
+    public Workspace? Workspace { get; private set; }
     public Guid WorkspaceId { get; }
 
     public string? Description { get; private set; }

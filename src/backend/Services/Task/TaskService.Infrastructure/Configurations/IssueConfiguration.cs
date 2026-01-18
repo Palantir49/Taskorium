@@ -25,7 +25,6 @@ namespace TaskService.Infrastructure.Configurations
             builder.Property(t => t.DueDate);
             builder.Property(t => t.ResolvedDate);
 
-            builder.Property(t => t.ReporterId);
             builder.Property(t => t.ProjectId).IsRequired();
             builder.Property(t => t.TaskStatusId).IsRequired();
             builder.Property(t => t.TaskTypeId).IsRequired();
@@ -35,6 +34,11 @@ namespace TaskService.Infrastructure.Configurations
                   .HasForeignKey(t => t.ProjectId)
                   .IsRequired()
                   .OnDelete(DeleteBehavior.Restrict);
+
+            //builder.HasOne(i => i.User)
+            //    .WithMany(u => u.Issues)
+            //    .HasForeignKey(i => i.ReporterId);
+
         }
     }
 }
