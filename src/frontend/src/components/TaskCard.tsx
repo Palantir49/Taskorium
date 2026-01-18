@@ -8,11 +8,12 @@ import {
   FaInfoCircle,
   FaCircle
 } from 'react-icons/fa';
+import { TaskCardProps, TaskType } from '../types';
 import './TaskCard.css';
 
-function TaskCard({ task, onClick }) {
+function TaskCard({ task, onClick }: TaskCardProps) {
   // Иконки для типов задач
-  const getTypeIcon = (type) => {
+  const getTypeIcon = (type: TaskType) => {
     switch (type) {
       case 'bug':
         return <FaBug className="task-type-icon bug" />;
@@ -25,9 +26,8 @@ function TaskCard({ task, onClick }) {
     }
   };
 
-
   // Форматирование даты
-  const formatDate = (date) => {
+  const formatDate = (date: Date | string | null): string | null => {
     if (!date) return null;
     const d = new Date(date);
     return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
@@ -56,7 +56,7 @@ function TaskCard({ task, onClick }) {
   }
 
   return (
-    <div className={`task-card ${priorityBorderClass}`} onClick={() => onClick(task)}>
+    <div className={`task-card ${priorityBorderClass}`} onClick={() => onClick && onClick(task)}>
       <div className="task-card-header">
         <div className="task-title-row">
           {getTypeIcon(task.type)}
@@ -89,5 +89,3 @@ function TaskCard({ task, onClick }) {
 }
 
 export default TaskCard;
-
-

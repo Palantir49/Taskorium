@@ -16,13 +16,18 @@ import { useTasks } from '../context/TaskContext';
 import { filterTasks, groupTasksByStatus } from '../utils/filterTasks';
 import Column from './Column';
 import TaskCard from './TaskCard';
+import { Task, TaskStatus } from '../types';
 import './KanbanBoard.css';
 
-const statusOrder = ['backlog', 'in-progress', 'testing', 'pause', 'done'];
+const statusOrder: TaskStatus[] = ['backlog', 'in-progress', 'testing', 'pause', 'done'];
 
-function KanbanBoard() {
+interface KanbanBoardProps {
+  onCreateTask?: (status: TaskStatus) => void;
+}
+
+function KanbanBoard({ onCreateTask }: KanbanBoardProps) {
   const { tasks, filters, updateTask, setSelectedTask, selectedTask } = useTasks();
-  const [activeTask, setActiveTask] = React.useState(null);
+  const [activeTask, setActiveTask] = React.useState<Task | null>(null);
 
   // Фильтрация задач
   const filteredTasks = React.useMemo(() => {
@@ -47,7 +52,7 @@ function KanbanBoard() {
   );
 
   // Обработка начала перетаскивания
-  const handleDragStart = (event) => {
+  const handleDragStart = (event: any) => {
     const { active } = event;
     if (active.data.current?.type === 'task') {
       setActiveTask(active.data.current.task);
@@ -55,7 +60,7 @@ function KanbanBoard() {
   };
 
   // Обработка окончания перетаскивания
-  const handleDragEnd = async (event) => {
+  const handleDragEnd = async (event: any) => {
     const { active, over } = event;
     setActiveTask(null);
 
@@ -91,7 +96,7 @@ function KanbanBoard() {
   };
 
   // Обработка клика на карточку задачи
-  const handleTaskClick = (task) => {
+  const handleTaskClick = (task: Task) => {
     setSelectedTask(task);
   };
 
@@ -111,6 +116,7 @@ function KanbanBoard() {
               tasks={groupedTasks[status] || []}
               onTaskClick={handleTaskClick}
               isSidebarOpen={!!selectedTask}
+              onCreateTask={onCreateTask}
             />
           ))}
         </div>
@@ -127,5 +133,3 @@ function KanbanBoard() {
 }
 
 export default KanbanBoard;
-
-
