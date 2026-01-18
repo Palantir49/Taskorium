@@ -46,13 +46,8 @@ function Column({ status, tasks, onTaskClick, isSidebarOpen, onCreateTask }: Col
   });
 
   const handleAddTask = () => {
-    console.log('Button + clicked in column:', status);
-    console.log('onCreateTask function:', onCreateTask);
     if (onCreateTask) {
-      console.log('Calling onCreateTask with status:', status);
       onCreateTask(status);
-    } else {
-      console.log('onCreateTask is undefined!');
     }
   };
 

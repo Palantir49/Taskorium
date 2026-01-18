@@ -67,7 +67,6 @@ export function filterTasks(tasks: Task[], filters: TaskFilters): Task[] {
           const overdueDeadline = new Date(task.deadline);
           overdueDeadline.setHours(0, 0, 0, 0);
           // Дедлайн должен быть меньше сегодняшней даты (просрочен)
-          console.log(overdueDeadline, now);
           if (overdueDeadline >= now) return false;
           break;
 

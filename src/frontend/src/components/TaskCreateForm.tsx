@@ -9,7 +9,6 @@ import { TaskCreateFormProps, User, TaskStatus, TaskPriority, TaskType } from '.
 import './TaskDetailSidebar.css';
 
 function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCreateFormProps) {
-  console.log('TaskCreateForm render - isOpen:', isOpen, 'initialStatus:', initialStatus);
   const { createTask } = useTasks();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);

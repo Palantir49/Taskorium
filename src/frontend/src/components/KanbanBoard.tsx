@@ -26,7 +26,6 @@ interface KanbanBoardProps {
 }
 
 function KanbanBoard({ onCreateTask }: KanbanBoardProps) {
-  console.log('KanbanBoard received onCreateTask:', onCreateTask);
   const { tasks, filters, updateTask, setSelectedTask, selectedTask } = useTasks();
   const [activeTask, setActiveTask] = React.useState<Task | null>(null);
 

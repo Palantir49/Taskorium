@@ -16,10 +16,8 @@ function App() {
   const [createFormStatus, setCreateFormStatus] = useState<TaskStatus>('backlog');
 
   const handleOpenCreateForm = (status: TaskStatus) => {
-    console.log('handleOpenCreateForm called with status:', status);
     setCreateFormStatus(status);
     setShowCreateForm(true);
-    console.log('Form state updated - showCreateForm:', true, 'createFormStatus:', status);
   };
 
   const handleCloseCreateForm = () => {
