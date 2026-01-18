@@ -4,10 +4,27 @@ import Header from './components/Header';
 import FilterBar from './components/FilterBar';
 import KanbanBoard from './components/KanbanBoard';
 import TaskDetailSidebar from './components/TaskDetailSidebar';
+import TaskCreateForm from './components/TaskCreateForm';
+import { TaskStatus } from './types';
 import './App.css';
 
+type TabType = 'board' | 'analytics' | 'docs';
+
 function App() {
-  const [activeTab, setActiveTab] = useState('board');
+  const [activeTab, setActiveTab] = useState<TabType>('board');
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [createFormStatus, setCreateFormStatus] = useState<TaskStatus>('backlog');
+
+  const handleOpenCreateForm = (status: TaskStatus) => {
+    console.log('handleOpenCreateForm called with status:', status);
+    setCreateFormStatus(status);
+    setShowCreateForm(true);
+    console.log('Form state updated - showCreateForm:', true, 'createFormStatus:', status);
+  };
+
+  const handleCloseCreateForm = () => {
+    setShowCreateForm(false);
+  };
 
   return (
     <TaskProvider>
@@ -16,7 +33,7 @@ function App() {
         {activeTab === 'board' && (
           <>
             <FilterBar />
-            <KanbanBoard />
+            <KanbanBoard onCreateTask={handleOpenCreateForm} />
           </>
         )}
         {activeTab === 'analytics' && (
@@ -32,11 +49,14 @@ function App() {
           </div>
         )}
         <TaskDetailSidebar />
+        <TaskCreateForm
+          isOpen={showCreateForm}
+          onClose={handleCloseCreateForm}
+          initialStatus={createFormStatus}
+        />
       </div>
     </TaskProvider>
   );
 }
 
 export default App;
-
-

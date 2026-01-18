@@ -13,18 +13,19 @@ import {
 } from 'react-icons/fa';
 import { useTasks } from '../context/TaskContext';
 import { fetchUsers } from '../api/taskService';
+import { TaskDetailSidebarProps, Task, User, TaskStatus, TaskPriority, TaskType } from '../types';
 import './TaskDetailSidebar.css';
 
 function TaskDetailSidebar() {
   const { selectedTask, setSelectedTask, updateTask, deleteTask } = useTasks();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    status: '',
-    priority: '',
-    type: '',
+    status: '' as TaskStatus,
+    priority: '' as TaskPriority,
+    type: '' as TaskType,
     assignedTo: '',
     deadline: ''
   });
@@ -40,9 +41,9 @@ function TaskDetailSidebar() {
       setFormData({
         title: selectedTask.title || '',
         description: selectedTask.description || '',
-        status: selectedTask.status || '',
-        priority: selectedTask.priority || '',
-        type: selectedTask.type || '',
+        status: selectedTask.status,
+        priority: selectedTask.priority,
+        type: selectedTask.type,
         assignedTo: selectedTask.assignedTo?.id?.toString() || '',
         deadline: selectedTask.deadline
           ? new Date(selectedTask.deadline).toISOString().split('T')[0]
@@ -59,7 +60,7 @@ function TaskDetailSidebar() {
     setIsEditing(false);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -99,7 +100,7 @@ function TaskDetailSidebar() {
     }
   };
 
-  const getTypeIcon = (type) => {
+  const getTypeIcon = (type: TaskType) => {
     switch (type) {
       case 'bug':
         return <FaBug className="detail-icon bug" />;
@@ -112,7 +113,7 @@ function TaskDetailSidebar() {
     }
   };
 
-  const getPriorityIcon = (priority) => {
+  const getPriorityIcon = (priority: TaskPriority) => {
     switch (priority) {
       case 'critical':
         return <FaFire className="detail-icon critical" />;
@@ -158,7 +159,7 @@ function TaskDetailSidebar() {
                   value={formData.description}
                   onChange={handleChange}
                   className="form-textarea"
-                  rows="4"
+                  rows={4}
                 />
               </div>
 
@@ -348,5 +349,3 @@ function TaskDetailSidebar() {
 }
 
 export default TaskDetailSidebar;
-
-

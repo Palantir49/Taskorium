@@ -1,10 +1,12 @@
+import { Task, User, CreateTaskData, UpdateTaskData } from '../types';
+
 /**
  * Сервис для работы с задачами через API
  * В будущем здесь будут реальные запросы к Asp.Net Core Backend
  */
 
 // Моковые данные для задач
-const mockTasks = [
+const mockTasks: Task[] = [
   {
     id: 1,
     title: "Исправить ошибку авторизации",
@@ -157,7 +159,7 @@ const mockTasks = [
 ];
 
 // Моковые пользователи
-const mockUsers = [
+const mockUsers: User[] = [
   { id: 1, name: "Иван Петров", initials: "ИП" },
   { id: 2, name: "Мария Сидорова", initials: "МС" },
   { id: 3, name: "Алексей Иванов", initials: "АИ" }
@@ -165,62 +167,59 @@ const mockUsers = [
 
 /**
  * Получить все задачи
- * @returns {Promise<Array>} Массив задач
  */
-export const fetchTasks = async () => {
+export const fetchTasks = async (): Promise<Task[]> => {
   // Имитация задержки сети
   await new Promise(resolve => setTimeout(resolve, 300));
   return [...mockTasks];
 };
 
-export const fetchTasksTestController = async () => {
-  const response = await fetch('/api/v1/Issues/123e4567-e89b-12d3-a456-426614174000');
-  if (!response.ok) {
-    throw new Error('Ошибка загрузки задач');
-  }
-  const data = await response.json();
-  console.log('fetchTasksTestController result:', data);
-  return data;
-};
-
 /**
  * Получить задачу по ID
- * @param {number} id - ID задачи
- * @returns {Promise<Object>} Задача
  */
-export const fetchTaskById = async (id) => {
+export const fetchTaskById = async (id: number): Promise<Task> => {
   await new Promise(resolve => setTimeout(resolve, 200));
-  return mockTasks.find(task => task.id === id);
+  const task = mockTasks.find(task => task.id === id);
+  if (!task) {
+    throw new Error('Task not found');
+  }
+  return task;
 };
 
 /**
  * Обновить задачу
- * @param {number} id - ID задачи
- * @param {Object} updates - Обновленные поля
- * @returns {Promise<Object>} Обновленная задача
  */
-export const updateTask = async (id, updates) => {
+export const updateTask = async (id: number, updates: UpdateTaskData): Promise<Task> => {
   await new Promise(resolve => setTimeout(resolve, 300));
   const taskIndex = mockTasks.findIndex(task => task.id === id);
   if (taskIndex === -1) {
     throw new Error('Task not found');
   }
-  mockTasks[taskIndex] = { ...mockTasks[taskIndex], ...updates };
-  return mockTasks[taskIndex];
+  const updatedTask = { ...mockTasks[taskIndex], ...updates };
+  mockTasks[taskIndex] = updatedTask;
+  return updatedTask;
 };
 
 /**
  * Создать новую задачу
- * @param {Object} taskData - Данные новой задачи
- * @returns {Promise<Object>} Созданная задача
  */
-export const createTask = async (taskData) => {
+export const createTask = async (taskData: CreateTaskData): Promise<Task> => {
   await new Promise(resolve => setTimeout(resolve, 300));
-  const newTask = {
+  const newTask: Task = {
     id: Math.max(...mockTasks.map(t => t.id)) + 1,
-    ...taskData,
+    title: taskData.title,
+    description: taskData.description,
+    status: taskData.status || 'backlog',
+    priority: taskData.priority || 'medium',
+    type: taskData.type || 'feature',
+    assignedTo: taskData.assignedTo || mockUsers[0],
     createdAt: new Date(),
-    subtasks: taskData.subtasks || []
+    deadline: taskData.deadline || null,
+    subtasks: taskData.subtasks?.map((subtask, index) => ({
+      id: Math.max(...mockTasks.flatMap(t => t.subtasks.map(s => s.id)), 0) + index + 1,
+      title: subtask.title,
+      completed: subtask.completed || false
+    })) || []
   };
   mockTasks.push(newTask);
   return newTask;
@@ -228,10 +227,8 @@ export const createTask = async (taskData) => {
 
 /**
  * Удалить задачу
- * @param {number} id - ID задачи
- * @returns {Promise<void>}
  */
-export const deleteTask = async (id) => {
+export const deleteTask = async (id: number): Promise<void> => {
   await new Promise(resolve => setTimeout(resolve, 200));
   const taskIndex = mockTasks.findIndex(task => task.id === id);
   if (taskIndex === -1) {
@@ -242,14 +239,24 @@ export const deleteTask = async (id) => {
 
 /**
  * Получить всех пользователей
- * @returns {Promise<Array>} Массив пользователей
  */
-export const fetchUsers = async () => {
+export const fetchUsers = async (): Promise<User[]> => {
   await new Promise(resolve => setTimeout(resolve, 100));
   return [...mockUsers];
 };
 
+/**
+ * Тестовый контроллер для проверки API
+ */
+export const fetchTasksTestController = async (): Promise<any> => {
+  const response = await fetch('/api/v1/Issues/123e4567-e89b-12d3-a456-426614174000');
+  if (!response.ok) {
+    throw new Error('Ошибка загрузки задач');
+  }
+  const data = await response.json();
+  console.log('fetchTasksTestController result:', data);
+  return data;
+};
+
 // Экспорт моковых данных для использования в компонентах
 export { mockTasks, mockUsers };
-
-

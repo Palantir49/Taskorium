@@ -3,9 +3,10 @@ import { useDroppable } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import TaskCard from './TaskCard';
+import { ColumnProps, Task, TaskStatus } from '../types';
 import './Column.css';
 
-const columnConfig = {
+const columnConfig: Record<TaskStatus, { title: string; color: string; id: string }> = {
   backlog: {
     title: 'Бэклог',
     color: 'var(--column-backlog)',
@@ -33,9 +34,9 @@ const columnConfig = {
   }
 };
 
-function Column({ status, tasks, onTaskClick, isSidebarOpen }) {
+function Column({ status, tasks, onTaskClick, isSidebarOpen, onCreateTask }: ColumnProps) {
   const config = columnConfig[status];
-  
+
   const { setNodeRef, isOver } = useDroppable({
     id: status,
     data: {
@@ -44,10 +45,15 @@ function Column({ status, tasks, onTaskClick, isSidebarOpen }) {
     }
   });
 
-
-  const handleAddTask =  () => {
-    // Можно добавить модалку или форму, но пока просто создаём пустую задачу с нужным статусом
-
+  const handleAddTask = () => {
+    console.log('Button + clicked in column:', status);
+    console.log('onCreateTask function:', onCreateTask);
+    if (onCreateTask) {
+      console.log('Calling onCreateTask with status:', status);
+      onCreateTask(status);
+    } else {
+      console.log('onCreateTask is undefined!');
+    }
   };
 
   return (
@@ -85,7 +91,7 @@ function Column({ status, tasks, onTaskClick, isSidebarOpen }) {
 }
 
 // Отдельный компонент для перетаскиваемой карточки задачи
-function SortableTaskCard({ task, onTaskClick }) {
+function SortableTaskCard({ task, onTaskClick }: { task: Task; onTaskClick?: (task: Task) => void }) {
   const {
     setNodeRef,
     attributes,
@@ -115,4 +121,3 @@ function SortableTaskCard({ task, onTaskClick }) {
 }
 
 export default Column;
-

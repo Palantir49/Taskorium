@@ -2,11 +2,12 @@ import React from 'react';
 import { FaFilter, FaTimes } from 'react-icons/fa';
 import { useTasks } from '../context/TaskContext';
 import { fetchUsers } from '../api/taskService';
+import { User } from '../types';
 import './FilterBar.css';
 
 function FilterBar() {
   const { filters, setFilter, resetFilters } = useTasks();
-  const [users, setUsers] = React.useState([]);
+  const [users, setUsers] = React.useState<User[]>([]);
 
   // Загрузка пользователей
   React.useEffect(() => {
@@ -16,7 +17,7 @@ function FilterBar() {
   // Проверка, есть ли активные фильтры
   const hasActiveFilters = Object.values(filters).some(value => value !== '');
 
-  const handleFilterChange = (key, value) => {
+  const handleFilterChange = (key: keyof typeof filters, value: string) => {
     setFilter(key, value);
   };
 
@@ -115,5 +116,3 @@ function FilterBar() {
 }
 
 export default FilterBar;
-
-
