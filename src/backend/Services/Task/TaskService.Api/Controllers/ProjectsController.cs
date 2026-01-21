@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Handlers.Issues.Command;
-using TaskService.Application.Handlers.Issues.Handler;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Handlers.Projects;
-using TaskService.Application.Handlers.Projects.Command;
 using TaskService.Application.Handlers.Projects.Handler;
-using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 
@@ -13,6 +10,7 @@ namespace TaskService.Api.Controllers;
 /// <summary>
 ///     Контроллер проектов
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class ProjectsController(CreateProjectHandler createProjectHandler) : Controller
@@ -34,10 +32,11 @@ public class ProjectsController(CreateProjectHandler createProjectHandler) : Con
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<ProjectResponse>> CreateIssueAsync([FromBody] CreateProjectRequest createProjectRequest)
+    public async Task<ActionResult<ProjectResponse>> CreateIssueAsync(
+        [FromBody] CreateProjectRequest createProjectRequest)
     {
-        CreateProjectCommand createProjectCommand = createProjectRequest.ToCommand();
-        ProjectResponse response = await createProjectHandler.HandleAsync(createProjectCommand);
+        var createProjectCommand = createProjectRequest.ToCommand();
+        var response = await createProjectHandler.HandleAsync(createProjectCommand);
         return CreatedAtAction(nameof(GetProjectByIdAsync), new { id = response.Id }, response);
         //FAQ: как ловить ошибки? я читал что-то через middleware, но нефига не понял
     }

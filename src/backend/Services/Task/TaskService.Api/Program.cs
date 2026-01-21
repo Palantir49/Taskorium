@@ -4,6 +4,7 @@ using Taskorium.ServiceDefaults;
 using TaskService.Api.Extensions;
 using TaskService.Api.Handlers;
 using TaskService.Api.Middlewares;
+using TaskService.Api.Transformers;
 using TaskService.Application.Extensions;
 using TaskService.Infrastructure.Extensions;
 
@@ -38,6 +39,8 @@ builder.Services.AddOpenApi(options =>
         };
         return Task.CompletedTask;
     });
+
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
 // Политику CORS
@@ -69,7 +72,18 @@ app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+    {
+        options.Authentication = new ScalarAuthenticationOptions { PreferredSecuritySchemes = ["Bearer"] };
+        var testToken = builder.Configuration["Authentication:Jwt:TestToken"];
+        if (string.IsNullOrWhiteSpace(testToken))
+        {
+            throw new ArgumentNullException(testToken);
+        }
+
+        options.AddHttpAuthentication("Bearer",
+            opts => opts.WithToken(testToken));
+    });
 }
 
 app.UseExceptionHandler();
