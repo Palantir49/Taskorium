@@ -1,8 +1,9 @@
 import React from 'react';
+import { HeaderProps } from '../types';
 import {FaChartLine, FaFileAlt, FaSignInAlt, FaSignOutAlt, FaUserCircle} from 'react-icons/fa';
 import './Header.css';
 
-function Header({activeTab, onTabChange, authInfo}) {
+function Header({activeTab, onTabChange, authInfo}:HeaderProps) {
     const {isAuthenticated, userFullName, onLogin, onLogout} = authInfo || {};
 
     return (
@@ -72,3 +73,5 @@ function Header({activeTab, onTabChange, authInfo}) {
 }
 
 export default Header;
+
+
