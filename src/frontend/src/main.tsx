@@ -5,10 +5,9 @@ import './index.css'
 import {AuthProvider} from "react-oidc-context";
 import {WebStorageStateStore} from 'oidc-client-ts'
 
-
 const oidcConfig = {
-    authority: "https://vm611833.eurodir.ru/auth/realms/TaskoriumRealm",
-    client_id: "taskorium-task-service-client",
+    authority: import.meta.env.VITE_OIDC_AUTHORITY,
+    client_id: import.meta.env.VITE_APP_OIDC_CLIENT_ID,
     redirect_uri: window.location.origin,
     post_logout_redirect_uri: window.location.origin,
     response_type: "code",
@@ -25,7 +24,14 @@ const oidcConfig = {
     },
 };
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+
+const container = document.getElementById('root');
+
+if (!container) {
+    throw new Error("Root container with id 'root' not found");
+}
+
+ReactDOM.createRoot(container).render(
     <React.StrictMode>
         <AuthProvider {...oidcConfig}>
             <App/>
