@@ -37,7 +37,7 @@ public class CreateIssueHandler
         await _wrapper.Issues.AddAsync(issue, ct);
         await _wrapper.SaveChangesAsync(ct);
 
-        return new IssueResponse(Id: issue.Id, Name: issue.Name.ToString(), ProjectId: issue.ProjectId, TaskTypeId: issue.TaskTypeId, TaskStatusId: issue.TaskStatusId,
+        return new IssueResponse(Id: issue.Id, Name: issue.Name.ToString(), ProjectId: issue.ProjectId, TaskTypeId: issue.IssueTypeId, TaskStatusId: issue.IssueStatusId,
             CreatedDate: issue.CreatedDate, Description: issue.Description, UpdatedDate: issue.UpdatedDate, DueDate: issue.DueDate,
             ResolvedDate: issue.ResolvedDate);
     }

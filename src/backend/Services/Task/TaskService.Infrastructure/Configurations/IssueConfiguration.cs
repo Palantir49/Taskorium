@@ -26,8 +26,8 @@ namespace TaskService.Infrastructure.Configurations
             builder.Property(t => t.ResolvedDate);
 
             builder.Property(t => t.ProjectId).IsRequired();
-            builder.Property(t => t.TaskStatusId).IsRequired();
-            builder.Property(t => t.TaskTypeId).IsRequired();
+            builder.Property(t => t.IssueStatusId).IsRequired();
+            builder.Property(t => t.IssueTypeId).IsRequired();
 
             builder.HasOne<Project>()
                   .WithMany()
