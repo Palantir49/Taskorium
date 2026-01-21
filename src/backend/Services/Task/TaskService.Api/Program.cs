@@ -34,8 +34,7 @@ builder.Services.AddOpenApi(options =>
 
         document.Info.License = new OpenApiLicense
         {
-            Name = "MIT License",
-            Url = new Uri("https://opensource.org/licenses/MIT")
+            Name = "MIT License", Url = new Uri("https://opensource.org/licenses/MIT")
         };
         return Task.CompletedTask;
     });
@@ -75,6 +74,14 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference(options =>
     {
         options.Authentication = new ScalarAuthenticationOptions { PreferredSecuritySchemes = ["Bearer"] };
+        var testToken = builder.Configuration["Authentication:Jwt:TestToken"];
+        if (string.IsNullOrWhiteSpace(testToken))
+        {
+            throw new ArgumentNullException(testToken);
+        }
+
+        options.AddHttpAuthentication("Bearer",
+            opts => opts.WithToken(testToken));
     });
 }
 
