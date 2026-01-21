@@ -33,7 +33,8 @@ builder.Services.AddOpenApi(options =>
 
         document.Info.License = new OpenApiLicense
         {
-            Name = "MIT License", Url = new Uri("https://opensource.org/licenses/MIT")
+            Name = "MIT License",
+            Url = new Uri("https://opensource.org/licenses/MIT")
         };
         return Task.CompletedTask;
     });
