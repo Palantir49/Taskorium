@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Interfaces;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.Workspace.Request;
@@ -10,6 +11,7 @@ namespace TaskService.Api.Controllers;
 ///     Контроллер для работы с рабочими пространствами
 /// </summary>
 /// <param name="workspaceService">Сервис для работы с задачами</param>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class WorkSpacesController(IWorkspaceService workspaceService) : Controller

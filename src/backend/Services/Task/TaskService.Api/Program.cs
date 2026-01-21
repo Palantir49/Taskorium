@@ -4,6 +4,7 @@ using Taskorium.ServiceDefaults;
 using TaskService.Api.Extensions;
 using TaskService.Api.Handlers;
 using TaskService.Api.Middlewares;
+using TaskService.Api.Transformers;
 using TaskService.Application.Extensions;
 using TaskService.Infrastructure.Extensions;
 
@@ -33,11 +34,12 @@ builder.Services.AddOpenApi(options =>
 
         document.Info.License = new OpenApiLicense
         {
-            Name = "MIT License",
-            Url = new Uri("https://opensource.org/licenses/MIT")
+            Name = "MIT License", Url = new Uri("https://opensource.org/licenses/MIT")
         };
         return Task.CompletedTask;
     });
+
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
 // Политику CORS
@@ -69,7 +71,10 @@ app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+    {
+        options.Authentication = new ScalarAuthenticationOptions { PreferredSecuritySchemes = ["Bearer"] };
+    });
 }
 
 app.UseExceptionHandler();
