@@ -24,8 +24,8 @@ namespace TaskService.Infrastructure.Configurations
             builder.Property(w => w.CreatedDate).IsRequired();
 
             builder.Property(w => w.OwnerId);
-            builder.HasOne(w => w.User)
-                .WithMany(u => u.Workspaces)
+            builder.HasOne<User>()
+                .WithMany()
                 .HasForeignKey(w => w.OwnerId);
         }
     }

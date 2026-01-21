@@ -10,9 +10,7 @@ public class Workspace : BaseEntities
     {
         OwnerId = ownerId;
     }
-    public User? User { get; private set; }
-    public ICollection<Project> Projects { get; private set; } = new List<Project>();
-    public Guid OwnerId { get; private set; }
+    public Guid? OwnerId { get; private set; }
 
     public static Workspace Create(string name, Guid ownerId)
     {

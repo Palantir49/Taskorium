@@ -11,7 +11,6 @@ namespace TaskService.Domain.Entities
         public Guid TaskTypeId { get; private set; }
         public Guid TaskStatusId { get; private set; }
         public string? Description { get; private set; }
-        public User? User { get; private set; }
         public DateTimeOffset? ResolvedDate { get; private set; }
         public DateTimeOffset? UpdatedDate { get; private set; }
         public DateTimeOffset? DueDate { get; private set; }

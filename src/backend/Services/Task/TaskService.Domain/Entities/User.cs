@@ -9,8 +9,6 @@ public class User
     public EmailAdress Email { get; private set; }
     public UserName Username { get; private set; }
     public DateTimeOffset CreatedDate { get; }
-    public ICollection<Workspace> Workspaces { get; private set; } = new List<Workspace>();
-    public ICollection<Issue> Issues { get; private set; } = new List<Issue>();
     protected User()
     {
         Email = null!;
