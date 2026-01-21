@@ -8,8 +8,8 @@ namespace TaskService.Domain.Entities
     public class Issue : BaseEntities
     {
         public Guid ProjectId { get; }
-        public Guid TaskTypeId { get; private set; }
-        public Guid TaskStatusId { get; private set; }
+        public Guid IssueTypeId { get; private set; }
+        public Guid IssueStatusId { get; private set; }
         public string? Description { get; private set; }
         public DateTimeOffset? ResolvedDate { get; private set; }
         public DateTimeOffset? UpdatedDate { get; private set; }
@@ -18,8 +18,8 @@ namespace TaskService.Domain.Entities
         //TODO: Добавление свойств:
         //ключ 
         //FAQ: как его создавать? возможно в хенделере запрашить проект, брать его короткое имя и количество задач в нем. "PROJ-123"
-        //дата назначения
-        //дата взятия в работу 
+        //дата назначения - возможно нужно в таблицу 
+        //дата взятия в работу - может добавить таблицу истории? статусов "в работе" может быть несколько
         //FAQ: а какой жизненный цикл у этого свойства? ведь может быть ситуация случайного перевода в рабочий статус и обратная ситуация, когда случайно перенесли в рабочую
 
         protected Issue() { }
@@ -28,8 +28,8 @@ namespace TaskService.Domain.Entities
         DateTimeOffset? resolvedDate) : base(id, name)
         {
             ProjectId = projectId;
-            TaskTypeId = taskTypeId;
-            TaskStatusId = taskStatusId;
+            IssueTypeId = taskTypeId;
+            IssueStatusId = taskStatusId;
             Description = description?.Trim();
             UpdatedDate = updatedDate;
             DueDate = dueDate;
@@ -38,6 +38,7 @@ namespace TaskService.Domain.Entities
 
         public static Issue Create(string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId, DateTimeOffset? dueDate)
         {
+            //TODO: нарушен порядок свойств
             return new Issue(Guid.CreateVersion7(), name, description, projectId, taskTypeId, taskStatusId,
                 null, null, dueDate);
         }
@@ -63,14 +64,14 @@ namespace TaskService.Domain.Entities
         //DESIGN: статус должен иметь значение, которое будет указывать, является ли он завершающим или начальным для изменения дат начала и завершения задачи.
         public void ChangeStatus(Guid newTaskStatusId, bool resolved = false)
         {
-            TaskStatusId = newTaskStatusId;
+            IssueStatusId = newTaskStatusId;
             UpdatedDate = DateTimeOffset.UtcNow;
             ResolvedDate = resolved ? DateTimeOffset.UtcNow : null;
         }
 
         public void UpdateType(Guid newTaskTypeId)
         {
-            TaskTypeId = newTaskTypeId;
+            IssueTypeId = newTaskTypeId;
             UpdatedDate = DateTimeOffset.UtcNow;
         }
     }
