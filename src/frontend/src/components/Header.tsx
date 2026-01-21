@@ -1,8 +1,9 @@
 import React from 'react';
 import { FaChartLine, FaFileAlt } from 'react-icons/fa';
+import { HeaderProps } from '../types';
 import './Header.css';
 
-function Header({ activeTab, onTabChange }) {
+function Header({ activeTab, onTabChange }: HeaderProps) {
   return (
     <header className="header">
       <div className="header-content">
@@ -39,5 +40,3 @@ function Header({ activeTab, onTabChange }) {
 }
 
 export default Header;
-
-
