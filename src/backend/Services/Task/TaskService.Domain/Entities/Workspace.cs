@@ -10,6 +10,7 @@ public class Workspace : BaseEntities
     {
         OwnerId = ownerId;
     }
+    //TODO: через members указывается юзер, проекты через репозиторий
     public User? User { get; private set; }
     public ICollection<Project> Projects { get; private set; } = new List<Project>();
     public Guid OwnerId { get; private set; }
