@@ -131,3 +131,10 @@ export interface AuthInfo {
     onLogin: () => void,
     onLogout: () => void
 }
+
+export interface AuthProviderProps {
+    children: React.ReactNode;
+    activeTab?: string;
+    onTabChange?: (tab: string) => void;
+    showHeader?: boolean;
+}
