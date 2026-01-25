@@ -12,6 +12,6 @@ public class ProjectMember
     public DateTimeOffset JoinedAt { get; private set; }
     protected ProjectMember()
     {
-            
+
     }
 }

@@ -7,7 +7,7 @@ using TaskService.Domain.Entities;
 
 namespace TaskService.Infrastructure.Configurations;
 
-public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember>   
+public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember>
 {
     public void Configure(EntityTypeBuilder<ProjectMember> builder)
     {
