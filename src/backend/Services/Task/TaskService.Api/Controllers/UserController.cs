@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Users.Create;
 using TaskService.Application.Commands.Users.Get;
 using TaskService.Application.Mediator;
