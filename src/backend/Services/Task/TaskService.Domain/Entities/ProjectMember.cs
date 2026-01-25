@@ -10,4 +10,8 @@ public class ProjectMember
     public Guid UserId { get; private set; }
     public string Role { get; private set; } = null!;
     public DateTimeOffset JoinedAt { get; private set; }
+    protected ProjectMember()
+    {
+            
+    }
 }

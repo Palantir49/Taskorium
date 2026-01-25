@@ -7,7 +7,7 @@ using TaskService.Domain.Entities;
 
 namespace TaskService.Infrastructure.Configurations;
 
-public class AttachmentConfiguration
+public class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
 {
     public void Configure(EntityTypeBuilder<Attachment> builder)
     {

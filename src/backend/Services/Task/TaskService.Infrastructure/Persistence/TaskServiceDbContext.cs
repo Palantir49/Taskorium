@@ -13,6 +13,9 @@ public class TaskServiceDbContext : DbContext
     internal DbSet<Project> Projects { get; set; } = null!;
     internal DbSet<Workspace> Workspaces { get; set; } = null!;
     internal DbSet<User> Users { get; set; } = null!;
+    internal DbSet<Attachment> Attachments { get; set; } = null!;
+    internal DbSet<ProjectMember> ProjectMembers { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

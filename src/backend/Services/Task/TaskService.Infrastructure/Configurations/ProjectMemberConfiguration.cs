@@ -7,14 +7,13 @@ using TaskService.Domain.Entities;
 
 namespace TaskService.Infrastructure.Configurations;
 
-public class ProjectMemberConfiguration
+public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember>   
 {
     public void Configure(EntityTypeBuilder<ProjectMember> builder)
     {
-        builder.HasKey(t => t.ProjectId);
-
+        builder.HasKey(t => new { t.ProjectId, t.UserId });
         builder.Property(t => t.ProjectId).ValueGeneratedNever();
-        builder.HasKey(t => t.UserId);
+
         builder.Property(t => t.UserId).ValueGeneratedNever();
 
         builder.Property(t => t.Role);
