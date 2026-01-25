@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TaskService.Contracts.User.Requests;
-using TaskService.Contracts.User.Responses;
 using TaskService.Application.Commands.Users.Create;
-using TaskService.Application.Commands.Users;
 using TaskService.Application.Commands.Users.Get;
 using TaskService.Application.Mediator;
+using TaskService.Contracts.User.Responses;
 
 namespace TaskService.Api.Controllers;
 
@@ -37,7 +35,6 @@ public class UserController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<UserResponse>> GetUserByIdAsync([FromBody] GetUserByIdQuery query)
     {
-
         var userResponse = await dispatcher.SendAsync(query);
         if (userResponse == null)
         {
