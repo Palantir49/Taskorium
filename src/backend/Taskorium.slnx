@@ -1,4 +1,10 @@
 <Solution>
+    <Folder Name="/Services/FileStorage/">
+        <Project Path="Services/FileStorage/FileStorageService.API/FileStorageService.API.csproj" Id="f5da955c-9ced-4dd3-8024-282e20c3102b" />
+        <Project Path="Services/FileStorage/FileStorageService.Application/FileStorageService.Application.csproj" Id="6bd9aad2-0bdb-41f0-9b32-e48c74a4504e" />
+        <Project Path="Services/FileStorage/FileStorageService.Domain/FileStorageService.Domain.csproj" Id="63b44af0-139a-436f-a705-b4e6faaaad60" />
+        <Project Path="Services/FileStorage/FileStorageService.Infrastructure/FileStorageService.Infrastructure.csproj" Id="ff3c09c4-d4e5-4238-8db7-362084d50563" />
+    </Folder>
     <Folder Name="/Services/Task/">
         <Project Path="Services/Task/TaskService.Api/TaskService.Api.csproj" />
         <Project Path="Services/Task/TaskService.Application/TaskService.Application.csproj" />
