@@ -14,16 +14,17 @@ public class User
         Email = null!;
         Username = null!;
     }
-    private User(Guid id, Guid keycloakId, UserName userName, EmailAdress email)
+    private User(Guid id, Guid keycloakId, UserName userName, EmailAdress email, DateTimeOffset createdAt)
     {
         Id = id;
         Username = userName;
         KeycloakId = keycloakId;
         Email = email;
+        CreatedDate = createdAt;
     }
     public static User Create(Guid keycloakId, UserName userName, EmailAdress email)
     {
-        return new User(Guid.CreateVersion7(), keycloakId, userName, email);
+        return new User(Guid.CreateVersion7(), keycloakId, userName, email, DateTimeOffset.Now);
     }
     public void UpdateEmail(EmailAdress newEmail)
     {
