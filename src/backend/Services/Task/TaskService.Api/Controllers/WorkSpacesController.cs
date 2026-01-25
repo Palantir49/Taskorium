@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Workspaces;
 using TaskService.Application.Commands.Workspaces.Get;
 using TaskService.Application.Mediator;
@@ -11,6 +15,7 @@ namespace TaskService.Api.Controllers;
 /// <summary>
 ///     Контроллер для работы с рабочими пространствами
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class WorkSpacesController(IDispatcher dispatcher) : Controller

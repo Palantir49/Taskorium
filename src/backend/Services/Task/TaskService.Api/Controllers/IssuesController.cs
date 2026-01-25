@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Issues;
 using TaskService.Application.Commands.Issues.Command;
 using TaskService.Application.Commands.Issues.Handler;
@@ -11,6 +15,7 @@ namespace TaskService.Api.Controllers;
 /// <summary>
 ///     Контроллер для работы с задачами
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class IssuesController(CreateIssueHandler createIssueHandler) : Controller

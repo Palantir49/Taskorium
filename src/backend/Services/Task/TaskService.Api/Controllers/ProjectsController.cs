@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Projects;
 using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Commands.Projects.Handler;
@@ -10,6 +14,7 @@ namespace TaskService.Api.Controllers;
 /// <summary>
 ///     Контроллер проектов
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class ProjectsController(CreateProjectHandler createProjectHandler) : Controller
