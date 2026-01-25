@@ -5,7 +5,7 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Repositories;
 
-public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
+internal class ProjectRepository : RepositoryBase<Project>, IProjectRepository
 {
     public ProjectRepository(TaskServiceDbContext context) : base(context) { }
 

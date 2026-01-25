@@ -1,19 +1,19 @@
 ﻿using TaskService.Domain.Entities.BaseEntity;
 
-namespace TaskService.Domain.Entities
+namespace TaskService.Domain.Entities;
+
+public class Workspace : BaseEntities
 {
-    public class Workspace : BaseEntityTask
+    protected Workspace() { }
+
+    private Workspace(Guid id, string name, Guid ownerId) : base(id, name)
     {
-        private Workspace(Guid id, string name, DateTimeOffset createdDate, Guid? ownerId) : base(id, name, createdDate)
-        {
-            OwnerId = ownerId;
-        }
+        OwnerId = ownerId;
+    }
+    public Guid? OwnerId { get; private set; }
 
-        public Guid? OwnerId { get; private set; }
-
-        public static Workspace Create(string name, Guid? ownerId = null)
-        {
-            return new Workspace(Guid.CreateVersion7(), name, DateTimeOffset.UtcNow, ownerId);
-        }
+    public static Workspace Create(string name, Guid ownerId)
+    {
+        return new Workspace(Guid.CreateVersion7(), name, ownerId);
     }
 }

@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Handlers.Issues;
-using TaskService.Application.Handlers.Issues.Handler;
+using TaskService.Application.Commands.Issues;
+using TaskService.Application.Commands.Issues.Command;
+using TaskService.Application.Commands.Issues.Handler;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
 using CreateIssueRequest = TaskService.Contracts.Issue.Requests.CreateIssueRequest;
@@ -19,7 +20,6 @@ namespace TaskService.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class IssuesController(CreateIssueHandler createIssueHandler) : Controller
 {
-    //FAQ: спросить про Minimal API и его документирования
     /// <summary>
     ///     Получить данные задачи по Id
     /// </summary>
@@ -32,7 +32,6 @@ public class IssuesController(CreateIssueHandler createIssueHandler) : Controlle
     /// <response code="200">Данные о задаче успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найдена задача по заданному id</response>
-    [Authorize]
     [HttpGet("{id:guid}")]
     [ActionName("GetTaskByIdAsync")]
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
@@ -69,10 +68,9 @@ public class IssuesController(CreateIssueHandler createIssueHandler) : Controlle
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromBody] CreateIssueRequest createIssueRequest)
     {
-        var createIssueCommand = createIssueRequest.ToCommand();
-        var response = await createIssueHandler.HandleAsync(createIssueCommand);
+        CreateIssueCommand createIssueCommand = createIssueRequest.ToCommand();
+        IssueResponse response = await createIssueHandler.HandleAsync(createIssueCommand);
         return CreatedAtAction(nameof(GetTaskByIdAsync), new { id = response.Id }, response);
-        //FAQ: как ловить ошибки? я читал что-то через middleware
     }
 
     /// <summary>
