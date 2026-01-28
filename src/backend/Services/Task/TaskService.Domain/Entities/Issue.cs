@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TaskService.Domain.Entities.BaseEntity;
+﻿using TaskService.Domain.Entities.BaseEntity;
+using TaskService.Domain.Entities.Enums;
 
 namespace TaskService.Domain.Entities
 {
@@ -24,23 +22,19 @@ namespace TaskService.Domain.Entities
 
         protected Issue() { }
 
-        private Issue(Guid id, string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId, DateTimeOffset? updatedDate, DateTimeOffset? dueDate,
-        DateTimeOffset? resolvedDate) : base(id, name)
+        private Issue(Guid id, string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId, DateTimeOffset? dueDate) : base(id, name)
         {
             ProjectId = projectId;
             IssueTypeId = taskTypeId;
             IssueStatusId = taskStatusId;
             Description = description?.Trim();
-            UpdatedDate = updatedDate;
             DueDate = dueDate;
-            ResolvedDate = resolvedDate;
         }
 
         public static Issue Create(string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId, DateTimeOffset? dueDate)
         {
-            //TODO: нарушен порядок свойств
-            return new Issue(Guid.CreateVersion7(), name, description, projectId, taskTypeId, taskStatusId,
-                null, null, dueDate);
+            return new Issue(id: Guid.CreateVersion7(), name: name, description: description, projectId: projectId, taskTypeId: taskTypeId, taskStatusId: taskStatusId,
+                dueDate: dueDate);
         }
 
         public override void UpdateName(string newName)
@@ -61,12 +55,15 @@ namespace TaskService.Domain.Entities
             UpdatedDate = DateTimeOffset.UtcNow;
         }
 
-        //DESIGN: статус должен иметь значение, которое будет указывать, является ли он завершающим или начальным для изменения дат начала и завершения задачи.
-        public void ChangeStatus(Guid newTaskStatusId, bool resolved = false)
+        public void ChangeStatus(IssueStatus status)
         {
-            IssueStatusId = newTaskStatusId;
+            IssueStatusId = status.Id;
             UpdatedDate = DateTimeOffset.UtcNow;
-            ResolvedDate = resolved ? DateTimeOffset.UtcNow : null;
+
+            if (status.Type == IssueStatusType.Success || status.Type == IssueStatusType.Rejected)
+                ResolvedDate = DateTimeOffset.UtcNow;
+            else
+                ResolvedDate = null;
         }
 
         public void UpdateType(Guid newTaskTypeId)
