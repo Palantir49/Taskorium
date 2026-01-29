@@ -4,6 +4,10 @@ namespace TaskService.Domain.Entities;
 
 public class User
 {
+    private User()
+    {
+    }
+
     private User(Guid id, Guid keycloakId, UserName userName, EmailAdress email, DateTimeOffset createdAt,
         string fullName)
     {
@@ -17,11 +21,11 @@ public class User
 
     public Guid Id { get; }
     public Guid KeycloakId { get; private set; }
-    public EmailAdress Email { get; private set; }
-    public UserName Username { get; private set; }
+    public EmailAdress Email { get; private set; } = null!;
+    public UserName Username { get; private set; } = null!;
     public DateTimeOffset CreatedDate { get; }
 
-    public string FullName { get; }
+    public string FullName { get; } = null!;
 
     public static User Create(Guid keycloakId, UserName userName, EmailAdress email, string fullName)
     {
