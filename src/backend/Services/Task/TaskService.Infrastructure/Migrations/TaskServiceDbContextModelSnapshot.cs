@@ -156,6 +156,11 @@ namespace TaskService.Infrastructure.Migrations
                         .HasMaxLength(225)
                         .HasColumnType("character varying(225)");
 
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.Property<Guid>("KeycloakId")
                         .HasColumnType("uuid");
 
