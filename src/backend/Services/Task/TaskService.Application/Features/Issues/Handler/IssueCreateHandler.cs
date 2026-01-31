@@ -16,7 +16,6 @@ public class IssueCreateHandler(IRepositoryWrapper wrapper) : IRequestHandler<Is
         var project = await wrapper.Projects.GetByIdAsync(request.ProjectId);
         //TODO: проверка существования статуса
         //TODO: проверка существования типа
-        //TODO: проверка существования юзера
 
         if (project == null)
         {
