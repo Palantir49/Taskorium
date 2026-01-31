@@ -24,4 +24,6 @@ public class Project : BaseEntities
     {
         return new Project(Guid.CreateVersion7(), name, description, workspaceId);
     }
+
+    public void UpdateDescription(string newDescription) => Description = newDescription;
 }

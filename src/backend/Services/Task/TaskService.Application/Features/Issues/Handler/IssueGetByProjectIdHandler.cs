@@ -13,6 +13,6 @@ public class IssueGetByProjectIdHandler(IRepositoryWrapper wrapper) : IRequestHa
     {
         List<Issue> issues = await wrapper.Issues.GetByProjectIdAsync(request.projectId, cancellationToken);
 
-        return issues.Select(x => x.ToResponce());
+        return issues.Select(x => x.ToResponse());
     }
 }

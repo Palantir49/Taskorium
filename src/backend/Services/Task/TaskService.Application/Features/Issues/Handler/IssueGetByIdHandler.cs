@@ -15,6 +15,6 @@ internal class IssueGetByIdHandler(IRepositoryWrapper wrapper) : IRequestHandler
         if (issue == null)
             throw new NullReferenceException($"задача с id: {request.id} не найдена");
 
-        return issue.ToResponce();
+        return issue.ToResponse();
     }
 }
