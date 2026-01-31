@@ -12,24 +12,15 @@ public class IssueCreateHandler(IRepositoryWrapper wrapper) : IRequestHandler<Is
 
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
     {
-        var project = await wrapper.Projects.GetByIdAsync(request.ProjectId);
-        //TODO: проверка существования типа
-
-        if (project == null)
-        {
+        var project = await wrapper.Projects.GetByIdAsync(request.ProjectId, cancellationToken) ??
             throw new NullReferenceException($"Проект с id: {request.IssueStatusId} не найдена");
-        }
 
-        IssueStatus? status = await wrapper.IssueStatus.GetByIdAsync(request.IssueStatusId);
-
-        if (status == null)
+        IssueStatus? status = await wrapper.IssueStatus.GetByIdAsync(request.IssueStatusId, cancellationToken) ??
             throw new NullReferenceException($"Статус задачи с id: {request.IssueStatusId} не найдена");
 
         //TODO: проверить что можно создавать с этим статусом
 
-        IssueType? type = await wrapper.IssueType.GetByIdAsync(request.IssueTypeId);
-
-        if (type == null)
+        IssueType? type = await wrapper.IssueType.GetByIdAsync(request.IssueTypeId, cancellationToken) ??
             throw new NullReferenceException($"Тип задачи с id: {request.IssueTypeId} не найдена");
 
         //TODO: проверить что можно создавать с этим типом

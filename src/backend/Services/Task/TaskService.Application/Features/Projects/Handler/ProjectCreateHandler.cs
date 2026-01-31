@@ -10,12 +10,8 @@ public class ProjectCreateHandler(IRepositoryWrapper wrapper) : IRequestHandler<
 {
     public async Task<ProjectResponse> Handle(ProjectCreateCommand request, CancellationToken cancellationToken = default)
     {
-        var workspace = await wrapper.Workspaces.GetByIdAsync(request.WorkspaceId);
-
-        if (workspace == null)
-        {
-            throw new Exception("Project not found.");
-        }
+        var workspace = await wrapper.Workspaces.GetByIdAsync(request.WorkspaceId, cancellationToken) ??
+            throw new NullReferenceException($"Рабочая область с id: {request.WorkspaceId} не найдена");
 
         var project = Project.Create(
             name: request.Name,
@@ -25,6 +21,6 @@ public class ProjectCreateHandler(IRepositoryWrapper wrapper) : IRequestHandler<
         await wrapper.Projects.AddAsync(project, cancellationToken);
         await wrapper.SaveChangesAsync(cancellationToken);
 
-        return new ProjectResponse(Id: project.Id, Name: project.Name.ToString(), Description: project.Description, WorkspaceId: project.WorkspaceId, CreatedDate: project.CreatedDate);
+        return project.ToResponse();
     }
 }

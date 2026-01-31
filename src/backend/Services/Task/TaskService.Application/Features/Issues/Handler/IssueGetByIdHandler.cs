@@ -11,8 +11,7 @@ internal class IssueGetByIdHandler(IRepositoryWrapper wrapper) : IRequestHandler
 {
     public async Task<IssueResponse> Handle(IssueGetByIdQuery request, CancellationToken cancellationToken = default)
     {
-        Issue? issue = await wrapper.Issues.GetByIdAsync(request.id, cancellationToken);
-        if (issue == null)
+        Issue? issue = await wrapper.Issues.GetByIdAsync(request.id, cancellationToken) ??
             throw new NullReferenceException($"задача с id: {request.id} не найдена");
 
         return issue.ToResponse();

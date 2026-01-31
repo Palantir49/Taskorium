@@ -11,16 +11,19 @@ namespace TaskService.Application.Features.Issues.Handler
     {
         public async Task<IssueResponse> Handle(IssueUpdateCommand request, CancellationToken cancellationToken = default)
         {
-            Issue? issue = await wrapper.Issues.GetByIdAsync(request.id) ?? throw new NullReferenceException($"Задача с id: {request.id} не найдена");
+            Issue? issue = await wrapper.Issues.GetByIdAsync(request.id, cancellationToken) ??
+                throw new NullReferenceException($"Задача с id: {request.id} не найдена");
 
-            Project? project = await wrapper.Projects.GetByIdAsync(issue.ProjectId);
+            Project? project = await wrapper.Projects.GetByIdAsync(issue.ProjectId, cancellationToken);
+            //TODO: добавить исключение, которое будет именно серверное, т.к. в этом случае у задачи не существующий проект
+            //FAQ: какое исключение будет серверным в этом случае?
 
-            IssueStatus? status = await wrapper.IssueStatus.GetByIdAsync(request.IssueStatusId) ??
+            IssueStatus? status = await wrapper.IssueStatus.GetByIdAsync(request.IssueStatusId, cancellationToken) ??
                 throw new NullReferenceException($"Статус задачи с id: {request.IssueStatusId} не найдена");
 
             //TODO: проверить что можно менять на этот статус
 
-            IssueType? type = await wrapper.IssueType.GetByIdAsync(request.IssueTypeId) ??
+            IssueType? type = await wrapper.IssueType.GetByIdAsync(request.IssueTypeId, cancellationToken) ??
                 throw new NullReferenceException($"Тип задачи с id: {request.IssueTypeId} не найдена");
 
             //TODO: проверить что можно менять на этот тип
@@ -31,7 +34,7 @@ namespace TaskService.Application.Features.Issues.Handler
             //issue.UpdateStatus();
             issue.UpdateDueDate(request.DueDate);
 
-            await wrapper.Issues.UpdateAsync(issue);
+            await wrapper.Issues.UpdateAsync(issue, cancellationToken);
             await wrapper.SaveChangesAsync(cancellationToken);
 
             return issue.ToResponse();
