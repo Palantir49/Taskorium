@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Statuses\Handler\" />
-    <Folder Include="Features\Types\Handler\" />
+    <Folder Include="Features\IssueStatuses\Handler\" />
+    <Folder Include="Features\IssueTypes\Handler\" />
   </ItemGroup>
 
 </Project>
