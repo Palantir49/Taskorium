@@ -1,9 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using TaskService.Domain.Entities.BaseEntity;
 
 namespace TaskService.Domain.Entities;
 
-public class IssueType
+public class IssueType : BaseEntities
 {
+    Guid ProjectId { get; private set; }
+    string? Color { get; private set; }
+
+    protected IssueType() { }
+
+    private IssueType(Guid id, string name, Guid projectId, string color):base(id, name)
+    {
+        ProjectId = projectId;
+        Color = color;
+    }
+
+    public static IssueType Create(string name, Guid projectId, string color)
+    {
+        return new IssueType(
+            id: Guid.CreateVersion7(), 
+            name: name, 
+            projectId: 
+            projectId, 
+            color: color);
+    }
+
 }
