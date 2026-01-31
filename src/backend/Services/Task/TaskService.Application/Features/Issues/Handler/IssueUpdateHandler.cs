@@ -14,21 +14,30 @@ namespace TaskService.Application.Features.Issues.Handler
             Issue? issue = await wrapper.Issues.GetByIdAsync(request.id);
 
             if (issue == null)
-                throw new NullReferenceException($"задача с id: {request.id} не найдена");
+                throw new NullReferenceException($"Задача с id: {request.id} не найдена");
 
             Project? project = await wrapper.Projects.GetByIdAsync(issue.ProjectId);
 
-            if (project == null)
+            IssueStatus? status = await wrapper.IssueStatus.GetByIdAsync(request.IssueStatusId);
 
-            //TODO: проверка существования статуса
-            //TODO: проверка существования типа
+            if (status == null)
+                throw new NullReferenceException($"Статус задачи с id: {request.IssueStatusId} не найдена");
+
+            //TODO: проверить что можно менять на этот статус
+
+            IssueType? type = await wrapper.IssueType.GetByIdAsync(request.IssueTypeId);
+
+            if (type == null)
+                throw new NullReferenceException($"Тип задачи с id: {request.IssueTypeId} не найдена");
+
+            //TODO: проверить что можно менять на этот тип
 
             issue.UpdateName(request.Name);
             issue.UpdateDescription(request.Description);
             //issue.UpdateType();
             //issue.UpdateStatus();
             issue.UpdateDueDate(request.DueDate);
-            
+
             await wrapper.SaveChangesAsync(cancellationToken);
 
             return issue.ToResponce();
