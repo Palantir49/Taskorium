@@ -24,11 +24,11 @@ public class IssueStatus : BaseEntities
     public static IssueStatus Create(string name, string type, int position, string color, Guid projectId)
     {
         return new IssueStatus(
-            id: Guid.CreateVersion7(), 
-            name: name, 
-            type: Enum.Parse<IssueStatusType>(type), 
-            position: position, 
-            color: color, 
+            id: Guid.CreateVersion7(),
+            name: name,
+            type: Enum.Parse<IssueStatusType>(type),
+            position: position,
+            color: color,
             projectId: projectId);
     }
     public void UpdateType(IssueStatusType type) => Type = type;

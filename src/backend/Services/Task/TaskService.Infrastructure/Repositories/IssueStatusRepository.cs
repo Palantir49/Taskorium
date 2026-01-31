@@ -12,7 +12,7 @@ namespace TaskService.Infrastructure.Repositories
         public async Task<List<IssueStatus>> GetByProjectIdAsync(Guid projectId, CancellationToken ct = default)
         {
             return await _context.IssueStatus
-                .Where(x=> x.ProjectId == projectId)
+                .Where(x => x.ProjectId == projectId)
                 .ToListAsync(ct);
         }
     }

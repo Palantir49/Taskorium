@@ -19,9 +19,9 @@ internal class IssueStatusConfiguration : IEntityTypeConfiguration<IssueStatus>
             .IsRequired().HasMaxLength(225);
 
         builder.Property(t => t.ProjectId).IsRequired();
-        builder.Property(t=>t.Type).IsRequired();
-        builder.Property(t=>t.Position).IsRequired();
+        builder.Property(t => t.Type).IsRequired();
+        builder.Property(t => t.Position).IsRequired();
         //TODO: если будет нужен, то сделать обязательным или в сущности добавить дефолт
-        builder.Property(t=>t.Color);
+        builder.Property(t => t.Color);
     }
 }

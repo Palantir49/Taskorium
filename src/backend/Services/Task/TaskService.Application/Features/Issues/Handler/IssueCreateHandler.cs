@@ -8,7 +8,7 @@ using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Commands.Issues.Handler;
 
-public class IssueCreateHandler (IRepositoryWrapper wrapper) : IRequestHandler<IssueCreateCommand, IssueResponse>
+public class IssueCreateHandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
 
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
