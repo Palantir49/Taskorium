@@ -1,9 +1,10 @@
 ﻿using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 
-namespace TaskService.Application.Commands.Issues.Command;
+namespace TaskService.Application.Features.Issues.Command;
 
-public record IssueCreateCommand(
+public record class IssueUpdateCommand(
+    Guid id, 
     string Name,
     Guid ProjectId,
     Guid TaskTypeId,
