@@ -5,18 +5,24 @@ namespace TaskService.Infrastructure.Repositories;
 public class RepositoryWrapper : IRepositoryWrapper
 {
     private readonly IIssueRepository _issue;
+    private readonly IIssueStatusRepository _issueStatus;
+    private readonly IIssueTypeRepository _issueType;
     private readonly IProjectRepository _project;
     private readonly IWorkspaceRepository _workspace;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _users;
     public RepositoryWrapper(
         IIssueRepository issue,
+        IIssueStatusRepository issueStatus,
+        IIssueTypeRepository issueType,
         IProjectRepository project,
         IWorkspaceRepository workspace,
         IUserRepository users,
         IUnitOfWork unitOfWork)
     {
         _issue = issue;
+        _issueStatus = issueStatus;
+        _issueType = issueType;
         _project = project;
         _workspace = workspace;
         _unitOfWork = unitOfWork;
