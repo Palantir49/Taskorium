@@ -18,7 +18,7 @@ namespace TaskService.Domain.Entities.BaseEntity
         {
             Name = null!;
         }
-
+        //TODO: а правильно ли что я тут сделал id входным, а не генерю его внутри конструктора?
         protected BaseEntities(Guid id, string name)
         {
             Id = id;

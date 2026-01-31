@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using TaskService.Domain.Entities;
 
 namespace TaskService.Infrastructure.Persistence;
@@ -15,6 +14,7 @@ public class TaskServiceDbContext : DbContext
     internal DbSet<User> Users { get; set; } = null!;
     internal DbSet<Attachment> Attachments { get; set; } = null!;
     internal DbSet<ProjectMember> ProjectMembers { get; set; } = null!;
+    internal DbSet<IssueStatus> IssueStatus { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
