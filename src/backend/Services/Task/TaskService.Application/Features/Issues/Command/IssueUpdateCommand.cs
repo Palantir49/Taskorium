@@ -4,7 +4,7 @@ using TaskService.Contracts.Issue.Responses;
 namespace TaskService.Application.Features.Issues.Command;
 
 public record class IssueUpdateCommand(
-    Guid id,
+    Guid id, 
     string Name,
     Guid ProjectId,
     Guid TaskTypeId,
