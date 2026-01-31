@@ -86,18 +86,18 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public Task<ActionResult<IssueResponse>> UpdateIssueAsync(Guid id,
-        [FromBody] UpdateIssueRequest? updateIssueRequest)
+    public async Task<ActionResult<IssueResponse>> UpdateIssueAsync(Guid id,
+        [FromBody] UpdateIssueRequest updateIssueRequest)
     {
-        if (updateIssueRequest is null)
-        {
-            return Task.FromResult<ActionResult<IssueResponse>>(Problem(type: "BadRequest", title: "Invalid request",
-                detail: "Некорректный запрос",
-                statusCode: StatusCodes.Status400BadRequest));
-        }
-
-        //var response = new IssueResponse { Id = Guid.CreateVersion7(), Key = "DEV-123", Summary = "Test" };
-        return Task.FromResult<ActionResult<IssueResponse>>(Ok());
+        //if (updateIssueRequest is null)
+        //{
+        //    return Task.FromResult<ActionResult<IssueResponse>>(Problem(type: "BadRequest", title: "Invalid request",
+        //        detail: "Некорректный запрос",
+        //        statusCode: StatusCodes.Status400BadRequest));
+        //}
+        IssueUpdateCommand command = IssueRequestToCommandMapping.CreateUpdateCommand(id, updateIssueRequest);
+        IssueResponse response = await dispatcher.SendAsync(command);
+        return Ok(response);
     }
 
 
