@@ -1,4 +1,5 @@
 ﻿using TaskService.Application.Commands.Issues.Command;
+using TaskService.Application.Commands.Issues.Query;
 using TaskService.Contracts.Issue.Requests;
 
 namespace TaskService.Application.Commands.Issues
@@ -16,6 +17,11 @@ namespace TaskService.Application.Commands.Issues
                 ReporterId: request.ReporterId,
                 DueDate: request.DueDate
                 );
+        }
+
+        public static GetAllIssuesQuery ToCommand(this GetIssuesRequest request)
+        {
+            return new GetAllIssuesQuery();
         }
     }
 }
