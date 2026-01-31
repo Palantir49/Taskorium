@@ -5,7 +5,7 @@ namespace TaskService.Application.Features.Issues.Mapping;
 
 public static class IssueToResponseMapping
 {
-    public static IssueResponse ToResponce(this Issue issue)
+    public static IssueResponse ToResponse(this Issue issue)
     {
         return new IssueResponse(
             Id: issue.Id,

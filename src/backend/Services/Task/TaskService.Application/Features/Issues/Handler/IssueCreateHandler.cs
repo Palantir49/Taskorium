@@ -45,6 +45,6 @@ public class IssueCreateHandler(IRepositoryWrapper wrapper) : IRequestHandler<Is
         await wrapper.Issues.AddAsync(issue, cancellationToken);
         await wrapper.SaveChangesAsync(cancellationToken);
 
-        return issue.ToResponce();
+        return issue.ToResponse();
     }
 }

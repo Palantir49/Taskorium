@@ -2,7 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Projects;
 using TaskService.Application.Commands.Projects.Command;
+using TaskService.Application.Features.Issues.Command;
+using TaskService.Application.Features.Issues.Mapping;
+using TaskService.Application.Features.Projects.Command;
 using TaskService.Application.Mediator;
+using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 
@@ -57,15 +61,64 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public Task<ActionResult<ProjectResponse>> GetProjectByIdAsync(Guid id)
+    public async Task<ActionResult<ProjectResponse>> GetProjectByIdAsync(Guid id)
     {
-        //var taskResponse = await issueService.GetTaskByIdAsync(id);
-        //if (taskResponse == null)
-        //{
-        //    return NotFound();
-        //}
+        ProjectGetByIdQuery query = new ProjectGetByIdQuery(id);
+        ProjectResponse response = await dispatcher.SendAsync(query);
+        return Ok(response);
+    }
 
-        //return Ok(taskResponse);
-        return Task.FromResult<ActionResult<ProjectResponse>>(Ok());
+    /// <summary>
+    ///     Обновить данные проекта по Id
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     PUT /api/v1/Projects/guid
+    ///     {
+    ///     }
+    /// </remarks>
+    /// <param name="id">Идентификатор проекта</param>
+    /// <param name="updateProjectRequest">Обновленные данные проекта</param>
+    /// <returns></returns>
+    /// <response code="200">Данные о проекте успешно обновлены</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найден проект для обновления</response>
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<IssueResponse>> UpdateProjectAsync(Guid id,
+        [FromBody] UpdateProjectRequest updateProjectRequest)
+    {
+        ProjectUpdateCommand command = ProjectMapping.ProjectUpdateCommand(id, updateProjectRequest);
+        ProjectResponse response = await dispatcher.SendAsync(command);
+        return Ok(response);
+    }
+
+    /// <summary>
+    ///     Получить все задачи проекта
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     PUT /api/v1/Projects/guid/tasks
+    ///     {
+    ///     }
+    /// </remarks>
+    /// <param name="id">Идентификатор проекта</param>
+    /// <returns></returns>
+    /// <response code="200">Данные о задачах проекта успешно получены</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найден проект для обновления</response>
+    [HttpPut("{id:guid}/tasks")]
+    [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssueByProjectidAsync(Guid id)
+    {//FAQ: а это нормальный возвращаемый тип?
+        IssueGetByProjectIdQuery query = new IssueGetByProjectIdQuery(id);
+        IEnumerable<IssueResponse> response = await dispatcher.SendAsync(query);
+        return Ok(response);
     }
 }

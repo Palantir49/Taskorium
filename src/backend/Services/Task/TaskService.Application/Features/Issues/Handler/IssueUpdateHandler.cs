@@ -38,9 +38,10 @@ namespace TaskService.Application.Features.Issues.Handler
             //issue.UpdateStatus();
             issue.UpdateDueDate(request.DueDate);
 
+            await wrapper.Issues.UpdateAsync(issue);
             await wrapper.SaveChangesAsync(cancellationToken);
 
-            return issue.ToResponce();
+            return issue.ToResponse();
         }
     }
 }
