@@ -3,9 +3,9 @@ using TaskService.Contracts.IssueStatus;
 
 namespace TaskService.Application.Features.IssueStatuses.Command;
 
-public record class StatusCreateCommand(
+public record class IssueStatusCreateCommand(
     string name,
     Guid projectId,
     string type,
     int position,
-    string color) : ICommand<IssueStatusResponse>;
+    string? color) : ICommand<IssueStatusResponse>;

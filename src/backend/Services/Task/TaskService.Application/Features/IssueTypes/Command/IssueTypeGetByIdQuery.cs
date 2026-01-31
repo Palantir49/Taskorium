@@ -3,4 +3,4 @@ using TaskService.Contracts.IssueType;
 
 namespace TaskService.Application.Features.IssueTypes.Command;
 
-public record class TypeGetByProjectIdQuery(Guid id) : IQuery<IssueTypeResponse>;
+public record class IssueTypeGetByIdQuery(Guid id) : IQuery<IssueTypeResponse>;
