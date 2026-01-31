@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Issues.Command;
 using TaskService.Application.Commands.Issues.Handler;
+using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Requests;
@@ -38,16 +39,11 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
+    public async Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
     {
-        //var taskResponse = await issueService.GetTaskByIdAsync(id);
-        //if (taskResponse == null)
-        //{
-        //    return NotFound();
-        //}
-
-        //return Ok(taskResponse);
-        return Task.FromResult<ActionResult<IssueResponse>>(Ok());
+        IssueGetByIdQuery query = new IssueGetByIdQuery(id);
+        IssueResponse response = await dispatcher.SendAsync(query);
+        return Ok(response);
     }
 
     /// <summary>
