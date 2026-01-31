@@ -16,14 +16,16 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(t => t.KeycloakId).ValueGeneratedNever();
 
+        builder.Property(t => t.FullName).IsRequired().HasMaxLength(100);
+
         builder.Property(t => t.Email).HasConversion(
-            email => email.ToString(),
-            value => new EmailAdress(value))
+                email => email.ToString(),
+                value => new EmailAdress(value))
             .IsRequired().HasMaxLength(225);
 
         builder.Property(t => t.Username).HasConversion(
-            email => email.ToString(),
-            value => new UserName(value))
+                username => username.ToString(),
+                value => new UserName(value))
             .IsRequired().HasMaxLength(225);
     }
 }

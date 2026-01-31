@@ -249,13 +249,13 @@ export const fetchUsers = async (): Promise<User[]> => {
  * Тестовый контроллер для проверки API
  */
 export const fetchTasksTestController = async (): Promise<any> => {
-  const response = await fetch('/api/v1/Issues/123e4567-e89b-12d3-a456-426614174000');
+ /* const response = await fetch('/api/v1/Issues/123e4567-e89b-12d3-a456-426614174000');
   if (!response.ok) {
     throw new Error('Ошибка загрузки задач');
   }
   const data = await response.json();
   console.log('fetchTasksTestController result:', data);
-  return data;
+  return data;*/
 };
 
 // Экспорт моковых данных для использования в компонентах

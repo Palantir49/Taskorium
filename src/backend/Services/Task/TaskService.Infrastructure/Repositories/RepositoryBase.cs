@@ -1,4 +1,6 @@
-﻿using TaskService.Domain.Repositories;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using TaskService.Domain.Repositories;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Repositories;
@@ -33,6 +35,43 @@ public class RepositoryBase<T> : IRepositoryBase<T> where T : class
         _context.Set<T>().Remove(entity);
         return Task.CompletedTask;
     }
+
+    public async Task<List<T>?> GetListByConditionAsync(Expression<Func<T, bool>>? predicate = null,
+        Func<IQueryable<T>, IQueryable<T>>? include = null, CancellationToken ct = default)
+    {
+        var query = _context.Set<T>().AsQueryable();
+
+        if (include is not null)
+        {
+            query = include(query);
+        }
+
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        return await query.ToListAsync(ct);
+    }
+
+    public Task<T?> GetByConditionAsync(Expression<Func<T, bool>>? predicate = null,
+        Func<IQueryable<T>, IQueryable<T>>? include = null, CancellationToken ct = default)
+    {
+        var query = _context.Set<T>().AsQueryable();
+
+        if (include is not null)
+        {
+            query = include(query);
+        }
+
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        return query.FirstOrDefaultAsync(ct);
+    }
+
 
     //public virtual async Task<T?> GetByConditionAsync(
     //    Expression<Func<T, bool>> predicate,

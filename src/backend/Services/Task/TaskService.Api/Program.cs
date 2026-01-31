@@ -93,7 +93,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 app.UseServiceDefaults(builder.Configuration);
-app.UseHttpsRedirection();
 app.MapControllers();
 app.UseMiddleware<RequestObservabilityMiddleware>();
 app.Run();

@@ -28,9 +28,13 @@ function App() {
         setShowCreateForm(false);
     };
 
-    if (auth.isLoading) return <div>Loading...</div>;
-    if (auth.error) return <div>Error: {auth.error.message}</div>;
+    // Показываем загрузку аутентификации
+    if (auth.isLoading) return <div className="auth-loading">Загрузка аутентификации...</div>;
 
+    // Показываем ошибку аутентификации
+    if (auth.error) return <div className="auth-error">Ошибка авторизации: {auth.error.message}</div>;
+
+    // Контент для аутентифицированных пользователей
     const content = auth.isAuthenticated ? (
         <>
             {activeTab === 'board' && (

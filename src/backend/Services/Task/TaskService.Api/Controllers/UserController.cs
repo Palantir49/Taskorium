@@ -1,9 +1,11 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Commands.Users.Create;
 using TaskService.Application.Commands.Users.Get;
+using TaskService.Application.Features.Users;
 using TaskService.Application.Mediator;
+using TaskService.Contracts.User.Requests;
 using TaskService.Contracts.User.Responses;
 
 namespace TaskService.Api.Controllers;
@@ -13,6 +15,7 @@ namespace TaskService.Api.Controllers;
 /// </summary>
 // <param name="createUserHandler">Handler создания пользователя</param>
 // <param name="getUserHandler">Handler получения пользователя по Id</param>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class UserController(IDispatcher dispatcher) : Controller
@@ -55,7 +58,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     ///     {
     ///     }
     /// </remarks>
-    /// <param name="command">Данные нового пользователя</param>
+    /// <param name="request">Данные нового пользователя</param>
     /// <returns></returns>
     /// <response code="201">Новый пользователь успешно создан</response>
     /// <response code="400">Некорректный запрос</response>
@@ -64,10 +67,11 @@ public class UserController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<UserResponse>> CreateUserAsync(
-        [FromBody] CreateUserCommand command)
+        [FromBody] CreateUserRequest request)
     {
-        var response = await dispatcher.SendAsync(command);
-        return CreatedAtAction(nameof(GetUserByIdAsync), new { id = response.id }, response);
+        var userCreateCommand = request.ToCommand();
+        var response = await dispatcher.SendAsync(userCreateCommand);
+        return CreatedAtAction(nameof(GetUserByIdAsync), new { response.id }, response);
     }
 
     ///// <summary>
