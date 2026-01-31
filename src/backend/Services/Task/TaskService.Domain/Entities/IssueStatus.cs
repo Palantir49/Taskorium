@@ -5,7 +5,7 @@ namespace TaskService.Domain.Entities;
 
 public class IssueStatus : BaseEntities
 {
-    public Guid ProjectId { get; private set; }
+    public Guid ProjectId { get; }
     public IssueStatusType Type { get; private set; }
     public int Position { get; private set; }
     //TODO: уточнить, будем ли что-то подобное хранить. Если да - сделать VO под HEX
