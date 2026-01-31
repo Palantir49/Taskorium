@@ -55,7 +55,7 @@ namespace TaskService.Domain.Entities
             UpdatedDate = DateTimeOffset.UtcNow;
         }
 
-        public void ChangeStatus(IssueStatus status)
+        public void UpdateStatus(IssueStatus status)
         {
             IssueStatusId = status.Id;
             UpdatedDate = DateTimeOffset.UtcNow;

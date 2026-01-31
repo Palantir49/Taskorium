@@ -9,5 +9,4 @@ public record IssueCreateCommand(
     Guid TaskTypeId,
     Guid TaskStatusId,
     string? Description = null,
-    Guid? ReporterId = null,
     DateTimeOffset? DueDate = null) : ICommand<IssueResponse>;
