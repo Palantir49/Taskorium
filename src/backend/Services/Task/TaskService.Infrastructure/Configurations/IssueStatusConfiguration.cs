@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
+using TaskService.Domain.ValueObjects;
 
 namespace TaskService.Infrastructure.Configurations;
 
@@ -11,6 +12,12 @@ internal class IssueStatusConfiguration : IEntityTypeConfiguration<IssueStatus>
         builder.HasKey(t => t.Id);
 
         builder.Property(t => t.Id).ValueGeneratedNever();
+
+        builder.Property(t => t.Name).HasConversion(
+            name => name.Value,
+            value => new BaseEntityName(value))
+            .IsRequired().HasMaxLength(225);
+
         builder.Property(t => t.ProjectId).IsRequired();
         builder.Property(t=>t.Type).IsRequired();
         builder.Property(t=>t.Position).IsRequired();

@@ -15,6 +15,7 @@ public class TaskServiceDbContext : DbContext
     internal DbSet<Attachment> Attachments { get; set; } = null!;
     internal DbSet<ProjectMember> ProjectMembers { get; set; } = null!;
     internal DbSet<IssueStatus> IssueStatus { get; set; } = null!;
+    internal DbSet<IssueType> IssueType { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
