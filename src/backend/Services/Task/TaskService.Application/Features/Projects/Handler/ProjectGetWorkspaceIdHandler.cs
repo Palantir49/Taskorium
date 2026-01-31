@@ -11,7 +11,7 @@ public class ProjectGetWorkspaceIdHandler(IRepositoryWrapper wrapper) : IRequest
 {
     public async Task<IEnumerable<ProjectResponse>> Handle(ProjectGetByWorkspaceIdQuery request, CancellationToken cancellationToken = default)
     {
-        List<Project> projects = await wrapper.Projects.GetByWorkspaceIdAsync(request.id);
+        List<Project> projects = await wrapper.Projects.GetByWorkspaceIdAsync(request.id, cancellationToken);
 
         return projects.Select(x => x.ToResponse());
     }

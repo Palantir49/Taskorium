@@ -9,8 +9,10 @@ internal class IssueDeleteByIdhandler(IRepositoryWrapper wrapper) : IRequestHand
 {
     public async Task<int> Handle(IssueDeleteByIdCommand request, CancellationToken cancellationToken = default)
     {
-        Issue issue = await wrapper.Issues.GetByIdAsync(request.id) ?? throw new NullReferenceException($"Задача с id: {request.id} не найдена");
-        await wrapper.Issues.DeleteAsync(issue);
-        return await wrapper.SaveChangesAsync();
+        Issue issue = await wrapper.Issues.GetByIdAsync(request.id, cancellationToken) ??
+            throw new NullReferenceException($"Задача с id: {request.id} не найдена");
+
+        await wrapper.Issues.DeleteAsync(issue, cancellationToken);
+        return await wrapper.SaveChangesAsync(cancellationToken);
     }
 }

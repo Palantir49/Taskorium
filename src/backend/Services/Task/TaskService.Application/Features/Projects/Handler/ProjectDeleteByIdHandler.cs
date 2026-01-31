@@ -9,7 +9,9 @@ public class ProjectDeleteByIdHandler(IRepositoryWrapper wrapper) : IRequestHand
 {
     public async Task<int> Handle(ProjectDeleteByIdCommand request, CancellationToken cancellationToken = default)
     {
-        Project project = await wrapper.Projects.GetByIdAsync(request.id) ?? throw new NullReferenceException($"Проект с id: {request.id} не найдена");
+        Project project = await wrapper.Projects.GetByIdAsync(request.id, cancellationToken) ??
+            throw new NullReferenceException($"Проект с id: {request.id} не найдена");
+
         await wrapper.Projects.DeleteAsync(project, cancellationToken);
         return await wrapper.SaveChangesAsync(cancellationToken);
     }

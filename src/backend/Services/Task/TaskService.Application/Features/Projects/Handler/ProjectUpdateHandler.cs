@@ -11,13 +11,14 @@ public class ProjectUpdateHandler(IRepositoryWrapper wrapper) : IRequestHandler<
 {
     public async Task<ProjectResponse> Handle(ProjectUpdateCommand request, CancellationToken cancellationToken = default)
     {
-        Project project = await wrapper.Projects.GetByIdAsync(request.id) ?? throw new NullReferenceException($"Проект с id: {request.id} не найдена");
+        Project project = await wrapper.Projects.GetByIdAsync(request.id, cancellationToken) ??
+            throw new NullReferenceException($"Проект с id: {request.id} не найдена");
 
         project.UpdateName(request.Name);
         project.UpdateDescription(request.Description);
 
-        await wrapper.Projects.UpdateAsync(project);
-        await wrapper.SaveChangesAsync();
+        await wrapper.Projects.UpdateAsync(project, cancellationToken);
+        await wrapper.SaveChangesAsync(cancellationToken);
 
         return project.ToResponse();
     }

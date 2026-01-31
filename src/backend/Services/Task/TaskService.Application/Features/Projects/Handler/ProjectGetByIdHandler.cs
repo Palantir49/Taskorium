@@ -11,11 +11,9 @@ internal class ProjectGetByIdHandler(IRepositoryWrapper wrapper) : IRequestHandl
 {
     public async Task<ProjectResponse> Handle(ProjectGetByIdQuery request, CancellationToken cancellationToken = default)
     {
-        Project? project = await wrapper.Projects.GetByIdAsync(request.id);
-        if (project == null)
-        {
+        Project? project = await wrapper.Projects.GetByIdAsync(request.id, cancellationToken) ??
             throw new NullReferenceException($"Проект с id: {request.id} не найдена");
-        }
+
         return project.ToResponse();
     }
 }
