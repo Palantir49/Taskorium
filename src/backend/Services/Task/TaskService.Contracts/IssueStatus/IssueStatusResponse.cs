@@ -1,5 +1,4 @@
-﻿
-namespace TaskService.Contracts.IssueStatus;
+﻿namespace TaskService.Contracts.IssueStatus;
 
 public record class IssueStatusResponse(
     Guid id,
