@@ -22,4 +22,9 @@
     <PackageReference Include="Scrutor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Statuses\Handler\" />
+    <Folder Include="Features\Types\Handler\" />
+  </ItemGroup>
+
 </Project>

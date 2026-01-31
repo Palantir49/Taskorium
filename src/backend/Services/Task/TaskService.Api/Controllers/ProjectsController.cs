@@ -1,11 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Projects;
 using TaskService.Application.Commands.Projects.Command;
-using TaskService.Application.Commands.Projects.Handler;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
