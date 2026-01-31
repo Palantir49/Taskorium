@@ -4,4 +4,4 @@ public record class IssueTypeResponse(
     Guid id,
     string name,
     Guid projectId,
-    string color);
+    string? color);
