@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Projects;
 using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Commands.Projects.Handler;
+using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 
@@ -17,7 +18,7 @@ namespace TaskService.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
-public class ProjectsController(CreateProjectHandler createProjectHandler) : Controller
+public class ProjectsController(IDispatcher dispatcher) : Controller
 {
     /// <summary>
     ///     Создать новый проект
@@ -38,8 +39,8 @@ public class ProjectsController(CreateProjectHandler createProjectHandler) : Con
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ProjectResponse>> CreateIssueAsync([FromBody] CreateProjectRequest createProjectRequest)
     {
-        CreateProjectCommand createProjectCommand = createProjectRequest.ToCommand();
-        ProjectResponse response = await createProjectHandler.HandleAsync(createProjectCommand);
+        ProjectCreateCommand createProjectCommand = createProjectRequest.ToCommand();
+        ProjectResponse response = await dispatcher.SendAsync(createProjectCommand);
         return CreatedAtAction(nameof(GetProjectByIdAsync), new { id = response.Id }, response);
     }
 

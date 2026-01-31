@@ -1,13 +1,13 @@
 ﻿using TaskService.Application.Commands.Issues.Command;
 using TaskService.Contracts.Issue.Requests;
 
-namespace TaskService.Application.Commands.Issues
+namespace TaskService.Application.Features.Issues.Mapping
 {
-    public static class IssueMapping
+    public static class IssueRequestToCommandMapping
     {
-        public static CreateIssueCommand ToCommand(this CreateIssueRequest request)
+        public static IssueCreateCommand ToCommand(this CreateIssueRequest request)
         {
-            return new CreateIssueCommand(
+            return new IssueCreateCommand(
                 Name: request.Name,
                 ProjectId: request.ProjectId,
                 TaskTypeId: request.TaskTypeId,
