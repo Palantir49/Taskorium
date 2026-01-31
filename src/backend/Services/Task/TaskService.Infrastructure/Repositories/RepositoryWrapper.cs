@@ -29,7 +29,12 @@ public class RepositoryWrapper : IRepositoryWrapper
         _users = users;
     }
     public IUserRepository Users => _users;
+
     public IIssueRepository Issues => _issue;
+
+    public IIssueStatusRepository IssueStatus => _issueStatus;
+
+    public IIssueTypeRepository IssueType => _issueType;
 
     public IProjectRepository Projects => _project;
 

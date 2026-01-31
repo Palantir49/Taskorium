@@ -17,6 +17,10 @@ internal class IssueTypeConfiguration : IEntityTypeConfiguration<IssueType>
             name => name.Value,
             value => new BaseEntityName(value))
             .IsRequired().HasMaxLength(225);
+
+        builder.Property(t => t.ProjectId).IsRequired();
+        builder.Property(t => t.CreatedDate).IsRequired();
+        builder.Property(t => t.Color);
     }
 
 }

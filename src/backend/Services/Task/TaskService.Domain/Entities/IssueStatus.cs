@@ -8,9 +8,9 @@ public class IssueStatus : BaseEntities
     public Guid ProjectId { get; }
     public IssueStatusType Type { get; private set; }
     public int Position { get; private set; }
-    //TODO: уточнить, будем ли что-то подобное хранить. Если да - сделать VO под HEX
+    //FAQ: уточнить, будем ли что-то подобное хранить. Если да - сделать VO под HEX
     public string? Color { get; private set; }
-
+    //FAQ: а статусу и типу вообще нужно CreateDate? а то мб и не нужно от BaseEntities наследоваться
     protected IssueStatus() { }
 
     private IssueStatus(Guid id, string name, IssueStatusType type, int position, string color, Guid projectId) : base(id, name)

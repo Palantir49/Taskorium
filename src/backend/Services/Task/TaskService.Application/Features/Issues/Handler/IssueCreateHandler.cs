@@ -1,5 +1,4 @@
 ﻿using TaskService.Application.Commands.Issues.Command;
-using TaskService.Application.Commands.Workspaces.Create;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
@@ -14,20 +13,33 @@ public class IssueCreateHandler(IRepositoryWrapper wrapper) : IRequestHandler<Is
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
     {
         var project = await wrapper.Projects.GetByIdAsync(request.ProjectId);
-        //TODO: проверка существования статуса
         //TODO: проверка существования типа
 
         if (project == null)
         {
-            throw new InvalidOperationException("Project not found.");
+            throw new NullReferenceException($"Проект с id: {request.IssueStatusId} не найдена");
         }
+
+        IssueStatus? status = await wrapper.IssueStatus.GetByIdAsync(request.IssueStatusId);
+
+        if (status == null)
+            throw new NullReferenceException($"Статус задачи с id: {request.IssueStatusId} не найдена");
+
+        //TODO: проверить что можно создавать с этим статусом
+
+        IssueType? type = await wrapper.IssueType.GetByIdAsync(request.IssueTypeId);
+
+        if (type == null)
+            throw new NullReferenceException($"Тип задачи с id: {request.IssueTypeId} не найдена");
+
+        //TODO: проверить что можно создавать с этим типом
 
         var issue = Issue.Create(
             name: request.Name,
             description: request.Description,
             projectId: request.ProjectId,
-            taskTypeId: request.TaskTypeId,
-            taskStatusId: request.TaskStatusId,
+            taskTypeId: request.IssueTypeId,
+            taskStatusId: request.IssueStatusId,
             dueDate: request.DueDate
         );
         await wrapper.Issues.AddAsync(issue, cancellationToken);
