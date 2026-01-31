@@ -3,6 +3,7 @@ using TaskService.Contracts.IssueType;
 
 namespace TaskService.Application.Features.IssueTypes.Command;
 
-public record class TypeCreateCommand(string name,
+public record class TypeCreateCommand(
+    string name,
     Guid projectId,
     string color) : ICommand<IssueTypeResponse>;

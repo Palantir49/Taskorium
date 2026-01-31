@@ -1,5 +1,8 @@
-﻿namespace TaskService.Application.Features.Types.Command;
+﻿using TaskService.Application.Mediator;
 
-internal class TypeUpdateCommand
-{
-}
+namespace TaskService.Application.Features.Types.Command;
+
+public record class TypeUpdateCommand(
+    string name,
+    Guid projectId,
+    string color) : ICommand<int>;
