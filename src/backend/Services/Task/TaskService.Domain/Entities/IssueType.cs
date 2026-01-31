@@ -4,8 +4,8 @@ namespace TaskService.Domain.Entities;
 
 public class IssueType : BaseEntities
 {
-    Guid ProjectId { get; private set; }
-    string? Color { get; private set; }
+    public Guid ProjectId { get; }
+    public string? Color { get; private set; }
 
     protected IssueType() { }
 
