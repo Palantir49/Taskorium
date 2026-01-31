@@ -5,7 +5,6 @@ import {useCreateUser} from '../hooks/useCreateUser';
 import {useUserFullName} from '../hooks/useUserFullName';
 import {AuthProviderProps} from "../types";
 
-
 export const AuthProvider: React.FC<AuthProviderProps> = ({
                                                               children,
                                                               activeTab,
@@ -13,11 +12,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                                                               showHeader = true,
                                                           }) => {
     const auth = useAuth();
-    useCreateUser(); // авто-синхронизация
+    const {syncStatus, syncError} = useCreateUser(); // авто-синхронизация
     const userFullName = useUserFullName();
 
     const handleLogout = () => auth.signoutRedirect();
 
+    // Показываем загрузку пока синхронизация в процессе
+    if (auth.isAuthenticated && syncStatus === 'loading') {
+        return (
+            <div className="sync-loading">
+                <div>Загрузка данных профиля...</div>
+            </div>
+        );
+    }
+
+    // Показываем ошибку если синхронизация не удалась
+    if (auth.isAuthenticated && syncStatus === 'error') {
+        return (
+            <div className="sync-error">
+                <h2>Ошибка синхронизации</h2>
+                <p>{syncError}</p>
+                <button onClick={handleLogout}>Выйти и повторить</button>
+            </div>
+        );
+    }
+
+    // Показываем контент только если синхронизация успешна или еще не начата
     const authInfo = {
         isAuthenticated: auth.isAuthenticated,
         userFullName,

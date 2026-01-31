@@ -1,4 +1,9 @@
-﻿using Microsoft.OpenApi;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Taskorium.ServiceDefaults;
 using TaskService.Api.Extensions;
