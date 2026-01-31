@@ -8,14 +8,14 @@ public static class IssueToResponseMapping
     public static IssueResponse ToResponce(this Issue issue)
     {
         return new IssueResponse(
-            Id: issue.Id,
-            Name: issue.Name.ToString(),
-            ProjectId: issue.ProjectId,
-            TaskTypeId: issue.IssueTypeId,
+            Id: issue.Id, 
+            Name: issue.Name.ToString(), 
+            ProjectId: issue.ProjectId, 
+            TaskTypeId: issue.IssueTypeId, 
             TaskStatusId: issue.IssueStatusId,
-            CreatedDate: issue.CreatedDate,
-            Description: issue.Description,
-            UpdatedDate: issue.UpdatedDate,
+            CreatedDate: issue.CreatedDate, 
+            Description: issue.Description, 
+            UpdatedDate: issue.UpdatedDate, 
             DueDate: issue.DueDate,
             ResolvedDate: issue.ResolvedDate);
     }
