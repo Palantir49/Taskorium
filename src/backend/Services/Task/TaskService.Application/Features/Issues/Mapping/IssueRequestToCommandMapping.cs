@@ -1,4 +1,5 @@
 ﻿using TaskService.Application.Commands.Issues.Command;
+using TaskService.Application.Commands.Issues.Query;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Contracts.Issue.Requests;
 
@@ -30,9 +31,9 @@ namespace TaskService.Application.Features.Issues.Mapping
                 );
         }
 
-        //public static GetAllIssuesQuery ToCommand(this IssueCreateRequest request)
-        //{
-        //    return new GetAllIssuesQuery();
-        //}
+        public static GetAllIssuesQuery ToCommand(this GetIssuesRequest reques)
+        {
+            return new GetAllIssuesQuery();
+        }
     }
 }
