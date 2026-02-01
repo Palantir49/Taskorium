@@ -7,15 +7,15 @@ namespace TaskService.Application.Features.IssueStatuses;
 
 public static class IssueStatusMapping
 {
-    public static IssueStatusResponse ToResponse(IssueStatus issueType)
+    public static IssueStatusResponse ToResponse(this IssueStatus issueStatus)
     {
         return new IssueStatusResponse(
-            id: issueType.Id,
-            name: issueType.Name.ToString(),
-            projectId: issueType.ProjectId,
-            type: issueType.Type.ToString(),
-            position: issueType.Position,
-            color: issueType.Color);
+            id: issueStatus.Id,
+            name: issueStatus.Name.ToString(),
+            projectId: issueStatus.ProjectId,
+            type: issueStatus.Type.ToString(),
+            position: issueStatus.Position,
+            color: issueStatus.Color);
     }
 
     public static IssueStatusCreateCommand ToCommand(this IssueStatusCreateRequest request)

@@ -13,7 +13,7 @@ public class IssueStatus : BaseEntities
     //FAQ: а статусу и типу вообще нужно CreateDate? а то мб и не нужно от BaseEntities наследоваться
     protected IssueStatus() { }
 
-    private IssueStatus(Guid id, string name, IssueStatusType type, int position, string color, Guid projectId) : base(id, name)
+    private IssueStatus(Guid id, string name, IssueStatusType type, int position, string? color, Guid projectId) : base(id, name)
     {
         Type = type;
         Position = position;
@@ -21,7 +21,7 @@ public class IssueStatus : BaseEntities
         ProjectId = projectId;
     }
 
-    public static IssueStatus Create(string name, string type, int position, string color, Guid projectId)
+    public static IssueStatus Create(string name, string type, int position, string? color, Guid projectId)
     {
         return new IssueStatus(
             id: Guid.CreateVersion7(),

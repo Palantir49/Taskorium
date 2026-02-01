@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\IssueStatuses\Handler\" />
     <Folder Include="Features\IssueTypes\Handler\" />
   </ItemGroup>
 
