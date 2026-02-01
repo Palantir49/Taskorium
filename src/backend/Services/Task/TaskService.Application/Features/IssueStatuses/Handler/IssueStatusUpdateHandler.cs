@@ -12,7 +12,7 @@ internal class IssueStatusUpdateHandler(IRepositoryWrapper wrapper) : IRequestHa
 {
     public async Task<IssueStatusResponse> Handle(IssueStatusUpdateCommand request, CancellationToken cancellationToken = default)
     {
-        IssueStatus status = await wrapper.IssueStatus.GetByIdAsync(request.id, cancellationToken) ?? 
+        IssueStatus status = await wrapper.IssueStatus.GetByIdAsync(request.id, cancellationToken) ??
             throw new NullReferenceException($"Статус с id: {request.id} не найден");
 
         status.UpdateName(request.name);
