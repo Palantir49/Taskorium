@@ -21,6 +21,12 @@ internal class IssueTypeConfiguration : IEntityTypeConfiguration<IssueType>
         builder.Property(t => t.ProjectId).IsRequired();
         builder.Property(t => t.CreatedDate).IsRequired();
         builder.Property(t => t.Color);
+
+        builder.HasOne<Project>()
+              .WithMany()
+              .HasForeignKey(t => t.ProjectId)
+              .IsRequired()
+              .OnDelete(DeleteBehavior.Restrict);
     }
 
 }
