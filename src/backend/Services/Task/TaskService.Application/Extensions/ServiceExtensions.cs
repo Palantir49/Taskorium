@@ -1,7 +1,5 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using TaskService.Application.Commands.Issues.Handler;
-using TaskService.Application.Commands.Projects.Handler;
 using TaskService.Application.Mediator;
 
 namespace TaskService.Application.Extensions;

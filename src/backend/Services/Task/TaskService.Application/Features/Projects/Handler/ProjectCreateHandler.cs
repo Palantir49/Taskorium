@@ -18,6 +18,7 @@ public class ProjectCreateHandler(IRepositoryWrapper wrapper) : IRequestHandler<
             description: request.Description,
             workspaceId: request.WorkspaceId
         );
+        //TODO: добавить создание статусов и типа
         await wrapper.Projects.AddAsync(project, cancellationToken);
         await wrapper.SaveChangesAsync(cancellationToken);
 

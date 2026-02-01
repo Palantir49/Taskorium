@@ -6,7 +6,7 @@ using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Features.IssueTypes.Handler;
 
-internal class IssueTypeUpdateHandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueTypeUpdateCommand, IssueTypeResponse>
+public class IssueTypeUpdateHandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueTypeUpdateCommand, IssueTypeResponse>
 {
     public async Task<IssueTypeResponse> Handle(IssueTypeUpdateCommand request, CancellationToken cancellationToken = default)
     {
