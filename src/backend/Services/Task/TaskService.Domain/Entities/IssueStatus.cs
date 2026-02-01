@@ -35,5 +35,5 @@ public class IssueStatus : BaseEntities
 
     public void UpdatePosition(int position) => Position = position;
 
-    public void UpdateColor(string color) => Color = color;
+    public void UpdateColor(string? color) => Color = color;
 }
