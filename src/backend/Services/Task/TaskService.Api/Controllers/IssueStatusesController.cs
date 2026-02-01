@@ -4,7 +4,6 @@ using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Features.IssueStatuses;
 using TaskService.Application.Features.IssueStatuses.Command;
 using TaskService.Application.Mediator;
-using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.IssueStatus;
 using TaskService.Contracts.IssueStatus.Request;
 

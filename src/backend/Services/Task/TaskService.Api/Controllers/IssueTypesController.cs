@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Features.IssueStatuses;
-using TaskService.Application.Features.IssueStatuses.Command;
 using TaskService.Application.Features.IssueTypes;
 using TaskService.Application.Features.IssueTypes.Command;
 using TaskService.Application.Mediator;
-using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.IssueStatus;
-using TaskService.Contracts.IssueStatus.Request;
 using TaskService.Contracts.IssueType;
 using TaskService.Contracts.IssueType.Request;
 
