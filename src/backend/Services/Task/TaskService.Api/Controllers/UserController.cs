@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Users;
-using TaskService.Application.Commands.Users.Create;
 using TaskService.Application.Commands.Users.Get;
+using TaskService.Application.Features.Users.Create;
 using TaskService.Application.Features.Users.Delete;
 using TaskService.Application.Features.Users.Update;
 using TaskService.Application.Features.Workspaces.Update;
@@ -33,7 +33,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<GetUserByIdResult>> GetUserByIdAsync([FromBody] Guid id)
+    public async Task<ActionResult<GetUserByIdResult>> GetUserByIdAsync(Guid id)
     {
 
         var userResponse = await dispatcher.SendAsync(new GetUserByIdQuery(id));
@@ -59,8 +59,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     public async Task<ActionResult<CreateUserResult>> CreateUserAsync(
         [FromBody] CreateUserCommand command)
     {
-        var userCreateCommand = request.ToCommand();
-        var response = await dispatcher.SendAsync(userCreateCommand);
+        var response = await dispatcher.SendAsync(command);
         return CreatedAtAction(nameof(GetUserByIdAsync), new { response.id }, response);
     }
 
@@ -88,7 +87,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     /// <response code="201">Имя рабочей области успешно обновлено</response>
     /// <response code="400">Некорректный запрос</response>
     [HttpPatch]
-    public async Task<ActionResult<WorkspaceResponse>> UpdateWorkspaceAsync(
+    public async Task<ActionResult<UpdateUserEmailResult>> UpdateUserEmailAsync(
         [FromBody] UpdateUserEmailCommand command)
     {
         var response = await dispatcher.SendAsync(command);
