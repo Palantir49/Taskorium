@@ -1,7 +1,16 @@
 import WorkspaceCard from "./WorkspaceCard";
 import ProjectCard from "./ProjectCard.tsx";
+import KanbanBoard from "./KanbanBoard.tsx";
+import { useState } from "react";
 
 export default function StartDashboardCard() {
+
+   const [selectedProject, setSelectedProject] = useState<number | null>(null);
+
+    if (selectedProject !== null) {
+    return <KanbanBoard />;
+  }
+
   return (
     <div className="min-h-screen p-8">
       <h1 className="text-3xl font-bold mb-8">Рабочие пространства</h1>
@@ -18,7 +27,7 @@ export default function StartDashboardCard() {
       <div className="border-2 border-gray-200 rounded-xl p-6 mb-8">
         <h2 className="text-xl font-semibold mb-4">Проекты</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ProjectCard />
+          <ProjectCard onSelect={setSelectedProject}/>
         </div>
       </div>
     </div>
