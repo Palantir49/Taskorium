@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
 
 namespace TaskService.Infrastructure.Configurations;
 
-public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember>   
+public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember>
 {
     public void Configure(EntityTypeBuilder<ProjectMember> builder)
     {
@@ -20,16 +17,15 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
         builder.Property(t => t.JoinedAt);
 
         builder.HasOne<Project>()
-              .WithMany()
-              .HasForeignKey(t => t.ProjectId)
-              .IsRequired()
-              .OnDelete(DeleteBehavior.Restrict);
+            .WithMany()
+            .HasForeignKey(t => t.ProjectId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<User>()
-              .WithMany()
-              .HasForeignKey(t => t.UserId)
-              .IsRequired()
-              .OnDelete(DeleteBehavior.Restrict);
-
+            .WithMany()
+            .HasForeignKey(t => t.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

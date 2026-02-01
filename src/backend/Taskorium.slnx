@@ -7,6 +7,9 @@
         <Project Path="Services/Task/TaskService.Infrastructure/TaskService.Infrastructure.csproj" />
         <Project Path="Services/Task/TaskService.Tests/TaskService.Tests.csproj" />
     </Folder>
+    <Folder Name="/Shared/">
+        <Project Path="Shared/Taskorium.ServiceDefaults/Taskorium.ServiceDefaults.csproj" />
+    </Folder>
      <Folder Name="/Solution Items/">
         <File Path=".editorconfig" />
         <File Path="Directory.Packages.props" />
