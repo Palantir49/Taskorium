@@ -9,6 +9,20 @@ internal class IssueRepository : RepositoryBase<Issue>, IIssueRepository
 {
     public IssueRepository(TaskServiceDbContext context) : base(context) { }
 
+    public async Task<List<Issue>> GetByIssueStatusIdAsync(Guid statusId, CancellationToken ct = default)
+    {
+        return await _context.Issues
+            .Where(i => i.IssueStatusId == statusId)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<Issue>> GetByIssueTypeIdAsync(Guid typeId, CancellationToken ct = default)
+    {
+        return await _context.Issues
+            .Where(i => i.IssueTypeId == typeId)
+            .ToListAsync(ct);
+    }
+
     public async Task<List<Issue>> GetByProjectIdAsync(Guid projectId, CancellationToken ct = default)
     {
         return await _context.Issues
