@@ -15,6 +15,7 @@ public static class ServiceExtensions
             services.AddScoped<IDispatcher, Dispatcher>();
             services.AddScoped<CreateIssueHandler, CreateIssueHandler>();
             services.AddScoped<CreateProjectHandler, CreateProjectHandler>();
+            services.AddScoped<GetAllIssuesHandler, GetAllIssuesHandler>();
             services.Scan(selector =>
                 selector.FromAssemblies(Assembly.GetExecutingAssembly())
                     .AddClasses(filter => filter.AssignableTo(typeof(IRequestHandler<,>)))

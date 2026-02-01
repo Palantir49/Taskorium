@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Issues;
 using TaskService.Application.Commands.Issues.Command;
 using TaskService.Application.Commands.Issues.Handler;
+using TaskService.Application.Commands.Issues.Query;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
-using CreateIssueRequest = TaskService.Contracts.Issue.Requests.CreateIssueRequest;
 
 namespace TaskService.Api.Controllers;
 
@@ -18,12 +18,32 @@ namespace TaskService.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
-public class IssuesController(CreateIssueHandler createIssueHandler) : Controller
+public class IssuesController(CreateIssueHandler createIssueHandler, GetAllIssuesHandler getAllIssuesHandler) : Controller
 {
+
+
+    /// <summary>
+    ///     Получить все задачи
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     GET /api/v1/Issues
+    /// </remarks>
+    /// <response code="200">Список задач успешно получен</response>
+    /// <response code="400">Некорректный запрос</response>
+    [HttpGet]
+    [ProducesResponseType(typeof(IssuesResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IssuesResponse>> GetAllIssuesAsync()
+    {
+        var query = new GetAllIssuesQuery();
+        var response = await getAllIssuesHandler.Handle(query);
+        return Ok(response);
+    }
+
     /// <summary>
     ///     Получить данные задачи по Id
     /// </summary>
-    /// ///
     /// <remarks>
     ///     Пример запроса:
     ///     GET /api/v1/Issues/guid
