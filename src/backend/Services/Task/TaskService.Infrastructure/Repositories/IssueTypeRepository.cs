@@ -7,7 +7,7 @@ namespace TaskService.Infrastructure.Repositories;
 
 internal class IssueTypeRepository : RepositoryBase<IssueType>, IIssueTypeRepository
 {
-    internal IssueTypeRepository(TaskServiceDbContext context) : base(context) { }
+    public IssueTypeRepository(TaskServiceDbContext context) : base(context) { }
 
     public async Task<List<IssueType>> GetByProjectIdAsync(Guid projectId, CancellationToken ct = default)
     {
