@@ -84,7 +84,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     /// <response code="201">Имя рабочей области успешно обновлено</response>
     /// <response code="400">Некорректный запрос</response>
     [HttpPatch]
-    public async Task<ActionResult<WorkspaceResponse>> UpdateWorkspaceAsync(
+    public async Task<ActionResult<UpdateUserEmailResult>> UpdateUserEmailAsync(
         [FromBody] UpdateUserEmailCommand command)
     {
         var response = await dispatcher.SendAsync(command);
