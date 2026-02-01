@@ -35,7 +35,7 @@ function App() {
     if (auth.error) return <div className="auth-error">Ошибка авторизации: {auth.error.message}</div>;
 
     // Контент для аутентифицированных пользователей
-    const content = auth.isAuthenticated ? (
+    const content =  auth.isAuthenticated ? (
         <>
             {activeTab === 'board' && (
                 <>
