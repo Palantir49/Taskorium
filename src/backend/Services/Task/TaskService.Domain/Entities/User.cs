@@ -24,7 +24,7 @@ public class User
     }
     public static User Create(Guid keycloakId, UserName userName, EmailAdress email)
     {
-        return new User(Guid.CreateVersion7(), keycloakId, userName, email, DateTimeOffset.Now);
+        return new User(Guid.CreateVersion7(), keycloakId, userName, email, DateTimeOffset.UtcNow);
     }
     public void UpdateEmail(EmailAdress newEmail)
     {
