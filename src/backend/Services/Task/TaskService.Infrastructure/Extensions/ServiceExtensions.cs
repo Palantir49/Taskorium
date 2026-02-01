@@ -17,6 +17,9 @@ public static class ServiceExtensions
                 configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IIssueRepository, IssueRepository>();
+            services.AddScoped<IIssueStatusRepository, IssueStatusRepository>();
+            services.AddScoped<IIssueTypeRepository, IssueTypeRepository>();
+            services.AddScoped<IIssueRepository, IssueRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
