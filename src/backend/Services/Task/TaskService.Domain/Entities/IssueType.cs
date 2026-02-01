@@ -9,13 +9,13 @@ public class IssueType : BaseEntities
 
     protected IssueType() { }
 
-    private IssueType(Guid id, string name, Guid projectId, string color) : base(id, name)
+    private IssueType(Guid id, string name, Guid projectId, string? color) : base(id, name)
     {
         ProjectId = projectId;
         Color = color;
     }
 
-    public static IssueType Create(string name, Guid projectId, string color)
+    public static IssueType Create(string name, Guid projectId, string? color)
     {
         return new IssueType(
             id: Guid.CreateVersion7(),

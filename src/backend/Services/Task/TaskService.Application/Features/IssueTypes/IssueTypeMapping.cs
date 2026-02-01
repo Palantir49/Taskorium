@@ -7,7 +7,7 @@ namespace TaskService.Application.Features.IssueTypes;
 
 public static class IssueTypeMapping
 {
-    public static IssueTypeResponse ToResponse(IssueType issueType)
+    public static IssueTypeResponse ToResponse(this IssueType issueType)
     {
         return new IssueTypeResponse(
             id: issueType.Id,
