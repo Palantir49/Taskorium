@@ -16,6 +16,16 @@ public class ProjectDeleteByIdHandler(IRepositoryWrapper wrapper) : IRequestHand
             throw new NullReferenceException($"Нельзя удалить статус, пока существуют связанные задачи");
         //TODO: изменить исключение на подходящее
 
+        List<IssueStatus> statuses = await wrapper.IssueStatus.GetByProjectIdAsync(projectId: project.Id, cancellationToken);
+
+        foreach (IssueStatus status in statuses)
+            await wrapper.IssueStatus.DeleteAsync(status, cancellationToken);
+
+        List<IssueType> types = await wrapper.IssueType.GetByProjectIdAsync(projectId: project.Id, cancellationToken);
+
+        foreach (IssueType type in types)
+            await wrapper.IssueType.DeleteAsync(type, cancellationToken);
+
         await wrapper.Projects.DeleteAsync(project, cancellationToken);
         return await wrapper.SaveChangesAsync(cancellationToken);
     }
