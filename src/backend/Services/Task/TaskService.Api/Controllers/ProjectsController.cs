@@ -114,7 +114,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// <response code="200">Данные о задачах проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
-    [HttpPut("{id:guid}/Issues")]
+    [HttpGet("{id:guid}/Issues")]
     [ProducesResponseType(typeof(IEnumerable<IssueResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -140,7 +140,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// <response code="200">Данные о статусах задачи проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
-    [HttpPut("{id:guid}/IssueStatuses")]
+    [HttpGet("{id:guid}/IssueStatuses")]
     [ProducesResponseType(typeof(IEnumerable<IssueStatusResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -166,7 +166,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// <response code="200">Данные о типах задач проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
-    [HttpPut("{id:guid}/IssueTypes")]
+    [HttpGet("{id:guid}/IssueTypes")]
     [ProducesResponseType(typeof(IEnumerable<IssueTypeResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
