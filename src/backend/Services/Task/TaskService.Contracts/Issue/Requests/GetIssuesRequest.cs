@@ -1,3 +1,3 @@
-namespace TaskService.Contracts.Issue.Requests;
+﻿namespace TaskService.Contracts.Issue.Requests;
 
 public record class GetIssuesRequest();

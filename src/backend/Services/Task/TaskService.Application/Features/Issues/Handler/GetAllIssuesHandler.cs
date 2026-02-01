@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TaskService.Application.Commands.Issues.Query;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
