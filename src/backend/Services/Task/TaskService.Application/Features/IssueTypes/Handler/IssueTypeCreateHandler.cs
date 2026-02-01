@@ -10,6 +10,9 @@ public class IssueTypeCreateHandler(IRepositoryWrapper wrapper) : IRequestHandle
 {
     public async Task<IssueTypeResponse> Handle(IssueTypeCreateCommand request, CancellationToken cancellationToken = default)
     {
+        Project project = await wrapper.Projects.GetByIdAsync(request.projectId, cancellationToken) ??
+            throw new NullReferenceException($"Проект с id: {request.projectId} не найден");
+
         IssueType type = IssueType.Create(
             name: request.name,
             projectId: request.projectId,
