@@ -8,6 +8,8 @@ import KanbanBoard from './components/KanbanBoard';
 import TaskDetailSidebar from './components/TaskDetailSidebar';
 import TaskCreateForm from './components/TaskCreateForm';
 import {TaskStatus} from './types';
+import StartDashboardCards from './components/StartDashboardCards';
+import WorkspaceCard from './components/WorkspaceCard';
 import './App.css';
 
 type TabType = 'board' | 'analytics' | 'docs';
@@ -35,11 +37,13 @@ function App() {
     if (auth.error) return <div className="auth-error">Ошибка авторизации: {auth.error.message}</div>;
 
     // Контент для аутентифицированных пользователей
-    const content =  auth.isAuthenticated ? (
+    const content = (1==1) || auth.isAuthenticated ? (
         <>
-            {activeTab === 'board' && (
+        <StartDashboardCards/>
+            {/* {activeTab === 'board' && (
                 <>
                     <FilterBar/>
+                    
                     <KanbanBoard onCreateTask={handleOpenCreateForm}/>
                 </>
             )}
@@ -60,7 +64,7 @@ function App() {
                 isOpen={showCreateForm}
                 onClose={handleCloseCreateForm}
                 initialStatus={createFormStatus}
-            />
+            /> */}
         </>
     ) : (
         <LoginGate/>
