@@ -15,7 +15,7 @@ public class IssueStatusDeleteByIdHandler(IRepositoryWrapper wrapper) : IRequest
         //FAQ: а точно в репозитории для этого нужно заводить или через all делать?
         List<Issue> issue = await wrapper.Issues.GetByIssueStatusIdAsync(statusId: status.Id, cancellationToken);
 
-        if(issue != null && issue.Count > 0)
+        if (issue != null && issue.Count > 0)
             throw new NullReferenceException($"Нельзя удалить статус, пока существуют связанные задачи");
         //TODO: изменить исключение на подходящее
 
