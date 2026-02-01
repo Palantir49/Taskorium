@@ -25,4 +25,5 @@ public class IssueType : BaseEntities
             color: color);
     }
 
+    public void UpdateColor(string? color) => Color = color;
 }
