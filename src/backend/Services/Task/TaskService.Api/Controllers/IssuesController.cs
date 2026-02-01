@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Issues.Command;
+using TaskService.Application.Commands.Issues.Query;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Mediator;
@@ -17,6 +18,25 @@ namespace TaskService.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class IssuesController(IDispatcher dispatcher) : Controller
 {
+    /// <summary>
+    ///     Получить все задачи
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     GET /api/v1/Issues
+    /// </remarks>
+    /// <response code="200">Список задач успешно получен</response>
+    /// <response code="400">Некорректный запрос</response>
+    [HttpGet]
+    [ProducesResponseType(typeof(IssuesResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IssuesResponse>> GetAllIssuesAsync()
+    {
+        var query = new GetAllIssuesQuery();
+        var response = await dispatcher.SendAsync(query);
+        return Ok(response);
+    }
+
     /// <summary>
     ///     Получить данные задачи по Id
     /// </summary>
