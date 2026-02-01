@@ -4,9 +4,13 @@ using TaskService.Application.Commands.Projects;
 using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
+using TaskService.Application.Features.IssueStatuses.Command;
+using TaskService.Application.Features.IssueTypes.Command;
 using TaskService.Application.Features.Projects.Command;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
+using TaskService.Contracts.IssueStatus;
+using TaskService.Contracts.IssueType;
 using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 
@@ -101,7 +105,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// <remarks>
     ///     Пример запроса:
-    ///     PUT /api/v1/Projects/guid/tasks
+    ///     PUT /api/v1/Projects/guid/Issues
     ///     {
     ///     }
     /// </remarks>
@@ -109,16 +113,68 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// <returns></returns>
     /// <response code="200">Данные о задачах проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
-    /// <response code="404">Не найден проект для обновления</response>
-    [HttpPut("{id:guid}/tasks")]
-    [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
+    /// <response code="404">Не найден проект</response>
+    [HttpPut("{id:guid}/Issues")]
+    [ProducesResponseType(typeof(IEnumerable<IssueResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetProjectByProjectidAsync(Guid id)
+    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssuesByProjectidAsync(Guid id)
     {//FAQ: а это нормальный возвращаемый тип?
         IssueGetByProjectIdQuery query = new IssueGetByProjectIdQuery(id);
         IEnumerable<IssueResponse> response = await dispatcher.SendAsync(query);
+        return Ok(response);
+    }
+
+    /// <summary>
+    ///     Получить все статусы задачи проекта
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     PUT /api/v1/Projects/guid/IssueStatuses
+    ///     {
+    ///     }
+    /// </remarks>
+    /// <param name="id">Идентификатор проекта</param>
+    /// <returns></returns>
+    /// <response code="200">Данные о статусах задачи проекта успешно получены</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найден проект</response>
+    [HttpPut("{id:guid}/IssueStatuses")]
+    [ProducesResponseType(typeof(IEnumerable<IssueStatusResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssuesStatusByProjectidAsync(Guid id)
+    {//FAQ: а это нормальный возвращаемый тип?
+        IssueStatusGetByProjectIdQuery query = new IssueStatusGetByProjectIdQuery(id);
+        IEnumerable<IssueStatusResponse> response = await dispatcher.SendAsync(query);
+        return Ok(response);
+    }
+
+    /// <summary>
+    ///     Получить все типы задачи проекта
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     PUT /api/v1/Projects/guid/IssueTypes
+    ///     {
+    ///     }
+    /// </remarks>
+    /// <param name="id">Идентификатор проекта</param>
+    /// <returns></returns>
+    /// <response code="200">Данные о типах задач проекта успешно получены</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найден проект</response>
+    [HttpPut("{id:guid}/IssueTypes")]
+    [ProducesResponseType(typeof(IEnumerable<IssueTypeResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssueTypesByProjectidAsync(Guid id)
+    {//FAQ: а это нормальный возвращаемый тип?
+        IssueTypeGetByProjectIdQuery query = new IssueTypeGetByProjectIdQuery(id);
+        IEnumerable<IssueTypeResponse> response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
 
