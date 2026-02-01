@@ -1,32 +1,15 @@
 import React, {useState} from 'react';
 import {useAuth} from 'react-oidc-context';
-import {TaskProvider} from './context/TaskContext';
-import {AuthProvider} from './providers/AuthProvider';
 import LoginGate from './components/auth/LoginGate';
-import FilterBar from './components/FilterBar';
-import KanbanBoard from './components/KanbanBoard';
-import TaskDetailSidebar from './components/TaskDetailSidebar';
-import TaskCreateForm from './components/TaskCreateForm';
-import {TaskStatus} from './types';
+import DashboardTasks from './components/DashboardTasks';
 import './App.css';
 
 type TabType = 'board' | 'analytics' | 'docs';
 
 function App() {
-    const [activeTab, setActiveTab] = useState<TabType>('board');
-    const [showCreateForm, setShowCreateForm] = useState(false);
-    const [createFormStatus, setCreateFormStatus] = useState<TaskStatus>('backlog');
+    const [activeTab, setActiveTab] = useState<string>('board');
 
     const auth = useAuth();
-
-    const handleOpenCreateForm = (status: TaskStatus) => {
-        setCreateFormStatus(status);
-        setShowCreateForm(true);
-    };
-
-    const handleCloseCreateForm = () => {
-        setShowCreateForm(false);
-    };
 
     // Показываем загрузку аутентификации
     if (auth.isLoading) return <div className="auth-loading">Загрузка аутентификации...</div>;
@@ -35,49 +18,20 @@ function App() {
     if (auth.error) return <div className="auth-error">Ошибка авторизации: {auth.error.message}</div>;
 
     // Контент для аутентифицированных пользователей
-    const content = auth.isAuthenticated ? (
-        <>
-            {activeTab === 'board' && (
-                <>
-                    <FilterBar/>
-                    <KanbanBoard onCreateTask={handleOpenCreateForm}/>
-                </>
-            )}
-            {activeTab === 'analytics' && (
-                <div className="coming-soon">
-                    <h2>Аналитика</h2>
-                    <p>Раздел находится в разработке</p>
-                </div>
-            )}
-            {activeTab === 'docs' && (
-                <div className="coming-soon">
-                    <h2>Документация</h2>
-                    <p>Раздел находится в разработке</p>
-                </div>
-            )}
-            <TaskDetailSidebar/>
-            <TaskCreateForm
-                isOpen={showCreateForm}
-                onClose={handleCloseCreateForm}
-                initialStatus={createFormStatus}
-            />
-        </>
+    const content = (1 == 1) || auth.isAuthenticated ? (
+        <DashboardTasks
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            showHeader={auth.isAuthenticated}
+        />
     ) : (
         <LoginGate/>
     );
 
     return (
-        <TaskProvider>
-            <div className="app">
-                <AuthProvider
-                    activeTab={activeTab}
-                    onTabChange={setActiveTab}
-                    showHeader={auth.isAuthenticated}
-                >
-                    {content}
-                </AuthProvider>
-            </div>
-        </TaskProvider>
+        <div className="app">
+            {content}
+        </div>
     );
 }
 
