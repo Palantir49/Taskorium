@@ -28,7 +28,7 @@ public class GetAllIssuesHandler : IRequestHandler<GetAllIssuesQuery, IssuesResp
                 TaskStatusId: Guid.Parse("44444444-4444-4444-4444-444444444444"),
                 CreatedDate: DateTimeOffset.UtcNow.AddDays(-5),
                 Description: "Add JWT authentication for users",
-                ReporterId: Guid.Parse("55555555-5555-5555-5555-555555555555"),
+                //ReporterId: Guid.Parse("55555555-5555-5555-5555-555555555555"),
                 UpdatedDate: DateTimeOffset.UtcNow.AddDays(-2),
                 DueDate: DateTimeOffset.UtcNow.AddDays(10),
                 ResolvedDate: null
@@ -41,7 +41,7 @@ public class GetAllIssuesHandler : IRequestHandler<GetAllIssuesQuery, IssuesResp
                 TaskStatusId: Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
                 CreatedDate: DateTimeOffset.UtcNow.AddDays(-3),
                 Description: "Design and implement Kanban board component",
-                ReporterId: Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
+                //ReporterId: Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
                 UpdatedDate: DateTimeOffset.UtcNow.AddDays(-1),
                 DueDate: DateTimeOffset.UtcNow.AddDays(7),
                 ResolvedDate: null
@@ -54,7 +54,7 @@ public class GetAllIssuesHandler : IRequestHandler<GetAllIssuesQuery, IssuesResp
                 TaskStatusId: Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
                 CreatedDate: DateTimeOffset.UtcNow.AddDays(-7),
                 Description: "Resolve PostgreSQL connection timeout issues",
-                ReporterId: Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
+                //ReporterId: Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
                 UpdatedDate: DateTimeOffset.UtcNow,
                 DueDate: DateTimeOffset.UtcNow.AddDays(2),
                 ResolvedDate: DateTimeOffset.UtcNow

@@ -57,7 +57,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromBody] CreateIssueRequest createIssueRequest)
+    public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromBody] IssueCreateRequest createIssueRequest)
     {
         IssueCreateCommand createIssueCommand = createIssueRequest.ToCommand();
         IssueResponse response = await dispatcher.SendAsync(createIssueCommand);
