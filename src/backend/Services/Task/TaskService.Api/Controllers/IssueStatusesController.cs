@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Features.IssueStatuses;
 using TaskService.Application.Features.IssueStatuses.Command;
 using TaskService.Application.Mediator;
-using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.IssueStatus;
 using TaskService.Contracts.IssueStatus.Request;
@@ -18,7 +16,7 @@ namespace TaskService.Api.Controllers
     [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class IssueStatusController(IDispatcher dispatcher) : ControllerBase
+    public class IssueStatusesController(IDispatcher dispatcher) : ControllerBase
     {
         /// <summary>
         ///     Получить данные статуса задачи по Id
@@ -26,7 +24,7 @@ namespace TaskService.Api.Controllers
         /// ///
         /// <remarks>
         ///     Пример запроса:
-        ///     GET /api/v1/IssueStatus/guid
+        ///     GET /api/v1/IssueStatuses/guid
         /// </remarks>
         /// <param name="id">Идентификатор статуса задачи</param>
         /// <response code="200">Данные о статусе задачи успешно получены</response>
@@ -49,7 +47,7 @@ namespace TaskService.Api.Controllers
         /// </summary>
         /// <remarks>
         ///     Пример запроса:
-        ///     POST /api/v1/IssueStatus
+        ///     POST /api/v1/IssueStatuses
         ///     {
         ///     }
         /// </remarks>
@@ -73,7 +71,7 @@ namespace TaskService.Api.Controllers
         /// </summary>
         /// <remarks>
         ///     Пример запроса:
-        ///     PUT /api/v1/IssueStatus/guid
+        ///     PUT /api/v1/IssueStatuses/guid
         ///     {
         ///     }
         /// </remarks>
@@ -84,11 +82,11 @@ namespace TaskService.Api.Controllers
         /// <response code="400">Некорректный запрос</response>
         /// <response code="404">Не найден статус задачи для обновления</response>
         [HttpPut("{id:guid}")]
-        [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IssueStatusResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<IssueStatusResponse>> UpdateIssueAsync(Guid id,
+        public async Task<ActionResult<IssueStatusResponse>> UpdateIssueStatusAsync(Guid id,
             [FromBody] IssueStatusUpdateRequest issueStatusUpdateRequest)
         {
             IssueStatusUpdateCommand command = IssueStatusMapping.IssueStatusUpdateCommand(id, issueStatusUpdateRequest);
@@ -101,7 +99,7 @@ namespace TaskService.Api.Controllers
         /// </summary>
         /// <remarks>
         ///     Пример запроса:
-        ///     DELETE /api/v1/IssuesStatus/guid
+        ///     DELETE /api/v1/IssuesStatuses/guid
         /// </remarks>
         /// <param name="id">Идентификатор статуса задачи для удаления</param>
         /// <returns></returns>

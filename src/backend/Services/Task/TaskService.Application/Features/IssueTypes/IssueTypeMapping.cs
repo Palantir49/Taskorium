@@ -16,7 +16,7 @@ public static class IssueTypeMapping
             color: issueType.Color);
     }
 
-    public static IssueTypeCreateCommand ToCommand(IssueTypeCreateRequest request)
+    public static IssueTypeCreateCommand ToCommand(this IssueTypeCreateRequest request)
     {
         return new IssueTypeCreateCommand(
             name: request.name,
