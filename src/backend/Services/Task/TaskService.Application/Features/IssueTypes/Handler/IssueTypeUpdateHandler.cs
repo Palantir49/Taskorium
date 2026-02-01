@@ -11,8 +11,8 @@ internal class IssueTypeUpdateHandler(IRepositoryWrapper wrapper) : IRequestHand
     public async Task<IssueTypeResponse> Handle(IssueTypeUpdateCommand request, CancellationToken cancellationToken = default)
     {
         IssueType type = await wrapper.IssueType.GetByIdAsync(request.id, cancellationToken) ??
-            throw new NullReferenceException($"Тип задачи с id: {request.id} не найден"); 
-        
+            throw new NullReferenceException($"Тип задачи с id: {request.id} не найден");
+
         type.UpdateName(request.name);
         type.UpdateColor(request.color);
 
