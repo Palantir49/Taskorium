@@ -4,6 +4,7 @@ using TaskService.Application.Commands.Issues.Command;
 using TaskService.Application.Commands.Issues.Handler;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
+using TaskService.Application.Features.IssueStatuses.Command;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
@@ -105,7 +106,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// <remarks>
     ///     Пример запроса:
-    ///     DELETE /api/v1/Issues/1
+    ///     DELETE /api/v1/Issues/guid
     /// </remarks>
     /// <param name="id">Идентификатор задачи для удаления</param>
     /// <returns></returns>
@@ -114,8 +115,10 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<IActionResult> DeleteIssueAsync(Guid id)
+    public async Task<IActionResult> DeleteIssueAsync(Guid id)
     {
-        return Task.FromResult<IActionResult>(NoContent());
+        IssueDeleteByIdCommand command = new(id);
+        int response = await dispatcher.SendAsync(command);
+        return NoContent();
     }
 }

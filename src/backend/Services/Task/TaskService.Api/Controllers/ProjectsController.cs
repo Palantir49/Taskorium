@@ -37,7 +37,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<ProjectResponse>> CreateIssueAsync([FromBody] CreateProjectRequest createProjectRequest)
+    public async Task<ActionResult<ProjectResponse>> CreateProjectAsync([FromBody] CreateProjectRequest createProjectRequest)
     {
         ProjectCreateCommand createProjectCommand = createProjectRequest.ToCommand();
         ProjectResponse response = await dispatcher.SendAsync(createProjectCommand);
@@ -115,10 +115,31 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssueByProjectidAsync(Guid id)
+    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetProjectByProjectidAsync(Guid id)
     {//FAQ: а это нормальный возвращаемый тип?
         IssueGetByProjectIdQuery query = new IssueGetByProjectIdQuery(id);
         IEnumerable<IssueResponse> response = await dispatcher.SendAsync(query);
         return Ok(response);
+    }
+
+    /// <summary>
+    ///     Удалить проект по Id
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     DELETE /api/v1/Projects/guid
+    /// </remarks>
+    /// <param name="id">Идентификатор задачи для удаления</param>
+    /// <returns></returns>
+    /// <response code="204">Задача успешно удалена</response>
+    /// <response code="404">Не найдена задача для удаления</response>
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteProjectAsync(Guid id)
+    {
+        ProjectDeleteByIdCommand command = new(id);
+        int response = await dispatcher.SendAsync(command);
+        return NoContent();
     }
 }
