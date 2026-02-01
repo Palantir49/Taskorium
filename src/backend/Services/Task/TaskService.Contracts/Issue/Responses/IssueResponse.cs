@@ -8,7 +8,6 @@ public record IssueResponse(
     Guid TaskStatusId,
     DateTimeOffset CreatedDate,
     string? Description = null,
-    Guid? ReporterId = null,
     DateTimeOffset? UpdatedDate = null,
     DateTimeOffset? DueDate = null,
     DateTimeOffset? ResolvedDate = null);

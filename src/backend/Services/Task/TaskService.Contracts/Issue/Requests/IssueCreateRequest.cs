@@ -1,10 +1,9 @@
 ﻿namespace TaskService.Contracts.Issue.Requests;
 
-public record class CreateIssueRequest(
+public record class IssueCreateRequest(
     string Name,
     Guid ProjectId,
-    Guid TaskTypeId,
-    Guid TaskStatusId,
+    Guid IssueTypeId,
+    Guid IssueStatusId,
     string? Description = null,
-    Guid? ReporterId = null,
     DateTimeOffset? DueDate = null);

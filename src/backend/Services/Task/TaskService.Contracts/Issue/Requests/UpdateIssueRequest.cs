@@ -7,11 +7,8 @@
 //FAQ: так и не решили как быть с DTO на изменение одного свойства.
 //можно пока обойтись без них и делать общее изменение, а потом если что добавить
 public record class UpdateIssueRequest(
-    Guid Id,
     string Name,
-    Guid? ProjectId = null,
-    Guid? TaskTypeId = null,
-    Guid? TaskStatusId = null,
+    Guid IssueTypeId,
+    Guid IssueStatusId,
     string? Description = null,
-    Guid? ReporterId = null,
     DateTimeOffset? DueDate = null);

@@ -89,6 +89,62 @@ namespace TaskService.Infrastructure.Migrations
                     b.ToTable("Issues");
                 });
 
+            modelBuilder.Entity("TaskService.Domain.Entities.IssueStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(225)
+                        .HasColumnType("character varying(225)");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IssueStatus");
+                });
+
+            modelBuilder.Entity("TaskService.Domain.Entities.IssueType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(225)
+                        .HasColumnType("character varying(225)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("IssueType");
+                });
+
             modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
                 {
                     b.Property<Guid>("Id")
@@ -213,6 +269,15 @@ namespace TaskService.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Issue", b =>
+                {
+                    b.HasOne("TaskService.Domain.Entities.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TaskService.Domain.Entities.IssueType", b =>
                 {
                     b.HasOne("TaskService.Domain.Entities.Project", null)
                         .WithMany()

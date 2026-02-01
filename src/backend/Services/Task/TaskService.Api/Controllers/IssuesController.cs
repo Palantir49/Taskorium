@@ -1,12 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Commands.Issues;
 using TaskService.Application.Commands.Issues.Command;
-using TaskService.Application.Commands.Issues.Handler;
-using TaskService.Application.Commands.Issues.Query;
+using TaskService.Application.Features.Issues.Command;
+using TaskService.Application.Features.Issues.Mapping;
+using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
 
@@ -18,29 +15,8 @@ namespace TaskService.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
-public class IssuesController(CreateIssueHandler createIssueHandler, GetAllIssuesHandler getAllIssuesHandler) : Controller
+public class IssuesController(IDispatcher dispatcher) : Controller
 {
-
-
-    /// <summary>
-    ///     Получить все задачи
-    /// </summary>
-    /// <remarks>
-    ///     Пример запроса:
-    ///     GET /api/v1/Issues
-    /// </remarks>
-    /// <response code="200">Список задач успешно получен</response>
-    /// <response code="400">Некорректный запрос</response>
-    [HttpGet]
-    [ProducesResponseType(typeof(IssuesResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IssuesResponse>> GetAllIssuesAsync()
-    {
-        var query = new GetAllIssuesQuery();
-        var response = await getAllIssuesHandler.Handle(query);
-        return Ok(response);
-    }
-
     /// <summary>
     ///     Получить данные задачи по Id
     /// </summary>
@@ -57,16 +33,11 @@ public class IssuesController(CreateIssueHandler createIssueHandler, GetAllIssue
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
+    public async Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
     {
-        //var taskResponse = await issueService.GetTaskByIdAsync(id);
-        //if (taskResponse == null)
-        //{
-        //    return NotFound();
-        //}
-
-        //return Ok(taskResponse);
-        return Task.FromResult<ActionResult<IssueResponse>>(Ok());
+        IssueGetByIdQuery query = new IssueGetByIdQuery(id);
+        IssueResponse response = await dispatcher.SendAsync(query);
+        return Ok(response);
     }
 
     /// <summary>
@@ -86,10 +57,10 @@ public class IssuesController(CreateIssueHandler createIssueHandler, GetAllIssue
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromBody] CreateIssueRequest createIssueRequest)
+    public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromBody] IssueCreateRequest createIssueRequest)
     {
-        CreateIssueCommand createIssueCommand = createIssueRequest.ToCommand();
-        IssueResponse response = await createIssueHandler.HandleAsync(createIssueCommand);
+        IssueCreateCommand createIssueCommand = createIssueRequest.ToCommand();
+        IssueResponse response = await dispatcher.SendAsync(createIssueCommand);
         return CreatedAtAction(nameof(GetTaskByIdAsync), new { id = response.Id }, response);
     }
 
@@ -113,18 +84,18 @@ public class IssuesController(CreateIssueHandler createIssueHandler, GetAllIssue
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public Task<ActionResult<IssueResponse>> UpdateIssueAsync(Guid id,
-        [FromBody] UpdateIssueRequest? updateIssueRequest)
+    public async Task<ActionResult<IssueResponse>> UpdateIssueAsync(Guid id,
+        [FromBody] UpdateIssueRequest updateIssueRequest)
     {
-        if (updateIssueRequest is null)
-        {
-            return Task.FromResult<ActionResult<IssueResponse>>(Problem(type: "BadRequest", title: "Invalid request",
-                detail: "Некорректный запрос",
-                statusCode: StatusCodes.Status400BadRequest));
-        }
-
-        //var response = new IssueResponse { Id = Guid.CreateVersion7(), Key = "DEV-123", Summary = "Test" };
-        return Task.FromResult<ActionResult<IssueResponse>>(Ok());
+        //if (updateIssueRequest is null)
+        //{
+        //    return Task.FromResult<ActionResult<IssueResponse>>(Problem(type: "BadRequest", title: "Invalid request",
+        //        detail: "Некорректный запрос",
+        //        statusCode: StatusCodes.Status400BadRequest));
+        //}
+        IssueUpdateCommand command = IssueRequestToCommandMapping.CreateUpdateCommand(id, updateIssueRequest);
+        IssueResponse response = await dispatcher.SendAsync(command);
+        return Ok(response);
     }
 
 
@@ -133,7 +104,7 @@ public class IssuesController(CreateIssueHandler createIssueHandler, GetAllIssue
     /// </summary>
     /// <remarks>
     ///     Пример запроса:
-    ///     DELETE /api/v1/Issues/1
+    ///     DELETE /api/v1/Issues/guid
     /// </remarks>
     /// <param name="id">Идентификатор задачи для удаления</param>
     /// <returns></returns>
@@ -142,8 +113,10 @@ public class IssuesController(CreateIssueHandler createIssueHandler, GetAllIssue
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<IActionResult> DeleteIssueAsync(Guid id)
+    public async Task<IActionResult> DeleteIssueAsync(Guid id)
     {
-        return Task.FromResult<IActionResult>(NoContent());
+        IssueDeleteByIdCommand command = new(id);
+        int response = await dispatcher.SendAsync(command);
+        return NoContent();
     }
 }

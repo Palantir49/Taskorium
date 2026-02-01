@@ -5,7 +5,7 @@ namespace TaskService.Domain.Entities;
 public class Project : BaseEntities
 {
     protected Project() { }
-
+    //TODO: добавить сокращение для key (5 символов)
     private Project(Guid id, string name, string? description, Guid workspaceId)
         : base(id, name)
     {
@@ -24,4 +24,6 @@ public class Project : BaseEntities
     {
         return new Project(Guid.CreateVersion7(), name, description, workspaceId);
     }
+
+    public void UpdateDescription(string newDescription) => Description = newDescription;
 }
