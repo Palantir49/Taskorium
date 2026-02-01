@@ -5,7 +5,7 @@ using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Features.Issues.Handler;
 
-internal class IssueDeleteByIdhandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueDeleteByIdCommand, int>
+public class IssueDeleteByIdhandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueDeleteByIdCommand, int>
 {
     public async Task<int> Handle(IssueDeleteByIdCommand request, CancellationToken cancellationToken = default)
     {

@@ -14,7 +14,7 @@ namespace TaskService.Api.Controllers
     ///     Контроллер для работы с типами задач
     /// </summary>
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class IssueTypesController(IDispatcher dispatcher) : ControllerBase
     {
@@ -31,7 +31,7 @@ namespace TaskService.Api.Controllers
         /// <response code="400">Некорректный запрос</response>
         /// <response code="404">Не найден тип задачи по заданному id</response>
         [HttpGet("{id:guid}")]
-        [ActionName("GetIssueTypesByIdAsync")]
+        [ActionName("GetIssueTypeByIdAsync")]
         [ProducesResponseType(typeof(IssueTypeResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]

@@ -7,7 +7,7 @@ using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Features.Issues.Handler;
 
-internal class IssueGetByIdHandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueGetByIdQuery, IssueResponse>
+public class IssueGetByIdHandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueGetByIdQuery, IssueResponse>
 {
     public async Task<IssueResponse> Handle(IssueGetByIdQuery request, CancellationToken cancellationToken = default)
     {

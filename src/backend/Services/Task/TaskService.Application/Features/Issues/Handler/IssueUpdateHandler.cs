@@ -30,8 +30,8 @@ namespace TaskService.Application.Features.Issues.Handler
 
             issue.UpdateName(request.Name);
             issue.UpdateDescription(request.Description);
-            //issue.UpdateType();
-            //issue.UpdateStatus();
+            issue.UpdateType(type.Id);
+            issue.UpdateStatus(status);
             issue.UpdateDueDate(request.DueDate);
 
             await wrapper.Issues.UpdateAsync(issue, cancellationToken);

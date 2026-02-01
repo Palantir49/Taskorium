@@ -6,7 +6,7 @@ using TaskService.Domain.Repositories;
 
 namespace TaskService.Application.Features.IssueStatuses.Handler
 {
-    internal class IssueStatusGetByProjectIdHandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueStatusGetByProjectIdQuery, IEnumerable<IssueStatusResponse>>
+    public class IssueStatusGetByProjectIdHandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueStatusGetByProjectIdQuery, IEnumerable<IssueStatusResponse>>
     {
         public async Task<IEnumerable<IssueStatusResponse>> Handle(IssueStatusGetByProjectIdQuery request, CancellationToken cancellationToken = default)
         {
