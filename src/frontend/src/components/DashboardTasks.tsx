@@ -7,13 +7,14 @@ import TaskDetailSidebar from './TaskDetailSidebar';
 import TaskCreateForm from './TaskCreateForm';
 import {TaskStatus} from '../types';
 
-interface MainContentProps {
+interface DashboardTasksProps {
   activeTab: string;
   onTabChange: React.Dispatch<React.SetStateAction<string>>;
   showHeader: boolean;
+ 
 }
 
-function MainContent({ activeTab, onTabChange, showHeader }: MainContentProps) {
+function DashboardTasks({ activeTab, onTabChange, showHeader }: DashboardTasksProps) {
   const [showCreateForm, setShowCreateForm] = React.useState(false);
   const [createFormStatus, setCreateFormStatus] = React.useState<TaskStatus>('backlog');
 
@@ -71,4 +72,4 @@ function MainContent({ activeTab, onTabChange, showHeader }: MainContentProps) {
   );
 }
 
-export default MainContent;
+export default DashboardTasks;

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useAuth} from 'react-oidc-context';
 import LoginGate from './components/auth/LoginGate';
-import DashboardTasks from './components/DashboardTasks';
+import StartDashboardCards from './components/StartDashboardCards';
 import './App.css';
 
 type TabType = 'board' | 'analytics' | 'docs';
@@ -18,8 +18,8 @@ function App() {
     if (auth.error) return <div className="auth-error">Ошибка авторизации: {auth.error.message}</div>;
 
     // Контент для аутентифицированных пользователей
-    const content = (1 == 1) || auth.isAuthenticated ? (
-        <DashboardTasks
+    const content =  auth.isAuthenticated ? (
+        <StartDashboardCards
             activeTab={activeTab}
             onTabChange={setActiveTab}
             showHeader={auth.isAuthenticated}
