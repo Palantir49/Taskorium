@@ -1,14 +1,24 @@
 import WorkspaceCard from "./WorkspaceCard";
 import ProjectCard from "./ProjectCard.tsx";
-import KanbanBoard from "./KanbanBoard.tsx";
+import DashboardTasks from "./DashboardTasks.tsx";
 import { useState } from "react";
 
-export default function StartDashboardCard() {
+interface StartDashboardCardsProps {
+  activeTab: string;
+  onTabChange: React.Dispatch<React.SetStateAction<string>>;
+  showHeader: boolean;
+}
+
+export default function StartDashboardCard({ activeTab, onTabChange, showHeader }: StartDashboardCardsProps) {
 
    const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
     if (selectedProject !== null) {
-    return <KanbanBoard />;
+    return <DashboardTasks 
+      activeTab={activeTab}
+      onTabChange={onTabChange}
+      showHeader={showHeader}
+    />;
   }
 
   return (
