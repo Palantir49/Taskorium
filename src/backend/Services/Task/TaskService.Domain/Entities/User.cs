@@ -29,7 +29,7 @@ public class User
 
     public static User Create(Guid keycloakId, UserName userName, EmailAdress email, string fullName)
     {
-        return new User(Guid.CreateVersion7(), keycloakId, userName, email, DateTimeOffset.UtcNow);
+        return new User(Guid.CreateVersion7(), keycloakId, userName, email, DateTimeOffset.UtcNow, fullName);
     }
 
     public void UpdateEmail(EmailAdress newEmail)
