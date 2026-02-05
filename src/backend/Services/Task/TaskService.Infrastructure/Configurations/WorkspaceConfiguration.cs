@@ -26,8 +26,7 @@ namespace TaskService.Infrastructure.Configurations
             builder.Property(w => w.OwnerId);
             builder.HasOne<User>()
                 .WithMany()
-                .HasForeignKey(w => w.OwnerId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(w => w.OwnerId);
         }
     }
 }

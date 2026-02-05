@@ -116,8 +116,6 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
-
                     b.ToTable("IssueStatus");
                 });
 
@@ -279,15 +277,6 @@ namespace TaskService.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TaskService.Domain.Entities.IssueStatus", b =>
-                {
-                    b.HasOne("TaskService.Domain.Entities.Project", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("TaskService.Domain.Entities.IssueType", b =>
                 {
                     b.HasOne("TaskService.Domain.Entities.Project", null)
@@ -325,8 +314,7 @@ namespace TaskService.Infrastructure.Migrations
                 {
                     b.HasOne("TaskService.Domain.Entities.User", null)
                         .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("OwnerId");
                 });
 #pragma warning restore 612, 618
         }
