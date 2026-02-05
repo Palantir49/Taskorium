@@ -11,6 +11,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private readonly IWorkspaceRepository _workspace;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _users;
+   
     public RepositoryWrapper(
         IIssueRepository issue,
         IIssueStatusRepository issueStatus,
@@ -18,6 +19,7 @@ public class RepositoryWrapper : IRepositoryWrapper
         IProjectRepository project,
         IWorkspaceRepository workspace,
         IUserRepository users,
+       
         IUnitOfWork unitOfWork)
     {
         _issue = issue;
@@ -27,6 +29,7 @@ public class RepositoryWrapper : IRepositoryWrapper
         _workspace = workspace;
         _unitOfWork = unitOfWork;
         _users = users;
+       
     }
     public IUserRepository Users => _users;
 
@@ -37,9 +40,8 @@ public class RepositoryWrapper : IRepositoryWrapper
     public IIssueTypeRepository IssueType => _issueType;
 
     public IProjectRepository Projects => _project;
-
     public IWorkspaceRepository Workspaces => _workspace;
-
+    
     public IUnitOfWork UnitOfWork => _unitOfWork;
 
     public Task<int> SaveChangesAsync(CancellationToken ct = default)
