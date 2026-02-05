@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TaskService.Domain.Repositories;
 using TaskService.Infrastructure.Persistence;
-using TaskService.Infrastructure.Repositories;
 
 namespace TaskService.Infrastructure.Extensions;
 
@@ -15,17 +13,6 @@ public static class ServiceExtensions
         {
             services.AddDbContext<TaskServiceDbContext>(options => options.UseNpgsql(
                 configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddScoped<IIssueRepository, IssueRepository>();
-            services.AddScoped<IIssueStatusRepository, IssueStatusRepository>();
-            services.AddScoped<IIssueTypeRepository, IssueTypeRepository>();
-            services.AddScoped<IIssueRepository, IssueRepository>();
-            services.AddScoped<IProjectRepository, ProjectRepository>();
-            services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
         }
     }
 }

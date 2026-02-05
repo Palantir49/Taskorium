@@ -2,15 +2,15 @@
 using TaskService.Application.Mediator;
 using TaskService.Contracts.IssueType;
 using TaskService.Domain.Entities;
-using TaskService.Domain.Repositories;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.IssueTypes.Handler;
 
-public class IssueTypeCreateHandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueTypeCreateCommand, IssueTypeResponse>
+public class IssueTypeCreateHandler(TaskServiceDbContext context) : IRequestHandler<IssueTypeCreateCommand, IssueTypeResponse>
 {
     public async Task<IssueTypeResponse> Handle(IssueTypeCreateCommand request, CancellationToken cancellationToken = default)
     {
-        Project project = await wrapper.Projects.GetByIdAsync(request.projectId, cancellationToken) ??
+        Project project = await context.Projects.FindAsync(request.projectId, cancellationToken) ??
             throw new NullReferenceException($"Проект с id: {request.projectId} не найден");
 
         IssueType type = IssueType.Create(
@@ -18,8 +18,8 @@ public class IssueTypeCreateHandler(IRepositoryWrapper wrapper) : IRequestHandle
             projectId: request.projectId,
             color: request.color);
 
-        await wrapper.IssueType.AddAsync(type, cancellationToken);
-        await wrapper.SaveChangesAsync(cancellationToken);
+        await context.IssueType.AddAsync(type, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
         return type.ToResponse();
     }
 }

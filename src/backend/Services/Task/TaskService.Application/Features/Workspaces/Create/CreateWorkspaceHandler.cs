@@ -1,11 +1,12 @@
 ﻿using TaskService.Application.Mediator;
 using TaskService.Contracts.Workspace.Response;
 using TaskService.Domain.Entities;
-using TaskService.Domain.Repositories;
+using TaskService.Infrastructure.Persistence;
+
 
 namespace TaskService.Application.Commands.Workspaces.Create;
 
-public class CreateWorkspaceHandler(IRepositoryWrapper wrapper) : IRequestHandler<CreateWorkspaceCommand, CreateWorkspaceResult>
+public class CreateWorkspaceHandler(TaskServiceDbContext context) : IRequestHandler<CreateWorkspaceCommand, CreateWorkspaceResult>
 {
     public async Task<CreateWorkspaceResult> Handle(CreateWorkspaceCommand command, CancellationToken cancellationToken = default)
     {
@@ -13,8 +14,8 @@ public class CreateWorkspaceHandler(IRepositoryWrapper wrapper) : IRequestHandle
             name: command.Name,
             ownerId: command.ownerId
         );
-        await wrapper.Workspaces.AddAsync(workspace, cancellationToken);
-        await wrapper.SaveChangesAsync(cancellationToken);
+        await context.Workspaces.AddAsync(workspace, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return new CreateWorkspaceResult(
             id: workspace.Id,
