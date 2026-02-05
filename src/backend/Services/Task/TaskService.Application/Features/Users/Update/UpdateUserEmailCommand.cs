@@ -6,5 +6,5 @@ using TaskService.Application.Mediator;
 
 namespace TaskService.Application.Features.Users.Update
 {
-    public record UpdateUserEmailCommand(Guid id,string email):ICommand<UpdateUserEmailResult>;
+    public record UpdateUserEmailCommand(Guid id, string email) : ICommand<UpdateUserEmailResult>;
 }

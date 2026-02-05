@@ -6,5 +6,5 @@ using TaskService.Application.Mediator;
 
 namespace TaskService.Application.Features.Users.Delete
 {
-    public record DeleteUserByIdCommand(Guid id):ICommand<DeleteUserByIdResult>;
+    public record DeleteUserByIdCommand(Guid id) : ICommand<DeleteUserByIdResult>;
 }

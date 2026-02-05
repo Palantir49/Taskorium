@@ -11,12 +11,12 @@ public class UpdateWorkspaceNameHandler(IRepositoryWrapper wrapper) : IRequestHa
     public async Task<UpdateWorkspaceNameResult> Handle(UpdateWorkspaceNameCommand request, CancellationToken cancellationToken = default)
     {
         var workspace = await wrapper.Workspaces.GetByIdAsync(request.Id);
-        if(workspace == null)
+        if (workspace == null)
         {
             throw new ArgumentException();
         }
         workspace.UpdateName(request.Name);
         await wrapper.SaveChangesAsync();
-        return new UpdateWorkspaceNameResult(workspace.Id,workspace.Name.Value);
+        return new UpdateWorkspaceNameResult(workspace.Id, workspace.Name.Value);
     }
 }
