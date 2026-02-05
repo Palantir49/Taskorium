@@ -2,22 +2,15 @@
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Workspace.Response;
 using TaskService.Domain.Entities;
-using TaskService.Domain.Repositories;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Commands.Workspaces.Get;
 
-public class GetWorkspaceHandler : IRequestHandler<GetWorkspaceByIdQuery, GetWorkspacebyIdResult>
+public class GetWorkspaceHandler(TaskServiceDbContext context) : IRequestHandler<GetWorkspaceByIdQuery, GetWorkspacebyIdResult>
 {
-    private readonly IRepositoryWrapper _wrapper;
-
-    public GetWorkspaceHandler(IRepositoryWrapper wrapper)
-    {
-        _wrapper = wrapper;
-    }
-
     public async Task<GetWorkspacebyIdResult> Handle(GetWorkspaceByIdQuery query, CancellationToken cancellationToken)
     {
-        var workspace = await _wrapper.Workspaces.GetByIdAsync(query.id, cancellationToken);
+        var workspace = await context.Workspaces.FindAsync(query.id, cancellationToken);
         if (workspace == null)
         {
             throw new NullReferenceException($"Рабочая область с id: {query.id} не найдена");

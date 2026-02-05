@@ -3,24 +3,24 @@ using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
-using TaskService.Domain.Repositories;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Commands.Issues.Handler;
 
-public class IssueCreateHandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueCreateCommand, IssueResponse>
+public class IssueCreateHandler(TaskServiceDbContext context) : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
 
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
     {
-        var project = await wrapper.Projects.GetByIdAsync(request.ProjectId, cancellationToken) ??
+        var project = await context.Projects.FindAsync(request.ProjectId, cancellationToken) ??
             throw new NullReferenceException($"Проект с id: {request.IssueStatusId} не найдена");
 
-        IssueStatus? status = await wrapper.IssueStatus.GetByIdAsync(request.IssueStatusId, cancellationToken) ??
+        IssueStatus? status = await context.IssueStatus.FindAsync(request.IssueStatusId, cancellationToken) ??
             throw new NullReferenceException($"Статус задачи с id: {request.IssueStatusId} не найдена");
 
         //TODO: проверить что можно создавать с этим статусом
 
-        IssueType? type = await wrapper.IssueType.GetByIdAsync(request.IssueTypeId, cancellationToken) ??
+        IssueType? type = await context.IssueType.FindAsync(request.IssueTypeId, cancellationToken) ??
             throw new NullReferenceException($"Тип задачи с id: {request.IssueTypeId} не найдена");
 
         //TODO: проверить что можно создавать с этим типом
@@ -33,8 +33,8 @@ public class IssueCreateHandler(IRepositoryWrapper wrapper) : IRequestHandler<Is
             taskStatusId: request.IssueStatusId,
             dueDate: request.DueDate
         );
-        await wrapper.Issues.AddAsync(issue, cancellationToken);
-        await wrapper.SaveChangesAsync(cancellationToken);
+        await context.Issues.AddAsync(issue, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return issue.ToResponse();
     }

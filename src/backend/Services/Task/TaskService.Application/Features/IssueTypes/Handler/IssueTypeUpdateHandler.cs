@@ -2,22 +2,22 @@
 using TaskService.Application.Mediator;
 using TaskService.Contracts.IssueType;
 using TaskService.Domain.Entities;
-using TaskService.Domain.Repositories;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.IssueTypes.Handler;
 
-public class IssueTypeUpdateHandler(IRepositoryWrapper wrapper) : IRequestHandler<IssueTypeUpdateCommand, IssueTypeResponse>
+public class IssueTypeUpdateHandler(TaskServiceDbContext context) : IRequestHandler<IssueTypeUpdateCommand, IssueTypeResponse>
 {
     public async Task<IssueTypeResponse> Handle(IssueTypeUpdateCommand request, CancellationToken cancellationToken = default)
     {
-        IssueType type = await wrapper.IssueType.GetByIdAsync(request.id, cancellationToken) ??
+        IssueType type = await context.IssueType.FindAsync(request.id, cancellationToken) ??
             throw new NullReferenceException($"Тип задачи с id: {request.id} не найден");
 
         type.UpdateName(request.name);
         type.UpdateColor(request.color);
 
-        await wrapper.IssueType.UpdateAsync(type, cancellationToken);
-        await wrapper.SaveChangesAsync(cancellationToken);
+        context.IssueType.Update(type);
+        await context.SaveChangesAsync(cancellationToken);
         return type.ToResponse();
     }
 }
