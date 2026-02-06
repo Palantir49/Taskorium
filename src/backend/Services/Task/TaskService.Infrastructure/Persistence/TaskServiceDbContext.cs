@@ -8,14 +8,14 @@ public class TaskServiceDbContext : DbContext
 {
     public TaskServiceDbContext(DbContextOptions options) : base(options) { }
     public TaskServiceDbContext() { }
-    internal DbSet<Issue> Issues { get; set; } = null!;
-    internal DbSet<Project> Projects { get; set; } = null!;
-    internal DbSet<Workspace> Workspaces { get; set; } = null!;
-    internal DbSet<User> Users { get; set; } = null!;
-    internal DbSet<Attachment> Attachments { get; set; } = null!;
-    internal DbSet<ProjectMember> ProjectMembers { get; set; } = null!;
-    internal DbSet<IssueStatus> IssueStatus { get; set; } = null!;
-    internal DbSet<IssueType> IssueType { get; set; } = null!;
+    public DbSet<Issue> Issues { get; set; } = null!;
+    public DbSet<Project> Projects { get; set; } = null!;
+    public DbSet<Workspace> Workspaces { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Attachment> Attachments { get; set; } = null!;
+    public DbSet<ProjectMember> ProjectMembers { get; set; } = null!;
+    public DbSet<IssueStatus> IssueStatus { get; set; } = null!;
+    public DbSet<IssueType> IssueType { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
