@@ -19,6 +19,7 @@ namespace TaskService.Api.Controllers;
 /// <summary>
 ///     Контроллер для работы с рабочими пространствами
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class UserController(IDispatcher dispatcher) : Controller

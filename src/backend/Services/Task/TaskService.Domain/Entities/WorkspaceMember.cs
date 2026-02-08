@@ -5,8 +5,9 @@ using TaskService.Domain.Entities.BaseEntity;
 
 namespace TaskService.Domain.Entities
 {
-    public class WorkspaceMembers : BaseEntities
+    public class WorkspaceMember
     {
+        public Guid UserId { get; private set; }
         public Guid WorkspaceId { get; private set; }
     }
 }
