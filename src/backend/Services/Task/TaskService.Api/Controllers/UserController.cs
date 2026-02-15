@@ -6,6 +6,7 @@ using TaskService.Application.Commands.Users;
 using TaskService.Application.Commands.Users.Get;
 using TaskService.Application.Features.Users.Create;
 using TaskService.Application.Features.Users.Delete;
+using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Features.Users.Update;
 using TaskService.Application.Features.Workspaces.Update;
 using TaskService.Application.Mediator;
@@ -45,7 +46,27 @@ public class UserController(IDispatcher dispatcher) : Controller
 
         return Ok(userResponse);
     }
+    /// <summary>
+    ///     Получить список пользователей
+    /// </summary>
+    /// ///
+    /// <param name="query">Объект пагинации</param>
+    [HttpGet("GetAllUsers")]
+    [ActionName("GetAllUsersAsync")]
+    [ProducesResponseType(typeof(GetAllUsersResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<GetAllUsersResult>> GetAllUsersAsync([FromQuery] GetAllUsersQuery query)
+    {
 
+        var response = await dispatcher.SendAsync(query);
+        if (response == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(response);
+    }
     /// <summary>
     ///     Создать нового пользователя
     /// </summary>
