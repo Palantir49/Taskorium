@@ -1,8 +1,8 @@
-﻿namespace TaskService.Infrastructure.Authorization.Actions;
+﻿namespace TaskService.Api.Authorization.Actions;
 
 /// <summary>
 /// </summary>
-public enum WorkSpaceAction
+public enum IssueAction
 {
     /// <summary>
     /// </summary>
@@ -18,13 +18,5 @@ public enum WorkSpaceAction
 
     /// <summary>
     /// </summary>
-    Delete,
-
-    /// <summary>
-    /// </summary>
-    AddUser,
-
-    /// <summary>
-    /// </summary>
-    DeleteUser
+    Delete
 }
