@@ -15,9 +15,7 @@ builder.Services.AddServiceDefaults(builder.Configuration);
 builder.Services.AddScoped<RequestObservabilityMiddleware>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer((document, context, cancellationToken) =>
@@ -34,8 +32,7 @@ builder.Services.AddOpenApi(options =>
 
         document.Info.License = new OpenApiLicense
         {
-            Name = "MIT License",
-            Url = new Uri("https://opensource.org/licenses/MIT")
+            Name = "MIT License", Url = new Uri("https://opensource.org/licenses/MIT")
         };
         return Task.CompletedTask;
     });
@@ -55,7 +52,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.ConfigureJwtAuthentication(builder.Configuration);
-builder.Services.AddAuthorization();
+builder.Services.ConfigureAuthorization();
 
 builder.Services.AddControllers();
 //configure infrastructure layer
