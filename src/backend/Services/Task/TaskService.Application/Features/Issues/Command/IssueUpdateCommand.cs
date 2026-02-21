@@ -6,7 +6,7 @@ namespace TaskService.Application.Features.Issues.Command;
 public record class IssueUpdateCommand(
     Guid id,
     string Name,
-    Guid IssueTypeId,
+    Guid IssueTagId,
     Guid IssueStatusId,
     string? Description = null,
     DateTimeOffset? DueDate = null) : ICommand<IssueResponse>;

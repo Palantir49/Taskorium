@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Features.Projects.Command;
 using TaskService.Application.Mediator;
+using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Projects.Handler;
@@ -27,12 +28,12 @@ public class ProjectDeleteByIdHandler(TaskServiceDbContext context, HybridCache 
             .Where(x => x.ProjectId == project.Id)
             .ToListAsync(cancellationToken);
 
-        var types = await context.IssueType
+        var tags = await context.IssueTag
             .Where(x => x.ProjectId == project.Id)
             .ToListAsync(cancellationToken);
 
         context.IssueStatus.RemoveRange(statuses);
-        context.IssueType.RemoveRange(types);
+        context.IssueTag.RemoveRange(tags);
         context.Projects.Remove(project);
 
         var deletedCount = await context.SaveChangesAsync(cancellationToken);

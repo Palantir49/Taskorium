@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Projects;
+using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Features.Issues.Command;
+using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Features.IssueStatuses.Command;
 using TaskService.Application.Features.IssueTypes.Command;
 using TaskService.Application.Features.Projects.Command;
-using TaskService.Application.Features.WorkspaceMembers.AddUser;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.IssueStatus;
@@ -47,8 +48,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<ProjectResponse>> CreateProjectAsync(
-        [FromBody] CreateProjectRequest createProjectRequest)
+    public async Task<ActionResult<ProjectResponse>> CreateProjectAsync([FromBody] CreateProjectRequest createProjectRequest)
     {
         var createProjectCommand = createProjectRequest.ToCommand();
         var response = await dispatcher.SendAsync(createProjectCommand);
@@ -188,7 +188,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// <remarks>
     ///     Пример запроса:
-    ///     PUT /api/v1/Projects/guid/IssueTypes
+    ///     PUT /api/v1/Projects/guid/IssueTags
     ///     {
     ///     }
     /// </remarks>
@@ -198,15 +198,14 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
     [Authorize(Policy = "CanViewProject")]
-    [HttpGet("{id:guid}/IssueTypes")]
-    [ProducesResponseType(typeof(IEnumerable<IssueTypeResponse>), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}/IssueTags")]
+    [ProducesResponseType(typeof(IEnumerable<IssueTagResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssueTypesByProjectidAsync(Guid id)
-    {
-        //FAQ: а это нормальный возвращаемый тип?
-        var query = new IssueTypeGetByProjectIdQuery(id);
+    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssueTagsByProjectidAsync(Guid id)
+    {//FAQ: а это нормальный возвращаемый тип?
+        var query = new IssueTagGetByProjectIdQuery(id);
         var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }

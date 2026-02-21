@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Commands.Issues.Command;
+﻿using TaskService.Application.Commands.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
@@ -11,6 +10,7 @@ namespace TaskService.Application.Features.Issues.Handler;
 public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
+
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
     {
         _ = await context.Projects.FindAsync([request.ProjectId], cancellationToken) ??
@@ -21,18 +21,18 @@ public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
 
         //TODO: проверить что можно создавать с этим статусом
 
-        var type = await context.IssueType.FindAsync([request.IssueTypeId], cancellationToken) ??
-                   throw new KeyNotFoundException($"Тип задачи с id: {request.IssueTypeId} не найдена");
+        var tag = await context.IssueTag.FindAsync([request.IssueTagId], cancellationToken) ??
+                   throw new KeyNotFoundException($"Тип задачи с id: {request.IssueTagId} не найдена");
 
         //TODO: проверить что можно создавать с этим типом
 
         var issue = Issue.Create(
-            request.Name,
-            request.Description,
-            request.ProjectId,
-            request.IssueTypeId,
-            request.IssueStatusId,
-            request.DueDate
+            name: request.Name,
+            description: request.Description,
+            projectId: request.ProjectId,
+            taskTagId: request.IssueTagId,
+            taskStatusId: request.IssueStatusId,
+            dueDate: request.DueDate
         );
         await context.Issues.AddAsync(issue, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);

@@ -5,9 +5,9 @@ using TaskService.Domain.ValueObjects;
 
 namespace TaskService.Infrastructure.Configurations;
 
-internal class IssueTypeConfiguration : IEntityTypeConfiguration<IssueType>
+internal class IssueTagConfiguration : IEntityTypeConfiguration<IssueTag>
 {
-    public void Configure(EntityTypeBuilder<IssueType> builder)
+    public void Configure(EntityTypeBuilder<IssueTag> builder)
     {
         builder.HasKey(e => e.Id);
         builder.Property(t => t.Id).ValueGeneratedNever();

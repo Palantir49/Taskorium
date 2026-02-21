@@ -6,7 +6,7 @@ namespace TaskService.Domain.Entities
     public class Issue : BaseEntities
     {
         public Guid ProjectId { get; }
-        public Guid IssueTypeId { get; private set; }
+        public Guid IssueTagId { get; private set; }
         public Guid IssueStatusId { get; private set; }
         public string? Description { get; private set; }
         public DateTimeOffset? ResolvedDate { get; private set; }
@@ -22,18 +22,18 @@ namespace TaskService.Domain.Entities
 
         protected Issue() { }
 
-        private Issue(Guid id, string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId, DateTimeOffset? dueDate) : base(id, name)
+        private Issue(Guid id, string name, string? description, Guid projectId, Guid taskTagId, Guid taskStatusId, DateTimeOffset? dueDate) : base(id, name)
         {
             ProjectId = projectId;
-            IssueTypeId = taskTypeId;
+            IssueTagId = taskTagId;
             IssueStatusId = taskStatusId;
             Description = description?.Trim();
             DueDate = dueDate;
         }
 
-        public static Issue Create(string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId, DateTimeOffset? dueDate)
+        public static Issue Create(string name, string? description, Guid projectId, Guid taskTagId, Guid taskStatusId, DateTimeOffset? dueDate)
         {
-            return new Issue(id: Guid.CreateVersion7(), name: name, description: description, projectId: projectId, taskTypeId: taskTypeId, taskStatusId: taskStatusId,
+            return new Issue(id: Guid.CreateVersion7(), name: name, description: description, projectId: projectId, taskTagId: taskTagId, taskStatusId: taskStatusId,
                 dueDate: dueDate);
         }
 
@@ -66,9 +66,9 @@ namespace TaskService.Domain.Entities
                 ResolvedDate = null;
         }
 
-        public void UpdateType(Guid newTaskTypeId)
+        public void UpdateTag(Guid newTaskTagId)
         {
-            IssueTypeId = newTaskTypeId;
+            IssueTagId = newTaskTagId;
             UpdatedDate = DateTimeOffset.UtcNow;
         }
     }
