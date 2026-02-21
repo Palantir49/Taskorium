@@ -32,6 +32,7 @@ public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
             projectId: request.ProjectId,
             taskTagId: request.IssueTagId,
             taskStatusId: request.IssueStatusId,
+            numberIssueType: request.numberIssueType,
             dueDate: request.DueDate
         );
         await context.Issues.AddAsync(issue, cancellationToken);

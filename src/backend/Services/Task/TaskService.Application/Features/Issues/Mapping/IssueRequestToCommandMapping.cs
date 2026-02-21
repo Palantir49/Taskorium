@@ -15,6 +15,7 @@ namespace TaskService.Application.Features.Issues.Mapping
                 IssueTagId: request.IssueTagId,
                 IssueStatusId: request.IssueStatusId,
                 Description: request.Description,
+                numberIssueType: request.numberIssueType,
                 DueDate: request.DueDate
                 );
         }
@@ -27,6 +28,7 @@ namespace TaskService.Application.Features.Issues.Mapping
                 IssueTagId: request.IssueTagId,
                 IssueStatusId: request.IssueStatusId,
                 Description: request.Description,
+                numberIssueType: request.numberIssueType,
                 DueDate: request.DueDate
                 );
         }

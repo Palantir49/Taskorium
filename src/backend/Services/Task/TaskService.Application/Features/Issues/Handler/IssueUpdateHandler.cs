@@ -28,11 +28,10 @@ public class IssueUpdateHandler(TaskServiceDbContext context, HybridCache cache)
             var tag = await context.IssueTag.FindAsync([request.IssueTagId], cancellationToken) ??
                 throw new NullReferenceException($"Тип задачи с id: {request.IssueTagId} не найдена");
 
-            //TODO: проверить что можно менять на этот тип
-
             issue.UpdateName(request.Name);
             issue.UpdateDescription(request.Description);
-            issue.UpdateTag(tag.Id);
+            issue.UpdateTag(tag);
+            issue.UpdateType(request.numberIssueType);
             issue.UpdateStatus(status);
             issue.UpdateDueDate(request.DueDate);
 

@@ -8,5 +8,6 @@ public record class IssueUpdateCommand(
     string Name,
     Guid IssueTagId,
     Guid IssueStatusId,
+    int numberIssueType,
     string? Description = null,
     DateTimeOffset? DueDate = null) : ICommand<IssueResponse>;
