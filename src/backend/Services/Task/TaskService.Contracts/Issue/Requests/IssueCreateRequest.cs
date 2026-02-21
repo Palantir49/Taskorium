@@ -5,5 +5,6 @@ public record class IssueCreateRequest(
     Guid ProjectId,
     Guid IssueTagId,
     Guid IssueStatusId,
+    int numberIssueType,
     string? Description = null,
     DateTimeOffset? DueDate = null);
