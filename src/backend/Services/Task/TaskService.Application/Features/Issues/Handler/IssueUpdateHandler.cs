@@ -23,14 +23,14 @@ namespace TaskService.Application.Features.Issues.Handler
 
             //TODO: проверить что можно менять на этот статус
 
-            IssueType? type = await context.IssueType.FindAsync(request.IssueTypeId, cancellationToken) ??
-                throw new NullReferenceException($"Тип задачи с id: {request.IssueTypeId} не найдена");
+            IssueTag? tag = await context.IssueTag.FindAsync(request.IssueTagId, cancellationToken) ??
+                throw new NullReferenceException($"Тип задачи с id: {request.IssueTagId} не найдена");
 
             //TODO: проверить что можно менять на этот тип
 
             issue.UpdateName(request.Name);
             issue.UpdateDescription(request.Description);
-            issue.UpdateType(type.Id);
+            issue.UpdateTag(tag.Id);
             issue.UpdateStatus(status);
             issue.UpdateDueDate(request.DueDate);
 

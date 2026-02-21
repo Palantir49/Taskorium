@@ -20,8 +20,8 @@ public class IssueCreateHandler(TaskServiceDbContext context) : IRequestHandler<
 
         //TODO: проверить что можно создавать с этим статусом
 
-        IssueType? type = await context.IssueType.FindAsync(request.IssueTypeId, cancellationToken) ??
-            throw new NullReferenceException($"Тип задачи с id: {request.IssueTypeId} не найдена");
+        IssueTag? tag = await context.IssueTag.FindAsync(request.IssueTagId, cancellationToken) ??
+            throw new NullReferenceException($"Тип задачи с id: {request.IssueTagId} не найдена");
 
         //TODO: проверить что можно создавать с этим типом
 
@@ -29,7 +29,7 @@ public class IssueCreateHandler(TaskServiceDbContext context) : IRequestHandler<
             name: request.Name,
             description: request.Description,
             projectId: request.ProjectId,
-            taskTypeId: request.IssueTypeId,
+            taskTagId: request.IssueTagId,
             taskStatusId: request.IssueStatusId,
             dueDate: request.DueDate
         );

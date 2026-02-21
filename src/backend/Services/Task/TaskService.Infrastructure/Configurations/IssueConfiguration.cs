@@ -27,7 +27,7 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
 
         builder.Property(t => t.ProjectId).IsRequired();
         builder.Property(t => t.IssueStatusId).IsRequired();
-        builder.Property(t => t.IssueTypeId).IsRequired();
+        builder.Property(t => t.IssueTagId).IsRequired();
 
         builder.HasOne<Project>()
               .WithMany()
