@@ -35,7 +35,7 @@ public class AddWorkspaceMemberHandler(TaskServiceDbContext context) : IRequestH
 
         await context.WorkspaceMembers.AddAsync(workspaceMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return new AddWorkspaceMemberResult(WorkspaceId: existWorkspace.Id,
                                  UserId: existUser.Id,
                                  RoleDto: new RoleDto(workspaceMember.Role.ToString()));

@@ -7,6 +7,7 @@ using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Features.IssueStatuses.Command;
 using TaskService.Application.Features.IssueTypes.Command;
 using TaskService.Application.Features.Projects.Command;
+using TaskService.Application.Features.WorkspaceMembers.AddUser;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.IssueStatus;
@@ -47,7 +48,23 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
         ProjectResponse response = await dispatcher.SendAsync(createProjectCommand);
         return CreatedAtAction(nameof(GetProjectByIdAsync), new { id = response.Id }, response);
     }
+    /// <summary>
+    ///     Добавить пользователя в проект
+    /// </summary>
+    /// <param name="command">Данные о проекте, пользователе и его роли</param>
+    /// <returns></returns>
+    /// <response code="201">Пользователь успешно добавлен в проект</response>
+    /// <response code="400">Некорректный запрос</response>
+    [HttpPost("AddProjectMember")]
+    [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ProjectResponse>> AddUserToProjectAsync([FromBody] AddProjectMemberCommand command)
+    {
 
+        var response = await dispatcher.SendAsync(command);
+        return Ok(response);
+    }
     /// <summary>
     ///     Получить данные проекта по Id
     /// </summary>
