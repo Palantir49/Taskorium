@@ -18,12 +18,12 @@ namespace TaskService.Application.Features.Users.Get
                 .Include(x => x.WorkspaceMembers)
                 .Include(x => x.ProjectMembers)
                 .FirstOrDefaultAsync(x => x.KeycloakId == query.keycloakId, cancellationToken);
-            
+
             if (existUser is null)
             {
                 throw new ArgumentNullException("Пользователь с таким keycloak id не существует", nameof(query.keycloakId));
             }
-            
+
             var userWorkspaces = existUser.WorkspaceMembers
                 .Select(x => new WorkSpaceMemberDto(x.WorkspaceId,
                                                     x.UserId,
@@ -35,7 +35,7 @@ namespace TaskService.Application.Features.Users.Get
                                                     x.UserId,
                                                     new RoleDto(x.Role.ToString())))
                 .ToList();
-            
+
             return new GetUserByKeycloakIdResult(existUser.Id, existUser.KeycloakId, userProjects, userWorkspaces);
         }
     }

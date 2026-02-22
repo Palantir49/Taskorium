@@ -9,7 +9,7 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
     public void Configure(EntityTypeBuilder<ProjectMember> builder)
     {
         builder.HasKey(t => new { t.ProjectId, t.UserId });
-       
+
         builder.Property(t => t.ProjectId)
             .ValueGeneratedNever()
             .IsRequired(); ;
@@ -20,7 +20,7 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
 
         builder.Property(t => t.Role)
             .HasConversion<string>();
-        
+
         builder.Property(t => t.JoinedAt)
             .IsRequired(); ;
 

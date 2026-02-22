@@ -14,7 +14,7 @@ namespace TaskService.Domain.Entities
         public DateTimeOffset JoinedAt { get; private set; }
         public WorkspaceMember()
         {
-                
+
         }
         private WorkspaceMember(Guid workspaceId, Guid userId, Roles role, DateTimeOffset joinedAt)
         {

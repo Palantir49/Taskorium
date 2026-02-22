@@ -36,7 +36,7 @@ public class AddProjectMemberHandler(TaskServiceDbContext context) : IRequestHan
 
         await context.ProjectMembers.AddAsync(projectMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return new AddProjectMemberResult(ProjectId: existProject.Id,
                                  UserId: existUser.Id,
                                  RoleDto: new RoleDto(projectMember.Role.ToString()));
