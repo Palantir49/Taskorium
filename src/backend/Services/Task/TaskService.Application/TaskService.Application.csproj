@@ -23,4 +23,8 @@
     <PackageReference Include="Scrutor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\ProjectMembers\GetAllUsers\" />
+  </ItemGroup>
+
 </Project>

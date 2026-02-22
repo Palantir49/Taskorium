@@ -2,4 +2,4 @@
 
 namespace TaskService.Application.Features.Users.Get;
 
-public record GetAllUsersQuery(int skip, int take) : IQuery<GetAllUsersResult>;
+public record GetUsersPageQuery(int skip, int take) : IQuery<GetUsersPageResult>;

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskService.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using TaskService.Infrastructure.Persistence;
 namespace TaskService.Infrastructure.Migrations
 {
     [DbContext(typeof(TaskServiceDbContext))]
-    partial class TaskServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260218162847_AddWorkspaceMembers")]
+    partial class AddWorkspaceMembers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -257,6 +260,9 @@ namespace TaskService.Infrastructure.Migrations
 
             modelBuilder.Entity("TaskService.Domain.Entities.WorkspaceMember", b =>
                 {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("WorkspaceId")
                         .HasColumnType("uuid");
 
@@ -267,12 +273,9 @@ namespace TaskService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.HasKey("UserId", "WorkspaceId");
 
-                    b.HasKey("WorkspaceId");
-
-                    b.HasIndex("UserId");
+                    b.HasIndex("WorkspaceId");
 
                     b.ToTable("WorkspaceMembers");
                 });
@@ -331,13 +334,13 @@ namespace TaskService.Infrastructure.Migrations
             modelBuilder.Entity("TaskService.Domain.Entities.ProjectMember", b =>
                 {
                     b.HasOne("TaskService.Domain.Entities.Project", null)
-                        .WithMany("ProjectMembers")
+                        .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TaskService.Domain.Entities.User", null)
-                        .WithMany("ProjectMembers")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -365,15 +368,8 @@ namespace TaskService.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
-                {
-                    b.Navigation("ProjectMembers");
-                });
-
             modelBuilder.Entity("TaskService.Domain.Entities.User", b =>
                 {
-                    b.Navigation("ProjectMembers");
-
                     b.Navigation("WorkspaceMembers");
                 });
 

@@ -9,21 +9,29 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
     public void Configure(EntityTypeBuilder<ProjectMember> builder)
     {
         builder.HasKey(t => new { t.ProjectId, t.UserId });
-        builder.Property(t => t.ProjectId).ValueGeneratedNever();
+       
+        builder.Property(t => t.ProjectId)
+            .ValueGeneratedNever()
+            .IsRequired(); ;
 
-        builder.Property(t => t.UserId).ValueGeneratedNever();
+        builder.Property(t => t.UserId)
+            .ValueGeneratedNever()
+            .IsRequired(); ;
 
-        builder.Property(t => t.Role);
-        builder.Property(t => t.JoinedAt);
+        builder.Property(t => t.Role)
+            .HasConversion<string>();
+        
+        builder.Property(t => t.JoinedAt)
+            .IsRequired(); ;
 
         builder.HasOne<Project>()
-            .WithMany()
+            .WithMany(x => x.ProjectMembers)
             .HasForeignKey(t => t.ProjectId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<User>()
-            .WithMany()
+            .WithMany(x => x.ProjectMembers)
             .HasForeignKey(t => t.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);

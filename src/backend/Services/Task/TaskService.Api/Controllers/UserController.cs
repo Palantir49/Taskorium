@@ -47,16 +47,37 @@ public class UserController(IDispatcher dispatcher) : Controller
         return Ok(userResponse);
     }
     /// <summary>
+    ///     Получить пользователя по keycloak id
+    /// </summary>
+    /// ///
+    /// <param name="id">Id пользователя</param>
+    [HttpGet("GetUserByKeycloakId")]
+    [ActionName("GetUserByKeycloakIdAsync")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<GetUserByIdResult>> GetUserByKeycloakIdAsync(Guid id)
+    {
+
+        var userResponse = await dispatcher.SendAsync(new GetUserByKeycloakIdQuery(id));
+        if (userResponse == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(userResponse);
+    }
+    /// <summary>
     ///     Получить список пользователей
     /// </summary>
     /// ///
     /// <param name="query">Объект пагинации</param>
     [HttpGet("GetAllUsers")]
     [ActionName("GetAllUsersAsync")]
-    [ProducesResponseType(typeof(GetAllUsersResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetUsersPageResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<GetAllUsersResult>> GetAllUsersAsync([FromQuery] GetAllUsersQuery query)
+    public async Task<ActionResult<GetUsersPageResult>> GetAllUsersAsync([FromQuery] GetUsersPageQuery query)
     {
 
         var response = await dispatcher.SendAsync(query);

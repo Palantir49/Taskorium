@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Workspaces;
 using TaskService.Application.Commands.Workspaces.Create;
 using TaskService.Application.Commands.Workspaces.Get;
+using TaskService.Application.Features.Users.Get;
+using TaskService.Application.Features.WorkspaceMembers.AddUser;
 using TaskService.Application.Features.Workspaces.Delete;
 using TaskService.Application.Features.Workspaces.Update;
 using TaskService.Application.Mediator;
@@ -52,7 +54,28 @@ public class WorkSpacesController(IDispatcher dispatcher) : Controller
 
         return Ok(response);
     }
-
+    /// <summary>
+    ///     Получить список рабочих области
+    /// </summary>
+    /// ///
+    /// <param name="query">Объект пагинации</param>
+    /// <response code="200">Список рабочих областей успешно получен</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найдена рабочая область по заданному id</response>
+    [HttpGet("GetWorkspacePage")]
+    [ActionName("GetWorkspaceByIdAsync")]
+    [ProducesResponseType(typeof(GetWorkspacebyIdResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<GetWorkspacePageResult>> GetWorkspaceByIdAsync([FromQuery] GetWorkspacePageQuery query)
+    {
+        var response = await dispatcher.SendAsync(query);
+        if (response == null)
+        {
+            return NotFound();
+        }
+        return Ok(response);
+    }
     /// <summary>
     ///     Создать новою рабочую область
     /// </summary>
@@ -76,7 +99,29 @@ public class WorkSpacesController(IDispatcher dispatcher) : Controller
         var response = await dispatcher.SendAsync(command);
         return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { id = response.id }, response);
     }
-
+    /// <summary>
+    ///     Добавить пользователя в рабочую область
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     POST /api/v1/Workspaces
+    ///     {
+    ///     }
+    /// </remarks>
+    /// <param name="command">Данные о новой задаче</param>
+    /// <returns></returns>
+    /// <response code="201">Новая задача успешно создана</response>
+    /// <response code="400">Некорректный запрос</response>
+    [HttpPost("adduser")]
+    [ProducesResponseType(typeof(AddWorkspaceMemberResult), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<WorkspaceResponse>> AddUserToWorkspaceAsync(
+        [FromBody] AddWorkspaceMemberCommand command)
+    {
+        var response = await dispatcher.SendAsync(command);
+        return Ok(response);
+    }
     /// <summary>
     ///     Обновление названия рабочей области
     /// </summary>

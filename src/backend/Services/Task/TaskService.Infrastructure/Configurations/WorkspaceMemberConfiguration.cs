@@ -10,6 +10,23 @@ public class WorkspaceMemberConfiguration : IEntityTypeConfiguration<WorkspaceMe
     public void Configure(EntityTypeBuilder<WorkspaceMember> builder)
     {
         builder.HasKey(x => x.UserId);
+
         builder.HasKey(x => x.WorkspaceId);
+
+        builder.Property(x => x.JoinedAt).IsRequired();
+
+        builder.HasOne<User>()
+            .WithMany(x=>x.WorkspaceMembers)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne<Workspace>()
+            .WithMany(x=>x.WorkspaceMembers)
+            .HasForeignKey(x => x.WorkspaceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(x => x.Role)
+            .IsRequired()
+            .HasConversion<string>();
     }
 }
