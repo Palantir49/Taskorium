@@ -1,9 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi;
+﻿using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Taskorium.ServiceDefaults;
 using TaskService.Api.Extensions;
@@ -39,8 +34,7 @@ builder.Services.AddOpenApi(options =>
 
         document.Info.License = new OpenApiLicense
         {
-            Name = "MIT License",
-            Url = new Uri("https://opensource.org/licenses/MIT")
+            Name = "MIT License", Url = new Uri("https://opensource.org/licenses/MIT")
         };
         return Task.CompletedTask;
     });
@@ -53,7 +47,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5000")
+        policy.WithOrigins("http://localhost*")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
