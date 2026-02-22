@@ -11,7 +11,7 @@ public class Workspace : BaseEntities
         OwnerId = ownerId;
     }
     public Guid? OwnerId { get; private set; }
-
+    public List<WorkspaceMember> WorkspaceMembers { get; private set; } = [];
     public static Workspace Create(string name, Guid ownerId)
     {
         return new Workspace(Guid.CreateVersion7(), name, ownerId);

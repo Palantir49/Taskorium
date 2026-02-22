@@ -5,7 +5,7 @@ using TaskService.Domain.ValueObjects;
 
 namespace TaskService.Infrastructure.Configurations;
 
-internal class UserConfiguration : IEntityTypeConfiguration<User>
+public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {

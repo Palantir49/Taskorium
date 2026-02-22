@@ -11,6 +11,7 @@ public class TaskServiceDbContext : DbContext
     public DbSet<Issue> Issues { get; set; } = null!;
     public DbSet<Project> Projects { get; set; } = null!;
     public DbSet<Workspace> Workspaces { get; set; } = null!;
+    public DbSet<WorkspaceMember> WorkspaceMembers { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Attachment> Attachments { get; set; } = null!;
     public DbSet<ProjectMember> ProjectMembers { get; set; } = null!;

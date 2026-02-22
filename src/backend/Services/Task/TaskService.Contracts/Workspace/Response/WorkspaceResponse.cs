@@ -4,5 +4,8 @@ using System.Text;
 
 namespace TaskService.Contracts.Workspace.Response
 {
-    public record class WorkspaceResponse(Guid id, string name, DateTimeOffset createdDate, Guid? ownerId);
+    public record class WorkspaceResponse(Guid id,
+                                          string name,
+                                          DateTimeOffset createdDate,
+                                          Guid? ownerId);
 }
