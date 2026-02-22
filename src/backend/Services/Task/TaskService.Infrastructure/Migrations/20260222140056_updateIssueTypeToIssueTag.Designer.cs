@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskService.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using TaskService.Infrastructure.Persistence;
 namespace TaskService.Infrastructure.Migrations
 {
     [DbContext(typeof(TaskServiceDbContext))]
-    partial class TaskServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260222140056_updateIssueTypeToIssueTag")]
+    partial class updateIssueTypeToIssueTag
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,8 +68,11 @@ namespace TaskService.Infrastructure.Migrations
                     b.Property<Guid>("IssueStatusId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("IssueTypeId")
+                    b.Property<Guid>("IssueTagId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("IssueType")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -116,10 +122,12 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProjectId");
+
                     b.ToTable("IssueStatus");
                 });
 
-            modelBuilder.Entity("TaskService.Domain.Entities.IssueType", b =>
+            modelBuilder.Entity("TaskService.Domain.Entities.IssueTag", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -142,7 +150,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("IssueType");
+                    b.ToTable("IssueTag");
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
@@ -253,28 +261,6 @@ namespace TaskService.Infrastructure.Migrations
                     b.ToTable("Workspaces");
                 });
 
-            modelBuilder.Entity("TaskService.Domain.Entities.WorkspaceMember", b =>
-                {
-                    b.Property<Guid>("WorkspaceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("JoinedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("WorkspaceId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("WorkspaceMembers");
-                });
-
             modelBuilder.Entity("TaskService.Domain.Entities.Attachment", b =>
                 {
                     b.HasOne("TaskService.Domain.Entities.Issue", null)
@@ -309,13 +295,13 @@ namespace TaskService.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.IssueTag", b =>
-            {
-                b.HasOne("TaskService.Domain.Entities.Project", null)
-                    .WithMany()
-                    .HasForeignKey("ProjectId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
-            });
+                {
+                    b.HasOne("TaskService.Domain.Entities.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
                 {
@@ -329,7 +315,7 @@ namespace TaskService.Infrastructure.Migrations
             modelBuilder.Entity("TaskService.Domain.Entities.ProjectMember", b =>
                 {
                     b.HasOne("TaskService.Domain.Entities.Project", null)
-                        .WithMany("ProjectMembers")
+                        .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -346,38 +332,6 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasOne("TaskService.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("OwnerId");
-                });
-
-            modelBuilder.Entity("TaskService.Domain.Entities.WorkspaceMember", b =>
-                {
-                    b.HasOne("TaskService.Domain.Entities.User", null)
-                        .WithMany("WorkspaceMembers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TaskService.Domain.Entities.Workspace", null)
-                        .WithMany("WorkspaceMembers")
-                        .HasForeignKey("WorkspaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
-                {
-                    b.Navigation("ProjectMembers");
-                });
-
-            modelBuilder.Entity("TaskService.Domain.Entities.User", b =>
-                {
-                    b.Navigation("ProjectMembers");
-
-                    b.Navigation("WorkspaceMembers");
-                });
-
-            modelBuilder.Entity("TaskService.Domain.Entities.Workspace", b =>
-                {
-                    b.Navigation("WorkspaceMembers");
                 });
 #pragma warning restore 612, 618
         }
