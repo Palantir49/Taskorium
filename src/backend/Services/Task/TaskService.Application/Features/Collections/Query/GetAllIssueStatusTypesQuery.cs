@@ -1,3 +1,6 @@
-﻿namespace TaskService.Application.Features.Collections.Query;
+﻿using TaskService.Application.Mediator;
+using TaskService.Contracts.Collections;
 
-public record class GetAllIssueStatusTypesQuery();
+namespace TaskService.Application.Features.Collections.Query;
+
+public record class GetAllIssueStatusTypesQuery() : IQuery<IEnumerable<IssueStatusTypeResponse>>;

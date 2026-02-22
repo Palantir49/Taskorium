@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Features.Collections.Query;
-using TaskService.Application.Features.IssueStatuses.Command;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Collections;
 using TaskService.Contracts.IssueStatus;
@@ -33,19 +31,19 @@ namespace TaskService.Api.Controllers
         }
 
         /// <summary>
-        ///     Получить список типов задач
+        ///     Получить список типов статусов
         /// </summary>
         /// ///
         /// <remarks>
         ///     Пример запроса:
-        ///     GET /api/v1/Collections/IssueStatus
+        ///     GET /api/v1/Collections/IssueStatusType
         /// </remarks>
         [HttpGet("IssueStatusType")]
         [ProducesResponseType(typeof(IssueStatusResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult<IssueStatusResponse>> GetIssueStatusTypeAsync()
         {
-            GetAllIsssueTypesQuery query = new();
-            IEnumerable<IssueTypeResponse> response = await dispatcher.SendAsync(query);
+            GetAllIssueStatusTypesQuery query = new();
+            IEnumerable<IssueStatusTypeResponse> response = await dispatcher.SendAsync(query);
             return Ok(response);
         }
     }
