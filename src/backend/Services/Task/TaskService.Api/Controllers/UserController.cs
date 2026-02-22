@@ -1,19 +1,14 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Commands.Users;
 using TaskService.Application.Commands.Users.Get;
+using TaskService.Application.Features.Users;
 using TaskService.Application.Features.Users.Create;
 using TaskService.Application.Features.Users.Delete;
 using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Features.Users.Update;
-using TaskService.Application.Features.Workspaces.Update;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.User.Requests;
 using TaskService.Contracts.User.Responses;
-using TaskService.Contracts.Workspace.Response;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TaskService.Api.Controllers;
 
@@ -37,7 +32,6 @@ public class UserController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<GetUserByIdResult>> GetUserByIdAsync(Guid id)
     {
-
         var userResponse = await dispatcher.SendAsync(new GetUserByIdQuery(id));
         if (userResponse == null)
         {
@@ -46,6 +40,7 @@ public class UserController(IDispatcher dispatcher) : Controller
 
         return Ok(userResponse);
     }
+
     /// <summary>
     ///     Получить пользователя по keycloak id
     /// </summary>
@@ -58,7 +53,6 @@ public class UserController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<GetUserByIdResult>> GetUserByKeycloakIdAsync(Guid id)
     {
-
         var userResponse = await dispatcher.SendAsync(new GetUserByKeycloakIdQuery(id));
         if (userResponse == null)
         {
@@ -67,6 +61,7 @@ public class UserController(IDispatcher dispatcher) : Controller
 
         return Ok(userResponse);
     }
+
     /// <summary>
     ///     Получить список пользователей
     /// </summary>
@@ -79,7 +74,6 @@ public class UserController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<GetUsersPageResult>> GetAllUsersAsync([FromQuery] GetUsersPageQuery query)
     {
-
         var response = await dispatcher.SendAsync(query);
         if (response == null)
         {
@@ -88,10 +82,11 @@ public class UserController(IDispatcher dispatcher) : Controller
 
         return Ok(response);
     }
+
     /// <summary>
     ///     Создать нового пользователя
     /// </summary>
-    /// <param name="command">Данные нового пользователя</param>
+    /// <param name="request">Данные нового пользователя</param>
     /// <returns></returns>
     /// <response code="201">Новый пользователь успешно создан</response>
     /// <response code="400">Некорректный запрос</response>
@@ -100,9 +95,10 @@ public class UserController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<CreateUserResult>> CreateUserAsync(
-        [FromBody] CreateUserCommand command)
+        [FromBody] CreateUserRequest request)
     {
-        var response = await dispatcher.SendAsync(command);
+        var userCommand = request.ToCommand();
+        var response = await dispatcher.SendAsync(userCommand);
         return CreatedAtAction(nameof(GetUserByIdAsync), new { response.id }, response);
     }
 
