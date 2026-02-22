@@ -36,11 +36,11 @@ namespace TaskService.Domain.Entities
         public static Issue Create(string name, string? description, Guid projectId, Guid taskTagId, Guid taskStatusId, int numberIssueType, DateTimeOffset? dueDate)
         {
             return new Issue(
-                id: Guid.CreateVersion7(), 
-                name: name, 
-                description: description, 
-                projectId: projectId, 
-                taskTagId: taskTagId, 
+                id: Guid.CreateVersion7(),
+                name: name,
+                description: description,
+                projectId: projectId,
+                taskTagId: taskTagId,
                 taskStatusId: taskStatusId,
                 numberIssueType: numberIssueType,
                 dueDate: dueDate);
