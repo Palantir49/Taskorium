@@ -17,7 +17,8 @@ namespace TaskService.Infrastructure.Configurations
                 value => new BaseEntityName(value))
                 .IsRequired().HasMaxLength(225);
 
-            builder.Property(p => p.Description);
+            builder.Property(p => p.Description).HasMaxLength(2000);
+            builder.Property(p => p.Abbreviation).HasMaxLength(5);
 
             builder.Property(p => p.CreatedDate).IsRequired();
 

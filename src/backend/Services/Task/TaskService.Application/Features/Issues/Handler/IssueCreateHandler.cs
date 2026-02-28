@@ -9,12 +9,12 @@ namespace TaskService.Application.Commands.Issues.Handler;
 
 public class IssueCreateHandler(TaskServiceDbContext context) : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
-
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
     {
         var project = await context.Projects.FindAsync(request.ProjectId, cancellationToken) ??
             throw new NullReferenceException($"Проект с id: {request.IssueStatusId} не найдена");
 
+        //TODO: создавать с статусом инициализации из проекта
         IssueStatus? status = await context.IssueStatus.FindAsync(request.IssueStatusId, cancellationToken) ??
             throw new NullReferenceException($"Статус задачи с id: {request.IssueStatusId} не найдена");
 
@@ -28,6 +28,7 @@ public class IssueCreateHandler(TaskServiceDbContext context) : IRequestHandler<
         var issue = Issue.Create(
             name: request.Name,
             description: request.Description,
+            key: "",
             projectId: request.ProjectId,
             taskTagId: request.IssueTagId,
             taskStatusId: request.IssueStatusId,

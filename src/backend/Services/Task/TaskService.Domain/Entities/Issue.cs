@@ -9,36 +9,33 @@ namespace TaskService.Domain.Entities
         public Guid IssueTagId { get; private set; }
         public Guid IssueStatusId { get; private set; }
         public string? Description { get; private set; }
-        public IssueType IssueType { get; set; }
+        public IssueType IssueType { get; private set; }
+        public string Key { get; private set; } = null!;
+        public DateTimeOffset? StartDate { get; private set; }
         public DateTimeOffset? ResolvedDate { get; private set; }
         public DateTimeOffset? UpdatedDate { get; private set; }
-        public DateTimeOffset? DueDate { get; private set; }
-
-        //TODO: Добавление свойств:
-        //ключ 
-        //FAQ: как его создавать? возможно в хенделере запрашить проект, брать его короткое имя и количество задач в нем. "PROJ-123"
-        //дата назначения - возможно нужно в таблицу 
-        //дата взятия в работу - может добавить таблицу истории? статусов "в работе" может быть несколько
-        //FAQ: а какой жизненный цикл у этого свойства? ведь может быть ситуация случайного перевода в рабочий статус и обратная ситуация, когда случайно перенесли в рабочую
+        public DateTimeOffset? DueDate { get; private set; } 
 
         protected Issue() { }
 
-        private Issue(Guid id, string name, string? description, Guid projectId, Guid taskTagId, Guid taskStatusId, int numberIssueType, DateTimeOffset? dueDate) : base(id, name)
+        private Issue(Guid id, string name, string? description, string key, Guid projectId, Guid taskTagId, Guid taskStatusId, int numberIssueType, DateTimeOffset? dueDate) : base(id, name)
         {
             ProjectId = projectId;
             IssueTagId = taskTagId;
+            Key = key;
             IssueStatusId = taskStatusId;
             Description = description?.Trim();
             DueDate = dueDate;
             IssueType = (IssueType)numberIssueType;
         }
 
-        public static Issue Create(string name, string? description, Guid projectId, Guid taskTagId, Guid taskStatusId, int numberIssueType, DateTimeOffset? dueDate)
+        public static Issue Create(string name, string? description, string key, Guid projectId, Guid taskTagId, Guid taskStatusId, int numberIssueType, DateTimeOffset? dueDate)
         {
             return new Issue(
                 id: Guid.CreateVersion7(),
                 name: name,
                 description: description,
+                key: key,
                 projectId: projectId,
                 taskTagId: taskTagId,
                 taskStatusId: taskStatusId,
@@ -68,6 +65,9 @@ namespace TaskService.Domain.Entities
         {
             IssueStatusId = status.Id;
             UpdatedDate = DateTimeOffset.UtcNow;
+
+            if(status.Type == IssueStatusType.Process && StartDate == default(DateTimeOffset))
+                StartDate = DateTimeOffset.UtcNow;
 
             if (status.Type == IssueStatusType.Success || status.Type == IssueStatusType.Rejected)
                 ResolvedDate = DateTimeOffset.UtcNow;
