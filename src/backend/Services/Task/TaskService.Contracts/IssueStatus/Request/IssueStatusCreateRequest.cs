@@ -3,7 +3,7 @@
 public record class IssueStatusCreateRequest(
     string name,
     Guid projectId,
-    string type,
+    int numberType,
     int position,
     string? color);
 

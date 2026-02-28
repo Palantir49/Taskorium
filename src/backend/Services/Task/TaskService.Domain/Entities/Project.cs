@@ -19,6 +19,7 @@ public class Project : BaseEntities
     public DateTimeOffset? StartDate { get; private set; }
 
     public DateTimeOffset? FinishDate { get; private set; }
+    public List<IssueStatus>? Statuses { get; protected set; } = new();
     public List<ProjectMember> ProjectMembers { get; private set; } = [];
     public static Project Create(string name, string? description, Guid workspaceId)
     {
