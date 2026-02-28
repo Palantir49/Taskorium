@@ -19,6 +19,7 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
             .IsRequired().HasMaxLength(225);
 
         builder.Property(t => t.Description).HasMaxLength(2000);
+        builder.Property(t => t.Key).HasMaxLength(10);
 
         builder.Property(t => t.CreatedDate).IsRequired();
         builder.Property(t => t.UpdatedDate);

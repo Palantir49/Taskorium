@@ -29,6 +29,7 @@ public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
         var issue = Issue.Create(
             name: request.Name,
             description: request.Description,
+            key: "",
             projectId: request.ProjectId,
             taskTagId: request.IssueTagId,
             taskStatusId: request.IssueStatusId,
