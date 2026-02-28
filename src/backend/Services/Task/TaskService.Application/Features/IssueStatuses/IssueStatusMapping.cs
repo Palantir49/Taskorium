@@ -23,7 +23,7 @@ public static class IssueStatusMapping
         return new IssueStatusCreateCommand(
             name: request.name,
             projectId: request.projectId,
-            type: request.type,
+            numberType: request.numberType,
             position: request.position,
             color: request.color);
     }

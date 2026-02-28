@@ -21,12 +21,12 @@ public class IssueStatus : BaseEntities
         ProjectId = projectId;
     }
 
-    public static IssueStatus Create(string name, string type, int position, string? color, Guid projectId)
+    public static IssueStatus Create(string name, int numberType, int position, string? color, Guid projectId)
     {
         return new IssueStatus(
             id: Guid.CreateVersion7(),
             name: name,
-            type: Enum.Parse<IssueStatusType>(type),
+            type: (IssueStatusType)numberType,
             position: position,
             color: color,
             projectId: projectId);

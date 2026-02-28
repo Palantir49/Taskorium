@@ -6,6 +6,6 @@ namespace TaskService.Application.Features.IssueStatuses.Command;
 public record class IssueStatusCreateCommand(
     string name,
     Guid projectId,
-    string type,
+    int numberType,
     int position,
     string? color) : ICommand<IssueStatusResponse>;

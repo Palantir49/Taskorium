@@ -20,6 +20,8 @@ public class Project : BaseEntities
 
     public DateTimeOffset? FinishDate { get; private set; }
 
+    public List<IssueStatus>? Statuses { get; protected set; } = new();
+
     public static Project Create(string name, string? description, Guid workspaceId)
     {
         return new Project(Guid.CreateVersion7(), name, description, workspaceId);

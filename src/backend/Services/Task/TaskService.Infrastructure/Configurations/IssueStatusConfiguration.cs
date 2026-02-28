@@ -26,7 +26,7 @@ internal class IssueStatusConfiguration : IEntityTypeConfiguration<IssueStatus>
         builder.Property(t => t.Color);
 
         builder.HasOne<Project>()
-              .WithMany()
+              .WithMany(x => x.Statuses)
               .HasForeignKey(t => t.ProjectId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
