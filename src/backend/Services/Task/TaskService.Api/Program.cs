@@ -15,9 +15,7 @@ builder.Services.AddServiceDefaults(builder.Configuration);
 builder.Services.AddScoped<RequestObservabilityMiddleware>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer((document, context, cancellationToken) =>
@@ -55,14 +53,14 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.ConfigureJwtAuthentication(builder.Configuration);
-builder.Services.AddAuthorization();
+builder.Services.ConfigureAuthorization();
 
 builder.Services.AddControllers();
 //configure infrastructure layer
 builder.Services.ConfigureInfrastructureLayer(builder.Configuration);
 builder.Services.ConfigureApplicationLayer();
 var app = builder.Build();
-
+app.UseExceptionHandler();
 // Включение CORS
 app.UseCors("AllowReactApp");
 app.UseAuthentication();
@@ -86,7 +84,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseExceptionHandler();
+
 app.UseServiceDefaults(builder.Configuration);
 app.MapControllers();
 app.UseMiddleware<RequestObservabilityMiddleware>();
