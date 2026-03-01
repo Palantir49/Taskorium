@@ -17,7 +17,7 @@ public class ProjectCreateHandler(TaskServiceDbContext context) : IRequestHandle
         var project = Project.Create(
             name: request.Name,
             description: request.Description,
-            abbreviation: "",
+            abbreviation: request.Abbreviation,
             workspaceId: request.WorkspaceId
         );
         //TODO: добавить создание статусов и типа
