@@ -1,23 +1,23 @@
-﻿using TaskService.Application.Features.IssueTags.Command;
+﻿using TaskService.Application.Features.Tags.Command;
 using TaskService.Application.Mediator;
-using TaskService.Contracts.IssueTag;
+using TaskService.Contracts.Tag;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Features.IssueTags.Handler;
+namespace TaskService.Application.Features.Tags.Handler;
 
-public class IssueTagCreateHandler(TaskServiceDbContext context) : IRequestHandler<IssueTagCreateCommand, IssueTagResponse>
+public class TagCreateHandler(TaskServiceDbContext context) : IRequestHandler<TagCreateCommand, TagResponse>
 {
-    public async Task<IssueTagResponse> Handle(IssueTagCreateCommand request, CancellationToken cancellationToken = default)
+    public async Task<TagResponse> Handle(TagCreateCommand request, CancellationToken cancellationToken = default)
     {
         Project project = await context.Projects.FindAsync(request.projectId, cancellationToken) ??
             throw new NullReferenceException($"Проект с id: {request.projectId} не найден");
 
-        IssueTag tag = IssueTag.Create(
+        Tag tag = Tag.Create(
             name: request.name,
             projectId: request.projectId);
 
-        await context.IssueTag.AddAsync(tag, cancellationToken);
+        await context.Tag.AddAsync(tag, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         return tag.ToResponse();
     }

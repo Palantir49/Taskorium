@@ -5,12 +5,12 @@ using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Features.IssueStatuses.Command;
-using TaskService.Application.Features.IssueTags.Command;
+using TaskService.Application.Features.Tags.Command;
 using TaskService.Application.Features.Projects.Command;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.IssueStatus;
-using TaskService.Contracts.IssueTag;
+using TaskService.Contracts.Tag;
 using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 
@@ -157,7 +157,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// <remarks>
     ///     Пример запроса:
-    ///     PUT /api/v1/Projects/guid/IssueTags
+    ///     PUT /api/v1/Projects/guid/Tags
     ///     {
     ///     }
     /// </remarks>
@@ -166,15 +166,15 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// <response code="200">Данные о типах задач проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
-    [HttpGet("{id:guid}/IssueTags")]
-    [ProducesResponseType(typeof(IEnumerable<IssueTagResponse>), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}/Tags")]
+    [ProducesResponseType(typeof(IEnumerable<TagResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssueTagsByProjectidAsync(Guid id)
+    public async Task<ActionResult<IEnumerable<TagResponse>>> GetTagsByProjectidAsync(Guid id)
     {//FAQ: а это нормальный возвращаемый тип?
-        IssueTagGetByProjectIdQuery query = new IssueTagGetByProjectIdQuery(id);
-        IEnumerable<IssueTagResponse> response = await dispatcher.SendAsync(query);
+        TagGetByProjectIdQuery query = new TagGetByProjectIdQuery(id);
+        IEnumerable<TagResponse> response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
 

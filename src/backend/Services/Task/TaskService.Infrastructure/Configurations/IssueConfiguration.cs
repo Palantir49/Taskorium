@@ -34,7 +34,6 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
 
         builder.Property(t => t.ProjectId).IsRequired();
         builder.Property(t => t.IssueStatusId).IsRequired();
-        //builder.Property(t => t.IssueTagId).IsRequired();
         builder.Property(t => t.IssuePriority).IsRequired();
         builder.Property(t => t.IssueType).IsRequired();
 
@@ -43,6 +42,9 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
               .HasForeignKey(t => t.ProjectId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(x => x.Tags)
+            .WithMany(x => x.Issues);
 
         //builder.HasOne(i => i.User)
         //    .WithMany(u => u.Issues)

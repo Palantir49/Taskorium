@@ -21,10 +21,10 @@ public class ProjectDeleteByIdHandler(TaskServiceDbContext context) : IRequestHa
         foreach (IssueStatus status in statuses)
             context.IssueStatus.Remove(status);
 
-        List<IssueTag> tags = await context.IssueTag.Where(x => x.ProjectId == project.Id).ToListAsync();
+        List<Tag> tags = await context.Tag.Where(x => x.ProjectId == project.Id).ToListAsync();
 
-        foreach (IssueTag tag in tags)
-            context.IssueTag.Remove(tag);
+        foreach (Tag tag in tags)
+            context.Tag.Remove(tag);
 
         context.Projects.Remove(project);
         return await context.SaveChangesAsync(cancellationToken);
