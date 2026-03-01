@@ -10,20 +10,20 @@ using TaskService.Application.Mediator;
 namespace TaskService.Api.Authorization.Handlers;
 
 /// <summary>
-///     Обработчик авторизации для проектов
+///     Обработчик авторизации для задач
 /// </summary>
-public class WorkSpaceAccessHandler(
+public class IssueAccessHandler(
     IHttpContextAccessor httpContextAccessor,
     IDispatcher dispatcher,
-    ILogger<ProjectAccessHandler> logger)
-    : AuthorizationHandler<WorkSpaceAccessRequirement>
+    ILogger<IssueAccessHandler> logger)
+    : AuthorizationHandler<IssueAccessRequirement>
 {
     /// <summary>
     /// </summary>
     /// <param name="context"></param>
     /// <param name="requirement"></param>
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
-        WorkSpaceAccessRequirement requirement)
+        IssueAccessRequirement requirement)
     {
         logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над задачей",
             requirement.Action);
@@ -73,14 +73,41 @@ public class WorkSpaceAccessHandler(
                 return;
 
             case "Member":
-                if (requirement.Action is WorkSpaceAction.View or WorkSpaceAction.Update)
+                if (requirement.Action is IssueAction.View or IssueAction.Update)
+                {
+                    context.Succeed(requirement);
+                    return;
+                }
+
+                break;
+            case "Viewer":
+                if (requirement.Action == IssueAction.View)
+                {
+                    context.Succeed(requirement);
+                    return;
+                }
+
+                break;
+        }
+
+        var projectMemberShip = user.ProjectMembers?.FirstOrDefault(x => x.ProjectId == project.Id);
+        switch (projectMemberShip?.RoleDto.roleName) //TODO enum
+        {
+            case "Creator":
+
+            case "Admin":
+                context.Succeed(requirement);
+                return;
+
+            case "Member": //TODO add user assigned task issue
+                if (requirement.Action is IssueAction.View or IssueAction.Update)
                 {
                     context.Succeed(requirement);
                 }
 
                 break;
             case "Viewer":
-                if (requirement.Action == WorkSpaceAction.View)
+                if (requirement.Action == IssueAction.View)
                 {
                     context.Succeed(requirement);
                 }
