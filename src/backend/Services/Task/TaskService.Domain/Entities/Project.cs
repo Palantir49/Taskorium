@@ -26,8 +26,8 @@ public class Project : BaseEntities
     public static Project Create(string name, string? description, Guid workspaceId)
     {
         return new Project(
-            id: Guid.CreateVersion7(), 
-            name: name, 
+            id: Guid.CreateVersion7(),
+            name: name,
             description: description,
             abbreviation: abbreviation,
             workspaceId: workspaceId);

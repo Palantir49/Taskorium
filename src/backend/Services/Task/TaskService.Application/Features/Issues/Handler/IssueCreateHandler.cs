@@ -19,7 +19,7 @@ public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
         var status = await context.IssueStatus.FindAsync([request.IssueStatusId], cancellationToken) ??
                      throw new KeyNotFoundException($"Статус задачи с id: {request.IssueStatusId} не найдена");
 
-        int countIssue = await context.Issues.CountAsync(x=> x.ProjectId == project.Id, cancellationToken);
+        int countIssue = await context.Issues.CountAsync(x => x.ProjectId == project.Id, cancellationToken);
 
         string issueKey = $"{project.Abbreviation}-{countIssue + 1}";
 
@@ -31,7 +31,7 @@ public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
             taskTagId: request.IssueTagId,
             taskStatusId: status.Id,
             numberIssueType: request.NumberIssueType,
-            numberIssuePriority:request.NumberIssuePriority,
+            numberIssuePriority: request.NumberIssuePriority,
             dueDate: request.DueDate
         );
         await context.Issues.AddAsync(issue, cancellationToken);

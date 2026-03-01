@@ -12,15 +12,15 @@ public class IssueStatusCreateHandler(TaskServiceDbContext context) : IRequestHa
 {
     public async Task<IssueStatusResponse> Handle(IssueStatusCreateCommand request, CancellationToken cancellationToken = default)
     {
-        if((IssueStatusType)request.numberType == IssueStatusType.Initial)
+        if ((IssueStatusType)request.numberType == IssueStatusType.Initial)
         {
             throw new Exception("В проекте не может существовать больше одного статуса инициализации задачи");
         }
 
         Project project = await context.Projects
             //.Include(p => p.Statuses)
-            .FirstOrDefaultAsync(x => x.Id == request.projectId, cancellationToken) ?? 
-            throw new NullReferenceException($"Проект с id: {request.projectId} не найден");        
+            .FirstOrDefaultAsync(x => x.Id == request.projectId, cancellationToken) ??
+            throw new NullReferenceException($"Проект с id: {request.projectId} не найден");
 
         IssueStatus status = IssueStatus.Create(
             name: request.name,
