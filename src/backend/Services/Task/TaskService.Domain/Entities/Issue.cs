@@ -17,7 +17,7 @@ namespace TaskService.Domain.Entities
         public DateTimeOffset? UpdatedDate { get; private set; }
         public DateTimeOffset? DueDate { get; private set; }
 
-        public List<IssueTag> Tags { get; private set; } = new();
+        public List<Tag> Tags { get; private set; } = new();
 
         protected Issue() { }
 
@@ -77,12 +77,6 @@ namespace TaskService.Domain.Entities
             else
                 ResolvedDate = null;
         }
-
-        //public void UpdateTag(IssueTag issueTag)
-        //{
-        //    IssueTagId = issueTag.Id;
-        //    UpdatedDate = DateTimeOffset.UtcNow;
-        //}
 
         public void UpdateType(int numberType)
         {

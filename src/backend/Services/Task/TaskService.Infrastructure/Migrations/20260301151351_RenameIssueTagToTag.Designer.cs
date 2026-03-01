@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskService.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using TaskService.Infrastructure.Persistence;
 namespace TaskService.Infrastructure.Migrations
 {
     [DbContext(typeof(TaskServiceDbContext))]
-    partial class TaskServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260301151351_RenameIssueTagToTag")]
+    partial class RenameIssueTagToTag
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,7 +122,6 @@ namespace TaskService.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
-                    
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -144,7 +146,6 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.ToTable("IssueStatus");
                 });
-            
 
             modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
                 {
@@ -298,28 +299,6 @@ namespace TaskService.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TaskService.Domain.Entities.WorkspaceMember", b =>
-                {
-                    b.Property<Guid>("WorkspaceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("JoinedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("WorkspaceId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("WorkspaceMembers");
-                });
-
             modelBuilder.Entity("TaskService.Domain.Entities.Attachment", b =>
                 {
                     b.HasOne("TaskService.Domain.Entities.Issue", null)
@@ -397,39 +376,7 @@ namespace TaskService.Infrastructure.Migrations
                 {
                     b.Navigation("Statuses");
                 });
-
-            modelBuilder.Entity("TaskService.Domain.Entities.WorkspaceMember", b =>
-                {
-                    b.HasOne("TaskService.Domain.Entities.User", null)
-                        .WithMany("WorkspaceMembers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TaskService.Domain.Entities.Workspace", null)
-                        .WithMany("WorkspaceMembers")
-                        .HasForeignKey("WorkspaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
-                {
-                    b.Navigation("ProjectMembers");
-                });
-
-            modelBuilder.Entity("TaskService.Domain.Entities.User", b =>
-                {
-                    b.Navigation("ProjectMembers");
-
-                    b.Navigation("WorkspaceMembers");
-                });
-
-            modelBuilder.Entity("TaskService.Domain.Entities.Workspace", b =>
-                {
-                    b.Navigation("WorkspaceMembers");
-                });
-
+#pragma warning restore 612, 618
         }
     }
 }

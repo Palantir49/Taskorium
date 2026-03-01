@@ -2,22 +2,22 @@
 
 namespace TaskService.Domain.Entities;
 
-public class IssueTag : BaseEntities
+public class Tag : BaseEntities
 {
     public Guid ProjectId { get; }
 
     public List<Issue> Issues { get; private set; } = new();
 
-    protected IssueTag() { }
+    protected Tag() { }
 
-    private IssueTag(Guid id, string name, Guid projectId) : base(id, name)
+    private Tag(Guid id, string name, Guid projectId) : base(id, name)
     {
         ProjectId = projectId;
     }
 
-    public static IssueTag Create(string name, Guid projectId)
+    public static Tag Create(string name, Guid projectId)
     {
-        return new IssueTag(
+        return new Tag(
             id: Guid.CreateVersion7(),
             name: name,
             projectId:

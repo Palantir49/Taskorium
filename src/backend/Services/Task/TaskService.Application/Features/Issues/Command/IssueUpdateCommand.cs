@@ -6,7 +6,6 @@ namespace TaskService.Application.Features.Issues.Command;
 public record class IssueUpdateCommand(
     Guid id,
     string Name,
-    //Guid IssueTagId,
     Guid IssueStatusId,
     int numberIssueType,
     string? Description = null,

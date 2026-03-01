@@ -12,32 +12,22 @@ public class ProjectDeleteByIdHandler(TaskServiceDbContext context, HybridCache 
 {
     public async Task<int> Handle(ProjectDeleteByIdCommand request, CancellationToken cancellationToken = default)
     {
-        var project = await context.Projects.FindAsync([request.id], cancellationToken) ??
-                      throw new KeyNotFoundException($"Проект с id: {request.id} не найден");
+        Project project = await context.Projects.FindAsync(request.id, cancellationToken) ??
+                          throw new NullReferenceException($"Проект с id: {request.id} не найдена");
+        List<Issue> issues = await context.Issues.Where(x => x.ProjectId == project.Id).ToListAsync();
+        if (issues != null && issues.Count > 0)
+            throw new NullReferenceException($"Нельзя удалить статус, пока существуют связанные задачи");
+        //TODO: изменить исключение на подходящее
 
-        var issues = await context.Issues
-            .Where(x => x.ProjectId == project.Id)
-            .ToListAsync(cancellationToken);
+        List<IssueStatus> statuses = await context.IssueStatus.Where(x => x.ProjectId == project.Id).ToListAsync();
+        foreach (IssueStatus status in statuses)
+            context.IssueStatus.Remove(status);
 
-        if (issues.Count > 0)
-        {
-            throw new InvalidOperationException("Нельзя удалить проект, пока существуют связанные задачи");
-        }
+        List<Tag> tags = await context.Tag.Where(x => x.ProjectId == project.Id).ToListAsync();
 
-        var statuses = await context.IssueStatus
-            .Where(x => x.ProjectId == project.Id)
-            .ToListAsync(cancellationToken);
-
-        var tags = await context.IssueTag
-            .Where(x => x.ProjectId == project.Id)
-            .ToListAsync(cancellationToken);
-
-        context.IssueStatus.RemoveRange(statuses);
-        context.IssueTag.RemoveRange(tags);
-        context.Projects.Remove(project);
-
-        var deletedCount = await context.SaveChangesAsync(cancellationToken);
-
+        foreach (Tag tag in tags)
+            context.Tag.Remove(tag);
+        
         // Инвалидируем кэш:
         var projectCacheKey = $"project_{project.Id}";
         var workspaceProjectsCacheKey = $"projects_by_workspace_{project.WorkspaceId}";
@@ -46,7 +36,7 @@ public class ProjectDeleteByIdHandler(TaskServiceDbContext context, HybridCache 
         await cache.RemoveAsync(projectCacheKey, cancellationToken);
         await cache.RemoveAsync(workspaceProjectsCacheKey, cancellationToken);
 
-
-        return deletedCount;
+        context.Projects.Remove(project);
+        return await context.SaveChangesAsync(cancellationToken);
     }
 }
