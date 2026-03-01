@@ -4,6 +4,7 @@ using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
+using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Projects.Handler;
@@ -22,8 +23,44 @@ public class ProjectCreateHandler(TaskServiceDbContext context, HybridCache cach
             abbreviation: request.Abbreviation,
             workspaceId: request.WorkspaceId
         );
-        //TODO: добавить создание статусов и типа
+
+        IssueStatus initStatus = IssueStatus.Create(
+            name: "Новая",
+            numberType: (int)IssueStatusType.Initial,
+            position: 0,
+            color: "#000000",
+            projectId: project.Id
+            );
+
+        IssueStatus processStatus = IssueStatus.Create(
+            name: "В работе",
+            numberType: (int)IssueStatusType.Process,
+            position: 1,
+            color: "#000000",
+            projectId: project.Id
+            );
+
+        IssueStatus successStatus = IssueStatus.Create(
+            name: "Выполнено",
+            numberType: (int)IssueStatusType.Success,
+            position: 2,
+            color: "#000000",
+            projectId: project.Id
+            );
+
+        IssueStatus rejectedStatus = IssueStatus.Create(
+            name: "Отменено",
+            numberType: (int)IssueStatusType.Rejected,
+            position: 3,
+            color: "#000000",
+            projectId: project.Id
+            );
+
         await context.Projects.AddAsync(project, cancellationToken);
+        await context.IssueStatus.AddAsync(initStatus, cancellationToken);
+        await context.IssueStatus.AddAsync(processStatus, cancellationToken);
+        await context.IssueStatus.AddAsync(successStatus, cancellationToken);
+        await context.IssueStatus.AddAsync(rejectedStatus, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         //инвалидируем кэш
