@@ -12,6 +12,12 @@ using TaskService.Contracts.Workspace.Response;
 
 namespace TaskService.Api.Controllers;
 
+/*TODO Action: delete user from workspace
+  TODO Action: SetAdmin in workspace?
+  TODO Action: UnSetAdmin in workspace?
+  TODO Get all users from workspace
+ */
+
 /// <summary>
 ///     Контроллер для работы с рабочими пространствами
 /// </summary>
