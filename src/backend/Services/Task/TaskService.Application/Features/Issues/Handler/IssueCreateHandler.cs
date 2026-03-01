@@ -1,4 +1,5 @@
-﻿using TaskService.Application.Commands.Issues.Command;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskService.Application.Commands.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
@@ -12,22 +13,23 @@ public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
 {
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
     {
-        _ = await context.Projects.FindAsync([request.ProjectId], cancellationToken) ??
+        var project = await context.Projects.FindAsync([request.ProjectId], cancellationToken) ??
             throw new KeyNotFoundException($"Проект с id: {request.IssueStatusId} не найдена");
 
         var status = await context.IssueStatus.FindAsync([request.IssueStatusId], cancellationToken) ??
                      throw new KeyNotFoundException($"Статус задачи с id: {request.IssueStatusId} не найдена");
 
-        
-        //TODO: проверить что можно создавать с этим типом
+        int countIssue = await context.Issues.CountAsync(x=> x.ProjectId == project.Id, cancellationToken);
+
+        string issueKey = $"{project.Abbreviation}-{countIssue + 1}";
 
         var issue = Issue.Create(
             name: request.Name,
             description: request.Description,
-            key: "",
+            key: issueKey,
             projectId: request.ProjectId,
             taskTagId: request.IssueTagId,
-            taskStatusId: request.IssueStatusId,
+            taskStatusId: status.Id,
             numberIssueType: request.numberIssueType,
             dueDate: request.DueDate
         );
