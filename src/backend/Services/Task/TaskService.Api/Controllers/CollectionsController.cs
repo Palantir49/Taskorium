@@ -46,5 +46,22 @@ namespace TaskService.Api.Controllers
             IEnumerable<IssueStatusTypeResponse> response = await dispatcher.SendAsync(query);
             return Ok(response);
         }
+
+        /// <summary>
+        ///     Получить список приоритетов задач
+        /// </summary>
+        /// ///
+        /// <remarks>
+        ///     Пример запроса:
+        ///     GET /api/v1/Collections/IssuePriority
+        /// </remarks>
+        [HttpGet("IssuePriority")]
+        [ProducesResponseType(typeof(IssueStatusResponse), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IssueStatusResponse>> GetIssuePriorityAsync()
+        {
+            GetAllIsssuePriorityQuery query = new();
+            IEnumerable<IssuePriorityResponse> response = await dispatcher.SendAsync(query);
+            return Ok(response);
+        }
     }
 }
