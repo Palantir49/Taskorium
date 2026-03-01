@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using TaskService.Infrastructure.Authorization.Actions;
+using TaskService.Api.Authorization.Actions;
 
 namespace TaskService.Api.Authorization.Requirements;
 

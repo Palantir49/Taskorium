@@ -1,4 +1,4 @@
-﻿namespace TaskService.Infrastructure.Authorization.Actions;
+﻿namespace TaskService.Api.Authorization.Actions;
 
 /// <summary>
 /// </summary>
