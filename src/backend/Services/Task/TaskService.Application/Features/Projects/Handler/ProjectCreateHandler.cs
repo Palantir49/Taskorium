@@ -26,7 +26,6 @@ public class ProjectCreateHandler(TaskServiceDbContext context) : IRequestHandle
             name: "Новая",
             numberType: (int)IssueStatusType.Initial,
             position: 0,
-            color: "#000000",
             projectId: project.Id
             );
 
@@ -34,7 +33,6 @@ public class ProjectCreateHandler(TaskServiceDbContext context) : IRequestHandle
             name: "В работе",
             numberType: (int)IssueStatusType.Process,
             position: 1,
-            color: "#000000",
             projectId: project.Id
             );
 
@@ -42,7 +40,6 @@ public class ProjectCreateHandler(TaskServiceDbContext context) : IRequestHandle
             name: "Выполнено",
             numberType: (int)IssueStatusType.Success,
             position: 2,
-            color: "#000000",
             projectId: project.Id
             );
 
@@ -50,7 +47,6 @@ public class ProjectCreateHandler(TaskServiceDbContext context) : IRequestHandle
             name: "Отменено",
             numberType: (int)IssueStatusType.Rejected,
             position: 3,
-            color: "#000000",
             projectId: project.Id
             );
 

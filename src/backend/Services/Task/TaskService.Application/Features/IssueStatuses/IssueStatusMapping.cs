@@ -14,8 +14,7 @@ public static class IssueStatusMapping
             name: issueStatus.Name.ToString(),
             projectId: issueStatus.ProjectId,
             type: issueStatus.Type.ToString(),
-            position: issueStatus.Position,
-            color: issueStatus.Color);
+            position: issueStatus.Position);
     }
 
     public static IssueStatusCreateCommand ToCommand(this IssueStatusCreateRequest request)
