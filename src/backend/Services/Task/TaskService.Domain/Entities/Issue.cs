@@ -17,6 +17,8 @@ namespace TaskService.Domain.Entities
         public DateTimeOffset? UpdatedDate { get; private set; }
         public DateTimeOffset? DueDate { get; private set; }
 
+        public List<IssueTag> Tags { get; private set; } = new();
+
         protected Issue() { }
 
         private Issue(Guid id, string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate) : base(id, name)

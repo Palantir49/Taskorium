@@ -20,7 +20,6 @@ internal class IssueTagConfiguration : IEntityTypeConfiguration<IssueTag>
 
         builder.Property(t => t.ProjectId).IsRequired();
         builder.Property(t => t.CreatedDate).IsRequired();
-        builder.Property(t => t.Color);
 
         builder.HasOne<Project>()
               .WithMany()

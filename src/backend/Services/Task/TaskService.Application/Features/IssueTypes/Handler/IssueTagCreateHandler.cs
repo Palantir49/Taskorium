@@ -15,8 +15,7 @@ public class IssueTagCreateHandler(TaskServiceDbContext context) : IRequestHandl
 
         IssueTag tag = IssueTag.Create(
             name: request.name,
-            projectId: request.projectId,
-            color: request.color);
+            projectId: request.projectId);
 
         await context.IssueTag.AddAsync(tag, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);

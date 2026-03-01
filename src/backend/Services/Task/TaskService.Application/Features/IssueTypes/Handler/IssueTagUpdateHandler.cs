@@ -14,7 +14,6 @@ public class IssueTagUpdateHandler(TaskServiceDbContext context) : IRequestHandl
             throw new NullReferenceException($"Тип задачи с id: {request.id} не найден");
 
         tag.UpdateName(request.name);
-        tag.UpdateColor(request.color);
 
         context.IssueTag.Update(tag);
         await context.SaveChangesAsync(cancellationToken);
