@@ -5,6 +5,7 @@ using TaskService.Application.Commands.Workspaces.Get;
 using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
 using TaskService.Application.Features.Workspaces.Delete;
+using TaskService.Application.Features.Workspaces.Get;
 using TaskService.Application.Features.Workspaces.Update;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Workspace.Response;

@@ -37,8 +37,6 @@ public class IssueAccessHandler(
             return;
         }
 
-        //search all privileges
-
         //get task
         var issueQuery = new IssueGetByIdQuery(issueId);
         var issue = await dispatcher.SendAsync(issueQuery);

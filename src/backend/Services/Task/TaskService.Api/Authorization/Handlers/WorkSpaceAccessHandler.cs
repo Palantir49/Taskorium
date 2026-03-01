@@ -2,15 +2,13 @@
 using TaskService.Api.Authorization.Actions;
 using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
-using TaskService.Application.Features.Issues.Command;
-using TaskService.Application.Features.Projects.Command;
 using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Mediator;
 
 namespace TaskService.Api.Authorization.Handlers;
 
 /// <summary>
-///     Обработчик авторизации для проектов
+///     Обработчик авторизации для рабоичих
 /// </summary>
 public class WorkSpaceAccessHandler(
     IHttpContextAccessor httpContextAccessor,
@@ -25,36 +23,25 @@ public class WorkSpaceAccessHandler(
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
         WorkSpaceAccessRequirement requirement)
     {
-        logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над задачей",
+        logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над рабочей область",
             requirement.Action);
-        var issueId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor);
-        if (issueId is null)
+        var workspaceId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor);
+        if (workspaceId is null)
         {
             logger.LogInformation(
-                "В процессе авторизации для совершения действия {Action} над задачей произошла ошибка: не удалось получить идентификатор задачи из запроса",
+                "В процессе авторизации для совершения действия {Action} над рабочей областью произошла ошибка: не удалось получить идентификатор задачи из запроса",
                 requirement.Action);
             context.Fail();
             return;
         }
-
-        //search all privileges
-
-        //get task
-        var issueQuery = new IssueGetByIdQuery(issueId);
-        var issue = await dispatcher.SendAsync(issueQuery);
-
-
-        //get project
-        var projectQuery = new ProjectGetByIdQuery(issue.ProjectId);
-        var project = await dispatcher.SendAsync(projectQuery);
 
 
         var userKeyCloakId = AuthorizationUtils.GetKeycloakUserId(httpContextAccessor);
         if (userKeyCloakId is null)
         {
             logger.LogInformation(
-                "В процессе авторизации для совершения действия {Action} над задачей {issueId} произошла ошибка: не удалось получить keycloakId пользователя из запроса",
-                requirement.Action, issueId);
+                "В процессе авторизации для совершения действия {Action} над рабочей областью {workspaceId} произошла ошибка: не удалось получить keycloakId пользователя из запроса",
+                requirement.Action, workspaceId);
             context.Fail();
             return;
         }
@@ -62,13 +49,13 @@ public class WorkSpaceAccessHandler(
         //get user
         var user = await dispatcher.SendAsync(new GetUserByKeycloakIdQuery(userKeyCloakId));
 
-        var wsMemberShip = user.WorkSpaceMembers?.FirstOrDefault(x => x.WorkspaceId == project.WorkspaceId);
+        var wsMemberShip = user.WorkSpaceMembers?.FirstOrDefault(x => x.WorkspaceId == workspaceId);
 
         switch (wsMemberShip?.RoleDto.roleName) //TODO enum
         {
             case "Creator":
 
-            case "Admin":
+            case "Admin": //TODO Set (unset) admin
                 context.Succeed(requirement);
                 return;
 
