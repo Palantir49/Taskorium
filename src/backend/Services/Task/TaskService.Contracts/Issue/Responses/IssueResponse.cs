@@ -4,7 +4,7 @@ public record IssueResponse(
     Guid Id,
     string Name,
     Guid ProjectId,
-    Guid TaskTagId,
+    //Guid TaskTagId,
     Guid TaskStatusId,
     DateTimeOffset CreatedDate,
     string? Description = null,

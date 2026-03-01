@@ -10,7 +10,6 @@ namespace TaskService.Application.Features.Issues.Handler;
 public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
-
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
     {
         _ = await context.Projects.FindAsync([request.ProjectId], cancellationToken) ??
@@ -19,11 +18,7 @@ public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
         var status = await context.IssueStatus.FindAsync([request.IssueStatusId], cancellationToken) ??
                      throw new KeyNotFoundException($"Статус задачи с id: {request.IssueStatusId} не найдена");
 
-        //TODO: проверить что можно создавать с этим статусом
-
-        var tag = await context.IssueTag.FindAsync([request.IssueTagId], cancellationToken) ??
-                   throw new KeyNotFoundException($"Тип задачи с id: {request.IssueTagId} не найдена");
-
+        
         //TODO: проверить что можно создавать с этим типом
 
         var issue = Issue.Create(
