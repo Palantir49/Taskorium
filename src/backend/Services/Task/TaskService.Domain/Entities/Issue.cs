@@ -1,5 +1,6 @@
 ﻿using TaskService.Domain.Entities.BaseEntity;
 using TaskService.Domain.Entities.Enums;
+using TaskService.Domain.ValueObjects;
 
 namespace TaskService.Domain.Entities
 {
@@ -10,7 +11,7 @@ namespace TaskService.Domain.Entities
         public Guid IssueStatusId { get; private set; }
         public string? Description { get; private set; }
         public IssueType IssueType { get; private set; }
-        public string Key { get; private set; } = null!;
+        public IssueKey Key { get; private set; } = null!;
         public DateTimeOffset? StartDate { get; private set; }
         public DateTimeOffset? ResolvedDate { get; private set; }
         public DateTimeOffset? UpdatedDate { get; private set; }
@@ -22,7 +23,7 @@ namespace TaskService.Domain.Entities
         {
             ProjectId = projectId;
             IssueTagId = taskTagId;
-            Key = key;
+            Key = new IssueKey(key);
             IssueStatusId = taskStatusId;
             Description = description?.Trim();
             DueDate = dueDate;
