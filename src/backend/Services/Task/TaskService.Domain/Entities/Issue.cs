@@ -15,7 +15,7 @@ namespace TaskService.Domain.Entities
         public DateTimeOffset? StartDate { get; private set; }
         public DateTimeOffset? ResolvedDate { get; private set; }
         public DateTimeOffset? UpdatedDate { get; private set; }
-        public DateTimeOffset? DueDate { get; private set; } 
+        public DateTimeOffset? DueDate { get; private set; }
 
         protected Issue() { }
 
@@ -67,7 +67,7 @@ namespace TaskService.Domain.Entities
             IssueStatusId = status.Id;
             UpdatedDate = DateTimeOffset.UtcNow;
 
-            if(status.Type == IssueStatusType.Process && StartDate == default(DateTimeOffset))
+            if (status.Type == IssueStatusType.Process && StartDate == default(DateTimeOffset))
                 StartDate = DateTimeOffset.UtcNow;
 
             if (status.Type == IssueStatusType.Success || status.Type == IssueStatusType.Rejected)

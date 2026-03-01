@@ -18,7 +18,7 @@ public record IssueKey
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentNullException("Ключ задачи задачи не может быть пустым или состоять только из пробелов",
             nameof(value));
-        if(!Regex.IsMatch(value, "^[a-zA-Z]{1,5}-\\d{1,4}$"))
+        if (!Regex.IsMatch(value, "^[a-zA-Z]{1,5}-\\d{1,4}$"))
             throw new ArgumentNullException("Ключ задачи не соответствует маске ААААА-0000",
             nameof(value));
     }

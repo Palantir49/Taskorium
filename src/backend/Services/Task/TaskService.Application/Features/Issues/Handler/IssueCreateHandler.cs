@@ -19,7 +19,7 @@ public class IssueCreateHandler(TaskServiceDbContext context) : IRequestHandler<
         IssueStatus status = await context.IssueStatus.FindAsync(request.ProjectId, IssueStatusType.Initial, cancellationToken) ??
             throw new NullReferenceException($"Не найден статус инициализации задачи для проекта {request.ProjectId}");
 
-        int countIssue = await context.Issues.CountAsync(x=> x.ProjectId == project.Id, cancellationToken);
+        int countIssue = await context.Issues.CountAsync(x => x.ProjectId == project.Id, cancellationToken);
 
         string issueKey = $"{project.Abbreviation}-{countIssue + 1}";
 
@@ -30,7 +30,7 @@ public class IssueCreateHandler(TaskServiceDbContext context) : IRequestHandler<
             projectId: request.ProjectId,
             taskStatusId: status.Id,
             numberIssueType: request.NumberIssueType,
-            numberIssuePriority:request.NumberIssuePriority,
+            numberIssuePriority: request.NumberIssuePriority,
             dueDate: request.DueDate
         );
         await context.Issues.AddAsync(issue, cancellationToken);
