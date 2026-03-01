@@ -7,11 +7,11 @@ namespace TaskService.Domain.Entities
     public class Issue : BaseEntities
     {
         public Guid ProjectId { get; }
-        public Guid IssueTagId { get; private set; }
         public Guid IssueStatusId { get; private set; }
         public string? Description { get; private set; }
-        public IssueType IssueType { get; private set; }
         public IssueKey Key { get; private set; } = null!;
+        public IssueType IssueType { get; private set; }
+        public IssuePriority IssuePriority { get; private set; }
         public DateTimeOffset? StartDate { get; private set; }
         public DateTimeOffset? ResolvedDate { get; private set; }
         public DateTimeOffset? UpdatedDate { get; private set; }
@@ -19,7 +19,7 @@ namespace TaskService.Domain.Entities
 
         protected Issue() { }
 
-        private Issue(Guid id, string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, DateTimeOffset? dueDate) : base(id, name)
+        private Issue(Guid id, string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate) : base(id, name)
         {
             ProjectId = projectId;
             Key = new IssueKey(key);
@@ -27,9 +27,10 @@ namespace TaskService.Domain.Entities
             Description = description?.Trim();
             DueDate = dueDate;
             IssueType = (IssueType)numberIssueType;
+            IssuePriority = (IssuePriority)numberIssuePriority;
         }
 
-        public static Issue Create(string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, DateTimeOffset? dueDate)
+        public static Issue Create(string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate)
         {
             return new Issue(
                 id: Guid.CreateVersion7(),
@@ -39,6 +40,7 @@ namespace TaskService.Domain.Entities
                 projectId: projectId,
                 taskStatusId: taskStatusId,
                 numberIssueType: numberIssueType,
+                numberIssuePriority: numberIssuePriority,
                 dueDate: dueDate);
         }
 
@@ -74,11 +76,11 @@ namespace TaskService.Domain.Entities
                 ResolvedDate = null;
         }
 
-        public void UpdateTag(IssueTag issueTag)
-        {
-            IssueTagId = issueTag.Id;
-            UpdatedDate = DateTimeOffset.UtcNow;
-        }
+        //public void UpdateTag(IssueTag issueTag)
+        //{
+        //    IssueTagId = issueTag.Id;
+        //    UpdatedDate = DateTimeOffset.UtcNow;
+        //}
 
         public void UpdateType(int numberType)
         {

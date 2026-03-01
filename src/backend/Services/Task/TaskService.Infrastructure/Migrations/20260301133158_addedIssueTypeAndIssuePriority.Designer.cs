@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskService.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using TaskService.Infrastructure.Persistence;
 namespace TaskService.Infrastructure.Migrations
 {
     [DbContext(typeof(TaskServiceDbContext))]
-    partial class TaskServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260301133158_addedIssueTypeAndIssuePriority")]
+    partial class addedIssueTypeAndIssuePriority
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,6 +69,9 @@ namespace TaskService.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<Guid>("IssueStatusId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("IssueTagId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("IssueType")

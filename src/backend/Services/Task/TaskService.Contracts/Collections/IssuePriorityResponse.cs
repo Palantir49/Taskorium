@@ -1,8 +1,7 @@
 ﻿namespace TaskService.Contracts.Collections;
 
-public record class IssueTypeResponse(
+public record IssuePriorityResponse(
     int Number,
     string Name,
-    string DisplayName,
-    string Code
+    string DisplayName
     );

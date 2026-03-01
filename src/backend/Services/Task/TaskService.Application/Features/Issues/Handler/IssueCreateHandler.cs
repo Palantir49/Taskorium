@@ -29,7 +29,8 @@ public class IssueCreateHandler(TaskServiceDbContext context) : IRequestHandler<
             key: issueKey,
             projectId: request.ProjectId,
             taskStatusId: status.Id,
-            numberIssueType: request.numberIssueType,
+            numberIssueType: request.NumberIssueType,
+            numberIssuePriority:request.NumberIssuePriority,
             dueDate: request.DueDate
         );
         await context.Issues.AddAsync(issue, cancellationToken);
