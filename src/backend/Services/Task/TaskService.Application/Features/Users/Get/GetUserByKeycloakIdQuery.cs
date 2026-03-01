@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TaskService.Application.Mediator;
+﻿using TaskService.Application.Mediator;
 
-namespace TaskService.Application.Features.Users.Get
-{
-    public record GetUserByKeycloakIdQuery(Guid keycloakId) : IQuery<GetUserByKeycloakIdResult>;
-}
+namespace TaskService.Application.Features.Users.Get;
+
+public record GetUserByKeycloakIdQuery(Guid? KeycloakId) : IQuery<GetUserByKeycloakIdResult>;
