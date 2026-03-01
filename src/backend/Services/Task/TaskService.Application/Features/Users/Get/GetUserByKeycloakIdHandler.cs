@@ -1,42 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
-using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace TaskService.Application.Features.Users.Get
+namespace TaskService.Application.Features.Users.Get;
+
+public class GetUserByKeycloakIdHandler(TaskServiceDbContext context)
+    : IRequestHandler<GetUserByKeycloakIdQuery, GetUserByKeycloakIdResult>
 {
-    public class GetUserByKeycloakIdHandler(TaskServiceDbContext context) : IRequestHandler<GetUserByKeycloakIdQuery, GetUserByKeycloakIdResult>
+    public async Task<GetUserByKeycloakIdResult> Handle(GetUserByKeycloakIdQuery query,
+        CancellationToken cancellationToken = default)
     {
-        public async Task<GetUserByKeycloakIdResult> Handle(GetUserByKeycloakIdQuery query, CancellationToken cancellationToken = default)
-        {
-            var existUser = await context.Users
-                .Include(x => x.WorkspaceMembers)
-                .Include(x => x.ProjectMembers)
-                .FirstOrDefaultAsync(x => x.KeycloakId == query.keycloakId, cancellationToken);
+        var existUser = await context.Users
+                            .Include(x => x.WorkspaceMembers)
+                            .Include(x => x.ProjectMembers)
+                            .FirstOrDefaultAsync(x => x.KeycloakId == query.KeycloakId, cancellationToken) ??
+                        throw new ArgumentNullException("Пользователь с таким keycloak id не существует",
+                            nameof(query.KeycloakId));
+        var userWorkspaces = existUser.WorkspaceMembers
+            .Select(x => new WorkSpaceMemberDto(x.WorkspaceId,
+                x.UserId,
+                new RoleDto(x.Role.ToString())))
+            .ToList();
 
-            if (existUser is null)
-            {
-                throw new ArgumentNullException("Пользователь с таким keycloak id не существует", nameof(query.keycloakId));
-            }
+        var userProjects = existUser.ProjectMembers
+            .Select(x => new ProjectMemberDto(x.ProjectId,
+                x.UserId,
+                new RoleDto(x.Role.ToString())))
+            .ToList();
 
-            var userWorkspaces = existUser.WorkspaceMembers
-                .Select(x => new WorkSpaceMemberDto(x.WorkspaceId,
-                                                    x.UserId,
-                                                    new RoleDto(x.Role.ToString())))
-                .ToList();
-
-            var userProjects = existUser.ProjectMembers
-                .Select(x => new ProjectMemberDto(x.ProjectId,
-                                                    x.UserId,
-                                                    new RoleDto(x.Role.ToString())))
-                .ToList();
-
-            return new GetUserByKeycloakIdResult(existUser.Id, existUser.KeycloakId, userProjects, userWorkspaces);
-        }
+        return new GetUserByKeycloakIdResult(existUser.Id, existUser.KeycloakId, userProjects, userWorkspaces);
     }
 }
