@@ -19,10 +19,9 @@ namespace TaskService.Domain.Entities
 
         protected Issue() { }
 
-        private Issue(Guid id, string name, string? description, string key, Guid projectId, Guid taskTagId, Guid taskStatusId, int numberIssueType, DateTimeOffset? dueDate) : base(id, name)
+        private Issue(Guid id, string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, DateTimeOffset? dueDate) : base(id, name)
         {
             ProjectId = projectId;
-            IssueTagId = taskTagId;
             Key = new IssueKey(key);
             IssueStatusId = taskStatusId;
             Description = description?.Trim();
@@ -30,7 +29,7 @@ namespace TaskService.Domain.Entities
             IssueType = (IssueType)numberIssueType;
         }
 
-        public static Issue Create(string name, string? description, string key, Guid projectId, Guid taskTagId, Guid taskStatusId, int numberIssueType, DateTimeOffset? dueDate)
+        public static Issue Create(string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, DateTimeOffset? dueDate)
         {
             return new Issue(
                 id: Guid.CreateVersion7(),
@@ -38,7 +37,6 @@ namespace TaskService.Domain.Entities
                 description: description,
                 key: key,
                 projectId: projectId,
-                taskTagId: taskTagId,
                 taskStatusId: taskStatusId,
                 numberIssueType: numberIssueType,
                 dueDate: dueDate);
