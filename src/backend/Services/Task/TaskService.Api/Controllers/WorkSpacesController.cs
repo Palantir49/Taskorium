@@ -5,11 +5,18 @@ using TaskService.Application.Commands.Workspaces.Get;
 using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
 using TaskService.Application.Features.Workspaces.Delete;
+using TaskService.Application.Features.Workspaces.Get;
 using TaskService.Application.Features.Workspaces.Update;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Workspace.Response;
 
 namespace TaskService.Api.Controllers;
+
+/*TODO Action: delete user from workspace
+  TODO Action: SetAdmin in workspace?
+  TODO Action: UnSetAdmin in workspace?
+  TODO Get all users from workspace
+ */
 
 /// <summary>
 ///     Контроллер для работы с рабочими пространствами

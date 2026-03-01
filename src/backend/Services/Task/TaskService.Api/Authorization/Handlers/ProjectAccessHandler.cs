@@ -2,7 +2,6 @@
 using TaskService.Api.Authorization.Actions;
 using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
-using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Projects.Command;
 using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Mediator;
@@ -25,27 +24,21 @@ public class ProjectAccessHandler(
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
         ProjectAccessRequirement requirement)
     {
-        logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над задачей",
+        logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над проектом",
             requirement.Action);
-        var issueId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor);
-        if (issueId is null)
+        var projectId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor);
+        if (projectId is null)
         {
             logger.LogInformation(
-                "В процессе авторизации для совершения действия {Action} над задачей произошла ошибка: не удалось получить идентификатор задачи из запроса",
+                "В процессе авторизации для совершения действия {Action} над проектом произошла ошибка: не удалось получить идентификатор проекта из запроса",
                 requirement.Action);
             context.Fail();
             return;
         }
 
-        //search all privileges
-
-        //get task
-        var issueQuery = new IssueGetByIdQuery(issueId);
-        var issue = await dispatcher.SendAsync(issueQuery);
-
 
         //get project
-        var projectQuery = new ProjectGetByIdQuery(issue.ProjectId);
+        var projectQuery = new ProjectGetByIdQuery(projectId);
         var project = await dispatcher.SendAsync(projectQuery);
 
 
@@ -53,8 +46,8 @@ public class ProjectAccessHandler(
         if (userKeyCloakId is null)
         {
             logger.LogInformation(
-                "В процессе авторизации для совершения действия {Action} над задачей {issueId} произошла ошибка: не удалось получить keycloakId пользователя из запроса",
-                requirement.Action, issueId);
+                "В процессе авторизации для совершения действия {Action} над проектом {projectId} произошла ошибка: не удалось получить keycloakId пользователя из запроса",
+                requirement.Action, projectId);
             context.Fail();
             return;
         }
@@ -95,7 +88,7 @@ public class ProjectAccessHandler(
         {
             case "Creator":
 
-            case "Admin":
+            case "Admin": //TODO Set and unset admin in project
                 context.Succeed(requirement);
                 return;
 

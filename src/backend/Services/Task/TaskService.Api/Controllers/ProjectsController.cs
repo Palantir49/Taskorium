@@ -15,6 +15,12 @@ using TaskService.Contracts.Project.Responses;
 
 namespace TaskService.Api.Controllers;
 
+/*TODO Action: delete user from project
+  TODO Action: SetAdmin in project?
+  TODO Action: UnSetAdmin in project?
+  TODO Get all users from project
+ */
+
 /// <summary>
 ///     Контроллер проектов
 /// </summary>
