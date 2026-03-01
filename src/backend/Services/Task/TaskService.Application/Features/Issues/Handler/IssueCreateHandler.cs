@@ -1,4 +1,5 @@
-﻿using TaskService.Application.Commands.Issues.Command;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskService.Application.Commands.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
@@ -11,19 +12,14 @@ public class IssueCreateHandler(TaskServiceDbContext context) : IRequestHandler<
 {
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
     {
-        var project = await context.Projects.FindAsync(request.ProjectId, cancellationToken) ??
-            throw new NullReferenceException($"Проект с id: {request.IssueStatusId} не найдена");
+        var project = await context.Projects.FirstOrDefaultAsync(x => x.Id == request.ProjectId, cancellationToken) ??
+            throw new NullReferenceException($"Проект с id: {request.ProjectId} не найдена");
 
         //TODO: создавать с статусом инициализации из проекта
         IssueStatus? status = await context.IssueStatus.FindAsync(request.IssueStatusId, cancellationToken) ??
             throw new NullReferenceException($"Статус задачи с id: {request.IssueStatusId} не найдена");
 
         //TODO: проверить что можно создавать с этим статусом
-
-        IssueTag? tag = await context.IssueTag.FindAsync(request.IssueTagId, cancellationToken) ??
-            throw new NullReferenceException($"Тип задачи с id: {request.IssueTagId} не найдена");
-
-        //TODO: проверить что можно создавать с этим типом
 
         var issue = Issue.Create(
             name: request.Name,
