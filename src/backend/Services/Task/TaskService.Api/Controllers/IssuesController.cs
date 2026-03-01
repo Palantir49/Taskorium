@@ -1,9 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Commands.Issues.Command;
 using TaskService.Application.Commands.Issues.Query;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
@@ -59,8 +55,8 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<IssueResponse>> GetTaskByIdAsync(Guid id)
     {
-        IssueGetByIdQuery query = new IssueGetByIdQuery(id);
-        IssueResponse response = await dispatcher.SendAsync(query);
+        var query = new IssueGetByIdQuery(id);
+        var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
 
@@ -77,14 +73,15 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     /// <returns></returns>
     /// <response code="201">Новая задача успешно создана</response>
     /// <response code="400">Некорректный запрос</response>
+    [Authorize(Policy = "CanCreateTask")]
     [HttpPost]
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromBody] IssueCreateRequest createIssueRequest)
     {
-        IssueCreateCommand createIssueCommand = createIssueRequest.ToCommand();
-        IssueResponse response = await dispatcher.SendAsync(createIssueCommand);
+        var createIssueCommand = createIssueRequest.ToCommand();
+        var response = await dispatcher.SendAsync(createIssueCommand);
         return CreatedAtAction(nameof(GetTaskByIdAsync), new { id = response.Id }, response);
     }
 
@@ -103,6 +100,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     /// <response code="200">Данные о задаче успешно обновлены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найдена задача для обновления</response>
+    [Authorize(Policy = "CanUpdateTask")]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -117,8 +115,8 @@ public class IssuesController(IDispatcher dispatcher) : Controller
         //        detail: "Некорректный запрос",
         //        statusCode: StatusCodes.Status400BadRequest));
         //}
-        IssueUpdateCommand command = IssueRequestToCommandMapping.CreateUpdateCommand(id, updateIssueRequest);
-        IssueResponse response = await dispatcher.SendAsync(command);
+        var command = IssueRequestToCommandMapping.CreateUpdateCommand(id, updateIssueRequest);
+        var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }
 
@@ -134,13 +132,14 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     /// <returns></returns>
     /// <response code="204">Задача успешно удалена</response>
     /// <response code="404">Не найдена задача для удаления</response>
+    [Authorize(Policy = "CanDeleteTask")]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteIssueAsync(Guid id)
     {
         IssueDeleteByIdCommand command = new(id);
-        int response = await dispatcher.SendAsync(command);
+        var response = await dispatcher.SendAsync(command);
         return NoContent();
     }
 }
