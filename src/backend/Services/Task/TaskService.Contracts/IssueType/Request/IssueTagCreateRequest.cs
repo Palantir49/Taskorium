@@ -2,5 +2,4 @@
 
 public record class IssueTagCreateRequest(
     string name,
-    Guid projectId,
-    string? color);
+    Guid projectId);

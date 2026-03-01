@@ -5,5 +5,4 @@ namespace TaskService.Application.Features.IssueTags.Command;
 
 public record class IssueTagUpdateCommand(
     Guid id,
-    string name,
-    string? color) : ICommand<IssueTagResponse>;
+    string name) : ICommand<IssueTagResponse>;

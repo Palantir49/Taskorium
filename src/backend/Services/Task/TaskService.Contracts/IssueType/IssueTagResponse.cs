@@ -3,5 +3,4 @@
 public record class IssueTagResponse(
     Guid id,
     string name,
-    Guid projectId,
-    string? color);
+    Guid projectId);
