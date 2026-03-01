@@ -79,6 +79,7 @@ public static class ServiceExtensions
 
             services.AddScoped<IAuthorizationHandler, IssueAccessHandler>();
             services.AddScoped<IAuthorizationHandler, ProjectAccessHandler>();
+            services.AddScoped<IAuthorizationHandler, WorkSpaceAccessHandler>();
         }
     }
 }
