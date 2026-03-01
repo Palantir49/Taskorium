@@ -13,6 +13,7 @@ public static class ProjectMapping
         return new ProjectCreateCommand(
             Name: request.Name,
             Description: request.Description,
+            Abbreviation: request.Abbreviation,
             WorkspaceId: request.WorkspaceId
             );
     }
@@ -23,6 +24,7 @@ public static class ProjectMapping
             Id: project.Id,
             Name: project.Name.ToString(),
             Description: project.Description,
+            Abbreviation: project.Abbreviation,
             WorkspaceId: project.WorkspaceId,
             CreatedDate: project.CreatedDate);
     }
