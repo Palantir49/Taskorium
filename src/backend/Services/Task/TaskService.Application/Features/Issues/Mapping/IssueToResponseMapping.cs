@@ -11,7 +11,6 @@ public static class IssueToResponseMapping
             Id: issue.Id,
             Name: issue.Name.ToString(),
             ProjectId: issue.ProjectId,
-            TaskTagId: issue.IssueTagId,
             TaskStatusId: issue.IssueStatusId,
             CreatedDate: issue.CreatedDate,
             Description: issue.Description,
