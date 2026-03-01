@@ -59,7 +59,7 @@ builder.Services.AddControllers();
 builder.Services.ConfigureInfrastructureLayer(builder.Configuration);
 builder.Services.ConfigureApplicationLayer();
 var app = builder.Build();
-
+app.UseExceptionHandler();
 // Включение CORS
 app.UseCors("AllowReactApp");
 app.UseAuthentication();
@@ -83,7 +83,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseExceptionHandler();
+
 app.UseServiceDefaults(builder.Configuration);
 app.MapControllers();
 app.UseMiddleware<RequestObservabilityMiddleware>();
