@@ -8,8 +8,8 @@
 //можно пока обойтись без них и делать общее изменение, а потом если что добавить
 public record class UpdateIssueRequest(
     string Name,
-    //Guid IssueTagId,
     Guid IssueStatusId,
-    int numberIssueType,
+    int NumberIssueType,
+    int NumberIssuePriority,
     string? Description = null,
     DateTimeOffset? DueDate = null);

@@ -8,6 +8,7 @@ public record IssueCreateCommand(
     Guid ProjectId,
     //Guid IssueTagId,
     //Guid IssueStatusId,
-    int numberIssueType,
+    int NumberIssueType,
+    int NumberIssuePriority,
     string? Description = null,
     DateTimeOffset? DueDate = null) : ICommand<IssueResponse>;

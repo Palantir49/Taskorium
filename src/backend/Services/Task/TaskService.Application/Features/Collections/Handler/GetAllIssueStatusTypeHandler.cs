@@ -1,4 +1,5 @@
-﻿using TaskService.Application.Features.Collections.Query;
+﻿using TaskService.Application.Features.Collections.Mapping;
+using TaskService.Application.Features.Collections.Query;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Collections;
 using TaskService.Domain.Entities.Enums;
@@ -12,23 +13,7 @@ public class GetAllIssueStatusTypeHandler : IRequestHandler<GetAllIssueStatusTyp
     {
         return Enum.GetValues<IssueStatusType>()
             .Cast<IssueStatusType>()
-            .Select(x => new IssueStatusTypeResponse(
-                Number: (int)x,
-                Name: x.ToString(),
-                DisplayName: GetDisplayName(x)
-                ))
+            .Select(x => x.ToResponse())
             .ToList();
-    }
-
-    private string GetDisplayName(IssueStatusType type)
-    {
-        return type switch
-        {
-            IssueStatusType.Initial => "Новая",
-            IssueStatusType.Process => "В работе",
-            IssueStatusType.Success => "Выполнено",
-            IssueStatusType.Rejected => "Отменено",
-            _ => type.ToString()
-        };
     }
 }

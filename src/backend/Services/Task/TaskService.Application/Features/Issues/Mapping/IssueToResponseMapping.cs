@@ -1,4 +1,5 @@
-﻿using TaskService.Contracts.Issue.Responses;
+﻿using TaskService.Application.Features.Collections.Mapping;
+using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
 
 namespace TaskService.Application.Features.Issues.Mapping;
@@ -14,6 +15,8 @@ public static class IssueToResponseMapping
             TaskStatusId: issue.IssueStatusId,
             CreatedDate: issue.CreatedDate,
             Description: issue.Description,
+            IssueType: issue.IssueType.ToResponse(),
+            IssuePriority: issue.IssuePriority.ToResponse(),
             UpdatedDate: issue.UpdatedDate,
             DueDate: issue.DueDate,
             ResolvedDate: issue.ResolvedDate);
