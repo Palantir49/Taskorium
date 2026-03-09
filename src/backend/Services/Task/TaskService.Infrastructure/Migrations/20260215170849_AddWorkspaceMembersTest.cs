@@ -37,38 +37,38 @@ namespace TaskService.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
+          /*  migrationBuilder.CreateIndex(
                 name: "IX_IssueStatus_ProjectId",
                 table: "IssueStatus",
-                column: "ProjectId");
+                column: "ProjectId");*/
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkspaceMembers_WorkspaceId",
                 table: "WorkspaceMembers",
                 column: "WorkspaceId");
 
-            migrationBuilder.AddForeignKey(
+          /*  migrationBuilder.AddForeignKey(
                 name: "FK_IssueStatus_Projects_ProjectId",
                 table: "IssueStatus",
                 column: "ProjectId",
                 principalTable: "Projects",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.Restrict);*/
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
+           /* migrationBuilder.DropForeignKey(
                 name: "FK_IssueStatus_Projects_ProjectId",
-                table: "IssueStatus");
+                table: "IssueStatus");*/
 
             migrationBuilder.DropTable(
                 name: "WorkspaceMembers");
 
-            migrationBuilder.DropIndex(
+          /*  migrationBuilder.DropIndex(
                 name: "IX_IssueStatus_ProjectId",
-                table: "IssueStatus");
+                table: "IssueStatus");*/
         }
     }
 }
