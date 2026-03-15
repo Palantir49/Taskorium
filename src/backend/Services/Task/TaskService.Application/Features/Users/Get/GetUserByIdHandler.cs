@@ -1,20 +1,25 @@
-﻿using TaskService.Application.Mediator;
+﻿using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Commands.Users.Get;
+using TaskService.Application.Mediator;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Commands.Users.Get;
+namespace TaskService.Application.Features.Users.Get;
 
-public class GetUserByIdHandler(TaskServiceDbContext context) : IRequestHandler<GetUserByIdQuery, GetUserByIdResult>
+public class GetUserByIdHandler(TaskServiceDbContext context, HybridCache cache)
+    : IRequestHandler<GetUserByIdQuery, GetUserByIdResult>
 {
-
     public async Task<GetUserByIdResult> Handle(GetUserByIdQuery command, CancellationToken cancellationToken = default)
     {
-
-        var user = await context.Users.FindAsync(command.id, cancellationToken);
-        if (user == null)
+        var cacheKey = $"user_{command.id}";
+        return await cache.GetOrCreateAsync(cacheKey, async _ =>
         {
-            throw new ArgumentNullException(nameof(user));
-        }
-        return new GetUserByIdResult(id: user.Id, userEmail: user.Email.ToString());
+            var user = await context.Users.FindAsync([command.id], cancellationToken);
+            if (user == null)
+            {
+                throw new KeyNotFoundException(nameof(user));
+            }
+
+            return new GetUserByIdResult(user.Id, user.Email.ToString());
+        }, cancellationToken: cancellationToken);
     }
 }
-

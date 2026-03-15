@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using TaskService.Application.Commands.Workspaces.Get;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
@@ -13,7 +14,7 @@ namespace TaskService.Application.Features.WorkspaceMembers.GetAllUsers
     {
         public async Task<GetWorkspaceMembersResult> Handle(GetWorkspaceMembersQuery request, CancellationToken cancellationToken = default)
         {
-            var existUser = context.Users.FirstOrDefault(x => x.KeycloakId == request.KeyoclakId);
+            var existUser = context.Users.Include(user => user.WorkspaceMembers).FirstOrDefault(x => x.KeycloakId == request.KeyoclakId);
             if (existUser is null)
             {
                 throw new ArgumentNullException("Пользователь с таким keycloak id не существует",
