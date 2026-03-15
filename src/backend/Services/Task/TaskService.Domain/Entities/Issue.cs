@@ -17,7 +17,7 @@ namespace TaskService.Domain.Entities
         public DateTimeOffset? UpdatedDate { get; private set; }
         public DateTimeOffset? DueDate { get; private set; }
 
-        public List<Tag> Tags { get; private set; } = new();
+        public ICollection<Tag> Tags { get; private set; } = null!;
 
         protected Issue() { }
 

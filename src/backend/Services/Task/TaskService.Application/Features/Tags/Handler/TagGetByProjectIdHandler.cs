@@ -12,7 +12,7 @@ public class TagGetByProjectIdHandler(TaskServiceDbContext context) : IRequestHa
 {
     public async Task<IEnumerable<TagResponse>> Handle(TagGetByProjectIdQuery request, CancellationToken cancellationToken = default)
     {
-        List<Tag> tags = await context.Tag
+        List<Tag> tags = await context.Tags
             .Where(x => x.ProjectId == request.id)
             .ToListAsync(cancellationToken);
 

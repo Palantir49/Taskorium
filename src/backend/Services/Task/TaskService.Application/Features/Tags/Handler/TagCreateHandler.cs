@@ -17,7 +17,7 @@ public class TagCreateHandler(TaskServiceDbContext context) : IRequestHandler<Ta
             name: request.name,
             projectId: request.projectId);
 
-        await context.Tag.AddAsync(tag, cancellationToken);
+        await context.Tags.AddAsync(tag, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         return tag.ToResponse();
     }
