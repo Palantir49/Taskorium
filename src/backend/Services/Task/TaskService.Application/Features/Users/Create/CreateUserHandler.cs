@@ -5,12 +5,13 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Users.Create;
 
-public class CreateUserHandler(TaskServiceDbContext context) : IRequestHandler<CreateUserCommand, CreateUserResult>
+public class CreateUserHandler(TaskServiceDbContext context)
+    : IRequestHandler<CreateUserCommand, CreateUserResult>
 {
     public async Task<CreateUserResult> Handle(CreateUserCommand command, CancellationToken cancellationToken = default)
     {
         //проверим существует ли пользователь
-        var user = await context.Users.FindAsync(command.KeycloakId);
+        var user = await context.Users.FindAsync([command.KeycloakId], cancellationToken);
 
         if (user is not null)
         {
@@ -21,7 +22,6 @@ public class CreateUserHandler(TaskServiceDbContext context) : IRequestHandler<C
 
         await context.Users.AddAsync(newUser, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-
         return new CreateUserResult(newUser.Id, newUser.Email.ToString());
         // return new UserResponse(id: user.Id, keycloakId: user.KeycloakId, email: user.Email.ToString(), username: user.Username.ToString(), createdAt: user.CreatedDate);
     }
