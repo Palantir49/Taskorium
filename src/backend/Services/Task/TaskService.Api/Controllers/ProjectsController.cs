@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Projects;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.IssueStatuses.Command;
-using TaskService.Application.Features.IssueTypes.Command;
 using TaskService.Application.Features.Projects.Command;
+using TaskService.Application.Features.Tags.Command;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.IssueStatus;
-using TaskService.Contracts.IssueType;
 using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
+using TaskService.Contracts.Tag;
 
 namespace TaskService.Api.Controllers;
 
@@ -188,7 +188,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// <remarks>
     ///     Пример запроса:
-    ///     PUT /api/v1/Projects/guid/IssueTypes
+    ///     PUT /api/v1/Projects/guid/Tags
     ///     {
     ///     }
     /// </remarks>
@@ -197,16 +197,15 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// <response code="200">Данные о типах задач проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
-    [Authorize(Policy = "CanViewProject")]
-    [HttpGet("{id:guid}/IssueTypes")]
-    [ProducesResponseType(typeof(IEnumerable<IssueTypeResponse>), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}/Tags")]
+    [ProducesResponseType(typeof(IEnumerable<TagResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssueTypesByProjectidAsync(Guid id)
+    public async Task<ActionResult<IEnumerable<TagResponse>>> GetTagsByProjectidAsync(Guid id)
     {
         //FAQ: а это нормальный возвращаемый тип?
-        var query = new IssueTypeGetByProjectIdQuery(id);
+        var query = new TagGetByProjectIdQuery(id);
         var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
@@ -222,6 +221,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// <returns></returns>
     /// <response code="204">Задача успешно удалена</response>
     /// <response code="404">Не найдена задача для удаления</response>
+    [Authorize(Policy = "CanViewProject")]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

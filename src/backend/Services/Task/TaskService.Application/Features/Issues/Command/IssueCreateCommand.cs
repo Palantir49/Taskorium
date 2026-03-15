@@ -6,7 +6,7 @@ namespace TaskService.Application.Commands.Issues.Command;
 public record IssueCreateCommand(
     string Name,
     Guid ProjectId,
-    Guid IssueTypeId,
-    Guid IssueStatusId,
+    int NumberIssueType,
+    int NumberIssuePriority,
     string? Description = null,
     DateTimeOffset? DueDate = null) : ICommand<IssueResponse>;

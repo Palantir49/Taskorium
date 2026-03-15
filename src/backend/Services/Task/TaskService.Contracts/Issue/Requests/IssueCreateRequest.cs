@@ -3,7 +3,7 @@
 public record class IssueCreateRequest(
     string Name,
     Guid ProjectId,
-    Guid IssueTypeId,
-    Guid IssueStatusId,
+    int NumberIssueType,
+    int NumberIssuePriority,
     string? Description = null,
     DateTimeOffset? DueDate = null);

@@ -20,6 +20,13 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
 
         builder.Property(t => t.Description).HasMaxLength(2000);
 
+        builder.Property(t => t.Key)
+            .HasConversion(
+            key => key.Value,
+            value => new IssueKey(value))
+            .IsRequired()
+            .HasMaxLength(10);
+
         builder.Property(t => t.CreatedDate).IsRequired();
         builder.Property(t => t.UpdatedDate);
         builder.Property(t => t.DueDate);
@@ -27,13 +34,17 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
 
         builder.Property(t => t.ProjectId).IsRequired();
         builder.Property(t => t.IssueStatusId).IsRequired();
-        builder.Property(t => t.IssueTypeId).IsRequired();
+        builder.Property(t => t.IssuePriority).IsRequired();
+        builder.Property(t => t.IssueType).IsRequired();
 
         builder.HasOne<Project>()
               .WithMany()
               .HasForeignKey(t => t.ProjectId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(x => x.Tags)
+            .WithMany(x => x.Issues);
 
         //builder.HasOne(i => i.User)
         //    .WithMany(u => u.Issues)

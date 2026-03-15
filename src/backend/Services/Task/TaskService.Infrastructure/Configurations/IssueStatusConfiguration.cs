@@ -22,11 +22,9 @@ internal class IssueStatusConfiguration : IEntityTypeConfiguration<IssueStatus>
         builder.Property(t => t.Type).IsRequired();
         builder.Property(t => t.Position).IsRequired();
         builder.Property(t => t.CreatedDate).IsRequired();
-        //TODO: если будет нужен, то сделать обязательным или в сущности добавить дефолт
-        builder.Property(t => t.Color);
 
         builder.HasOne<Project>()
-              .WithMany()
+              .WithMany(x => x.Statuses)
               .HasForeignKey(t => t.ProjectId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);

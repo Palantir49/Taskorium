@@ -24,12 +24,10 @@ public class IssueUpdateHandler(TaskServiceDbContext context, HybridCache cache)
         var status = await context.IssueStatus.FindAsync([request.IssueStatusId], cancellationToken) ??
                      throw new NullReferenceException($"Статус задачи с id: {request.IssueStatusId} не найден");
 
-        var type = await context.IssueType.FindAsync([request.IssueTypeId], cancellationToken) ??
-                   throw new NullReferenceException($"Тип задачи с id: {request.IssueTypeId} не найден");
 
         issue.UpdateName(request.Name);
         issue.UpdateDescription(request.Description);
-        issue.UpdateType(type.Id);
+        issue.UpdateType(request.numberIssueType);
         issue.UpdateStatus(status);
         issue.UpdateDueDate(request.DueDate);
 

@@ -16,7 +16,6 @@ public static class ServiceExtensions
                     .AddClasses(filter => filter.AssignableTo(typeof(IRequestHandler<,>)))
                     .AsImplementedInterfaces()
                     .WithScopedLifetime());
-            //services.AddScoped<ICommandHandler<CreateUserCommand, CreateUserResult>, CreateUserHandler>();
         }
     }
 }

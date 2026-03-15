@@ -12,9 +12,9 @@ namespace TaskService.Application.Features.Issues.Mapping
             return new IssueCreateCommand(
                 Name: request.Name,
                 ProjectId: request.ProjectId,
-                IssueTypeId: request.IssueTypeId,
-                IssueStatusId: request.IssueStatusId,
                 Description: request.Description,
+                NumberIssueType: request.NumberIssueType,
+                NumberIssuePriority: request.NumberIssuePriority,
                 DueDate: request.DueDate
                 );
         }
@@ -24,9 +24,9 @@ namespace TaskService.Application.Features.Issues.Mapping
             return new IssueUpdateCommand(
                 id: id,
                 Name: request.Name,
-                IssueTypeId: request.IssueTypeId,
                 IssueStatusId: request.IssueStatusId,
                 Description: request.Description,
+                numberIssueType: request.NumberIssueType,
                 DueDate: request.DueDate
                 );
         }

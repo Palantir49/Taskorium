@@ -1,39 +1,48 @@
 ﻿using TaskService.Domain.Entities.BaseEntity;
 using TaskService.Domain.Entities.Enums;
+using TaskService.Domain.ValueObjects;
 
 namespace TaskService.Domain.Entities
 {
     public class Issue : BaseEntities
     {
         public Guid ProjectId { get; }
-        public Guid IssueTypeId { get; private set; }
         public Guid IssueStatusId { get; private set; }
         public string? Description { get; private set; }
+        public IssueKey Key { get; private set; } = null!;
+        public IssueType IssueType { get; private set; }
+        public IssuePriority IssuePriority { get; private set; }
+        public DateTimeOffset? StartDate { get; private set; }
         public DateTimeOffset? ResolvedDate { get; private set; }
         public DateTimeOffset? UpdatedDate { get; private set; }
         public DateTimeOffset? DueDate { get; private set; }
 
-        //TODO: Добавление свойств:
-        //ключ 
-        //FAQ: как его создавать? возможно в хенделере запрашить проект, брать его короткое имя и количество задач в нем. "PROJ-123"
-        //дата назначения - возможно нужно в таблицу 
-        //дата взятия в работу - может добавить таблицу истории? статусов "в работе" может быть несколько
-        //FAQ: а какой жизненный цикл у этого свойства? ведь может быть ситуация случайного перевода в рабочий статус и обратная ситуация, когда случайно перенесли в рабочую
+        public ICollection<Tag> Tags { get; private set; } = null!;
 
         protected Issue() { }
 
-        private Issue(Guid id, string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId, DateTimeOffset? dueDate) : base(id, name)
+        private Issue(Guid id, string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate) : base(id, name)
         {
             ProjectId = projectId;
-            IssueTypeId = taskTypeId;
+            Key = new IssueKey(key);
             IssueStatusId = taskStatusId;
             Description = description?.Trim();
             DueDate = dueDate;
+            IssueType = (IssueType)numberIssueType;
+            IssuePriority = (IssuePriority)numberIssuePriority;
         }
 
-        public static Issue Create(string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId, DateTimeOffset? dueDate)
+        public static Issue Create(string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate)
         {
-            return new Issue(id: Guid.CreateVersion7(), name: name, description: description, projectId: projectId, taskTypeId: taskTypeId, taskStatusId: taskStatusId,
+            return new Issue(
+                id: Guid.CreateVersion7(),
+                name: name,
+                description: description,
+                key: key,
+                projectId: projectId,
+                taskStatusId: taskStatusId,
+                numberIssueType: numberIssueType,
+                numberIssuePriority: numberIssuePriority,
                 dueDate: dueDate);
         }
 
@@ -60,15 +69,18 @@ namespace TaskService.Domain.Entities
             IssueStatusId = status.Id;
             UpdatedDate = DateTimeOffset.UtcNow;
 
+            if (status.Type == IssueStatusType.Process && StartDate == default(DateTimeOffset))
+                StartDate = DateTimeOffset.UtcNow;
+
             if (status.Type == IssueStatusType.Success || status.Type == IssueStatusType.Rejected)
                 ResolvedDate = DateTimeOffset.UtcNow;
             else
                 ResolvedDate = null;
         }
 
-        public void UpdateType(Guid newTaskTypeId)
+        public void UpdateType(int numberType)
         {
-            IssueTypeId = newTaskTypeId;
+            IssueType = (IssueType)numberType;
             UpdatedDate = DateTimeOffset.UtcNow;
         }
     }
