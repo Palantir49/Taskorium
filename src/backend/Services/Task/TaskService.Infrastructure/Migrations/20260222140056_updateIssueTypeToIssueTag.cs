@@ -47,23 +47,23 @@ namespace TaskService.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-          /*  migrationBuilder.CreateIndex(
-                name: "IX_IssueStatus_ProjectId",
-                table: "IssueStatus",
-                column: "ProjectId");*/
+            /*  migrationBuilder.CreateIndex(
+                  name: "IX_IssueStatus_ProjectId",
+                  table: "IssueStatus",
+                  column: "ProjectId");*/
 
             migrationBuilder.CreateIndex(
                 name: "IX_IssueTag_ProjectId",
                 table: "IssueTag",
                 column: "ProjectId");
 
-          /*  migrationBuilder.AddForeignKey(
-                name: "FK_IssueStatus_Projects_ProjectId",
-                table: "IssueStatus",
-                column: "ProjectId",
-                principalTable: "Projects",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);*/
+            /*  migrationBuilder.AddForeignKey(
+                  name: "FK_IssueStatus_Projects_ProjectId",
+                  table: "IssueStatus",
+                  column: "ProjectId",
+                  principalTable: "Projects",
+                  principalColumn: "Id",
+                  onDelete: ReferentialAction.Cascade);*/
         }
 
         /// <inheritdoc />
@@ -76,9 +76,9 @@ namespace TaskService.Infrastructure.Migrations
             migrationBuilder.DropTable(
                 name: "IssueTag");
 
-          /*  migrationBuilder.DropIndex(
-                name: "IX_IssueStatus_ProjectId",
-                table: "IssueStatus");*/
+            /*  migrationBuilder.DropIndex(
+                  name: "IX_IssueStatus_ProjectId",
+                  table: "IssueStatus");*/
 
             migrationBuilder.DropColumn(
                 name: "IssueType",

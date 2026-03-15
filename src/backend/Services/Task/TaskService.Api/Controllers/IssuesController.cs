@@ -159,7 +159,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     [HttpPost("{id:guid}/Tags")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AddTagToIssueAsync([FromRoute]Guid id, [FromBody] AddTagToIssueRequest request)
+    public async Task<IActionResult> AddTagToIssueAsync([FromRoute] Guid id, [FromBody] AddTagToIssueRequest request)
     {
         AddTagToIssueCommand command = new(id, request.TagId);
         await dispatcher.SendAsync(command);

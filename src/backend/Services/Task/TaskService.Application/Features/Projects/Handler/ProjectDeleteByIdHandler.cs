@@ -27,7 +27,7 @@ public class ProjectDeleteByIdHandler(TaskServiceDbContext context, HybridCache 
 
         foreach (Tag tag in tags)
             context.Tags.Remove(tag);
-        
+
         // Инвалидируем кэш:
         var projectCacheKey = $"project_{project.Id}";
         var workspaceProjectsCacheKey = $"projects_by_workspace_{project.WorkspaceId}";
