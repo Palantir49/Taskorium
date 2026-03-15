@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskService.Infrastructure.Persistence;
@@ -22,6 +21,21 @@ namespace TaskService.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("IssueTag", b =>
+                {
+                    b.Property<Guid>("IssuesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TagsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("IssuesId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("IssueTag");
+                });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Attachment", b =>
                 {
@@ -210,7 +224,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.User", b =>
@@ -289,7 +303,20 @@ namespace TaskService.Infrastructure.Migrations
                     b.ToTable("WorkspaceMembers");
                 });
 
-            // Relations
+            modelBuilder.Entity("IssueTag", b =>
+                {
+                    b.HasOne("TaskService.Domain.Entities.Issue", null)
+                        .WithMany()
+                        .HasForeignKey("IssuesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaskService.Domain.Entities.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Attachment", b =>
                 {
@@ -378,8 +405,6 @@ namespace TaskService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
-
-            // Navigations
 
             modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
                 {
