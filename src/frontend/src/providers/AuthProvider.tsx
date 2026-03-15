@@ -1,9 +1,9 @@
 ﻿import React from 'react';
 import {useAuth} from 'react-oidc-context';
-import Header from '../components/Header';
+import { HeaderAuthorization } from '../components/HeaderAuthorization';
 import {useCreateUser} from '../hooks/useCreateUser';
 import {useUserFullName} from '../hooks/useUserFullName';
-import {AuthProviderProps} from "../types";
+import {AuthProviderProps, AuthInfo} from "../types";
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({
                                                               children,
@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     }
 
     // Показываем контент только если синхронизация успешна или еще не начата
-    const authInfo = {
+    const authInfo: AuthInfo = {
         isAuthenticated: auth.isAuthenticated,
         userFullName,
         onLogin: () => {
@@ -49,7 +49,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     return (
         <>
             {showHeader && auth.isAuthenticated && activeTab && (
-                <Header
+                <HeaderAuthorization
                     activeTab={activeTab as any}
                     onTabChange={onTabChange as any}
                     authInfo={authInfo}
