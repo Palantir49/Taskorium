@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TaskService.Infrastructure.Extensions.Cache;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Extensions;
@@ -13,6 +14,7 @@ public static class ServiceExtensions
         {
             services.AddDbContext<TaskServiceDbContext>(options => options.UseNpgsql(
                 configuration.GetConnectionString("DefaultConnection")));
+            services.AddCache(configuration);
         }
     }
 }
