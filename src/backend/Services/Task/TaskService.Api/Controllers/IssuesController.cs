@@ -166,50 +166,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
         return NoContent();
     }
 
-    /// <summary>
-    ///     удалить таг у задаче
-    /// </summary>
-    /// <remarks>
-    ///     Пример запроса:
-    ///     DELETE /api/v1/Issues/guid/Tags/guid
-    /// </remarks>
-    /// <param name="id">Идентификатор задачи для удаления</param>
-    /// <param name="tagId">идентификатор тага</param>
-    /// <returns></returns>
-    /// <response code="204">Связь задачи и тага успешно удалена</response>
-    /// <response code="404">Не найдена задача или таг для удаления связи</response>
-    [HttpPost("{id:guid}/Tags/{tagId:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteTagToIssueAsync([FromRoute] Guid id, [FromRoute] Guid tagId)
-    {
-        //AddTagToIssueCommand command = new(id, request.TagId);
-        //await dispatcher.SendAsync(command);
-        return NoContent();
-    }
 
-    /// <summary>
-    ///     Добавить таг к задаче
-    /// </summary>
-    /// <remarks>
-    ///     Пример запроса:
-    ///     POST /api/v1/Issues/guid/Tags
-    /// </remarks>
-    /// <param name="id">Идентификатор задачи для удаления</param>
-    /// <param name="request">тело запроса с идентификатором тага</param>
-    /// <returns></returns>
-    /// <response code="204">Связь задачи и тага успешно создана</response>
-    /// <response code="404">Не найдена задача или таг для добавления тага</response>
-    /// <response code="409">Задача и таг относятся к разынм проектам</response>
-    [HttpPost("{id:guid}/Tags")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AddTagToIssueAsync([FromRoute]Guid id, [FromBody] AddTagToIssueRequest request)
-    {
-        AddTagToIssueCommand command = new(id, request.TagId);
-        await dispatcher.SendAsync(command);
-        return NoContent();
-    }
 
     /// <summary>
     ///     удалить таг у задаче
