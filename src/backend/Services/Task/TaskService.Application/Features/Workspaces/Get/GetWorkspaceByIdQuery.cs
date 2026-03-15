@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using TaskService.Application.Commands.Workspaces.Get;
 using TaskService.Application.Mediator;
 
-namespace TaskService.Application.Commands.Workspaces.Get;
+namespace TaskService.Application.Features.Workspaces.Get;
 
-public record class GetWorkspaceByIdQuery(Guid id) : IQuery<GetWorkspacebyIdResult>;
-
+public record GetWorkspaceByIdQuery(Guid? Id) : IQuery<GetWorkspacebyIdResult>;
