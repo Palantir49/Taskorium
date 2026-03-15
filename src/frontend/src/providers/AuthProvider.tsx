@@ -1,16 +1,22 @@
-﻿import React from 'react';
+﻿import React, { createContext, useContext } from 'react';
 import {useAuth} from 'react-oidc-context';
-import Header from '../components/Header';
 import {useCreateUser} from '../hooks/useCreateUser';
 import {useUserFullName} from '../hooks/useUserFullName';
-import {AuthProviderProps} from "../types";
+import {AuthInfo} from "../types";
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({
-                                                              children,
-                                                              activeTab,
-                                                              onTabChange,
-                                                              showHeader = true,
-                                                          }) => {
+// Создаем контекст аутентификации
+const AuthContext = createContext<AuthInfo | null>(null);
+
+// Хук для использования контекста аутентификации
+export const useAuthContext = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuthContext must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const auth = useAuth();
     const {syncStatus, syncError} = useCreateUser(); // авто-синхронизация
     const userFullName = useUserFullName();
@@ -37,25 +43,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         );
     }
 
-    // Показываем контент только если синхронизация успешна или еще не начата
-    const authInfo = {
+    // Создаем authInfo для контекста
+    const authInfo: AuthInfo = {
         isAuthenticated: auth.isAuthenticated,
         userFullName,
-        onLogin: () => {
-        },
+        onLogin: () => {},
         onLogout: handleLogout,
     };
 
     return (
-        <>
-            {showHeader && auth.isAuthenticated && activeTab && (
-                <Header
-                    activeTab={activeTab as any}
-                    onTabChange={onTabChange as any}
-                    authInfo={authInfo}
-                />
-            )}
+        <AuthContext.Provider value={authInfo}>
             {children}
-        </>
+        </AuthContext.Provider>
     );
 };

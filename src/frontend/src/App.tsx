@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useAuth} from 'react-oidc-context';
+import {AuthProvider} from './providers/AuthProvider';
 import LoginGate from './components/auth/LoginGate';
 import StartDashboardCards from './components/StartDashboardCards';
 import './App.css';
@@ -19,11 +20,13 @@ function App() {
 
     // Контент для аутентифицированных пользователей
     const content =  auth.isAuthenticated ? (
-        <StartDashboardCards
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            showHeader={auth.isAuthenticated}
-        />
+        <AuthProvider>
+            <StartDashboardCards
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                showHeader={auth.isAuthenticated}
+            />
+        </AuthProvider>
     ) : (
         <LoginGate/>
     );
