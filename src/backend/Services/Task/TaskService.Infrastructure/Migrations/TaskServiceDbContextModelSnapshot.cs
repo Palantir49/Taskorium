@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskService.Infrastructure.Persistence;
@@ -21,21 +22,6 @@ namespace TaskService.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("IssueTag", b =>
-                {
-                    b.Property<Guid>("IssuesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TagsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("IssuesId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("IssueTag");
-                });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Attachment", b =>
                 {
@@ -119,7 +105,6 @@ namespace TaskService.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
-                    
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -144,7 +129,6 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.ToTable("IssueStatus");
                 });
-            
 
             modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
                 {
@@ -283,21 +267,6 @@ namespace TaskService.Infrastructure.Migrations
                     b.ToTable("Workspaces");
                 });
 
-            modelBuilder.Entity("IssueTag", b =>
-                {
-                    b.HasOne("TaskService.Domain.Entities.Issue", null)
-                        .WithMany()
-                        .HasForeignKey("IssuesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TaskService.Domain.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("TaskService.Domain.Entities.WorkspaceMember", b =>
                 {
                     b.Property<Guid>("WorkspaceId")
@@ -319,6 +288,8 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.ToTable("WorkspaceMembers");
                 });
+
+            // Relations
 
             modelBuilder.Entity("TaskService.Domain.Entities.Attachment", b =>
                 {
@@ -365,13 +336,13 @@ namespace TaskService.Infrastructure.Migrations
             modelBuilder.Entity("TaskService.Domain.Entities.ProjectMember", b =>
                 {
                     b.HasOne("TaskService.Domain.Entities.Project", null)
-                        .WithMany()
+                        .WithMany("ProjectMembers")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TaskService.Domain.Entities.User", null)
-                        .WithMany()
+                        .WithMany("ProjectMembers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -393,11 +364,6 @@ namespace TaskService.Infrastructure.Migrations
                         .HasForeignKey("OwnerId");
                 });
 
-            modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
-                {
-                    b.Navigation("Statuses");
-                });
-
             modelBuilder.Entity("TaskService.Domain.Entities.WorkspaceMember", b =>
                 {
                     b.HasOne("TaskService.Domain.Entities.User", null)
@@ -413,9 +379,13 @@ namespace TaskService.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            // Navigations
+
             modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
                 {
                     b.Navigation("ProjectMembers");
+
+                    b.Navigation("Statuses");
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.User", b =>
@@ -429,7 +399,7 @@ namespace TaskService.Infrastructure.Migrations
                 {
                     b.Navigation("WorkspaceMembers");
                 });
-
+#pragma warning restore 612, 618
         }
     }
 }
