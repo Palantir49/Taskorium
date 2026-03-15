@@ -1,8 +1,8 @@
-﻿using TaskService.Application.Features.Issues.Command;
+﻿using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
-using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Issues.Handler;
@@ -24,15 +24,15 @@ public class IssueUpdateHandler(TaskServiceDbContext context, HybridCache cache)
         var status = await context.IssueStatus.FindAsync([request.IssueStatusId], cancellationToken) ??
                      throw new NullReferenceException($"Статус задачи с id: {request.IssueStatusId} не найден");
 
-           
-            issue.UpdateName(request.Name);
-            issue.UpdateDescription(request.Description);
-            issue.UpdateType(request.numberIssueType);
-            issue.UpdateStatus(status);
-            issue.UpdateDueDate(request.DueDate);
 
-            context.Issues.Update(issue);
-            await context.SaveChangesAsync(cancellationToken);
+        issue.UpdateName(request.Name);
+        issue.UpdateDescription(request.Description);
+        issue.UpdateType(request.numberIssueType);
+        issue.UpdateStatus(status);
+        issue.UpdateDueDate(request.DueDate);
+
+        context.Issues.Update(issue);
+        await context.SaveChangesAsync(cancellationToken);
 
         //Инвалидируем кэш:
         var issueCacheKey = $"issue_id_{issue.Id}";

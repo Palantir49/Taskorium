@@ -5,6 +5,7 @@ namespace TaskService.Domain.Entities;
 public class Project : BaseEntities
 {
     protected Project() { }
+
     //TODO: добавить сокращение для key (5 символов)
     private Project(Guid id, string name, string? description, string abbreviation, Guid workspaceId)
         : base(id, name)
@@ -13,6 +14,7 @@ public class Project : BaseEntities
         Description = description;
         Abbreviation = abbreviation;
     }
+
     public Guid WorkspaceId { get; }
 
     public string? Description { get; private set; }
@@ -23,15 +25,19 @@ public class Project : BaseEntities
 
     public List<IssueStatus>? Statuses { get; protected set; } = new();
     public List<ProjectMember> ProjectMembers { get; private set; } = [];
-    public static Project Create(string name, string? description, Guid workspaceId)
+
+    public static Project Create(string name, string? description, string abbreviation, Guid workspaceId)
     {
         return new Project(
-            id: Guid.CreateVersion7(),
-            name: name,
-            description: description,
-            abbreviation: abbreviation,
-            workspaceId: workspaceId);
+            Guid.CreateVersion7(),
+            name,
+            description,
+            abbreviation,
+            workspaceId);
     }
 
-    public void UpdateDescription(string newDescription) => Description = newDescription;
+    public void UpdateDescription(string newDescription)
+    {
+        Description = newDescription;
+    }
 }
