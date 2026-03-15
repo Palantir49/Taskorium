@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import {useAuth} from 'react-oidc-context';
-import Header from '../components/Header';
+import HeaderKanbanBoard from '../components/HeaderKanbanBoard';
 import {useCreateUser} from '../hooks/useCreateUser';
 import {useUserFullName} from '../hooks/useUserFullName';
 import {AuthProviderProps} from "../types";
@@ -49,7 +49,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     return (
         <>
             {showHeader && auth.isAuthenticated && activeTab && (
-                <Header
+                <HeaderKanbanBoard
                     activeTab={activeTab as any}
                     onTabChange={onTabChange as any}
                     authInfo={authInfo}
