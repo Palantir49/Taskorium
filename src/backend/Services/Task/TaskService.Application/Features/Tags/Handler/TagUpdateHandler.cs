@@ -10,12 +10,12 @@ public class TagUpdateHandler(TaskServiceDbContext context) : IRequestHandler<Ta
 {
     public async Task<TagResponse> Handle(TagUpdateCommand request, CancellationToken cancellationToken = default)
     {
-        Tag tag = await context.Tag.FindAsync(request.id, cancellationToken) ??
+        Tag tag = await context.Tags.FindAsync(request.id, cancellationToken) ??
             throw new NullReferenceException($"Тип задачи с id: {request.id} не найден");
 
         tag.UpdateName(request.name);
 
-        context.Tag.Update(tag);
+        context.Tags.Update(tag);
         await context.SaveChangesAsync(cancellationToken);
         return tag.ToResponse();
     }

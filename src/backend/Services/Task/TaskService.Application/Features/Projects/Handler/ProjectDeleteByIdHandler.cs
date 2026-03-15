@@ -13,7 +13,7 @@ public class ProjectDeleteByIdHandler(TaskServiceDbContext context, HybridCache 
     public async Task<int> Handle(ProjectDeleteByIdCommand request, CancellationToken cancellationToken = default)
     {
         Project project = await context.Projects.FindAsync(request.id, cancellationToken) ??
-                          throw new NullReferenceException($"Проект с id: {request.id} не найдена");
+            throw new NullReferenceException($"Проект с id: {request.id} не найдена");
         List<Issue> issues = await context.Issues.Where(x => x.ProjectId == project.Id).ToListAsync();
         if (issues != null && issues.Count > 0)
             throw new NullReferenceException($"Нельзя удалить статус, пока существуют связанные задачи");
@@ -23,10 +23,10 @@ public class ProjectDeleteByIdHandler(TaskServiceDbContext context, HybridCache 
         foreach (IssueStatus status in statuses)
             context.IssueStatus.Remove(status);
 
-        List<Tag> tags = await context.Tag.Where(x => x.ProjectId == project.Id).ToListAsync();
+        List<Tag> tags = await context.Tags.Where(x => x.ProjectId == project.Id).ToListAsync();
 
         foreach (Tag tag in tags)
-            context.Tag.Remove(tag);
+            context.Tags.Remove(tag);
         
         // Инвалидируем кэш:
         var projectCacheKey = $"project_{project.Id}";

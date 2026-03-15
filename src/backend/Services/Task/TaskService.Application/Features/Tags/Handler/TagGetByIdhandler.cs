@@ -10,7 +10,7 @@ namespace TaskService.Application.Features.Tags.Handler
     {
         public async Task<TagResponse> Handle(TagGetByIdQuery request, CancellationToken cancellationToken = default)
         {
-            Tag tag = await context.Tag.FindAsync(request.id, cancellationToken) ??
+            Tag tag = await context.Tags.FindAsync(request.id, cancellationToken) ??
                 throw new NullReferenceException($"Тип задачи с id: {request.id} не найден");
             return tag.ToResponse();
         }
