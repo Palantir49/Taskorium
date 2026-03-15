@@ -21,7 +21,8 @@ internal static class ServiceExtensions
             {
                 options.DefaultEntryOptions = new HybridCacheEntryOptions
                 {
-                    LocalCacheExpiration = TimeSpan.FromDays(1), Expiration = TimeSpan.FromDays(7)
+                    LocalCacheExpiration = TimeSpan.FromDays(1),
+                    Expiration = TimeSpan.FromDays(7)
                 };
             });
         }
