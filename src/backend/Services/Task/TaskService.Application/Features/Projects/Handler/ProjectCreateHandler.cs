@@ -15,7 +15,7 @@ public class ProjectCreateHandler(TaskServiceDbContext context, HybridCache cach
         CancellationToken cancellationToken = default)
     {
         _ = await context.Workspaces.FindAsync([request.WorkspaceId], cancellationToken) ??
-            throw new NullReferenceException($"Рабочая область с id: {request.WorkspaceId} не найдена");
+            throw new KeyNotFoundException($"Рабочая область с id: {request.WorkspaceId} не найдена");
 
         var project = Project.Create(
             request.Name,

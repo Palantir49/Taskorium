@@ -18,7 +18,7 @@ internal class ProjectGetByIdHandler(TaskServiceDbContext context, HybridCache c
         return await cache.GetOrCreateAsync(cacheKey, async _ =>
         {
             var project = await context.Projects.FindAsync([request.Id], cancellationToken) ??
-                          throw new NullReferenceException($"Проект с id: {request.Id} не найден");
+                          throw new KeyNotFoundException($"Проект с id: {request.Id} не найден");
 
             return project.ToResponse();
         }, cancellationToken: cancellationToken);

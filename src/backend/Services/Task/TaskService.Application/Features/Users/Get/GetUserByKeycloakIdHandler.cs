@@ -20,8 +20,8 @@ public class GetUserByKeycloakIdHandler(TaskServiceDbContext context, HybridCach
                                 .Include(x => x.WorkspaceMembers)
                                 .Include(x => x.ProjectMembers)
                                 .FirstOrDefaultAsync(x => x.KeycloakId == query.KeycloakId, cancellationToken) ??
-                            throw new ArgumentNullException("Пользователь с таким keycloak id не существует",
-                                nameof(query.KeycloakId));
+                            throw new KeyNotFoundException(
+                                $"Пользователь с таким keycloak id {query.KeycloakId} не существует");
             var userWorkspaces = existUser.WorkspaceMembers
                 .Select(x => new WorkSpaceMemberDto(x.WorkspaceId,
                     x.UserId,

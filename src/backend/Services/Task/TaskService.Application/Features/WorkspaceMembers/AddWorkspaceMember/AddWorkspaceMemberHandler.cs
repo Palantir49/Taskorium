@@ -19,15 +19,13 @@ public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache
             .FirstOrDefaultAsync(workspace => workspace.Id == command.workspaceId, cancellationToken);
         if (existWorkspace is null)
         {
-            throw new ArgumentNullException("Рабочей области с таким id не существует",
-                nameof(command.workspaceId));
+            throw new KeyNotFoundException($"Рабочей области с таким id {command.workspaceId} не существует");
         }
 
-        var existUser = await context.Users.FindAsync(command.userId, cancellationToken);
+        var existUser = await context.Users.FindAsync([command.userId], cancellationToken);
         if (existUser is null)
         {
-            throw new ArgumentNullException("Пользователь с таким id не существует",
-                nameof(command.workspaceId));
+            throw new KeyNotFoundException($"Пользователь с таким id {command.userId} не существует");
         }
 
         if (existWorkspace.WorkspaceMembers.Any(x => x.UserId == existUser.Id))
