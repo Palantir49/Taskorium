@@ -1,18 +1,32 @@
-﻿using TaskService.Application.Features.Issues.Command;
+﻿using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Mediator;
-using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Issues.Handler;
 
-public class IssueDeleteByIdhandler(TaskServiceDbContext context) : IRequestHandler<IssueDeleteByIdCommand, int>
+public class IssueDeleteByIdHandler(TaskServiceDbContext context, HybridCache cache)
+    : IRequestHandler<IssueDeleteByIdCommand, int>
 {
     public async Task<int> Handle(IssueDeleteByIdCommand request, CancellationToken cancellationToken = default)
     {
-        Issue issue = await context.Issues.FindAsync(request.id, cancellationToken) ??
-            throw new NullReferenceException($"Задача с id: {request.id} не найдена");
+        var issue = await context.Issues.FindAsync([request.id], cancellationToken) ??
+                    throw new KeyNotFoundException($"Задача с id: {request.id} не найдена");
+
+        var projectId = issue.ProjectId;
 
         context.Issues.Remove(issue);
-        return await context.SaveChangesAsync(cancellationToken);
+        var deletedCount = await context.SaveChangesAsync(cancellationToken);
+
+        // Инвалидируем кэш:
+        var issueCacheKey = $"issue_id_{issue.Id}";
+        var projectIssuesCacheKey = $"issues_by_project_id_{projectId}";
+
+
+        await cache.RemoveAsync(issueCacheKey, cancellationToken);
+        await cache.RemoveAsync(projectIssuesCacheKey, cancellationToken);
+
+
+        return deletedCount;
     }
 }

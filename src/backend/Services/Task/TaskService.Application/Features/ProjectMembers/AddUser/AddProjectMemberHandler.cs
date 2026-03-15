@@ -1,30 +1,31 @@
-﻿using TaskService.Application.Exceptions;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Exceptions;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
-using TaskService.Contracts.Workspace.Response;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
-
 namespace TaskService.Application.Commands.Workspaces.Create;
 
-public class AddProjectMemberHandler(TaskServiceDbContext context) : IRequestHandler<AddProjectMemberCommand, AddProjectMemberResult>
+public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache cache)
+    : IRequestHandler<AddProjectMemberCommand, AddProjectMemberResult>
 {
-    public async Task<AddProjectMemberResult> Handle(AddProjectMemberCommand command, CancellationToken cancellationToken = default)
+    public async Task<AddProjectMemberResult> Handle(AddProjectMemberCommand command,
+        CancellationToken cancellationToken = default)
     {
-        var existProject = await context.Projects.FindAsync(command.ProjectId, cancellationToken);
+        var existProject = await context.Projects.Include(project => project.ProjectMembers)
+            .FirstOrDefaultAsync(element => element.Id == command.ProjectId, cancellationToken);
         if (existProject is null)
         {
-            throw new ArgumentNullException("Проект с таким id не существует",
-                 nameof(command.ProjectId));
+            throw new KeyNotFoundException($"Проект с id {command.UserId} не существует");
         }
 
-        var existUser = await context.Users.FindAsync(command.UserId, cancellationToken);
+        var existUser = await context.Users.FindAsync([command.UserId], cancellationToken);
         if (existUser is null)
         {
-            throw new ArgumentNullException("Пользователь с таким id не существует",
-                 nameof(command.ProjectId));
+            throw new KeyNotFoundException($"Пользователь с  id {command.UserId} не существует");
         }
 
         if (existProject.ProjectMembers.Any(x => x.UserId == existUser.Id))
@@ -32,13 +33,17 @@ public class AddProjectMemberHandler(TaskServiceDbContext context) : IRequestHan
             throw new ConflictException("Пользователь уже состоит в рабочей области");
         }
 
-        var projectMember = ProjectMember.Create(command.ProjectId, command.UserId, command.RoleDto, DateTimeOffset.UtcNow);
+        var projectMember =
+            ProjectMember.Create(command.ProjectId, command.UserId, command.RoleDto, DateTimeOffset.UtcNow);
 
         await context.ProjectMembers.AddAsync(projectMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new AddProjectMemberResult(ProjectId: existProject.Id,
-                                 UserId: existUser.Id,
-                                 RoleDto: new RoleDto(projectMember.Role.ToString()));
+        //инвалидируем кэш
+        var cacheKey = $"user_by_keycloak_id_{existUser.KeycloakId}";
+        await cache.RemoveAsync(cacheKey, cancellationToken);
+        return new AddProjectMemberResult(existProject.Id,
+            existUser.Id,
+            new RoleDto(projectMember.Role.ToString()));
     }
 }
