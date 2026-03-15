@@ -1,20 +1,22 @@
 import React from 'react';
 import {TaskProvider} from '../context/TaskContext';
-import {AuthProvider} from '../providers/AuthProvider';
+import {useAuthContext} from '../providers/AuthProvider';
 import FilterBar from './FilterBar';
 import KanbanBoard from './KanbanBoard';
 import TaskDetailSidebar from './TaskDetailSidebar';
 import TaskCreateForm from './TaskCreateForm';
+import HeaderKanbanBoard from './HeaderKanbanBoard';
 import {TaskStatus} from '../types';
 
 interface DashboardTasksProps {
   activeTab: string;
   onTabChange: React.Dispatch<React.SetStateAction<string>>;
-  showHeader: boolean;
- 
+  showHeader?: boolean;
 }
 
-function DashboardTasks({ activeTab, onTabChange, showHeader }: DashboardTasksProps) {
+function DashboardTasks({ activeTab, onTabChange, showHeader = true }: DashboardTasksProps) {
+  const authInfo = useAuthContext();
+  
   const [showCreateForm, setShowCreateForm] = React.useState(false);
   const [createFormStatus, setCreateFormStatus] = React.useState<TaskStatus>('backlog');
 
@@ -27,7 +29,6 @@ function DashboardTasks({ activeTab, onTabChange, showHeader }: DashboardTasksPr
     setShowCreateForm(false);
   };
 
-  // Контент для аутентифицированных пользователей
   const content = (
     <>
       {activeTab === 'board' && (
@@ -60,13 +61,14 @@ function DashboardTasks({ activeTab, onTabChange, showHeader }: DashboardTasksPr
   return (
     <TaskProvider>
       <div className="app">
-        <AuthProvider
-          activeTab={activeTab}
-          onTabChange={onTabChange}
-          showHeader={showHeader}
-        >
-          {content}
-        </AuthProvider>
+        {showHeader && authInfo.isAuthenticated && (
+          <HeaderKanbanBoard
+            activeTab={activeTab}
+            onTabChange={onTabChange}
+            authInfo={authInfo}
+          />
+        )}
+        {content}
       </div>
     </TaskProvider>
   );

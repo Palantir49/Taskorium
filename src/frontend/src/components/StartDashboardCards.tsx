@@ -1,19 +1,25 @@
+import React, { useState } from "react";
+import { useAuthContext } from "../providers/AuthProvider";
 import WorkspaceCard from "./WorkspaceCard";
 import ProjectCard from "./ProjectCard.tsx";
 import DashboardTasks from "./DashboardTasks.tsx";
-import { useState } from "react";
+import { HeaderStartBoard } from "./HeaderStartBoard";
 
 interface StartDashboardCardsProps {
   activeTab: string;
   onTabChange: React.Dispatch<React.SetStateAction<string>>;
-  showHeader: boolean;
+  showHeader?: boolean;
 }
 
-export default function StartDashboardCard({ activeTab, onTabChange, showHeader }: StartDashboardCardsProps) {
+export default function StartDashboardCard({ 
+  activeTab, 
+  onTabChange, 
+  showHeader = true 
+}: StartDashboardCardsProps) {
+  const authInfo = useAuthContext();
+  const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
-   const [selectedProject, setSelectedProject] = useState<number | null>(null);
-
-    if (selectedProject !== null) {
+  if (selectedProject !== null) {
     return <DashboardTasks 
       activeTab={activeTab}
       onTabChange={onTabChange}
@@ -23,6 +29,10 @@ export default function StartDashboardCard({ activeTab, onTabChange, showHeader 
 
   return (
     <div className="min-h-screen p-8">
+      {showHeader && authInfo.isAuthenticated && (
+        <HeaderStartBoard authInfo={authInfo} />
+      )}
+
       <h1 className="text-3xl font-bold mb-8">Рабочие пространства</h1>
       
       {/* Первая область */}

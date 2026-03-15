@@ -11,7 +11,7 @@ export const HeaderStartBoard = ({ authInfo }: HeaderStartBoardProps) => {
     <header className="header-start">
       <div className="header-content">
         <div className="logo">
-          <span className="logo-text">TaskFlow</span>
+
         </div>
         <AuthenticatedComponent authInfo={authInfo} />
       </div>
