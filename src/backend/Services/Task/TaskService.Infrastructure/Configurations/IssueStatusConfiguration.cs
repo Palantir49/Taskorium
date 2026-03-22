@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
 using TaskService.Domain.ValueObjects;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations;
 
@@ -28,5 +29,6 @@ internal class IssueStatusConfiguration : IEntityTypeConfiguration<IssueStatus>
               .HasForeignKey(t => t.ProjectId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
+        builder.HasData(FakeDataFactory.IssueStatuses);
     }
 }

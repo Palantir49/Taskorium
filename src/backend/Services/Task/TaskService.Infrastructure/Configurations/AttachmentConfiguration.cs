@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations;
 
@@ -28,6 +29,6 @@ public class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
               .HasForeignKey(t => t.IssueId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
-
+        builder.HasData(FakeDataFactory.Attachments);
     }
 }

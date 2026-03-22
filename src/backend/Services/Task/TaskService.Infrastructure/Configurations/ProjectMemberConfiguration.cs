@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations;
 
@@ -35,5 +36,6 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
             .HasForeignKey(t => t.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
+        builder.HasData(FakeDataFactory.ProjectMembers);
     }
 }

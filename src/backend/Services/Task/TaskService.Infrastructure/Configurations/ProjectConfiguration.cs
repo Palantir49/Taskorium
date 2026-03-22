@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
 using TaskService.Domain.ValueObjects;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations
 {
@@ -30,6 +31,8 @@ namespace TaskService.Infrastructure.Configurations
             builder.Property(p => p.StartDate);
 
             builder.Property(p => p.FinishDate);
+
+            builder.HasData(FakeDataFactory.Projects);
         }
     }
 }
