@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
-using TaskService.Domain.ValueObjects;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations;
@@ -10,9 +9,7 @@ public class WorkspaceMemberConfiguration : IEntityTypeConfiguration<WorkspaceMe
 {
     public void Configure(EntityTypeBuilder<WorkspaceMember> builder)
     {
-        builder.HasKey(x => x.UserId);
-
-        builder.HasKey(x => x.WorkspaceId);
+        builder.HasKey(x => new { x.UserId, x.WorkspaceId });
 
         builder.Property(x => x.JoinedAt).IsRequired();
 
