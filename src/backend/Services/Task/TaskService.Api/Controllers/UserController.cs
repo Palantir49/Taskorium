@@ -99,7 +99,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     {
         var userCommand = request.ToCommand();
         var response = await dispatcher.SendAsync(userCommand);
-        return CreatedAtAction(nameof(GetUserByIdAsync), new { response.id }, response);
+        return CreatedAtAction(nameof(GetUserByIdAsync), new { response.Id }, response);
     }
 
     /// <summary>

@@ -13,7 +13,7 @@ public class CreateWorkspaceHandler(TaskServiceDbContext context)
     {
         var workspace = Workspace.Create(
             command.Name,
-            command.ownerId
+            command.OwnerId
         );
         await context.Workspaces.AddAsync(workspace, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
