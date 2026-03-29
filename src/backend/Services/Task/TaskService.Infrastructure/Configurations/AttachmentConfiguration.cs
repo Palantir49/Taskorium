@@ -29,6 +29,6 @@ public class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
               .HasForeignKey(t => t.IssueId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
-        //builder.HasData(FakeDataFactory.Attachments);
+        builder.HasData(FakeDataFactory.Attachments);
     }
 }

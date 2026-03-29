@@ -27,6 +27,6 @@ public class WorkspaceMemberConfiguration : IEntityTypeConfiguration<WorkspaceMe
             .IsRequired()
             .HasConversion<string>();
 
-        //builder.HasData(FakeDataFactory.WorkspaceMembers);
+        builder.HasData(FakeDataFactory.WorkspaceMembers);
     }
 }

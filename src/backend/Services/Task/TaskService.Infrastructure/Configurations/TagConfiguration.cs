@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
 using TaskService.Domain.ValueObjects;
@@ -28,7 +28,7 @@ internal class TagConfiguration : IEntityTypeConfiguration<Tag>
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
 
-        //builder.HasData(FakeDataFactory.IssueTypes);
+        //builder.HasData(FakeDataFactory.Tags);
     }
 
 }

@@ -24,11 +24,11 @@ namespace TaskService.Infrastructure.Configurations
 
             builder.Property(w => w.CreatedDate).IsRequired();
 
-            builder.Property(w => w.OwnerId);
-            builder.HasOne<User>()
-                .WithMany()
-                .HasForeignKey(w => w.OwnerId);
-            //builder.HasData(FakeDataFactory.Workspaces);
+            //builder.Property(w => w.OwnerId);
+            //builder.HasOne<User>()
+            //    .WithMany()
+            //    .HasForeignKey(w => w.OwnerId);
+            builder.HasData(FakeDataFactory.Workspaces);
         }
     }
 }

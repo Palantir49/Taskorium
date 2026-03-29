@@ -64,17 +64,17 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("019d15d2-e490-7e75-8ec7-70074e7178ee"),
-                            IssueId = new Guid("019d15d2-e48f-70dc-9cc0-dd168477afdd"),
-                            StoragePath = "issues/taskorium-api/openapi-staging/checklist.pdf",
-                            UploaderId = new Guid("019d15d2-e48e-7980-a536-a85ba7fc9a9d")
+                            Id = new Guid("019d399c-2a7a-75d1-b674-6b5a40ca34a7"),
+                            IssueId = new Guid("019d399c-2a78-797f-a73a-3f9aa697f117"),
+                            StoragePath = "attachments/mob-1/wireframe.png",
+                            UploaderId = new Guid("019d399c-2a77-77cf-8fa0-3b54e54910ff")
                         },
                         new
                         {
-                            Id = new Guid("019d15d2-e490-742d-b832-781812685628"),
-                            IssueId = new Guid("019d15d2-e490-7d40-9d6e-609eb6eed7d3"),
-                            StoragePath = "issues/ui-kit/dialog-focus/nested-dialog-repro.webm",
-                            UploaderId = new Guid("019d15d2-e48e-7100-a0e3-aabbb5540c2b")
+                            Id = new Guid("019d399c-2a7a-7ccf-aee6-3614b1d0492a"),
+                            IssueId = new Guid("019d399c-2a7a-7ece-a77a-aff51fdd2458"),
+                            StoragePath = "attachments/mob-2/logcat.txt",
+                            UploaderId = new Guid("019d399c-2a77-7d11-bbd4-db8c27757b25")
                         });
                 });
 
@@ -133,89 +133,41 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("019d15d2-e48f-70dc-9cc0-dd168477afdd"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(9451), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Generate and upload the merged spec to the docs bucket; add link from the repo README.",
-                            DueDate = new DateTimeOffset(new DateTime(2025, 3, 28, 17, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            IssueStatusId = new Guid("019d15d2-e48f-7e3d-a478-757784a9a658"),
-                            IssueTypeId = new Guid("019d15d2-e48f-7fc3-85a2-8bf40555224b"),
-                            Name = "Publish OpenAPI 3.1 bundle for staging",
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f")
+                            Id = new Guid("019d399c-2a78-797f-a73a-3f9aa697f117"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 48, DateTimeKind.Unspecified).AddTicks(3808), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Implement email and SSO login.",
+                            DueDate = new DateTimeOffset(new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            IssuePriority = 3,
+                            IssueStatusId = new Guid("019d399c-2a78-7197-b808-733763f23a62"),
+                            IssueType = 0,
+                            Key = "MOB-1",
+                            Name = "Login screen",
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855")
                         },
                         new
                         {
-                            Id = new Guid("019d15d2-e490-739a-9ca2-4c79498a453c"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 856, DateTimeKind.Unspecified).AddTicks(43), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Repro: list issues with page size 50; next cursor sometimes returns 400. Add regression test against snapshot payloads.",
-                            DueDate = new DateTimeOffset(new DateTime(2025, 3, 22, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            IssueStatusId = new Guid("019d15d2-e48f-7a0b-bc2a-114145597528"),
-                            IssueTypeId = new Guid("019d15d2-e48f-791d-8aba-cbae4968ffad"),
-                            Name = "Fix inconsistent cursor encoding on issue list",
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f")
+                            Id = new Guid("019d399c-2a7a-7ece-a77a-aff51fdd2458"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 50, DateTimeKind.Unspecified).AddTicks(5341), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Reproduces on Android 14.",
+                            DueDate = new DateTimeOffset(new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            IssuePriority = 4,
+                            IssueStatusId = new Guid("019d399c-2a78-7f43-9db3-0bf290c89ca6"),
+                            IssueType = 2,
+                            Key = "MOB-2",
+                            Name = "Crash on cold start",
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855")
                         },
                         new
                         {
-                            Id = new Guid("019d15d2-e490-7ddf-83f6-ac114cea8e40"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 856, DateTimeKind.Unspecified).AddTicks(46), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Align with product spec: max 8 attempts, jitter, dead-letter after final failure.",
-                            DueDate = new DateTimeOffset(new DateTime(2025, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            IssueStatusId = new Guid("019d15d2-e48f-733b-a1a0-af28c84cfc90"),
-                            IssueTypeId = new Guid("019d15d2-e48f-749d-bb8a-b05ff2ad1f59"),
-                            Name = "Webhook delivery retries with exponential backoff",
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e490-708c-9fd7-33d3ee182ce7"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 856, DateTimeKind.Unspecified).AddTicks(47), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Expose SQL and message bus connectivity in /health/detailed for k8s probes.",
-                            IssueStatusId = new Guid("019d15d2-e48f-77ec-bed5-90e9bf2a37da"),
-                            IssueTypeId = new Guid("019d15d2-e48f-749d-bb8a-b05ff2ad1f59"),
-                            Name = "Health checks return dependency status",
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e490-7d40-9d6e-609eb6eed7d3"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 856, DateTimeKind.Unspecified).AddTicks(48), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "NVDA + Chrome: tab cycle escapes modal when DatePicker overlay opens. Repro steps attached to design QA doc.",
-                            DueDate = new DateTimeOffset(new DateTime(2025, 3, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            IssueStatusId = new Guid("019d15d2-e48f-7575-b340-a50c662e8ab6"),
-                            IssueTypeId = new Guid("019d15d2-e48f-7db9-aa64-5aa7b3fd887b"),
-                            Name = "Focus trap breaks inside nested Dialog",
-                            ProjectId = new Guid("019d15d2-e48f-7ccb-b352-e6174f75a6ac")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e490-7ab6-8eac-58a94f3183cb"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 856, DateTimeKind.Unspecified).AddTicks(50), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Map legacy palette to new token names; no visual change in light theme.",
-                            IssueStatusId = new Guid("019d15d2-e48f-7905-9205-2e2b4d78cd73"),
-                            IssueTypeId = new Guid("019d15d2-e48f-718f-b7b7-63324f85348e"),
-                            Name = "Ship semantic color tokens for dark mode",
-                            ProjectId = new Guid("019d15d2-e48f-7ccb-b352-e6174f75a6ac")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e490-798e-8d8b-961cf35f893e"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 856, DateTimeKind.Unspecified).AddTicks(69), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Vendor scheduled March maintenance; update sealed secrets and verify staging send.",
-                            DueDate = new DateTimeOffset(new DateTime(2025, 3, 25, 8, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            IssueStatusId = new Guid("019d15d2-e48f-7251-a42c-c5438f365e92"),
-                            IssueTypeId = new Guid("019d15d2-e48f-746a-b5dc-0f4604b93c53"),
-                            Name = "Rotate SMTP credentials in vault",
-                            ProjectId = new Guid("019d15d2-e48f-7ba4-96d6-750b47b33613")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e490-72de-a5ea-05dd89a5b2ab"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 856, DateTimeKind.Unspecified).AddTicks(70), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "One page: required sections, tone, and when to require human rewrite before merge.",
-                            DueDate = new DateTimeOffset(new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            IssueStatusId = new Guid("019d15d2-e48f-71cc-8470-a635e2b811f5"),
-                            IssueTypeId = new Guid("019d15d2-e48f-779e-971b-edf70fa2a907"),
-                            Name = "Draft team guidelines for AI-generated PR descriptions",
-                            ProjectId = new Guid("019d15d2-e48f-738a-b630-f0bcd663ac6e")
+                            Id = new Guid("019d399c-2a7a-7ebc-8553-4464fb17c356"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 50, DateTimeKind.Unspecified).AddTicks(5567), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Finalize strings for v1.",
+                            IssuePriority = 1,
+                            IssueStatusId = new Guid("019d399c-2a78-774b-9570-9e62bc08f0a0"),
+                            IssueType = 1,
+                            Key = "MOB-3",
+                            Name = "Push notification copy",
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855")
                         });
                 });
 
@@ -250,102 +202,29 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("019d15d2-e48f-733b-a1a0-af28c84cfc90"),
-                            Color = "#94A3B8",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(6541), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "To Do",
-                            Position = 0,
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f"),
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-7a0b-bc2a-114145597528"),
-                            Color = "#3B82F6",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7063), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "In Progress",
-                            Position = 1,
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f"),
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-7e3d-a478-757784a9a658"),
-                            Color = "#A855F7",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7076), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "In Review",
-                            Position = 2,
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f"),
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-77ec-bed5-90e9bf2a37da"),
-                            Color = "#22C55E",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7078), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Done",
-                            Position = 3,
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f"),
-                            Type = 2
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-7575-b340-a50c662e8ab6"),
-                            Color = "#94A3B8",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7938), new TimeSpan(0, 0, 0, 0, 0)),
+                            Id = new Guid("019d399c-2a78-7f43-9db3-0bf290c89ca6"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 48, DateTimeKind.Unspecified).AddTicks(1555), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Backlog",
                             Position = 0,
-                            ProjectId = new Guid("019d15d2-e48f-7ccb-b352-e6174f75a6ac"),
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
                             Type = 0
                         },
                         new
                         {
-                            Id = new Guid("019d15d2-e48f-7905-9205-2e2b4d78cd73"),
-                            Color = "#22C55E",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7979), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Released",
+                            Id = new Guid("019d399c-2a78-7197-b808-733763f23a62"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 48, DateTimeKind.Unspecified).AddTicks(1784), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "In progress",
                             Position = 1,
-                            ProjectId = new Guid("019d15d2-e48f-7ccb-b352-e6174f75a6ac"),
-                            Type = 2
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            Type = 1
                         },
                         new
                         {
-                            Id = new Guid("019d15d2-e48f-7251-a42c-c5438f365e92"),
-                            Color = "#94A3B8",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7984), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "To Do",
-                            Position = 0,
-                            ProjectId = new Guid("019d15d2-e48f-7ba4-96d6-750b47b33613"),
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-7030-8ad5-8422aeb59873"),
-                            Color = "#22C55E",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7985), new TimeSpan(0, 0, 0, 0, 0)),
+                            Id = new Guid("019d399c-2a78-774b-9570-9e62bc08f0a0"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 48, DateTimeKind.Unspecified).AddTicks(1786), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Done",
-                            Position = 1,
-                            ProjectId = new Guid("019d15d2-e48f-7ba4-96d6-750b47b33613"),
-                            Type = 2
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-71cc-8470-a635e2b811f5"),
-                            Color = "#94A3B8",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7988), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "To Do",
-                            Position = 0,
-                            ProjectId = new Guid("019d15d2-e48f-738a-b630-f0bcd663ac6e"),
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-7f41-90a6-a80efac43691"),
-                            Color = "#22C55E",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7989), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Done",
-                            Position = 1,
-                            ProjectId = new Guid("019d15d2-e48f-738a-b630-f0bcd663ac6e"),
+                            Position = 2,
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
                             Type = 2
                         });
                 });
@@ -359,79 +238,6 @@ namespace TaskService.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(5)
                         .HasColumnType("character varying(5)");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("IssueType");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-791d-8aba-cbae4968ffad"),
-                            Color = "#EF4444",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7745), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Bug",
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-749d-bb8a-b05ff2ad1f59"),
-                            Color = "#0EA5E9",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7932), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Feature",
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-7fc3-85a2-8bf40555224b"),
-                            Color = "#64748B",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7933), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Chore",
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-718f-b7b7-63324f85348e"),
-                            Color = "#6366F1",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7981), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Task",
-                            ProjectId = new Guid("019d15d2-e48f-7ccb-b352-e6174f75a6ac")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-7db9-aa64-5aa7b3fd887b"),
-                            Color = "#F97316",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7982), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Bug",
-                            ProjectId = new Guid("019d15d2-e48f-7ccb-b352-e6174f75a6ac")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-746a-b5dc-0f4604b93c53"),
-                            Color = "#0EA5E9",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7987), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Task",
-                            ProjectId = new Guid("019d15d2-e48f-7ba4-96d6-750b47b33613")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-779e-971b-edf70fa2a907"),
-                            Color = "#64748B",
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(7993), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Task",
-                            ProjectId = new Guid("019d15d2-e48f-738a-b630-f0bcd663ac6e")
-                        });
-                });
-
-            modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -463,59 +269,12 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(2015), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "ASP.NET Core service for workspaces, projects, issues, and notifications. Exposes REST APIs consumed by the web client.",
-                            Name = "taskorium-api",
-                            WorkspaceId = new Guid("019d15d2-e48e-72ce-81f8-543847822440")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-7ccb-b352-e6174f75a6ac"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(2187), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Open-source React component library shared across Taskorium frontends: layout primitives, forms, and accessibility-tested patterns.",
-                            Name = "ui-kit",
-                            WorkspaceId = new Guid("019d15d2-e48e-72ce-81f8-543847822440")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-7ba4-96d6-750b47b33613"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(2189), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Outbox-backed worker that delivers email and in-app notifications with retry policies and idempotent handlers.",
-                            Name = "taskorium-notify",
-                            WorkspaceId = new Guid("019d15d2-e48e-72ce-81f8-543847822440")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-738a-b630-f0bcd663ac6e"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(2191), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Pilot: lint prompts, CI gates, and review checklists for teams adopting AI-assisted coding without bypassing quality bars.",
-                            Name = "ai-dev-workflow",
-                            WorkspaceId = new Guid("019d15d2-e48e-71f9-ba45-1194f4d963a4")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-759a-bb42-c42a5e1790c1"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(2195), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Rewrite onboarding and API reference for the next major release; align examples with current OpenAPI spec.",
-                            Name = "docs-refresh",
-                            WorkspaceId = new Guid("019d15d2-e48e-71f9-ba45-1194f4d963a4")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-7d62-9939-75db3ee9ed74"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(2198), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Track removal of deprecated endpoints and migration of remaining consumers to v2 APIs.",
-                            Name = "legacy-cleanup",
-                            WorkspaceId = new Guid("019d15d2-e48e-746b-827c-28becde8f6ad")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48f-724a-b684-63f34426ffe9"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 855, DateTimeKind.Unspecified).AddTicks(2199), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Time-boxed prototype: WebSocket presence and optimistic updates for the board view.",
-                            Name = "spike-realtime-board",
-                            WorkspaceId = new Guid("019d15d2-e48e-746b-827c-28becde8f6ad")
+                            Id = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            Abbreviation = "MOB",
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 47, DateTimeKind.Unspecified).AddTicks(9498), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Customer-facing iOS and Android app.",
+                            Name = "Mobile client",
+                            WorkspaceId = new Guid("019d399c-2a77-79fd-9ff7-acf17ea6bc2e")
                         });
                 });
 
@@ -543,52 +302,24 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f"),
-                            UserId = new Guid("019d15d2-e48e-7100-a0e3-aabbb5540c2b"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            UserId = new Guid("019d399c-2a77-77cf-8fa0-3b54e54910ff"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 15, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Role = "Creator"
+                        },
+                        new
+                        {
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            UserId = new Guid("019d399c-2a77-7d11-bbd4-db8c27757b25"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 16, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Role = "Member"
                         },
                         new
                         {
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f"),
-                            UserId = new Guid("019d15d2-e48e-7980-a536-a85ba7fc9a9d"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Role = "Admin"
-                        },
-                        new
-                        {
-                            ProjectId = new Guid("019d15d2-e48f-7d65-a334-2b43386ab02f"),
-                            UserId = new Guid("019d15d2-e48e-777c-98e4-745e4ecdb1bf"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Role = "Member"
-                        },
-                        new
-                        {
-                            ProjectId = new Guid("019d15d2-e48f-7ccb-b352-e6174f75a6ac"),
-                            UserId = new Guid("019d15d2-e48e-7100-a0e3-aabbb5540c2b"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Role = "Member"
-                        },
-                        new
-                        {
-                            ProjectId = new Guid("019d15d2-e48f-7ccb-b352-e6174f75a6ac"),
-                            UserId = new Guid("019d15d2-e48e-7980-a536-a85ba7fc9a9d"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Role = "Admin"
-                        },
-                        new
-                        {
-                            ProjectId = new Guid("019d15d2-e48f-7ba4-96d6-750b47b33613"),
-                            UserId = new Guid("019d15d2-e48e-777c-98e4-745e4ecdb1bf"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Role = "Admin"
-                        },
-                        new
-                        {
-                            ProjectId = new Guid("019d15d2-e48f-7ba4-96d6-750b47b33613"),
-                            UserId = new Guid("019d15d2-e48e-7100-a0e3-aabbb5540c2b"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Role = "Member"
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            UserId = new Guid("019d399c-2a77-7365-b1a4-e737e821d4fb"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 18, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Role = "Viewer"
                         });
                 });
 
@@ -648,39 +379,30 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("019d15d2-e48e-7c9d-8b8f-48f4e825d0ee"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 854, DateTimeKind.Unspecified).AddTicks(5228), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "ivan.petrov@taskorium.local",
-                            FullName = "Ivan Petrov",
-                            KeycloakId = new Guid("10000000-0000-0000-0000-000000000001"),
-                            Username = "ivan.petrov"
+                            Id = new Guid("019d399c-2a77-77cf-8fa0-3b54e54910ff"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 47, DateTimeKind.Unspecified).AddTicks(4107), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "alice@example.com",
+                            FullName = "Alice Anderson",
+                            KeycloakId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"),
+                            Username = "alice"
                         },
                         new
                         {
-                            Id = new Guid("019d15d2-e48e-7100-a0e3-aabbb5540c2b"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 854, DateTimeKind.Unspecified).AddTicks(6383), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "peter.sokolov@taskorium.local",
-                            FullName = "Peter Sokolov",
-                            KeycloakId = new Guid("20000000-0000-0000-0000-000000000002"),
-                            Username = "peter.sokolov"
+                            Id = new Guid("019d399c-2a77-7d11-bbd4-db8c27757b25"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 47, DateTimeKind.Unspecified).AddTicks(5202), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "bob@example.com",
+                            FullName = "Bob Brown",
+                            KeycloakId = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"),
+                            Username = "bob"
                         },
                         new
                         {
-                            Id = new Guid("019d15d2-e48e-7980-a536-a85ba7fc9a9d"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 854, DateTimeKind.Unspecified).AddTicks(6387), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "kirill.volkov@taskorium.local",
-                            FullName = "Kirill Volkov",
-                            KeycloakId = new Guid("30000000-0000-0000-0000-000000000003"),
-                            Username = "kirill.volkov"
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48e-777c-98e4-745e4ecdb1bf"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 854, DateTimeKind.Unspecified).AddTicks(6389), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "alexey.nikitin@taskorium.local",
-                            FullName = "Alexey Nikitin",
-                            KeycloakId = new Guid("40000000-0000-0000-0000-000000000004"),
-                            Username = "alexey.nikitin"
+                            Id = new Guid("019d399c-2a77-7365-b1a4-e737e821d4fb"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 47, DateTimeKind.Unspecified).AddTicks(5205), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "carol@example.com",
+                            FullName = "Carol Chen",
+                            KeycloakId = new Guid("cccccccc-cccc-cccc-cccc-ccccccccccc3"),
+                            Username = "carol"
                         });
                 });
 
@@ -697,36 +419,16 @@ namespace TaskService.Infrastructure.Migrations
                         .HasMaxLength(225)
                         .HasColumnType("character varying(225)");
 
-                    b.Property<Guid?>("OwnerId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("OwnerId");
 
                     b.ToTable("Workspaces");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("019d15d2-e48e-71f9-ba45-1194f4d963a4"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 854, DateTimeKind.Unspecified).AddTicks(9264), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Personal",
-                            OwnerId = new Guid("019d15d2-e48e-7c9d-8b8f-48f4e825d0ee")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48e-72ce-81f8-543847822440"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 854, DateTimeKind.Unspecified).AddTicks(9761), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Taskorium",
-                            OwnerId = new Guid("019d15d2-e48e-7c9d-8b8f-48f4e825d0ee")
-                        },
-                        new
-                        {
-                            Id = new Guid("019d15d2-e48e-746b-827c-28becde8f6ad"),
-                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 22, 13, 53, 55, 854, DateTimeKind.Unspecified).AddTicks(9769), new TimeSpan(0, 0, 0, 0, 0)),
-                            Name = "Sandbox",
-                            OwnerId = new Guid("019d15d2-e48e-7c9d-8b8f-48f4e825d0ee")
+                            Id = new Guid("019d399c-2a77-79fd-9ff7-acf17ea6bc2e"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 47, DateTimeKind.Unspecified).AddTicks(6992), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Acme Workspace"
                         });
                 });
 
@@ -754,52 +456,24 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("019d15d2-e48e-7c9d-8b8f-48f4e825d0ee"),
-                            WorkspaceId = new Guid("019d15d2-e48e-71f9-ba45-1194f4d963a4"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            UserId = new Guid("019d399c-2a77-77cf-8fa0-3b54e54910ff"),
+                            WorkspaceId = new Guid("019d399c-2a77-79fd-9ff7-acf17ea6bc2e"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 15, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Role = "Creator"
+                        },
+                        new
+                        {
+                            UserId = new Guid("019d399c-2a77-7d11-bbd4-db8c27757b25"),
+                            WorkspaceId = new Guid("019d399c-2a77-79fd-9ff7-acf17ea6bc2e"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 16, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Role = "Admin"
                         },
                         new
                         {
-                            UserId = new Guid("019d15d2-e48e-7100-a0e3-aabbb5540c2b"),
-                            WorkspaceId = new Guid("019d15d2-e48e-71f9-ba45-1194f4d963a4"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            UserId = new Guid("019d399c-2a77-7365-b1a4-e737e821d4fb"),
+                            WorkspaceId = new Guid("019d399c-2a77-79fd-9ff7-acf17ea6bc2e"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 17, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Role = "Member"
-                        },
-                        new
-                        {
-                            UserId = new Guid("019d15d2-e48e-7c9d-8b8f-48f4e825d0ee"),
-                            WorkspaceId = new Guid("019d15d2-e48e-72ce-81f8-543847822440"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Role = "Admin"
-                        },
-                        new
-                        {
-                            UserId = new Guid("019d15d2-e48e-7100-a0e3-aabbb5540c2b"),
-                            WorkspaceId = new Guid("019d15d2-e48e-72ce-81f8-543847822440"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Role = "Member"
-                        },
-                        new
-                        {
-                            UserId = new Guid("019d15d2-e48e-7980-a536-a85ba7fc9a9d"),
-                            WorkspaceId = new Guid("019d15d2-e48e-72ce-81f8-543847822440"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Role = "Admin"
-                        },
-                        new
-                        {
-                            UserId = new Guid("019d15d2-e48e-777c-98e4-745e4ecdb1bf"),
-                            WorkspaceId = new Guid("019d15d2-e48e-72ce-81f8-543847822440"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Role = "Viewer"
-                        },
-                        new
-                        {
-                            UserId = new Guid("019d15d2-e48e-777c-98e4-745e4ecdb1bf"),
-                            WorkspaceId = new Guid("019d15d2-e48e-746b-827c-28becde8f6ad"),
-                            JoinedAt = new DateTimeOffset(new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Role = "Admin"
                         });
                 });
 
@@ -882,13 +556,6 @@ namespace TaskService.Infrastructure.Migrations
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("TaskService.Domain.Entities.Workspace", b =>
-                {
-                    b.HasOne("TaskService.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("OwnerId");
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.WorkspaceMember", b =>

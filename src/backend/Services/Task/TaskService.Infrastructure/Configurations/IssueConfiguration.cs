@@ -50,6 +50,7 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
         //builder.HasOne(i => i.User)
         //    .WithMany(u => u.Issues)
         //    .HasForeignKey(i => i.ReporterId);
+        builder.HasData(FakeDataFactory.Issues);
 
     }
 }

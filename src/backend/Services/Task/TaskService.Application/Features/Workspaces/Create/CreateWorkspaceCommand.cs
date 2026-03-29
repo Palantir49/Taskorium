@@ -5,4 +5,4 @@ using TaskService.Application.Mediator;
 
 namespace TaskService.Application.Commands.Workspaces.Create;
 
-public record CreateWorkspaceCommand(string Name, Guid OwnerId) : ICommand<CreateWorkspaceResult>;
+public record CreateWorkspaceCommand(string Name) : ICommand<CreateWorkspaceResult>;
