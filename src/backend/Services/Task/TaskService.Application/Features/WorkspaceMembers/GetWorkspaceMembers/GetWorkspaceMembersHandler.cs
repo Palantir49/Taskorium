@@ -22,7 +22,7 @@ namespace TaskService.Application.Features.WorkspaceMembers.GetAllUsers
             }
             var workspaceMembersDto = existUser.WorkspaceMembers.Select(x => new WorkSpaceMemberDto(WorkspaceId: x.WorkspaceId,
                                                                                                     UserId: x.UserId,
-                                                                                                    RoleDto: new RoleDto(x.Role.ToString())));
+                                                                                                    Role: x.Role.ToDto()));
 
             throw new NotImplementedException();
         }
