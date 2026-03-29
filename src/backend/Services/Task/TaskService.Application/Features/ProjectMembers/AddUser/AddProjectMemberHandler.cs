@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Exceptions;
+using TaskService.Application.Features.WorkspaceMembers;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
@@ -44,6 +45,6 @@ public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache c
         await cache.RemoveAsync(cacheKey, cancellationToken);
         return new AddProjectMemberResult(existProject.Id,
             existUser.Id,
-            new RoleDto(projectMember.Role.ToString()));
+            projectMember.Role.ToDto());
     }
 }

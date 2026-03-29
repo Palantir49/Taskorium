@@ -46,6 +46,6 @@ public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache
 
         return new AddWorkspaceMemberResult(existWorkspace.Id,
             existUser.Id,
-            new RoleDto(workspaceMember.Role.ToString()));
+            workspaceMember.Role.ToDto());
     }
 }
