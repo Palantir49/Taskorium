@@ -6,6 +6,7 @@ using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Projects.Command;
 using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Mediator;
+using TaskService.Contracts.Enum;
 
 namespace TaskService.Api.Authorization.Handlers;
 
@@ -62,15 +63,15 @@ public class IssueAccessHandler(
 
         var wsMemberShip = user.WorkSpaceMembers?.FirstOrDefault(x => x.WorkspaceId == project.WorkspaceId);
 
-        switch (wsMemberShip?.RoleDto.roleName) //TODO enum
+        switch (wsMemberShip?.Role) //TODO enum
         {
-            case "Creator":
+            case RolesDto.Creator:
 
-            case "Admin":
+            case RolesDto.Admin:
                 context.Succeed(requirement);
                 return;
 
-            case "Member":
+            case RolesDto.Member:
                 if (requirement.Action is IssueAction.View or IssueAction.Update)
                 {
                     context.Succeed(requirement);
@@ -78,7 +79,7 @@ public class IssueAccessHandler(
                 }
 
                 break;
-            case "Viewer":
+            case RolesDto.Viewer:
                 if (requirement.Action == IssueAction.View)
                 {
                     context.Succeed(requirement);
@@ -89,22 +90,22 @@ public class IssueAccessHandler(
         }
 
         var projectMemberShip = user.ProjectMembers?.FirstOrDefault(x => x.ProjectId == project.Id);
-        switch (projectMemberShip?.RoleDto.roleName) //TODO enum
+        switch (projectMemberShip?.Role) //TODO enum
         {
-            case "Creator":
+            case RolesDto.Creator:
 
-            case "Admin":
+            case RolesDto.Admin:
                 context.Succeed(requirement);
                 return;
 
-            case "Member": //TODO add user assigned task issue
+            case RolesDto.Member: //TODO add user assigned task issue
                 if (requirement.Action is IssueAction.View or IssueAction.Update)
                 {
                     context.Succeed(requirement);
                 }
 
                 break;
-            case "Viewer":
+            case RolesDto.Viewer:
                 if (requirement.Action == IssueAction.View)
                 {
                     context.Succeed(requirement);

@@ -4,6 +4,7 @@ using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
 using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Mediator;
+using TaskService.Contracts.Enum;
 
 namespace TaskService.Api.Authorization.Handlers;
 
@@ -51,22 +52,22 @@ public class WorkSpaceAccessHandler(
 
         var wsMemberShip = user.WorkSpaceMembers?.FirstOrDefault(x => x.WorkspaceId == workspaceId);
 
-        switch (wsMemberShip?.RoleDto.roleName) //TODO enum
+        switch (wsMemberShip?.Role) //TODO enum
         {
-            case "Creator":
+            case RolesDto.Creator:
 
-            case "Admin": //TODO Set (unset) admin
+            case RolesDto.Admin: //TODO Set (unset) admin
                 context.Succeed(requirement);
                 return;
 
-            case "Member":
+            case RolesDto.Member:
                 if (requirement.Action is WorkSpaceAction.View or WorkSpaceAction.Update)
                 {
                     context.Succeed(requirement);
                 }
 
                 break;
-            case "Viewer":
+            case RolesDto.Viewer:
                 if (requirement.Action == WorkSpaceAction.View)
                 {
                     context.Succeed(requirement);
