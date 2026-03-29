@@ -28,7 +28,7 @@ internal class TagConfiguration : IEntityTypeConfiguration<Tag>
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasData(FakeDataFactory.IssueTypes);
+        //builder.HasData(FakeDataFactory.IssueTypes);
     }
 
 }

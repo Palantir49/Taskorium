@@ -28,6 +28,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                 username => username.ToString(),
                 value => new UserName(value))
             .IsRequired().HasMaxLength(225);
-        builder.HasData(FakeDataFactory.Users);
+        //builder.HasData(FakeDataFactory.Users);
     }
 }

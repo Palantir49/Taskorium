@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
@@ -27,6 +27,6 @@ public class WorkspaceMemberConfiguration : IEntityTypeConfiguration<WorkspaceMe
             .IsRequired()
             .HasConversion<string>();
 
-        builder.HasData(FakeDataFactory.WorkspaceMembers);
+        //builder.HasData(FakeDataFactory.WorkspaceMembers);
     }
 }

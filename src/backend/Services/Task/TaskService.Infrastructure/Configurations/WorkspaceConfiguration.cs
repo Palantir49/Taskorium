@@ -28,7 +28,7 @@ namespace TaskService.Infrastructure.Configurations
             builder.HasOne<User>()
                 .WithMany()
                 .HasForeignKey(w => w.OwnerId);
-            builder.HasData(FakeDataFactory.Workspaces);
+            //builder.HasData(FakeDataFactory.Workspaces);
         }
     }
 }

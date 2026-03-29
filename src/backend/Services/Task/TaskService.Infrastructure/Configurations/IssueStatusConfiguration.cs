@@ -29,6 +29,6 @@ internal class IssueStatusConfiguration : IEntityTypeConfiguration<IssueStatus>
               .HasForeignKey(t => t.ProjectId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
-        builder.HasData(FakeDataFactory.IssueStatuses);
+        //builder.HasData(FakeDataFactory.IssueStatuses);
     }
 }

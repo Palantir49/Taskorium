@@ -32,7 +32,7 @@ namespace TaskService.Infrastructure.Configurations
 
             builder.Property(p => p.FinishDate);
 
-            builder.HasData(FakeDataFactory.Projects);
+            //builder.HasData(FakeDataFactory.Projects);
         }
     }
 }

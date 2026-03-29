@@ -36,6 +36,6 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
             .HasForeignKey(t => t.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
-        builder.HasData(FakeDataFactory.ProjectMembers);
+        //builder.HasData(FakeDataFactory.ProjectMembers);
     }
 }
