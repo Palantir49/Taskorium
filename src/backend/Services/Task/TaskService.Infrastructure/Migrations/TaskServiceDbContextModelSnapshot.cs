@@ -60,6 +60,22 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasIndex("UploaderId");
 
                     b.ToTable("Attachments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("019d399c-2a7a-75d1-b674-6b5a40ca34a7"),
+                            IssueId = new Guid("019d399c-2a78-797f-a73a-3f9aa697f117"),
+                            StoragePath = "attachments/mob-1/wireframe.png",
+                            UploaderId = new Guid("019d399c-2a77-77cf-8fa0-3b54e54910ff")
+                        },
+                        new
+                        {
+                            Id = new Guid("019d399c-2a7a-7ccf-aee6-3614b1d0492a"),
+                            IssueId = new Guid("019d399c-2a7a-7ece-a77a-aff51fdd2458"),
+                            StoragePath = "attachments/mob-2/logcat.txt",
+                            UploaderId = new Guid("019d399c-2a77-7d11-bbd4-db8c27757b25")
+                        });
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Issue", b =>
@@ -113,6 +129,46 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Issues");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("019d399c-2a78-797f-a73a-3f9aa697f117"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 48, DateTimeKind.Unspecified).AddTicks(3808), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Implement email and SSO login.",
+                            DueDate = new DateTimeOffset(new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            IssuePriority = 3,
+                            IssueStatusId = new Guid("019d399c-2a78-7197-b808-733763f23a62"),
+                            IssueType = 0,
+                            Key = "MOB-1",
+                            Name = "Login screen",
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855")
+                        },
+                        new
+                        {
+                            Id = new Guid("019d399c-2a7a-7ece-a77a-aff51fdd2458"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 50, DateTimeKind.Unspecified).AddTicks(5341), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Reproduces on Android 14.",
+                            DueDate = new DateTimeOffset(new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            IssuePriority = 4,
+                            IssueStatusId = new Guid("019d399c-2a78-7f43-9db3-0bf290c89ca6"),
+                            IssueType = 2,
+                            Key = "MOB-2",
+                            Name = "Crash on cold start",
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855")
+                        },
+                        new
+                        {
+                            Id = new Guid("019d399c-2a7a-7ebc-8553-4464fb17c356"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 50, DateTimeKind.Unspecified).AddTicks(5567), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Finalize strings for v1.",
+                            IssuePriority = 1,
+                            IssueStatusId = new Guid("019d399c-2a78-774b-9570-9e62bc08f0a0"),
+                            IssueType = 1,
+                            Key = "MOB-3",
+                            Name = "Push notification copy",
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855")
+                        });
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.IssueStatus", b =>
@@ -142,6 +198,35 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("IssueStatus");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("019d399c-2a78-7f43-9db3-0bf290c89ca6"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 48, DateTimeKind.Unspecified).AddTicks(1555), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Backlog",
+                            Position = 0,
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            Type = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("019d399c-2a78-7197-b808-733763f23a62"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 48, DateTimeKind.Unspecified).AddTicks(1784), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "In progress",
+                            Position = 1,
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("019d399c-2a78-774b-9570-9e62bc08f0a0"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 48, DateTimeKind.Unspecified).AddTicks(1786), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Done",
+                            Position = 2,
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            Type = 2
+                        });
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
@@ -180,6 +265,17 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasIndex("WorkspaceId");
 
                     b.ToTable("Projects");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            Abbreviation = "MOB",
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 47, DateTimeKind.Unspecified).AddTicks(9498), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Customer-facing iOS and Android app.",
+                            Name = "Mobile client",
+                            WorkspaceId = new Guid("019d399c-2a77-79fd-9ff7-acf17ea6bc2e")
+                        });
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.ProjectMember", b =>
@@ -202,6 +298,29 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ProjectMembers");
+
+                    b.HasData(
+                        new
+                        {
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            UserId = new Guid("019d399c-2a77-77cf-8fa0-3b54e54910ff"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 15, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Role = "Creator"
+                        },
+                        new
+                        {
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            UserId = new Guid("019d399c-2a77-7d11-bbd4-db8c27757b25"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 16, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Role = "Member"
+                        },
+                        new
+                        {
+                            ProjectId = new Guid("019d399c-2a77-7614-a948-620f1191a855"),
+                            UserId = new Guid("019d399c-2a77-7365-b1a4-e737e821d4fb"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 18, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Role = "Viewer"
+                        });
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Tag", b =>
@@ -256,6 +375,35 @@ namespace TaskService.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("019d399c-2a77-77cf-8fa0-3b54e54910ff"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 47, DateTimeKind.Unspecified).AddTicks(4107), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "alice@example.com",
+                            FullName = "Alice Anderson",
+                            KeycloakId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"),
+                            Username = "alice"
+                        },
+                        new
+                        {
+                            Id = new Guid("019d399c-2a77-7d11-bbd4-db8c27757b25"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 47, DateTimeKind.Unspecified).AddTicks(5202), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "bob@example.com",
+                            FullName = "Bob Brown",
+                            KeycloakId = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2"),
+                            Username = "bob"
+                        },
+                        new
+                        {
+                            Id = new Guid("019d399c-2a77-7365-b1a4-e737e821d4fb"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 47, DateTimeKind.Unspecified).AddTicks(5205), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "carol@example.com",
+                            FullName = "Carol Chen",
+                            KeycloakId = new Guid("cccccccc-cccc-cccc-cccc-ccccccccccc3"),
+                            Username = "carol"
+                        });
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Workspace", b =>
@@ -271,18 +419,24 @@ namespace TaskService.Infrastructure.Migrations
                         .HasMaxLength(225)
                         .HasColumnType("character varying(225)");
 
-                    b.Property<Guid?>("OwnerId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
-
                     b.ToTable("Workspaces");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("019d399c-2a77-79fd-9ff7-acf17ea6bc2e"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2026, 3, 29, 12, 40, 29, 47, DateTimeKind.Unspecified).AddTicks(6992), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Acme Workspace"
+                        });
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.WorkspaceMember", b =>
                 {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("WorkspaceId")
                         .HasColumnType("uuid");
 
@@ -293,14 +447,34 @@ namespace TaskService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.HasKey("UserId", "WorkspaceId");
 
-                    b.HasKey("WorkspaceId");
-
-                    b.HasIndex("UserId");
+                    b.HasIndex("WorkspaceId");
 
                     b.ToTable("WorkspaceMembers");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("019d399c-2a77-77cf-8fa0-3b54e54910ff"),
+                            WorkspaceId = new Guid("019d399c-2a77-79fd-9ff7-acf17ea6bc2e"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 15, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Role = "Creator"
+                        },
+                        new
+                        {
+                            UserId = new Guid("019d399c-2a77-7d11-bbd4-db8c27757b25"),
+                            WorkspaceId = new Guid("019d399c-2a77-79fd-9ff7-acf17ea6bc2e"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 16, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Role = "Admin"
+                        },
+                        new
+                        {
+                            UserId = new Guid("019d399c-2a77-7365-b1a4-e737e821d4fb"),
+                            WorkspaceId = new Guid("019d399c-2a77-79fd-9ff7-acf17ea6bc2e"),
+                            JoinedAt = new DateTimeOffset(new DateTime(2026, 1, 17, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Role = "Member"
+                        });
                 });
 
             modelBuilder.Entity("IssueTag", b =>
@@ -382,13 +556,6 @@ namespace TaskService.Infrastructure.Migrations
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("TaskService.Domain.Entities.Workspace", b =>
-                {
-                    b.HasOne("TaskService.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("OwnerId");
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.WorkspaceMember", b =>

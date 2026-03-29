@@ -12,8 +12,7 @@ public class CreateWorkspaceHandler(TaskServiceDbContext context)
         CancellationToken cancellationToken = default)
     {
         var workspace = Workspace.Create(
-            command.Name,
-            command.ownerId
+            command.Name
         );
         await context.Workspaces.AddAsync(workspace, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);

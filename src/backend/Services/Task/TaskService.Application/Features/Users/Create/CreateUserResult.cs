@@ -1,3 +1,3 @@
 ﻿namespace TaskService.Application.Features.Users.Create;
 
-public record class CreateUserResult(Guid id, string userEmail);
+public record class CreateUserResult(Guid Id, string UserEmail);

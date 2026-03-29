@@ -16,16 +16,16 @@ public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache
         CancellationToken cancellationToken = default)
     {
         var existWorkspace = await context.Workspaces.Include(workspace => workspace.WorkspaceMembers)
-            .FirstOrDefaultAsync(workspace => workspace.Id == command.workspaceId, cancellationToken);
+            .FirstOrDefaultAsync(workspace => workspace.Id == command.WorkspaceId, cancellationToken);
         if (existWorkspace is null)
         {
-            throw new KeyNotFoundException($"Рабочей области с таким id {command.workspaceId} не существует");
+            throw new KeyNotFoundException($"Рабочей области с таким id {command.WorkspaceId} не существует");
         }
 
-        var existUser = await context.Users.FindAsync([command.userId], cancellationToken);
+        var existUser = await context.Users.FindAsync([command.UserId], cancellationToken);
         if (existUser is null)
         {
-            throw new KeyNotFoundException($"Пользователь с таким id {command.userId} не существует");
+            throw new KeyNotFoundException($"Пользователь с таким id {command.UserId} не существует");
         }
 
         if (existWorkspace.WorkspaceMembers.Any(x => x.UserId == existUser.Id))
@@ -34,7 +34,7 @@ public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache
         }
 
         var workspaceMember =
-            WorkspaceMember.Create(command.workspaceId, command.userId, command.role, DateTimeOffset.UtcNow);
+            WorkspaceMember.Create(command.WorkspaceId, command.UserId, command.Role, DateTimeOffset.UtcNow);
 
         await context.WorkspaceMembers.AddAsync(workspaceMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);

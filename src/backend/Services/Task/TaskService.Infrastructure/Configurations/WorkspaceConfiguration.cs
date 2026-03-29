@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
 using TaskService.Domain.ValueObjects;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations
 {
@@ -23,10 +24,11 @@ namespace TaskService.Infrastructure.Configurations
 
             builder.Property(w => w.CreatedDate).IsRequired();
 
-            builder.Property(w => w.OwnerId);
-            builder.HasOne<User>()
-                .WithMany()
-                .HasForeignKey(w => w.OwnerId);
+            //builder.Property(w => w.OwnerId);
+            //builder.HasOne<User>()
+            //    .WithMany()
+            //    .HasForeignKey(w => w.OwnerId);
+            builder.HasData(FakeDataFactory.Workspaces);
         }
     }
 }

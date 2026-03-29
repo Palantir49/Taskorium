@@ -20,8 +20,7 @@ public class GetWorkspacePageHandler(TaskServiceDbContext context) : IRequestHan
             .Take(request.take)
             .Select(x => new WorkspaceResponse(id: x.Id,
                                                name: x.Name.Value,
-                                               createdDate: x.CreatedDate,
-                                               ownerId: x.OwnerId))
+                                               createdDate: x.CreatedDate))
             .ToListAsync();
 
         return new GetWorkspacePageResult(workspaces: result);

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
 using TaskService.Domain.ValueObjects;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations;
 
@@ -49,6 +50,7 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
         //builder.HasOne(i => i.User)
         //    .WithMany(u => u.Issues)
         //    .HasForeignKey(i => i.ReporterId);
+        builder.HasData(FakeDataFactory.Issues);
 
     }
 }

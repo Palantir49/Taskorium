@@ -6,14 +6,14 @@ public class Workspace : BaseEntities
 {
     protected Workspace() { }
 
-    private Workspace(Guid id, string name, Guid ownerId) : base(id, name)
+    private Workspace(Guid id, string name) : base(id, name)
     {
-        OwnerId = ownerId;
+        //OwnerId = ownerId;
     }
-    public Guid? OwnerId { get; private set; }
+    //public Guid? OwnerId { get; private set; }
     public List<WorkspaceMember> WorkspaceMembers { get; private set; } = [];
-    public static Workspace Create(string name, Guid ownerId)
+    public static Workspace Create(string name)
     {
-        return new Workspace(Guid.CreateVersion7(), name, ownerId);
+        return new Workspace(Guid.CreateVersion7(), name);
     }
 }

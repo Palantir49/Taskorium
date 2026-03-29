@@ -7,7 +7,7 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Projects.Handler;
 
-internal class ProjectGetByIdHandler(TaskServiceDbContext context, HybridCache cache)
+public class ProjectGetByIdHandler(TaskServiceDbContext context, HybridCache cache)
     : IRequestHandler<ProjectGetByIdQuery, ProjectResponse>
 {
     public async Task<ProjectResponse> Handle(ProjectGetByIdQuery request,
