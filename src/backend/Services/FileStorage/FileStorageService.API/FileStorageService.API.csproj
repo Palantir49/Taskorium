@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore"/>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+    <PackageReference Include="Grpc.AspNetCore"/>
+    <PackageReference Include="Scalar.AspNetCore"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Taskorium.ServiceDefaults\Taskorium.ServiceDefaults.csproj"/>
+    <ProjectReference Include="..\FileStorageService.Application\FileStorageService.Application.csproj"/>
+    <ProjectReference Include="..\FileStorageService.Domain\FileStorageService.Domain.csproj"/>
+    <ProjectReference Include="..\FileStorageService.Infrastructure\FileStorageService.Infrastructure.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Taskorium.Protos\Taskorium.Protos.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Protobuf Include="..\..\..\Shared\Taskorium.Protos\Protos\FileStorageProto.proto"
+              GrpcServices="Server"
+              Link="Protos\FileStorageProto.proto"/>
+  </ItemGroup>
+
+</Project>
