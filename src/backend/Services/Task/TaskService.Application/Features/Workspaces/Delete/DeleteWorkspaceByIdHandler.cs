@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Mediator;
+using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Workspaces.Delete;
