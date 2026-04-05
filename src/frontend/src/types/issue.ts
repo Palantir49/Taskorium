@@ -26,7 +26,7 @@ export interface IssueCreateRequest {
   numberIssueType: number;
   numberIssuePriority: number;
   description?: string;
-  dueDate?: string;
+  dueDate?: string | null;
 }
 
 export interface UpdateIssueRequest {
@@ -35,7 +35,7 @@ export interface UpdateIssueRequest {
   numberIssueType: number;
   numberIssuePriority: number;
   description?: string;
-  dueDate?: string;
+  dueDate?: string | null;
 }
 
 export interface IssueResponse {
@@ -47,9 +47,9 @@ export interface IssueResponse {
   issueType: IssueTypeResponse;
   issuePriority: IssuePriorityResponse;
   createdDate: string;
-  updatedDate?: string;
-  dueDate?: string;
-  resolvedDate?: string;
+  updatedDate?: string | null;
+  dueDate?: string | null;
+  resolvedDate?: string | null;
 }
 
 export interface IssuesResponse {

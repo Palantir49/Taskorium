@@ -4,9 +4,9 @@ import { Task, TaskState, Action, ActionType, UpdateTaskData, CreateTaskData } f
 
 const TaskContext = createContext<TaskState & {
   loadTasks: () => Promise<void>;
-  updateTask: (id: number, updates: UpdateTaskData) => Promise<Task>;
+  updateTask: (id: string, updates: UpdateTaskData) => Promise<Task>;
   createTask: (taskData: CreateTaskData) => Promise<Task>;
-  deleteTask: (id: number) => Promise<void>;
+  deleteTask: (id: string) => Promise<void>;
   setSelectedTask: (task: Task | null) => void;
   setFilter: (key: keyof TaskState['filters'], value: string) => void;
   resetFilters: () => void;
@@ -124,7 +124,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
     }
   };
 
-  const handleUpdateTask = async (id: number, updates: UpdateTaskData): Promise<Task> => {
+  const handleUpdateTask = async (id: string, updates: UpdateTaskData): Promise<Task> => {
     try {
       const updatedTask = await updateTask(id, updates);
       dispatch({ type: ActionTypes.UPDATE_TASK, payload: updatedTask });
@@ -146,7 +146,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
     }
   };
 
-  const handleDeleteTask = async (id: number): Promise<void> => {
+  const handleDeleteTask = async (id: string): Promise<void> => {
     try {
       await deleteTask(id);
       dispatch({ type: ActionTypes.REMOVE_TASK, payload: id });

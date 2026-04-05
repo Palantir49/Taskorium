@@ -5,164 +5,145 @@ import { Task, User, CreateTaskData, UpdateTaskData } from '../types';
  * В будущем здесь будут реальные запросы к Asp.Net Core Backend
  */
 
-// Моковые данные для задач
+// Моковые данные для задач (совместимые с DTO)
 const mockTasks: Task[] = [
   {
-    id: 1,
-    title: "Исправить ошибку авторизации",
+    id: "1",
+    name: "Исправить ошибку авторизации",
     description: "Пользователи не могут войти в систему после обновления. Требуется срочное исправление.",
-    status: "backlog",
-    priority: "critical",
-    type: "bug",
-    assignedTo: { id: 1, name: "Иван Петров", initials: "ИП" },
-    createdAt: new Date(2025, 10, 5), // Ноябрь 2025
-    deadline: new Date(2025, 11, 25), // Декабрь 2025
-    subtasks: [
-      { id: 1, title: "Проверить логи сервера", completed: true },
-      { id: 2, title: "Найти причину ошибки", completed: true },
-      { id: 3, title: "Исправить код", completed: false }
-    ]
+    projectId: "1",
+    taskStatusId: "1",
+    issueType: { number: 1, name: "bug", displayName: "Баг", code: "BUG" },
+    issuePriority: { number: 4, name: "critical", displayName: "Критический" },
+    createdDate: "2025-11-05T00:00:00",
+    updatedDate: "2025-11-05T00:00:00",
+    dueDate: "2025-12-25T00:00:00",
+    resolvedDate: null
   },
   {
-    id: 2,
-    title: "Добавить темную тему",
+    id: "2",
+    name: "Добавить темную тему",
     description: "Реализовать переключение между светлой и темной темой интерфейса.",
-    status: "in-progress",
-    priority: "high",
-    type: "feature",
-    assignedTo: { id: 2, name: "Мария Сидорова", initials: "МС" },
-    createdAt: new Date(2025, 10, 8), // Ноябрь 2025
-    deadline: new Date(2026, 0, 10), // Январь 2026
-    subtasks: [
-      { id: 4, title: "Создать цветовую палитру", completed: true },
-      { id: 5, title: "Реализовать переключатель", completed: false },
-      { id: 6, title: "Протестировать на всех страницах", completed: false }
-    ]
+    projectId: "1",
+    taskStatusId: "2",
+    issueType: { number: 2, name: "feature", displayName: "Функция", code: "FEATURE" },
+    issuePriority: { number: 3, name: "high", displayName: "Высокий" },
+    createdDate: "2025-11-08T00:00:00",
+    updatedDate: "2025-11-08T00:00:00",
+    dueDate: "2026-01-10T00:00:00",
+    resolvedDate: null
   },
   {
-    id: 3,
-    title: "Оптимизировать загрузку данных",
+    id: "3",
+    name: "Оптимизировать загрузку данных",
     description: "Улучшить производительность загрузки списка задач при большом количестве данных.",
-    status: "in-progress",
-    priority: "medium",
-    type: "improvement",
-    assignedTo: { id: 3, name: "Алексей Иванов", initials: "АИ" },
-    createdAt: new Date(2025, 10, 12), // Ноябрь 2025
-    deadline: null,
-    subtasks: [
-      { id: 7, title: "Добавить пагинацию", completed: false },
-      { id: 8, title: "Реализовать виртуальный скролл", completed: false }
-    ]
+    projectId: "1",
+    taskStatusId: "2",
+    issueType: { number: 3, name: "improvement", displayName: "Улучшение", code: "IMPROVEMENT" },
+    issuePriority: { number: 2, name: "medium", displayName: "Средний" },
+    createdDate: "2025-11-12T00:00:00",
+    updatedDate: "2025-11-12T00:00:00",
+    dueDate: null,
+    resolvedDate: null
   },
   {
-    id: 4,
-    title: "Написать тесты для API",
+    id: "4",
+    name: "Написать тесты для API",
     description: "Создать unit и integration тесты для всех endpoints.",
-    status: "testing",
-    priority: "high",
-    type: "improvement",
-    assignedTo: { id: 1, name: "Иван Петров", initials: "ИП" },
-    createdAt: new Date(2025, 10, 3), // Ноябрь 2025
-    deadline: new Date(2026, 0, 5), // Январь 2026
-    subtasks: [
-      { id: 9, title: "Тесты для GET endpoints", completed: true },
-      { id: 10, title: "Тесты для POST endpoints", completed: true },
-      { id: 11, title: "Тесты для PUT endpoints", completed: false },
-      { id: 12, title: "Тесты для DELETE endpoints", completed: false }
-    ]
+    projectId: "1",
+    taskStatusId: "3",
+    issueType: { number: 3, name: "improvement", displayName: "Улучшение", code: "IMPROVEMENT" },
+    issuePriority: { number: 3, name: "high", displayName: "Высокий" },
+    createdDate: "2025-11-03T00:00:00",
+    updatedDate: "2025-11-03T00:00:00",
+    dueDate: "2026-01-05T00:00:00",
+    resolvedDate: null
   },
   {
-    id: 5,
-    title: "Обновить документацию",
+    id: "5",
+    name: "Обновить документацию",
     description: "Актуализировать API документацию с новыми endpoints.",
-    status: "testing",
-    priority: "low",
-    type: "improvement",
-    assignedTo: { id: 2, name: "Мария Сидорова", initials: "МС" },
-    createdAt: new Date(2025, 11, 15), // Декабрь 2025
-    deadline: null,
-    subtasks: [
-      { id: 13, title: "Обновить Swagger", completed: true },
-      { id: 14, title: "Добавить примеры запросов", completed: true }
-    ]
+    projectId: "1",
+    taskStatusId: "3",
+    issueType: { number: 3, name: "improvement", displayName: "Улучшение", code: "IMPROVEMENT" },
+    issuePriority: { number: 1, name: "low", displayName: "Низкий" },
+    createdDate: "2025-12-15T00:00:00",
+    updatedDate: "2025-12-15T00:00:00",
+    dueDate: null,
+    resolvedDate: null
   },
   {
-    id: 6,
-    title: "Исправить баг с отображением дат",
+    id: "6",
+    name: "Исправить баг с отображением дат",
     description: "Даты отображаются в неправильном формате в некоторых браузерах.",
-    status: "done",
-    priority: "medium",
-    type: "bug",
-    assignedTo: { id: 3, name: "Алексей Иванов", initials: "АИ" },
-    createdAt: new Date(2025, 11, 1), // Декабрь 2025
-    deadline: new Date(2025, 11, 20), // Декабрь 2025
-    subtasks: [
-      { id: 15, title: "Использовать date-fns", completed: true },
-      { id: 16, title: "Протестировать в разных браузерах", completed: true }
-    ]
+    projectId: "1",
+    taskStatusId: "4",
+    issueType: { number: 1, name: "bug", displayName: "Баг", code: "BUG" },
+    issuePriority: { number: 2, name: "medium", displayName: "Средний" },
+    createdDate: "2025-12-01T00:00:00",
+    updatedDate: "2025-12-01T00:00:00",
+    dueDate: "2025-12-20T00:00:00",
+    resolvedDate: "2025-12-20T00:00:00"
   },
   {
-    id: 7,
-    title: "Добавить уведомления",
+    id: "7",
+    name: "Добавить уведомления",
     description: "Реализовать систему push-уведомлений для важных событий.",
-    status: "backlog",
-    priority: "high",
-    type: "feature",
-    assignedTo: { id: 1, name: "Иван Петров", initials: "ИП" },
-    createdAt: new Date(2025, 11, 18), // Декабрь 2025
-    deadline: new Date(2026, 0, 15), // Январь 2026
-    subtasks: [
-      { id: 17, title: "Настроить WebSocket", completed: false },
-      { id: 18, title: "Создать компонент уведомлений", completed: false }
-    ]
+    projectId: "1",
+    taskStatusId: "1",
+    issueType: { number: 2, name: "feature", displayName: "Функция", code: "FEATURE" },
+    issuePriority: { number: 3, name: "high", displayName: "Высокий" },
+    createdDate: "2025-12-18T00:00:00",
+    updatedDate: "2025-12-18T00:00:00",
+    dueDate: "2026-01-15T00:00:00",
+    resolvedDate: null
   },
   {
-    id: 8,
-    title: "Улучшить UI мобильной версии",
+    id: "8",
+    name: "Улучшить UI мобильной версии",
     description: "Оптимизировать интерфейс для мобильных устройств.",
-    status: "done",
-    priority: "medium",
-    type: "improvement",
-    assignedTo: { id: 2, name: "Мария Сидорова", initials: "МС" },
-    createdAt: new Date(2025, 11, 2), // Декабрь 2025
-    deadline: new Date(2025, 11, 22), // Декабрь 2025
-    subtasks: [
-      { id: 19, title: "Адаптивная верстка", completed: true },
-      { id: 20, title: "Оптимизация touch-событий", completed: true },
-      { id: 21, title: "Тестирование на устройствах", completed: true }
-    ]
+    projectId: "1",
+    taskStatusId: "4",
+    issueType: { number: 3, name: "improvement", displayName: "Улучшение", code: "IMPROVEMENT" },
+    issuePriority: { number: 2, name: "medium", displayName: "Средний" },
+    createdDate: "2025-12-02T00:00:00",
+    updatedDate: "2025-12-02T00:00:00",
+    dueDate: "2025-12-22T00:00:00",
+    resolvedDate: "2025-12-22T00:00:00"
   },
   {
-    id: 9,
-    title: "Рефакторинг модуля авторизации",
+    id: "9",
+    name: "Рефакторинг модуля авторизации",
     description: "Требуется пересмотр архитектуры модуля авторизации. Ожидается решение по выбору библиотеки.",
-    status: "pause",
-    priority: "high",
-    type: "improvement",
-    assignedTo: { id: 1, name: "Иван Петров", initials: "ИП" },
-    createdAt: new Date(2025, 10, 7), // Ноябрь 2025
-    deadline: new Date(2026, 0, 12), // Январь 2026
-    subtasks: []
+    projectId: "1",
+    taskStatusId: "5",
+    issueType: { number: 3, name: "improvement", displayName: "Улучшение", code: "IMPROVEMENT" },
+    issuePriority: { number: 3, name: "high", displayName: "Высокий" },
+    createdDate: "2025-11-07T00:00:00",
+    updatedDate: "2025-11-07T00:00:00",
+    dueDate: "2026-01-12T00:00:00",
+    resolvedDate: null
   },
   {
-    id: 10,
-    title: "Интеграция с платежной системой",
+    id: "10",
+    name: "Интеграция с платежной системой",
     description: "Интеграция приостановлена до получения необходимых API ключей от партнера.",
-    status: "pause",
-    priority: "medium",
-    type: "feature",
-    assignedTo: { id: 3, name: "Алексей Иванов", initials: "АИ" },
-    createdAt: new Date(2025, 10, 14), // Ноябрь 2025
-    deadline: new Date(2026, 0, 20), // Январь 2026
-    subtasks: []
+    projectId: "1",
+    taskStatusId: "5",
+    issueType: { number: 2, name: "feature", displayName: "Функция", code: "FEATURE" },
+    issuePriority: { number: 2, name: "medium", displayName: "Средний" },
+    createdDate: "2025-11-14T00:00:00",
+    updatedDate: "2025-11-14T00:00:00",
+    dueDate: "2026-01-20T00:00:00",
+    resolvedDate: null
   }
 ];
 
-// Моковые пользователи
+// Моковые пользователи (совместимые с DTO)
 const mockUsers: User[] = [
-  { id: 1, name: "Иван Петров", initials: "ИП" },
-  { id: 2, name: "Мария Сидорова", initials: "МС" },
-  { id: 3, name: "Алексей Иванов", initials: "АИ" }
+  { id: "1", keycloakId: "1", email: "ivan.petrov@example.com", username: "ivan.petrov", createdAt: "2025-01-01T00:00:00" },
+  { id: "2", keycloakId: "2", email: "maria.sidorova@example.com", username: "maria.sidorova", createdAt: "2025-01-02T00:00:00" },
+  { id: "3", keycloakId: "3", email: "alexey.ivanov@example.com", username: "alexey.ivanov", createdAt: "2025-01-03T00:00:00" }
 ];
 
 /**
@@ -177,7 +158,7 @@ export const fetchTasks = async (): Promise<Task[]> => {
 /**
  * Получить задачу по ID
  */
-export const fetchTaskById = async (id: number): Promise<Task> => {
+export const fetchTaskById = async (id: string): Promise<Task> => {
   await new Promise(resolve => setTimeout(resolve, 200));
   const task = mockTasks.find(task => task.id === id);
   if (!task) {
@@ -189,7 +170,7 @@ export const fetchTaskById = async (id: number): Promise<Task> => {
 /**
  * Обновить задачу
  */
-export const updateTask = async (id: number, updates: UpdateTaskData): Promise<Task> => {
+export const updateTask = async (id: string, updates: UpdateTaskData): Promise<Task> => {
   await new Promise(resolve => setTimeout(resolve, 300));
   const taskIndex = mockTasks.findIndex(task => task.id === id);
   if (taskIndex === -1) {
@@ -206,20 +187,17 @@ export const updateTask = async (id: number, updates: UpdateTaskData): Promise<T
 export const createTask = async (taskData: CreateTaskData): Promise<Task> => {
   await new Promise(resolve => setTimeout(resolve, 300));
   const newTask: Task = {
-    id: Math.max(...mockTasks.map(t => t.id)) + 1,
-    title: taskData.title,
+    id: (mockTasks.length + 1).toString(),
+    name: taskData.name,
     description: taskData.description,
-    status: taskData.status || 'backlog',
-    priority: taskData.priority || 'medium',
-    type: taskData.type || 'feature',
-    assignedTo: taskData.assignedTo || mockUsers[0],
-    createdAt: new Date(),
-    deadline: taskData.deadline || null,
-    subtasks: taskData.subtasks?.map((subtask, index) => ({
-      id: Math.max(...mockTasks.flatMap(t => t.subtasks.map(s => s.id)), 0) + index + 1,
-      title: subtask.title,
-      completed: subtask.completed || false
-    })) || []
+    projectId: taskData.projectId,
+    taskStatusId: "1", // По умолчанию в бэклоге
+    issueType: { number: taskData.numberIssueType, name: "", displayName: "", code: "" },
+    issuePriority: { number: taskData.numberIssuePriority, name: "", displayName: "" },
+    createdDate: new Date().toISOString(),
+    updatedDate: new Date().toISOString(),
+    dueDate: taskData.dueDate || null,
+    resolvedDate: null
   };
   mockTasks.push(newTask);
   return newTask;
@@ -228,7 +206,7 @@ export const createTask = async (taskData: CreateTaskData): Promise<Task> => {
 /**
  * Удалить задачу
  */
-export const deleteTask = async (id: number): Promise<void> => {
+export const deleteTask = async (id: string): Promise<void> => {
   await new Promise(resolve => setTimeout(resolve, 200));
   const taskIndex = mockTasks.findIndex(task => task.id === id);
   if (taskIndex === -1) {

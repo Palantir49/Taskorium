@@ -8,12 +8,12 @@ import {
   FaInfoCircle,
   FaCircle
 } from 'react-icons/fa';
-import { TaskCardProps, TaskType } from '../types';
+import { TaskCardProps } from '../types';
 import './TaskCard.css';
 
 function TaskCard({ task, onClick }: TaskCardProps) {
   // Иконки для типов задач
-  const getTypeIcon = (type: TaskType) => {
+  const getTypeIcon = (type: string) => {
     switch (type) {
       case 'bug':
         return <FaBug className="task-type-icon bug" />;
@@ -27,18 +27,18 @@ function TaskCard({ task, onClick }: TaskCardProps) {
   };
 
   // Форматирование даты
-  const formatDate = (date: Date | string | null): string | null => {
+  const formatDate = (date: string | null | undefined): string | null => {
     if (!date) return null;
     const d = new Date(date);
     return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
   };
 
   // Проверка просроченности дедлайна
-  const isOverdue = task.deadline && new Date(task.deadline) < new Date();
+  const isOverdue = task.dueDate && new Date(task.dueDate) < new Date();
 
   // Определяем класс рамки по приоритету
   let priorityBorderClass = '';
-  switch (task.priority) {
+  switch (task.issuePriority.name) {
     case 'critical':
       priorityBorderClass = 'priority-critical';
       break;
@@ -59,8 +59,8 @@ function TaskCard({ task, onClick }: TaskCardProps) {
     <div className={`task-card ${priorityBorderClass}`} onClick={() => onClick && onClick(task)}>
       <div className="task-card-header">
         <div className="task-title-row">
-          {getTypeIcon(task.type)}
-          <h3 className="task-title">{task.title}</h3>
+          {getTypeIcon(task.issueType.name)}
+          <h3 className="task-title">{task.name}</h3>
         </div>
         <div className="task-priority">
         </div>
@@ -72,15 +72,11 @@ function TaskCard({ task, onClick }: TaskCardProps) {
 
       <div className="task-footer">
         <div className="task-assignee">
-          {task.assignedTo && (
-            <div className="assignee-avatar" title={task.assignedTo.name}>
-              {task.assignedTo.initials}
-            </div>
-          )}
+          {/* В DTO не указан пользователь, поэтому пока оставим пустым */}
         </div>
-        {task.deadline && (
+        {task.dueDate && (
           <div className={`task-deadline ${isOverdue ? 'overdue' : ''}`}>
-            {formatDate(task.deadline)}
+            {formatDate(task.dueDate)}
           </div>
         )}
       </div>

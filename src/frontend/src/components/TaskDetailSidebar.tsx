@@ -13,7 +13,7 @@ import {
 } from 'react-icons/fa';
 import { useTasks } from '../context/TaskContext';
 import { fetchUsers } from '../api/taskService';
-import { TaskDetailSidebarProps, Task, User, TaskStatus, TaskPriority, TaskType } from '../types';
+import { TaskDetailSidebarProps, Task, User } from '../types';
 import './TaskDetailSidebar.css';
 
 function TaskDetailSidebar() {
@@ -21,13 +21,12 @@ function TaskDetailSidebar() {
   const [users, setUsers] = useState<User[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
+    name: '',
     description: '',
-    status: '' as TaskStatus,
-    priority: '' as TaskPriority,
-    type: '' as TaskType,
-    assignedTo: '',
-    deadline: ''
+    issueStatusId: '1',
+    numberIssueType: 2,
+    numberIssuePriority: 2,
+    dueDate: ''
   });
 
   // Загрузка пользователей
@@ -39,14 +38,13 @@ function TaskDetailSidebar() {
   useEffect(() => {
     if (selectedTask) {
       setFormData({
-        title: selectedTask.title || '',
+        name: selectedTask.name || '',
         description: selectedTask.description || '',
-        status: selectedTask.status,
-        priority: selectedTask.priority,
-        type: selectedTask.type,
-        assignedTo: selectedTask.assignedTo?.id?.toString() || '',
-        deadline: selectedTask.deadline
-          ? new Date(selectedTask.deadline).toISOString().split('T')[0]
+        issueStatusId: selectedTask.taskStatusId,
+        numberIssueType: selectedTask.issueType.number,
+        numberIssuePriority: selectedTask.issuePriority.number,
+        dueDate: selectedTask.dueDate
+          ? selectedTask.dueDate.split('T')[0]
           : ''
       });
       setIsEditing(false);
@@ -71,13 +69,12 @@ function TaskDetailSidebar() {
   const handleSave = async () => {
     try {
       const updates = {
-        title: formData.title,
+        name: formData.name,
         description: formData.description,
-        status: formData.status,
-        priority: formData.priority,
-        type: formData.type,
-        assignedTo: users.find(u => u.id.toString() === formData.assignedTo),
-        deadline: formData.deadline ? new Date(formData.deadline) : null
+        issueStatusId: formData.issueStatusId,
+        numberIssueType: parseInt(formData.numberIssueType.toString()),
+        numberIssuePriority: parseInt(formData.numberIssuePriority.toString()),
+        dueDate: formData.dueDate ? formData.dueDate : null
       };
 
       await updateTask(selectedTask.id, updates);
@@ -100,7 +97,7 @@ function TaskDetailSidebar() {
     }
   };
 
-  const getTypeIcon = (type: TaskType) => {
+  const getTypeIcon = (type: string) => {
     switch (type) {
       case 'bug':
         return <FaBug className="detail-icon bug" />;
@@ -113,7 +110,7 @@ function TaskDetailSidebar() {
     }
   };
 
-  const getPriorityIcon = (priority: TaskPriority) => {
+  const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case 'critical':
         return <FaFire className="detail-icon critical" />;
@@ -145,8 +142,8 @@ function TaskDetailSidebar() {
                 <label>Название</label>
                 <input
                   type="text"
-                  name="title"
-                  value={formData.title}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   className="form-input"
                 />
@@ -164,64 +161,31 @@ function TaskDetailSidebar() {
               </div>
 
               <div className="form-group">
-                <label>Статус</label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="backlog">Бэклог</option>
-                  <option value="in-progress">В работе</option>
-                  <option value="testing">В тестировании</option>
-                  <option value="pause">Пауза</option>
-                  <option value="done">Готово</option>
-                </select>
-              </div>
-
-              <div className="form-group">
                 <label>Тип задачи</label>
                 <select
-                  name="type"
-                  value={formData.type}
+                  name="numberIssueType"
+                  value={formData.numberIssueType}
                   onChange={handleChange}
                   className="form-select"
                 >
-                  <option value="bug">Ошибка</option>
-                  <option value="feature">Фича</option>
-                  <option value="improvement">Улучшение</option>
+                  <option value="1">Ошибка</option>
+                  <option value="2">Фича</option>
+                  <option value="3">Улучшение</option>
                 </select>
               </div>
 
               <div className="form-group">
                 <label>Важность</label>
                 <select
-                  name="priority"
-                  value={formData.priority}
+                  name="numberIssuePriority"
+                  value={formData.numberIssuePriority}
                   onChange={handleChange}
                   className="form-select"
                 >
-                  <option value="critical">Критичная</option>
-                  <option value="high">Высокая</option>
-                  <option value="medium">Средняя</option>
-                  <option value="low">Низкая</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Исполнитель</label>
-                <select
-                  name="assignedTo"
-                  value={formData.assignedTo}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="">Не назначен</option>
-                  {users.map(user => (
-                    <option key={user.id} value={user.id}>
-                      {user.name}
-                    </option>
-                  ))}
+                  <option value="4">Критичная</option>
+                  <option value="3">Высокая</option>
+                  <option value="2">Средняя</option>
+                  <option value="1">Низкая</option>
                 </select>
               </div>
 
@@ -229,8 +193,8 @@ function TaskDetailSidebar() {
                 <label>Дедлайн</label>
                 <input
                   type="date"
-                  name="deadline"
-                  value={formData.deadline}
+                  name="dueDate"
+                  value={formData.dueDate}
                   onChange={handleChange}
                   className="form-input"
                 />
@@ -250,10 +214,10 @@ function TaskDetailSidebar() {
             <>
               <div className="detail-section">
                 <div className="detail-header">
-                  <h3>{selectedTask.title}</h3>
+                  <h3>{selectedTask.name}</h3>
                   <div className="detail-icons">
-                    {getTypeIcon(selectedTask.type)}
-                    {getPriorityIcon(selectedTask.priority)}
+                    {getTypeIcon(selectedTask.issueType.name)}
+                    {getPriorityIcon(selectedTask.issuePriority.name)}
                   </div>
                 </div>
               </div>
@@ -264,54 +228,29 @@ function TaskDetailSidebar() {
               </div>
 
               <div className="detail-section">
-                <label>Статус</label>
-                <p className="detail-text">
-                  {selectedTask.status === 'backlog' && 'Бэклог'}
-                  {selectedTask.status === 'in-progress' && 'В работе'}
-                  {selectedTask.status === 'testing' && 'В тестировании'}
-                  {selectedTask.status === 'pause' && 'Пауза'}
-                  {selectedTask.status === 'done' && 'Готово'}
-                </p>
-              </div>
-
-              <div className="detail-section">
                 <label>Тип задачи</label>
                 <p className="detail-text">
-                  {selectedTask.type === 'bug' && 'Ошибка'}
-                  {selectedTask.type === 'feature' && 'Фича'}
-                  {selectedTask.type === 'improvement' && 'Улучшение'}
+                  {selectedTask.issueType.displayName}
                 </p>
               </div>
 
               <div className="detail-section">
                 <label>Важность</label>
                 <p className="detail-text">
-                  {selectedTask.priority === 'critical' && 'Критичная'}
-                  {selectedTask.priority === 'high' && 'Высокая'}
-                  {selectedTask.priority === 'medium' && 'Средняя'}
-                  {selectedTask.priority === 'low' && 'Низкая'}
+                  {selectedTask.issuePriority.displayName}
                 </p>
               </div>
 
               <div className="detail-section">
                 <label>Исполнитель</label>
-                {selectedTask.assignedTo ? (
-                  <div className="assignee-info">
-                    <div className="assignee-avatar-large">
-                      {selectedTask.assignedTo.initials}
-                    </div>
-                    <span>{selectedTask.assignedTo.name}</span>
-                  </div>
-                ) : (
-                  <p className="detail-text">Не назначен</p>
-                )}
+                <p className="detail-text">Не назначен</p>
               </div>
 
-              {selectedTask.deadline && (
+              {selectedTask.dueDate && (
                 <div className="detail-section">
                   <label>Дедлайн</label>
                   <p className="detail-text">
-                    {new Date(selectedTask.deadline).toLocaleDateString('ru-RU', {
+                    {new Date(selectedTask.dueDate).toLocaleDateString('ru-RU', {
                       day: 'numeric',
                       month: 'long',
                       year: 'numeric'
@@ -323,7 +262,7 @@ function TaskDetailSidebar() {
               <div className="detail-section">
                 <label>Дата создания</label>
                 <p className="detail-text">
-                  {new Date(selectedTask.createdAt).toLocaleDateString('ru-RU', {
+                  {new Date(selectedTask.createdDate).toLocaleDateString('ru-RU', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric'

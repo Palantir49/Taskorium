@@ -1,36 +1,40 @@
 // Основные типы данных для приложения Taskorium
+// Синхронизированы с бэкендом через DTO
 
-export interface User {
-    id: number;
-    name: string;
-    initials: string;
-}
+// Экспорт DTO
+export * from './common';
+export * from './issue';
+export * from './issueStatus';
+export * from './project';
+export * from './tag';
+export * from './user';
+export * from './workspace';
 
+// Типы для приложения (сопоставленные с DTO)
+import { IssueResponse, IssueCreateRequest, UpdateIssueRequest, IssuePriorityResponse, IssueTypeResponse } from './issue';
+import { IssueStatusResponse, IssueStatusTypeResponse } from './issueStatus';
+import { UserResponse } from './user';
+import { ProjectResponse } from './project';
+
+// Типы для приложения
+export type Task = IssueResponse;
+export type CreateTaskData = IssueCreateRequest;
+export type UpdateTaskData = UpdateIssueRequest;
+export type TaskStatus = IssueStatusTypeResponse['name'];
+export type TaskPriority = IssuePriorityResponse['name'];
+export type TaskType = IssueTypeResponse['name'];
+export type User = UserResponse;
+export type Project = ProjectResponse;
+export type TaskStatusType = IssueStatusResponse;
+
+// Подзадачи (в бэкенде отсутствуют, оставляем для фронтенда)
 export interface Subtask {
     id: number;
     title: string;
     completed: boolean;
 }
 
-export type TaskStatus = 'backlog' | 'in-progress' | 'testing' | 'pause' | 'done';
-
-export type TaskPriority = 'low' | 'medium' | 'high' | 'critical';
-
-export type TaskType = 'bug' | 'feature' | 'improvement';
-
-export interface Task {
-    id: number;
-    title: string;
-    description: string;
-    status: TaskStatus;
-    priority: TaskPriority;
-    type: TaskType;
-    assignedTo: User;
-    createdAt: Date;
-    deadline: Date | null;
-    subtasks: Subtask[];
-}
-
+// Типы для фильтрации
 export interface TaskFilters {
     assignedTo: string;
     type: string;
@@ -39,6 +43,7 @@ export interface TaskFilters {
     deadline: string;
 }
 
+// Состояние приложения
 export interface TaskState {
     tasks: Task[];
     loading: boolean;
@@ -62,29 +67,6 @@ export type ActionType =
 export interface Action {
     type: ActionType;
     payload?: any;
-}
-
-// Типы для API
-export interface CreateTaskData {
-    title: string;
-    description: string;
-    status?: TaskStatus;
-    priority?: TaskPriority;
-    type?: TaskType;
-    assignedTo?: User;
-    deadline?: Date | null;
-    subtasks?: Omit<Subtask, 'id'>[];
-}
-
-export interface UpdateTaskData {
-    title?: string;
-    description?: string;
-    status?: TaskStatus;
-    priority?: TaskPriority;
-    type?: TaskType;
-    assignedTo?: User;
-    deadline?: Date | null;
-    subtasks?: Subtask[];
 }
 
 // Типы для компонентов
