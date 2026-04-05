@@ -1,8 +1,9 @@
-﻿import React, { createContext, useContext } from 'react';
+﻿import React, { createContext, useContext, useEffect } from 'react';
 import {useAuth} from 'react-oidc-context';
 import {useCreateUser} from '../hooks/useCreateUser';
 import {useUserFullName} from '../hooks/useUserFullName';
 import {AuthInfo} from "../types";
+import { setTokenProvider } from '../api/taskService';
 
 // Создаем контекст аутентификации
 const AuthContext = createContext<AuthInfo | null>(null);
@@ -20,6 +21,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const auth = useAuth();
     const {syncStatus, syncError} = useCreateUser(); // авто-синхронизация
     const userFullName = useUserFullName();
+
+    // Установка провайдера токена для API-запросов
+    useEffect(() => {
+        setTokenProvider(() => auth.user?.access_token || null);
+    }, [auth.user]);
 
     const handleLogout = () => auth.signoutRedirect();
 
