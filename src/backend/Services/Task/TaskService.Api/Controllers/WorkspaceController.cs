@@ -25,7 +25,7 @@ namespace TaskService.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
-public class WorkSpacesController(IDispatcher dispatcher) : Controller
+public class WorkspaceController(IDispatcher dispatcher) : Controller
 {
     /// <summary>
     ///     Получить рабочей области по Id
