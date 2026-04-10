@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.Extensions.DependencyInjection;
-using TaskService.Application.Mediator;
-using TaskService.Contracts.Common.DTO;
 using TaskService.Contracts.Enum;
 using TaskService.Domain.Entities.Enums;
 
-namespace TaskService.Application.Features.WorkspaceMembers
+namespace TaskService.Application.Mapping
 {
-    public static class WorkspaceMemberMapping
+    public static class RoleMapper
     {
         extension(Roles domainEnum)
         {
@@ -27,6 +24,25 @@ namespace TaskService.Application.Features.WorkspaceMembers
                         return RolesDto.Viewer;
                     default:
                         return RolesDto.Viewer;
+                }
+            }
+        }
+        extension(RolesDto domainEnum)
+        {
+            public Roles ToEntity()
+            {
+                switch (domainEnum)
+                {
+                    case RolesDto.Admin:
+                        return Roles.Admin;
+                    case RolesDto.Member:
+                        return Roles.Member;
+                    case RolesDto.Creator:
+                        return Roles.Creator;
+                    case RolesDto.Viewer:
+                        return Roles.Viewer;
+                    default:
+                        return Roles.Viewer;
                 }
             }
         }
