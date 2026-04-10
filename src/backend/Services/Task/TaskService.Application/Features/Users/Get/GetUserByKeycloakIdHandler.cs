@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Features.WorkspaceMembers;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
 using TaskService.Infrastructure.Persistence;
