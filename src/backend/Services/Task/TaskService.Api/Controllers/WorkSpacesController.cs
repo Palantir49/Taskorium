@@ -8,6 +8,7 @@ using TaskService.Application.Features.Workspaces.Delete;
 using TaskService.Application.Features.Workspaces.Get;
 using TaskService.Application.Features.Workspaces.Update;
 using TaskService.Application.Mediator;
+using TaskService.Contracts.Workspace.Request;
 using TaskService.Contracts.Workspace.Response;
 
 namespace TaskService.Api.Controllers;
@@ -111,22 +112,23 @@ public class WorkSpacesController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// <remarks>
     ///     Пример запроса:
-    ///     POST /api/v1/Workspaces
+    ///     POST /api/v1/Workspaces/id/user
     ///     {
     ///     }
     /// </remarks>
-    /// <param name="command">Данные о новой задаче</param>
+    /// <param name="id">Id рабочей области</param>
+    /// <param name="request">Данные добавляемого пользователя</param>
     /// <returns></returns>
     /// <response code="201">Новая задача успешно создана</response>
     /// <response code="400">Некорректный запрос</response>
     [Authorize(Policy = "CanAddUserToWorkSpace")]
-    [HttpPost("adduser")]
+    [HttpPost("{id:guid}/user/")]
     [ProducesResponseType(typeof(AddWorkspaceMemberResult), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<WorkspaceResponse>> AddUserToWorkspaceAsync(
-        [FromBody] AddWorkspaceMemberCommand command)
+    public async Task<ActionResult<WorkspaceResponse>> AddUserToWorkspaceAsync(Guid id, [FromBody] AddUserToWorkspaceRequest request)
     {
+        var command = new AddWorkspaceMemberCommand(WorkspaceId: id, UserId: request.UserId, Role: request.Role);
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }

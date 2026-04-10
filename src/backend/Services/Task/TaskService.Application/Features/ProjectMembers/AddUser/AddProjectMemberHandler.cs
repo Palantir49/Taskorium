@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Exceptions;
 using TaskService.Application.Features.WorkspaceMembers;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
 using TaskService.Domain.Entities;

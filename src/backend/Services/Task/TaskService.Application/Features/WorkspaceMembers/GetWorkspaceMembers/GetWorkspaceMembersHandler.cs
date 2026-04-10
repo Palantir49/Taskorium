@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using TaskService.Application.Commands.Workspaces.Get;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
 using TaskService.Infrastructure.Persistence;
