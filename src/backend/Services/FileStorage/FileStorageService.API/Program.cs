@@ -1,13 +1,9 @@
 ﻿using FileStorageService.Api.Interceptors;
 using FileStorageService.Api.Services;
-using FileStorageService.Application;
 using FileStorageService.Application.Interfaces;
-using FileStorageService.Infrastructure.Data;
 using FileStorageService.Infrastructure.MinIO;
-using FileStorageService.Infrastructure.Repositories;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Minio;
 using Scalar.AspNetCore;
@@ -25,7 +21,7 @@ builder.Services.AddGrpc(o =>
     o.Interceptors.Add<ExceptionInterceptor>());
 builder.Services.AddOpenApi(options =>
 {
-    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    options.AddDocumentTransformer((document, _, _) =>
     {
         document.Info.Version = "1.0.0-alpha.1";
         document.Info.Title = "FileStorage Service API";
@@ -45,11 +41,8 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
-// Database
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 // MinIO
-builder.Services.AddSingleton<IMinioClient>(sp =>
+builder.Services.AddSingleton<IMinioClient>(_ =>
 {
     var config = builder.Configuration.GetSection("MinIO");
     return new MinioClient()
@@ -59,17 +52,10 @@ builder.Services.AddSingleton<IMinioClient>(sp =>
         .Build();
 });
 
-//// Redis Cache
-//builder.Services.AddStackExchangeRedisCache(options =>
-//{
-//    options.Configuration = builder.Configuration.GetConnectionString("Redis");
-//});
 
 // Application Services
 builder.Services.AddScoped<IFileStorageService, FileStorageService.Application.Services.FileStorageService>();
-//builder.Services.AddScoped<IFileMetadataService, FileMetadataService>();
 builder.Services.AddScoped<IMinioService, MinioService>();
-builder.Services.AddScoped<IFileRepository, FileRepository>();
 
 // Validators
 builder.Services.AddFluentValidationAutoValidation();
@@ -78,18 +64,13 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowAll", config =>
     {
-        builder.AllowAnyOrigin()
+        config.AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
 });
-
-//// Health Checks
-//builder.Services.AddHealthChecks()
-//    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!)
-//    .AddRedis(builder.Configuration.GetConnectionString("Redis")!);
 
 var app = builder.Build();
 
@@ -101,7 +82,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseServiceDefaults(builder.Configuration);
-app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.MapControllers();
 app.MapGrpcService<FileService>();
