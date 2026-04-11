@@ -14,7 +14,7 @@ namespace TaskService.Api.Authorization.Handlers;
 public class WorkSpaceAccessHandler(
     IHttpContextAccessor httpContextAccessor,
     IDispatcher dispatcher,
-    ILogger<ProjectAccessHandler> logger)
+    ILogger<WorkSpaceAccessHandler> logger)
     : AuthorizationHandler<WorkSpaceAccessRequirement>
 {
     /// <summary>
@@ -24,13 +24,18 @@ public class WorkSpaceAccessHandler(
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
         WorkSpaceAccessRequirement requirement)
     {
-        logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над рабочей область",
+        logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над рабочей областью",
             requirement.Action);
+        if (requirement.Action == WorkSpaceAction.Create)
+        {
+            context.Succeed(requirement);
+            return;
+        }
         var workspaceId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor);
         if (workspaceId is null)
         {
             logger.LogInformation(
-                "В процессе авторизации для совершения действия {Action} над рабочей областью произошла ошибка: не удалось получить идентификатор задачи из запроса",
+                "В процессе авторизации для совершения действия {Action} над рабочей областью произошла ошибка: не удалось получить идентификатор рабочей области из запроса",
                 requirement.Action);
             context.Fail();
             return;

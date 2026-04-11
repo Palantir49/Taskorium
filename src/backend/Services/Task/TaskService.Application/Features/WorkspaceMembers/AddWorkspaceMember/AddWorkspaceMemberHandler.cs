@@ -35,7 +35,7 @@ public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache
         }
 
         var workspaceMember =
-            WorkspaceMember.Create(command.WorkspaceId, command.UserId, command.Role.ToEntity(), DateTimeOffset.UtcNow);
+            WorkspaceMember.Create(command.WorkspaceId, command.UserId, command.Role.ToEntity());
 
         await context.WorkspaceMembers.AddAsync(workspaceMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
