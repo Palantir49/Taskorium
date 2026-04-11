@@ -65,12 +65,12 @@ public class WorkSpacesController(IDispatcher dispatcher) : Controller
     /// <response code="200">Список рабочих областей успешно получен</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найдена рабочая область по заданному id</response>
-    [HttpGet("GetWorkspacePage")]
+    [HttpGet("workspaces")]
     [ActionName("GetWorkspaceByIdAsync")]
     [ProducesResponseType(typeof(GetWorkspacebyIdResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<GetWorkspacePageResult>> GetWorkspaceByIdAsync(
+    public async Task<ActionResult<GetWorkspacePageResult>> GetWorkspacePageAsync(
         [FromQuery] GetWorkspacePageQuery query)
     {
         var response = await dispatcher.SendAsync(query);
@@ -104,7 +104,9 @@ public class WorkSpacesController(IDispatcher dispatcher) : Controller
         [FromBody] CreateWorkspaceCommand command)
     {
         var response = await dispatcher.SendAsync(command);
-        return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { response.id }, response);
+        var createOwnerCommand = new AddWorkspaceMemberCommand(response.Id, command.OwnerId, Contracts.Enum.RolesDto.Creator);
+        await dispatcher.SendAsync(createOwnerCommand);
+        return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { response.Id }, response);
     }
 
     /// <summary>
