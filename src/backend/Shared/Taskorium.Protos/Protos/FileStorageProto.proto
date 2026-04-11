@@ -1,0 +1,39 @@
+﻿syntax = "proto3";
+
+
+package taskorium.file_storage.v1;
+import "google/protobuf/empty.proto";
+service FileStorageService {
+  
+  //Get file
+  rpc DownloadFile (GetFileRequest) returns (GetFileResponse);
+  //Put File
+  rpc UploadFile (UploadFileRequest) returns (google.protobuf.Empty);
+  //Delete file
+  rpc DeleteFile (DeleteFileRequest) returns (google.protobuf.Empty);
+}
+
+
+message GetFileRequest {
+  
+  string name = 1;
+}
+
+message GetFileResponse {
+  bytes body = 1;
+}
+
+message UploadFileRequest{
+  string id = 1;
+  string name = 2;
+  bytes body = 3;
+  string contentType = 4;
+}
+
+message DeleteFileRequest {
+  string name = 1;
+}
+
+
+
+
