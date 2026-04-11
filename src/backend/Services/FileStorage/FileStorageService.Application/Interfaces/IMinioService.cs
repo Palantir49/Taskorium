@@ -9,7 +9,7 @@ public interface IMinioService
         CancellationToken cancellationToken = default);
 
 
-    Task<byte[]> DownloadFileAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
+    Task<Stream> DownloadFileAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
 
     Task<bool> DeleteFileAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
 
