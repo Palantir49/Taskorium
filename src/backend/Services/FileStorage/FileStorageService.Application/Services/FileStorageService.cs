@@ -1,210 +1,42 @@
-﻿using System.Security.Cryptography;
-using FileStorageService.Application.DTO;
-using FileStorageService.Application.Interfaces;
-using FileStorageService.Domain;
-using FileStorageService.Domain.Entities;
+﻿using FileStorageService.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace FileStorageService.Application.Services;
 
-public class FileStorageService(
-    IMinioService minioService,
-    IFileRepository fileRepository,
-    IConfiguration configuration,
-    ILogger<FileStorageService> logger)
+public class FileStorageService
     : IFileStorageService
 {
-    public async Task<FileUploadResponseDto> UploadFileAsync(FileUploadDto fileUpload, Guid userId,
-        CancellationToken cancellationToken = default)
+    private readonly string _bucketName;
+    private readonly IMinioService _minioService;
+
+    public FileStorageService(IMinioService minioService, IConfiguration configuration)
     {
-        try
-        {
-            var bucketName = fileUpload.BucketName ?? configuration["MinIO:DefaultBucket"]!;
-            var fileId = Guid.NewGuid();
-            var extension = Path.GetExtension(fileUpload.File.FileName);
-            var objectName = $"{userId}/{fileId}{extension}";
-
-            using var stream = fileUpload.File.OpenReadStream();
-            var hash = await ComputeHashAsync(stream);
-            stream.Position = 0;
-
-            // Upload to MinIO
-            await minioService.UploadFileAsync(
-                stream,
-                bucketName,
-                objectName,
-                fileUpload.File.ContentType,
-                cancellationToken);
-
-            // Save metadata to database
-            var metadata = new FileMetadata
-            {
-                Id = fileId,
-                FileName = objectName,
-                OriginalFileName = fileUpload.File.FileName,
-                ContentType = fileUpload.File.ContentType,
-                Size = fileUpload.File.Length,
-                BucketName = bucketName,
-                ObjectName = objectName,
-                Description = fileUpload.Description,
-                Tags = fileUpload.Tags,
-                UploadedBy = userId,
-                UploadedAt = DateTime.UtcNow,
-                Status = FileStatus.Available,
-                Hash = hash
-            };
-
-            await fileRepository.CreateAsync(metadata, cancellationToken);
-
-            logger.LogInformation("File {FileId} uploaded successfully by user {UserId}", fileId, userId);
-
-            return new FileUploadResponseDto
-            {
-                FileId = fileId,
-                FileName = fileUpload.File.FileName,
-                Size = fileUpload.File.Length,
-                ContentType = fileUpload.File.ContentType,
-                UploadedAt = metadata.UploadedAt
-            };
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error uploading file for user {UserId}", userId);
-            throw;
-        }
+        _minioService = minioService;
+        _bucketName = configuration["MinIO:DefaultBucket"] ?? throw new ArgumentNullException(_bucketName);
     }
 
     public async Task UploadFileAsync(ReadOnlyMemory<byte> content, string key,
         CancellationToken cancellationToken = default)
     {
-        var bucketName = configuration["MinIO:DefaultBucket"]!;
-        await minioService.UploadFileAsync(content, bucketName, key, cancellationToken);
+        await _minioService.UploadFileAsync(content, _bucketName, key, cancellationToken);
     }
 
 
-    public async Task<FileDownloadDto> DownloadFileAsync(Guid fileId, CancellationToken cancellationToken = default)
+    public async Task DeleteFileAsync(string key, CancellationToken cancellationToken = default)
     {
-        var metadata = await fileRepository.GetByIdAsync(fileId, cancellationToken);
-
-        if (metadata == null || metadata.IsDeleted)
-        {
-            throw new FileNotFoundException($"File {fileId} not found");
-        }
-
-        var stream = await minioService.DownloadFileAsync(metadata.BucketName, metadata.ObjectName, cancellationToken);
-
-        return new FileDownloadDto
-        {
-            FileStream = stream,
-            FileName = metadata.OriginalFileName,
-            ContentType = metadata.ContentType,
-            Size = metadata.Size
-        };
+        await _minioService.DeleteFileAsync(_bucketName, key, cancellationToken);
     }
 
     public async Task<FileDownloadDto> DownloadFileAsync(string key, CancellationToken cancellationToken = default)
     {
-        var bucketName = "taskorium";
-        var stream = await minioService.DownloadFileAsync(bucketName, key, cancellationToken);
+        var stream = await _minioService.DownloadFileAsync(_bucketName, key, cancellationToken);
         return new FileDownloadDto { FileStream = stream };
     }
 
-    public async Task<bool> DeleteFileAsync(Guid fileId, CancellationToken cancellationToken = default)
-    {
-        var metadata = await fileRepository.GetByIdAsync(fileId, cancellationToken);
-
-        if (metadata == null)
-        {
-            return false;
-        }
-
-        // Soft delete in database
-        metadata.IsDeleted = true;
-        metadata.Status = FileStatus.Deleted;
-        metadata.ModifiedAt = DateTime.UtcNow;
-        await fileRepository.UpdateAsync(metadata, cancellationToken);
-
-        // Delete from MinIO
-        await minioService.DeleteFileAsync(metadata.BucketName, metadata.ObjectName, cancellationToken);
-
-        logger.LogInformation("File {FileId} deleted successfully", fileId);
-        return true;
-    }
-
-    public async Task<FileMetadataDto?> GetFileMetadataAsync(Guid fileId, CancellationToken cancellationToken = default)
-    {
-        var metadata = await fileRepository.GetByIdAsync(fileId, cancellationToken);
-
-        if (metadata == null || metadata.IsDeleted)
-        {
-            return null;
-        }
-
-        return new FileMetadataDto
-        {
-            Id = metadata.Id,
-            FileName = metadata.FileName,
-            OriginalFileName = metadata.OriginalFileName,
-            ContentType = metadata.ContentType,
-            Size = metadata.Size,
-            Description = metadata.Description,
-            Tags = metadata.Tags,
-            UploadedAt = metadata.UploadedAt,
-            Status = metadata.Status.ToString()
-        };
-    }
-
-    public async Task<IEnumerable<FileMetadataDto>> GetUserFilesAsync(Guid userId,
-        CancellationToken cancellationToken = default)
-    {
-        var files = await fileRepository.GetByUserIdAsync(userId, cancellationToken);
-
-        return files.Where(f => !f.IsDeleted).Select(f => new FileMetadataDto
-        {
-            Id = f.Id,
-            FileName = f.FileName,
-            OriginalFileName = f.OriginalFileName,
-            ContentType = f.ContentType,
-            Size = f.Size,
-            Description = f.Description,
-            Tags = f.Tags,
-            UploadedAt = f.UploadedAt,
-            Status = f.Status.ToString()
-        });
-    }
-
-    public async Task<PresignedUrlDto> GetPresignedUrlAsync(Guid fileId, int expiryMinutes = 60,
-        CancellationToken cancellationToken = default)
-    {
-        var metadata = await fileRepository.GetByIdAsync(fileId, cancellationToken);
-
-        if (metadata == null || metadata.IsDeleted)
-        {
-            throw new FileNotFoundException($"File {fileId} not found");
-        }
-
-        var url = await minioService.GetPresignedUrlAsync(
-            metadata.BucketName,
-            metadata.ObjectName,
-            expiryMinutes * 60,
-            cancellationToken);
-
-        return new PresignedUrlDto { Url = url, ExpiresAt = DateTime.UtcNow.AddMinutes(expiryMinutes) };
-    }
 
     public async Task UploadFileAsync(Stream content, string key, string contentType,
         CancellationToken cancellationToken = default)
     {
-        var bucketName = configuration["MinIO:DefaultBucket"]!;
-        await minioService.UploadFileAsync(content, bucketName, key, contentType, cancellationToken);
-    }
-
-
-    private async Task<string> ComputeHashAsync(Stream stream)
-    {
-        using var sha256 = SHA256.Create();
-        var hashBytes = await sha256.ComputeHashAsync(stream);
-        return Convert.ToBase64String(hashBytes);
+        await _minioService.UploadFileAsync(content, _bucketName, key, contentType, cancellationToken);
     }
 }

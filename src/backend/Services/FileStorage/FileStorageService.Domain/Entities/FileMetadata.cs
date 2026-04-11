@@ -1,4 +1,6 @@
-﻿namespace FileStorageService.Domain.Entities;
+﻿using FileStorageService.Domain.Enums;
+
+namespace FileStorageService.Domain.Entities;
 
 public class FileMetadata
 {

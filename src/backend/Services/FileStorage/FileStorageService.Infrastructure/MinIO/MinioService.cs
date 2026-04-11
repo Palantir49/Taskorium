@@ -22,12 +22,12 @@ public class MinioService(IMinioClient minioClient, ILogger<MinioService> logger
                     .WithBucket(bucketName);
 
                 await minioClient.MakeBucketAsync(makeBucketArgs, cancellationToken);
-                logger.LogInformation("Bucket {BucketName} created successfully", bucketName);
+                logger.LogInformation("Бакет {BucketName} успешно создан", bucketName);
             }
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error ensuring bucket {BucketName} exists", bucketName);
+            logger.LogError(ex, "Ошибка при проверке существования бакета {BucketName}", bucketName);
             throw;
         }
     }
@@ -38,7 +38,6 @@ public class MinioService(IMinioClient minioClient, ILogger<MinioService> logger
         try
         {
             await EnsureBucketExistsAsync(bucketName, cancellationToken);
-
             var putObjectArgs = new PutObjectArgs()
                 .WithBucket(bucketName)
                 .WithObject(objectName)
@@ -48,13 +47,18 @@ public class MinioService(IMinioClient minioClient, ILogger<MinioService> logger
 
             var result = await minioClient.PutObjectAsync(putObjectArgs, cancellationToken);
 
-            logger.LogInformation("File {ObjectName} uploaded to bucket {BucketName}", objectName, bucketName);
+            logger.LogInformation("Вложение {ObjectName} загружено в бакет {BucketName}", objectName, bucketName);
             return result.ObjectName;
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error uploading file {ObjectName} to bucket {BucketName}", objectName, bucketName);
             throw;
+        }
+
+        finally
+        {
+            await fileStream.DisposeAsync();
         }
     }
 
@@ -69,10 +73,12 @@ public class MinioService(IMinioClient minioClient, ILogger<MinioService> logger
             .WithRequestBody(file)
             .WithObjectSize(file.Length);
 
-        var result = await minioClient.PutObjectAsync(putObjectArgs, cancellationToken);
+        await minioClient.PutObjectAsync(putObjectArgs, cancellationToken);
     }
 
-    public async Task<byte[]> DownloadFileAsync(string bucketName, string objectName,
+    public async Task<Stream> DownloadFileAsync(
+        string bucketName,
+        string objectName,
         CancellationToken cancellationToken = default)
     {
         try
@@ -82,20 +88,30 @@ public class MinioService(IMinioClient minioClient, ILogger<MinioService> logger
             var getObjectArgs = new GetObjectArgs()
                 .WithBucket(bucketName)
                 .WithObject(objectName)
-                .WithCallbackStream(async void (stream) =>
+                .WithCallbackStream(stream =>
                 {
-                    await stream.CopyToAsync(memoryStream, cancellationToken);
+                    stream.CopyTo(memoryStream);
                 });
 
             await minioClient.GetObjectAsync(getObjectArgs, cancellationToken);
 
-            //memoryStream.Position = 0;
-            logger.LogInformation("File {ObjectName} downloaded from bucket {BucketName}", objectName, bucketName);
-            return memoryStream.ToArray();
+            memoryStream.Position = 0;
+
+            logger.LogInformation(
+                "Файл {ObjectName} загружен из бакета {BucketName}",
+                objectName,
+                bucketName);
+
+            return memoryStream;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error downloading file {ObjectName} from bucket {BucketName}", objectName, bucketName);
+            logger.LogError(
+                ex,
+                "Ошибка при загрузке файла {ObjectName} из бакета {BucketName}",
+                objectName,
+                bucketName);
+
             throw;
         }
     }
@@ -112,12 +128,13 @@ public class MinioService(IMinioClient minioClient, ILogger<MinioService> logger
 
             await minioClient.RemoveObjectAsync(removeObjectArgs, cancellationToken);
 
-            logger.LogInformation("File {ObjectName} deleted from bucket {BucketName}", objectName, bucketName);
+            logger.LogInformation("Файл {ObjectName} удален из бакета {BucketName}", objectName, bucketName);
             return true;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error deleting file {ObjectName} from bucket {BucketName}", objectName, bucketName);
+            logger.LogError(ex, "Ошибка при удалении файла {ObjectName} из бакета {BucketName}", objectName,
+                bucketName);
             return false;
         }
     }
@@ -134,13 +151,13 @@ public class MinioService(IMinioClient minioClient, ILogger<MinioService> logger
 
             var url = await minioClient.PresignedGetObjectAsync(presignedGetObjectArgs);
 
-            logger.LogInformation("Presigned URL generated for {ObjectName} in bucket {BucketName}",
+            logger.LogInformation("Presigned URL сгенерирован для {ObjectName} в бакете {BucketName}",
                 objectName, bucketName);
             return url;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error generating presigned URL for {ObjectName} in bucket {BucketName}",
+            logger.LogError(ex, "Ошибка при генерации presigned URL для {ObjectName} в бакете {BucketName}",
                 objectName, bucketName);
             throw;
         }
