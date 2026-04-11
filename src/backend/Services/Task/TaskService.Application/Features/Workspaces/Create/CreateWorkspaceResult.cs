@@ -4,4 +4,4 @@ using System.Text;
 
 namespace TaskService.Application.Commands.Workspaces.Create;
 
-public record CreateWorkspaceResult(Guid id, string name);
+public record CreateWorkspaceResult(Guid Id, string Name);

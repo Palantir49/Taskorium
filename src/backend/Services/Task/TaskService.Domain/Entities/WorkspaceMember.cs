@@ -27,5 +27,6 @@ namespace TaskService.Domain.Entities
         {
             return new WorkspaceMember(workspaceId, userId, role, joinedAt);
         }
+        public static WorkspaceMember Create(Guid workspaceId, Guid userId, Roles role) => Create(workspaceId, userId, role, DateTimeOffset.UtcNow);
     }
 }
