@@ -1,39 +1,51 @@
-﻿using TaskService.Application.Commands.Issues.Command;
-using TaskService.Application.Commands.Issues.Query;
+﻿using TaskService.Application.Commands.Issues.Query;
 using TaskService.Application.Features.Issues.Command;
+using TaskService.Application.Features.Issues.Dto;
 using TaskService.Contracts.Issue.Requests;
 
-namespace TaskService.Application.Features.Issues.Mapping
+namespace TaskService.Application.Features.Issues.Mapping;
+
+
+//TODO issue assignees
+public static class IssueRequestToCommandMapping
 {
-    public static class IssueRequestToCommandMapping
+    public static IssueCreateCommand ToCommand(this IssueCreateRequest request)
     {
-        public static IssueCreateCommand ToCommand(this IssueCreateRequest request)
-        {
-            return new IssueCreateCommand(
-                Name: request.Name,
-                ProjectId: request.ProjectId,
-                Description: request.Description,
-                NumberIssueType: request.NumberIssueType,
-                NumberIssuePriority: request.NumberIssuePriority,
-                DueDate: request.DueDate
-                );
-        }
+        var attachments = request.Attachments?
+            .Select(file => new AttachmentDto
+            {
+                Content = file.OpenReadStream(),
+                ContentType = file.ContentType,
+                ContentLength = file.Length,
+                Name = file.FileName
+            })
+            .ToList();
 
-        public static IssueUpdateCommand CreateUpdateCommand(Guid id, UpdateIssueRequest request)
-        {
-            return new IssueUpdateCommand(
-                id: id,
-                Name: request.Name,
-                IssueStatusId: request.IssueStatusId,
-                Description: request.Description,
-                numberIssueType: request.NumberIssueType,
-                DueDate: request.DueDate
-                );
-        }
+        return new IssueCreateCommand(
+            request.Name,
+            request.ProjectId,
+            request.NumberIssueType,
+            request.NumberIssuePriority,
+            request.Description,
+            request.DueDate,
+            attachments
+        );
+    }
 
-        public static GetAllIssuesQuery ToCommand(this GetIssuesRequest reques)
-        {
-            return new GetAllIssuesQuery();
-        }
+    public static IssueUpdateCommand CreateUpdateCommand(Guid id, UpdateIssueRequest request)
+    {
+        return new IssueUpdateCommand(
+            id,
+            request.Name,
+            request.IssueStatusId,
+            Description: request.Description,
+            numberIssueType: request.NumberIssueType,
+            DueDate: request.DueDate
+        );
+    }
+
+    public static GetAllIssuesQuery ToCommand(this GetIssuesRequest reques)
+    {
+        return new GetAllIssuesQuery();
     }
 }

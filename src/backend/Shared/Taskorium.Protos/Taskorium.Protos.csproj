@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <Protobuf Include="Protos\**\*.proto" GrpcServices="None"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Protos\FileStorageProto.proto">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

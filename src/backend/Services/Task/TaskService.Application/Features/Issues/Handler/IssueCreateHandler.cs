@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Commands.Issues.Command;
+using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
@@ -10,7 +10,9 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Issues.Handler;
 
-public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
+public class IssueCreateHandler(
+    TaskServiceDbContext context,
+    HybridCache cache /*, FileStorageService fileStorageService*/)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
@@ -19,7 +21,9 @@ public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
                       throw new KeyNotFoundException($"Проект с id: {request.ProjectId} не найдена");
 
         var status =
-            await context.IssueStatus.FindAsync(request.ProjectId, IssueStatusType.Initial, cancellationToken) ??
+            await context.IssueStatus.FirstOrDefaultAsync(
+                element => element.ProjectId == request.ProjectId && element.Type == IssueStatusType.Initial,
+                cancellationToken) ??
             throw new KeyNotFoundException($"Не найден статус инициализации задачи для проекта {request.ProjectId}");
 
         var countIssue = await context.Issues.CountAsync(x => x.ProjectId == project.Id, cancellationToken);
@@ -36,6 +40,9 @@ public class IssueCreateHandler(TaskServiceDbContext context, HybridCache cache)
             request.NumberIssuePriority,
             request.DueDate
         );
+
+        //TODO upload attachments if are not null or empty via fileStorageService
+
         await context.Issues.AddAsync(issue, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
