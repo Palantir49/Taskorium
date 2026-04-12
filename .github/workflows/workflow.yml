@@ -24,15 +24,15 @@ jobs:
 
       - name: Restore dependencies
         working-directory: ./src/backend
-        run: dotnet restore Taskorium.sln
+        run: dotnet restore Taskorium.slnx
 
       - name: Format code
         working-directory: ./src/backend
-        run: dotnet format Taskorium.sln --no-restore --verify-no-changes
+        run: dotnet format Taskorium.slnx --no-restore --verify-no-changes
 
       - name: Build
         working-directory: ./src/backend
-        run: dotnet build Taskorium.sln --no-restore
+        run: dotnet build Taskorium.slnx --no-restore
 
       - name: Test
         working-directory: ./src/backend/Services/Task/TaskService.Tests
