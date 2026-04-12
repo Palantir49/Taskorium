@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ "main", "dev" ]
     paths:
-      - 'src**'
+      - 'src/**'
       - '.github/workflows/workflow.yml'
 
 jobs:
@@ -13,20 +13,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.100
-      - name: Format code
-        working-directory: ./src/backend
-        run: dotnet format --verify-no-changes
+          dotnet-version: '10.0.x'
+
+      - name: Show SDK info
+        run: dotnet --info
+
       - name: Restore dependencies
         working-directory: ./src/backend
-        run: dotnet restore
+        run: dotnet restore Taskorium.sln
+
+      - name: Format code
+        working-directory: ./src/backend
+        run: dotnet format Taskorium.sln --no-restore --verify-no-changes
+
       - name: Build
         working-directory: ./src/backend
-        run: dotnet build --no-restore
+        run: dotnet build Taskorium.sln --no-restore
+
       - name: Test
         working-directory: ./src/backend/Services/Task/TaskService.Tests
         run: dotnet test --no-build --verbosity normal
-    
