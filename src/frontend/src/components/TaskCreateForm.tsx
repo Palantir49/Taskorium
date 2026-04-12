@@ -5,7 +5,7 @@ import {
 } from 'react-icons/fa';
 import { useTasks } from '../context/TaskContext';
 import { fetchUsers } from '../api/taskService';
-import { TaskCreateFormProps, User, TaskStatus, TaskPriority, TaskType } from '../types';
+import { TaskCreateFormProps, User } from '../types';
 import './TaskDetailSidebar.css';
 
 function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCreateFormProps) {
@@ -13,13 +13,12 @@ function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCrea
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
+    name: '',
     description: '',
-    status: initialStatus,
-    priority: 'medium' as TaskPriority,
-    type: 'feature' as TaskType,
-    assignedTo: '',
-    deadline: ''
+    projectId: '1', // По умолчанию проект 1
+    numberIssueType: 2, // По умолчанию функция
+    numberIssuePriority: 2, // По умолчанию средний приоритет
+    dueDate: ''
   });
 
   // Загрузка пользователей
@@ -28,13 +27,12 @@ function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCrea
       fetchUsers().then(setUsers);
       // Сброс формы при открытии
       setFormData({
-        title: '',
+        name: '',
         description: '',
-        status: initialStatus,
-        priority: 'medium',
-        type: 'feature',
-        assignedTo: '',
-        deadline: ''
+        projectId: '1',
+        numberIssueType: 2,
+        numberIssuePriority: 2,
+        dueDate: ''
       });
     }
   }, [isOpen, initialStatus]);
@@ -54,7 +52,7 @@ function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCrea
   };
 
   const handleSave = async () => {
-    if (!formData.title.trim()) {
+    if (!formData.name.trim()) {
       alert('Название задачи обязательно для заполнения');
       return;
     }
@@ -62,13 +60,12 @@ function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCrea
     setIsLoading(true);
     try {
       const taskData = {
-        title: formData.title.trim(),
+        name: formData.name.trim(),
         description: formData.description.trim(),
-        status: formData.status,
-        priority: formData.priority,
-        type: formData.type,
-        assignedTo: formData.assignedTo ? users.find(u => u.id.toString() === formData.assignedTo) : undefined,
-        deadline: formData.deadline ? new Date(formData.deadline) : null
+        projectId: formData.projectId,
+        numberIssueType: parseInt(formData.numberIssueType.toString()),
+        numberIssuePriority: parseInt(formData.numberIssuePriority.toString()),
+        dueDate: formData.dueDate ? formData.dueDate : null
       };
 
       await createTask(taskData);
@@ -96,8 +93,8 @@ function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCrea
             <label>Название *</label>
             <input
               type="text"
-              name="title"
-              value={formData.title}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               className="form-input"
               placeholder="Введите название задачи"
@@ -118,64 +115,31 @@ function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCrea
           </div>
 
           <div className="form-group">
-            <label>Статус</label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="form-select"
-            >
-              <option value="backlog">Бэклог</option>
-              <option value="in-progress">В работе</option>
-              <option value="testing">В тестировании</option>
-              <option value="pause">Пауза</option>
-              <option value="done">Готово</option>
-            </select>
-          </div>
-
-          <div className="form-group">
             <label>Тип задачи</label>
             <select
-              name="type"
-              value={formData.type}
+              name="numberIssueType"
+              value={formData.numberIssueType}
               onChange={handleChange}
               className="form-select"
             >
-              <option value="bug">Ошибка</option>
-              <option value="feature">Фича</option>
-              <option value="improvement">Улучшение</option>
+              <option value="1">Ошибка</option>
+              <option value="2">Фича</option>
+              <option value="3">Улучшение</option>
             </select>
           </div>
 
           <div className="form-group">
             <label>Важность</label>
             <select
-              name="priority"
-              value={formData.priority}
+              name="numberIssuePriority"
+              value={formData.numberIssuePriority}
               onChange={handleChange}
               className="form-select"
             >
-              <option value="critical">Критичная</option>
-              <option value="high">Высокая</option>
-              <option value="medium">Средняя</option>
-              <option value="low">Низкая</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Исполнитель</label>
-            <select
-              name="assignedTo"
-              value={formData.assignedTo}
-              onChange={handleChange}
-              className="form-select"
-            >
-              <option value="">Не назначен</option>
-              {users.map(user => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
-                </option>
-              ))}
+              <option value="4">Критичная</option>
+              <option value="3">Высокая</option>
+              <option value="2">Средняя</option>
+              <option value="1">Низкая</option>
             </select>
           </div>
 
@@ -183,8 +147,8 @@ function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCrea
             <label>Дедлайн</label>
             <input
               type="date"
-              name="deadline"
-              value={formData.deadline}
+              name="dueDate"
+              value={formData.dueDate}
               onChange={handleChange}
               className="form-input"
             />

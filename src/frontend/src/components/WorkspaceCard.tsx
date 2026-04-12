@@ -1,33 +1,67 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardDescription, CardTitle } from "./ui/card";
+import CreateCard from "./CreateCard";
+import CreateWorkspaceModal from "./CreateWorkspaceModal";
+import { fetchUserWorkspaces } from "../api/workSpaceService";
+import { WorkspaceResponse } from "../types/workspace";
 
-const workspaceData = [
-  {
-    title: "Разработка",
-    description: "Frontend и backend проекты, код-ревью"
-  },
-  {
-    title: "Дизайн",
-    description: "UI/UX, прототипы, графические материалы"
-  },
-  {
-    title: "Аналитика",
-    description: "Метрики, отчеты, дашборды"
-  }
-];
+interface WorkspaceCardProps {
+  onSelect?: (workspaceId: string) => void;
+}
 
-export default function WorkspaceCard() {
+export default function WorkspaceCard({ onSelect }: WorkspaceCardProps) {
+  const [workspaces, setWorkspaces] = useState<WorkspaceResponse[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const loadWorkspaces = async () => {
+      const data = await fetchUserWorkspaces();
+      setWorkspaces(data);
+    };
+
+    loadWorkspaces();
+  }, []);
+
+  const handleWorkspaceCreated = (newWorkspace: WorkspaceResponse) => {
+    setWorkspaces([...workspaces, newWorkspace]);
+  };
+
   return (
     <>
-      {workspaceData.map((workspace, index) => (
-        <Card className="border-gray-300 mx-auto w-full max-w-sm">
+      {workspaces.map((workspace) => (
+        <Card 
+          key={workspace.id} 
+          className="border-gray-300 mx-auto w-full max-w-sm cursor-pointer hover:border-blue-500 transition-colors"
+          onClick={() => onSelect?.(workspace.id)}
+        >
           <CardHeader>
-            <CardTitle className="text-xl">{workspace.title}</CardTitle>
+            <CardTitle className="text-xl">{workspace.name}</CardTitle>
+            {workspace.createdDate && (
+              <CardDescription>
+                Создано: {new Date(workspace.createdDate).toLocaleDateString()}
+              </CardDescription>
+            )}
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600">{workspace.description}</p>
+            {workspace.ownerId && (
+              <p className="text-sm text-gray-500">
+                Владелец: {workspace.ownerId}
+              </p>
+            )}
           </CardContent>
         </Card>
       ))}
+      
+      <CreateCard 
+        title="Создать рабочую область" 
+        onClick={() => setIsModalOpen(true)}
+      />
+
+      <CreateWorkspaceModal 
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onSuccess={handleWorkspaceCreated}
+      />
     </>
   );
 }
