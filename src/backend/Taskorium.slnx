@@ -7,7 +7,7 @@
                 Path="Services/FileStorage/FileStorageService.Infrastructure/FileStorageService.Infrastructure.csproj"/>
     </Folder>
     <Folder Name="/Services/Task/">
-        <Project Path="Services/Task/TaskService.Api/TaskService.Api.csproj"/>
+        <Project Path="Services/Task/TaskService.API/TaskService.API.csproj"/>
         <Project Path="Services/Task/TaskService.Application/TaskService.Application.csproj"/>
         <Project Path="Services/Task/TaskService.Contracts/TaskService.Contracts.csproj"/>
         <Project Path="Services/Task/TaskService.Domain/TaskService.Domain.csproj"/>
