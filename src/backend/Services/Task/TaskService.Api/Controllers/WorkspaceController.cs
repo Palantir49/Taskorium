@@ -104,8 +104,6 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
         [FromBody] CreateWorkspaceCommand command)
     {
         var response = await dispatcher.SendAsync(command);
-        var createOwnerCommand = new AddWorkspaceMemberCommand(response.Id, command.OwnerId, Contracts.Enum.RolesDto.Creator);
-        await dispatcher.SendAsync(createOwnerCommand);
         return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { response.Id }, response);
     }
 
@@ -124,7 +122,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     /// <response code="201">Новая задача успешно создана</response>
     /// <response code="400">Некорректный запрос</response>
     [Authorize(Policy = "CanAddUserToWorkSpace")]
-    [HttpPost("{id:guid}/user/")]
+    [HttpPost("{id:guid}/users/")]
     [ProducesResponseType(typeof(AddWorkspaceMemberResult), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -144,16 +142,17 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     ///     {
     ///     }
     /// </remarks>
+    /// <param name="Id">Id рабочей области и имя рабочей области</param>
     /// <param name="command">Id рабочей области и имя рабочей области</param>
     /// <returns></returns>
     /// <response code="201">Имя рабочей области успешно обновлено</response>
     /// <response code="400">Некорректный запрос</response>
     [Authorize(Policy = "CanUpdateWorkSpace")]
-    [HttpPatch]
+    [HttpPatch("{id:guid}")]
     [ProducesResponseType(typeof(WorkspaceResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<WorkspaceResponse>> UpdateWorkspaceAsync(
+    public async Task<ActionResult<WorkspaceResponse>> UpdateWorkspaceAsync(Guid Id,
         [FromBody] UpdateWorkspaceNameCommand command)
     {
         var response = await dispatcher.SendAsync(command);
