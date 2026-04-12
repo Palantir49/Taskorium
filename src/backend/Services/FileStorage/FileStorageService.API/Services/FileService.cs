@@ -14,6 +14,7 @@ public class FileService(IFileStorageService fileStorageService, ILogger<FileSer
         logger.LogInformation("Начало получения вложения {ObjectName} из хранилища.", request.Name);
         var file = await fileStorageService.DownloadFileAsync(request.Name);
         var byteString = await ByteString.FromStreamAsync(file.FileStream);
+        await file.FileStream.DisposeAsync();
         return new GetFileResponse { Body = byteString };
     }
 
