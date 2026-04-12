@@ -46,7 +46,7 @@ api.interceptors.response.use(
 );
 
 /**
- * Сервис для работы с проектами через API
+ * Сервис для работы с проектами
  */
 
 /**
@@ -160,6 +160,28 @@ export const fetchTagsByProjectId = async (id: string): Promise<TagResponse[]> =
     return response.data || [];
   } catch (error) {
     console.error('fetchTagsByProjectId error:', error);
+    return [];
+  }
+};
+
+/**
+ * Получить все проекты в рамках рабочей области
+ */
+export const fetchProjectsByWorkspaceId = async (workspaceId: string): Promise<ProjectResponse[]> => {
+  try {
+    const response = await api.get(`/Projects?workspaceId=${workspaceId}`);
+    console.log('fetchProjectsByWorkspaceId:', response.data);
+    
+    if (response.data && Array.isArray(response.data.projects)) {
+      return response.data.projects;
+    } else if (response.data && Array.isArray(response.data)) {
+      return response.data;
+    } else {
+      console.warn('Unexpected projects response format:', response.data);
+      return [];
+    }
+  } catch (error) {
+    console.error('fetchProjectsByWorkspaceId error:', error);
     return [];
   }
 };

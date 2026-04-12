@@ -128,7 +128,7 @@ export const fetchUsers = async (): Promise<User[]> => {
     const response = await api.get('/User/GetAllUsers');
     console.log('fetchUsers response data:', response.data);
     
-    // Бэкенд возвращает объект с массивом пользователей в свойстве "users"
+    // Возвращает объект с массивом пользователей в свойстве "users"
     if (response.data && Array.isArray(response.data.users)) {
       return response.data.users;
     } else {

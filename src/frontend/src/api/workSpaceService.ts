@@ -117,6 +117,30 @@ export const addUserToWorkspace = async (command: any): Promise<any> => {
 };
 
 /**
+ * Получить все рабочие области пользователя
+ * (без пагинации, для отображения на главной странице)
+ */
+export const fetchUserWorkspaces = async (): Promise<WorkspaceResponse[]> => {
+  try {
+    const response = await api.get('/WorkSpaces/GetWorkspacePage');
+    console.log('fetchUserWorkspaces:', response.data);
+    
+    // Предполагаем, что бэкенд возвращает список рабочих областей в свойстве "workspaces" или напрямую
+    if (response.data && Array.isArray(response.data.workspaces)) {
+      return response.data.workspaces;
+    } else if (response.data && Array.isArray(response.data)) {
+      return response.data;
+    } else {
+      console.warn('Unexpected workspaces response format:', response.data);
+      return [];
+    }
+  } catch (error) {
+    console.error('fetchUserWorkspaces error:', error);
+    return [];
+  }
+};
+
+/**
  * Удалить рабочую область
  */
 export const deleteWorkspace = async (id: string): Promise<void> => {

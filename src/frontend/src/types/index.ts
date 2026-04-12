@@ -1,5 +1,3 @@
-// Основные типы данных для приложения Taskorium
-// Синхронизированы с бэкендом через DTO
 
 // Экспорт DTO
 export * from './common';
@@ -10,7 +8,7 @@ export * from './tag';
 export * from './user';
 export * from './workspace';
 
-// Типы для приложения (сопоставленные с DTO)
+// Типы для приложения 
 import { IssueResponse, IssueCreateRequest, UpdateIssueRequest, IssuePriorityResponse, IssueTypeResponse } from './issue';
 import { IssueStatusResponse, IssueStatusTypeResponse } from './issueStatus';
 import { UserResponse } from './user';
@@ -27,7 +25,7 @@ export type User = UserResponse;
 export type Project = ProjectResponse;
 export type TaskStatusType = IssueStatusResponse;
 
-// Подзадачи (в бэкенде отсутствуют, оставляем для фронтенда)
+// Подзадачи (в бэке отсутствуют)
 export interface Subtask {
     id: number;
     title: string;
@@ -52,7 +50,7 @@ export interface TaskState {
     filters: TaskFilters;
 }
 
-// Типы для действий reducer'а
+// Типы для действий reducer
 export type ActionType =
     | 'SET_LOADING'
     | 'SET_TASKS'
@@ -84,7 +82,7 @@ export interface ColumnProps {
 }
 
 export interface FilterBarProps {
-    // Props для FilterBar компонента
+
 }
 
 export interface HeaderProps {
@@ -94,11 +92,11 @@ export interface HeaderProps {
 }
 
 export interface KanbanBoardProps {
-    // Props для KanbanBoard компонента (пока пустой)
+    
 }
 
 export interface TaskDetailSidebarProps {
-    // Props для TaskDetailSidebar компонента
+    
 }
 
 export interface TaskCreateFormProps {
