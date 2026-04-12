@@ -1,6 +1,6 @@
 <Solution>
     <Folder Name="/Services/FileStorage/">
-        <Project Path="Services/FileStorage/FileStorageService.API/FileStorageService.Api.csproj"/>
+        <Project Path="Services/FileStorage/FileStorageService.Api/FileStorageService.Api.csproj"/>
         <Project Path="Services/FileStorage/FileStorageService.Application/FileStorageService.Application.csproj"/>
         <Project Path="Services/FileStorage/FileStorageService.Domain/FileStorageService.Domain.csproj"/>
         <Project
