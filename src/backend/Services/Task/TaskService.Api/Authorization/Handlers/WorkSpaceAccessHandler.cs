@@ -9,7 +9,7 @@ using TaskService.Contracts.Enum;
 namespace TaskService.Api.Authorization.Handlers;
 
 /// <summary>
-///     Обработчик авторизации для рабоичих
+///     Обработчик авторизации для рабочей области
 /// </summary>
 public class WorkSpaceAccessHandler(
     IHttpContextAccessor httpContextAccessor,
@@ -31,7 +31,7 @@ public class WorkSpaceAccessHandler(
             context.Succeed(requirement);
             return;
         }
-        var workspaceId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor);
+        var workspaceId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor, "workspaceId");
         if (workspaceId is null)
         {
             logger.LogInformation(
@@ -57,7 +57,7 @@ public class WorkSpaceAccessHandler(
 
         var wsMemberShip = user.WorkSpaceMembers?.FirstOrDefault(x => x.WorkspaceId == workspaceId);
 
-        switch (wsMemberShip?.Role) //TODO enum
+        switch (wsMemberShip?.Role)
         {
             case RolesDto.Creator:
 
