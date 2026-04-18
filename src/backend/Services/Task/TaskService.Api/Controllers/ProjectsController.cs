@@ -164,21 +164,21 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     ///     {
     ///     }
     /// </remarks>
-    /// <param name="id">Идентификатор проекта</param>
+    /// <param name="projectId">Идентификатор проекта</param>
     /// <returns></returns>
     /// <response code="200">Данные о статусах задачи проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
     [Authorize(Policy = "CanViewProject")]
-    [HttpGet("{id:guid}/IssueStatuses")]
+    [HttpGet("{projectId:guid}/IssueStatuses")]
     [ProducesResponseType(typeof(IEnumerable<IssueStatusResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssuesStatusByProjectidAsync(Guid id)
+    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssuesStatusByProjectidAsync(Guid projectId)
     {
         //FAQ: а это нормальный возвращаемый тип?
-        var query = new IssueStatusGetByProjectIdQuery(id);
+        var query = new IssueStatusGetByProjectIdQuery(projectId);
         var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
@@ -192,20 +192,20 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     ///     {
     ///     }
     /// </remarks>
-    /// <param name="id">Идентификатор проекта</param>
+    /// <param name="projectId">Идентификатор проекта</param>
     /// <returns></returns>
     /// <response code="200">Данные о типах задач проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
-    [HttpGet("{id:guid}/Tags")]
+    [HttpGet("{projectId:guid}/Tags")]
     [ProducesResponseType(typeof(IEnumerable<TagResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<TagResponse>>> GetTagsByProjectidAsync(Guid id)
+    public async Task<ActionResult<IEnumerable<TagResponse>>> GetTagsByProjectidAsync(Guid projectId)
     {
         //FAQ: а это нормальный возвращаемый тип?
-        var query = new TagGetByProjectIdQuery(id);
+        var query = new TagGetByProjectIdQuery(projectId);
         var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
@@ -217,17 +217,17 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     ///     Пример запроса:
     ///     DELETE /api/v1/Projects/guid
     /// </remarks>
-    /// <param name="id">Идентификатор задачи для удаления</param>
+    /// <param name="projectId">Идентификатор задачи для удаления</param>
     /// <returns></returns>
     /// <response code="204">Задача успешно удалена</response>
     /// <response code="404">Не найдена задача для удаления</response>
     [Authorize(Policy = "CanViewProject")]
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{projectId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteProjectAsync(Guid id)
+    public async Task<IActionResult> DeleteProjectAsync(Guid projectId)
     {
-        ProjectDeleteByIdCommand command = new(id);
+        ProjectDeleteByIdCommand command = new(projectId);
         var response = await dispatcher.SendAsync(command);
         return NoContent();
     }
