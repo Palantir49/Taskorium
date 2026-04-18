@@ -25,9 +25,15 @@ public class ProjectAccessHandler(
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
         ProjectAccessRequirement requirement)
     {
+
         logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над проектом",
             requirement.Action);
-        var projectId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor);
+        if (requirement.Action == ProjectAction.Create)
+        {
+            context.Succeed(requirement);
+            return;
+        }
+        var projectId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor, "projectId");
         if (projectId is null)
         {
             logger.LogInformation(
