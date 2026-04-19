@@ -158,7 +158,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromRoute] Guid workspaceId, [FromRoute] Guid projectId,[FromForm] IssueCreateRequest createIssueRequest)
+    public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromRoute] Guid workspaceId, [FromRoute] Guid projectId, [FromForm] IssueCreateRequest createIssueRequest)
     {
         var createIssueCommand = createIssueRequest.ToCommand();
         var response = await dispatcher.SendAsync(createIssueCommand);
@@ -182,7 +182,8 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
         var command = new ProjectCreateCommand(Name: request.Name,
                                                Description: request.Description,
                                                Abbreviation: request.Abbreviation,
-                                               WorkspaceId: workspaceId);
+                                               WorkspaceId: workspaceId,
+                                               UserId: request.UserId);
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }

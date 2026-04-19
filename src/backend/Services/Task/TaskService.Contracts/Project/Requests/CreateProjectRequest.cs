@@ -3,4 +3,5 @@
 public record CreateProjectRequest(
     string Name,
     string Description,
-    string Abbreviation);
+    string Abbreviation,
+    Guid UserId);
