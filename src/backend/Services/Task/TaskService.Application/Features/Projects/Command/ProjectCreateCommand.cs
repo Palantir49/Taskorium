@@ -7,5 +7,6 @@ namespace TaskService.Application.Commands.Projects.Command
     string Name,
     string Description,
     string Abbreviation,
-    Guid WorkspaceId) : ICommand<ProjectResponse>;
+    Guid WorkspaceId,
+    Guid UserId) : ICommand<ProjectResponse>;
 }
