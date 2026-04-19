@@ -36,7 +36,7 @@ public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache c
         }
 
         var projectMember =
-            ProjectMember.Create(command.ProjectId, command.UserId, command.RoleDto, DateTimeOffset.UtcNow);
+            ProjectMember.Create(command.ProjectId, command.UserId, command.RoleDto.ToEntity(), DateTimeOffset.UtcNow);
 
         await context.ProjectMembers.AddAsync(projectMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
