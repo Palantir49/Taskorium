@@ -8,15 +8,15 @@ namespace TaskService.Application.Commands.Projects;
 
 public static class ProjectMapping
 {
-    public static ProjectCreateCommand ToCommand(this CreateProjectRequest request)
-    {
-        return new ProjectCreateCommand(
-            Name: request.Name,
-            Description: request.Description,
-            Abbreviation: request.Abbreviation,
-            WorkspaceId: request.WorkspaceId
-            );
-    }
+    //public static ProjectCreateCommand ToCommand(this CreateProjectRequest request)
+    //{
+    //    return new ProjectCreateCommand(
+    //        Name: request.Name,
+    //        Description: request.Description,
+    //        Abbreviation: request.Abbreviation,
+    //        WorkspaceId: request.WorkspaceId
+    //        );
+    //}
 
     public static ProjectResponse ToResponse(this Project project)
     {

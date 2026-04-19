@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using TaskService.Application.Mediator;
-using TaskService.Domain.Entities.Enums;
+using TaskService.Contracts.Enum;
 
 namespace TaskService.Application.Features.WorkspaceMembers.AddUser;
 
-public record AddProjectMemberCommand(Guid ProjectId, Guid UserId, Roles RoleDto) : ICommand<AddProjectMemberResult>;
+public record AddProjectMemberCommand(Guid ProjectId, Guid UserId, RolesDto RoleDto) : ICommand<AddProjectMemberResult>;

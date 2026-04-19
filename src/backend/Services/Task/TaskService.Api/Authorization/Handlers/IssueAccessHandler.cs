@@ -28,7 +28,12 @@ public class IssueAccessHandler(
     {
         logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над задачей",
             requirement.Action);
-        var issueId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor);
+
+        if (requirement.Action == IssueAction.Create)
+        {
+            context.Succeed(requirement);
+        }
+        var issueId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor, "issueId");
         if (issueId is null)
         {
             logger.LogInformation(
