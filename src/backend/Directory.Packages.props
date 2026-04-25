@@ -36,6 +36,9 @@
     <PackageVersion Include="Microsoft.Extensions.Caching.Hybrid" Version="10.0.0"/>
     <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="$(MicrosoftExtensionsVersion)"/>
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MicrosoftExtensionsVersion)"/>
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="$(MicrosoftExtensionsVersion)"/>
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(MicrosoftExtensionsVersion)"/>
+    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="$(MicrosoftExtensionsVersion)"/>
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="$(MicrosoftExtensionsVersion)"/>
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="$(MicrosoftExtensionsVersion)"/>
     <!-- Version together with Asp.Versioning -->
@@ -56,6 +59,7 @@
     <PackageVersion Include="Microsoft.Extensions.Identity.Stores" Version="$(MicrosoftExtensionsVersion)"/>
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="$(MicrosoftExtensionsVersion)"/>
     <PackageVersion Include="Microsoft.OpenApi" Version="2.3.2"/>
+    <PackageVersion Include="MongoDB.Driver" Version="3.8.0"/>
     <PackageVersion Include="MSTest.TestFramework" Version="3.10.4"/>
     <PackageVersion Include="MSTest.TestAdapter" Version="3.10.4"/>
     <!-- Version together with EF -->
@@ -86,6 +90,7 @@
     <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.14.0"/>
     <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.14.0-beta.1"/>
     <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.14.0-beta.2"/>
+    <PackageVersion Include="RabbitMQ.Client.OpenTelemetry" Version="1.0.0-rc.2"/>
     <!-- IdentityServer -->
     <PackageVersion Include="Duende.IdentityServer" Version="7.3.2"/>
     <PackageVersion Include="Duende.IdentityServer.AspNetIdentity" Version="7.3.2"/>
@@ -106,6 +111,8 @@
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0"/>
     <PackageVersion Include="Google.Protobuf" Version="3.33.0"/>
     <PackageVersion Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71"/>
+    <PackageVersion Include="RabbitMQ.Client" Version="7.2.1"/>
+    <PackageVersion Include="RabbitMQ.Client.OpenTelemetry" Version="1.0.0-rc.2"/>
     <PackageVersion Include="System.Reflection.TypeExtensions" Version="4.7.0"/>
     <PackageVersion Include="xunit" Version="2.9.3"/>
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4"/>
