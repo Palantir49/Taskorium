@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Net.Security;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
@@ -201,7 +202,14 @@ public sealed class RabbitMqEventBus : IEventBus, IAsyncDisposable
             ClientProvidedName = _options.Connection.ClientProvidedName,
             AutomaticRecoveryEnabled = _options.Connection.AutomaticRecoveryEnabled,
             TopologyRecoveryEnabled = _options.Connection.TopologyRecoveryEnabled,
-            ConsumerDispatchConcurrency = _options.Connection.ConsumerDispatchConcurrency
+            ConsumerDispatchConcurrency = _options.Connection.ConsumerDispatchConcurrency,
+            Ssl = new SslOption
+            {
+                Enabled = _options.Connection.UseSsl,
+                ServerName = _options.Connection.HostName,
+                AcceptablePolicyErrors = SslPolicyErrors.RemoteCertificateNameMismatch |
+                                         SslPolicyErrors.RemoteCertificateChainErrors
+            }
         };
     }
 
