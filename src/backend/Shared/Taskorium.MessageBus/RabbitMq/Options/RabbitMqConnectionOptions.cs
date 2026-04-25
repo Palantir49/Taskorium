@@ -11,4 +11,6 @@ public sealed class RabbitMqConnectionOptions
     public bool AutomaticRecoveryEnabled { get; set; } = true;
     public bool TopologyRecoveryEnabled { get; set; } = true;
     public ushort ConsumerDispatchConcurrency { get; set; } = 1;
+
+    public bool UseSsl { get; set; } = false;
 }
