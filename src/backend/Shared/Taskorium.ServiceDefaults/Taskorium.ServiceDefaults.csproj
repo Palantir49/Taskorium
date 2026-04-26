@@ -11,6 +11,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient"/>
     <PackageReference Include="OpenTelemetry.Instrumentation.Http"/>
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime"/>
+    <PackageReference Include="RabbitMQ.Client.OpenTelemetry"/>
     <PackageReference Include="Serilog.AspNetCore"/>
     <PackageReference Include="Serilog.Sinks.Console"/>
   </ItemGroup>

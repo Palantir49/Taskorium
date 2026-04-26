@@ -43,6 +43,7 @@ public static class ServiceExtensions
                         .AddAspNetCoreInstrumentation()
                         .AddHttpClientInstrumentation()
                         .AddEntityFrameworkCoreInstrumentation()
+                        .AddRabbitMQInstrumentation()
                         .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName))
                         .AddSource($"{serviceName}*")
                         .AddOtlpExporter(opts =>
