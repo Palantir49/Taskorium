@@ -12,7 +12,7 @@ internal static class ServiceExtensions
     {
         internal void AddRabbitMqConsumers(IConfiguration configuration)
         {
-            serviceCollection.AddRabbitMqConsumer<IssueCreatedIntegrationEvent, IssueCreatedEventHandler>(configuration,
+            serviceCollection.AddRabbitMqConsumer<NotificationIntegrationEvent, IssueCreatedEventHandler>(configuration,
                 "notification-received");
         }
     }
