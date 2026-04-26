@@ -36,6 +36,10 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
             .HasForeignKey(t => t.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
-        builder.HasData(FakeDataFactory.ProjectMembers);
+
+        builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
+
+        //builder.HasData(FakeDataFactory.ProjectMembers);
+
     }
 }

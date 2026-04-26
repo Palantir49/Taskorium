@@ -23,12 +23,12 @@ namespace TaskService.Infrastructure.Configurations
                 .HasMaxLength(225);
 
             builder.Property(w => w.CreatedDate).IsRequired();
-
+            builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
             //builder.Property(w => w.OwnerId);
             //builder.HasOne<User>()
             //    .WithMany()
             //    .HasForeignKey(w => w.OwnerId);
-            builder.HasData(FakeDataFactory.Workspaces);
+            //builder.HasData(FakeDataFactory.Workspaces);
         }
     }
 }
