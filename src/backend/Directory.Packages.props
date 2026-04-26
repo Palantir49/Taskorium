@@ -24,6 +24,7 @@
     <PackageVersion Include="Aspire.Azure.AI.OpenAI" Version="$(AspireUnstablePackagesVersion)" />
     <PackageVersion Include="EFCore.NamingConventions" Version="9.0.0" />
     <PackageVersion Include="Grpc.Net.Client" Version="2.76.0" />
+    <PackageVersion Include="MailKit" Version="4.16.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Authorization" Version="$(AspnetVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.Http.Features" Version="2.3.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(AspnetVersion)" />
