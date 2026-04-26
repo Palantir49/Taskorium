@@ -2,11 +2,13 @@
 
 namespace TaskService.Domain.Entities;
 
-public class Tag : BaseEntities
+public class Tag : BaseEntities, ISoftDeletable
 {
     public Guid ProjectId { get; }
 
     public List<Issue> Issues { get; private set; } = new();
+    public bool IsDeleted { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
 
     protected Tag() { }
 

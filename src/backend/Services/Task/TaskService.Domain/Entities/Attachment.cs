@@ -1,6 +1,8 @@
-﻿namespace TaskService.Domain.Entities;
+﻿using TaskService.Domain.Entities.BaseEntity;
 
-public class Attachment
+namespace TaskService.Domain.Entities;
+
+public class Attachment : ISoftDeletable
 {
     private Attachment(Guid id, Guid issueId, Guid uploaderId, string storagePath)
     {
@@ -16,6 +18,8 @@ public class Attachment
     //TODO need?
     public Guid UploaderId { get; private set; }
     public string StoragePath { get; private set; }
+    public bool IsDeleted { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
 
     public static Attachment Create(Guid issueId, Guid uploaderId, string fileName)
     {

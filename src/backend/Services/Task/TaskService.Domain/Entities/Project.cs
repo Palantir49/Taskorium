@@ -2,7 +2,7 @@
 
 namespace TaskService.Domain.Entities;
 
-public class Project : BaseEntities
+public class Project : BaseEntities, ISoftDeletable
 {
     protected Project() { }
 
@@ -25,6 +25,8 @@ public class Project : BaseEntities
 
     public List<IssueStatus>? Statuses { get; protected set; } = new();
     public List<ProjectMember> ProjectMembers { get; private set; } = [];
+    public bool IsDeleted { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
 
     public static Project Create(string name, string? description, string abbreviation, Guid workspaceId)
     {
