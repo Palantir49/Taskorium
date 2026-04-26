@@ -26,7 +26,9 @@ public class WorkspaceMemberConfiguration : IEntityTypeConfiguration<WorkspaceMe
         builder.Property(x => x.Role)
             .IsRequired()
             .HasConversion<string>();
+        
+        builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
 
-        builder.HasData(FakeDataFactory.WorkspaceMembers);
+        //builder.HasData(FakeDataFactory.WorkspaceMembers);
     }
 }

@@ -28,6 +28,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                 username => username.ToString(),
                 value => new UserName(value))
             .IsRequired().HasMaxLength(225);
-        builder.HasData(FakeDataFactory.Users);
+
+        builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
+
+
+        //builder.HasData(FakeDataFactory.Users);
     }
 }

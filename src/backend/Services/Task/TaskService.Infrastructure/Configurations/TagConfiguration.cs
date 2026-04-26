@@ -27,6 +27,7 @@ internal class TagConfiguration : IEntityTypeConfiguration<Tag>
               .HasForeignKey(t => t.ProjectId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
+        builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
 
         //builder.HasData(FakeDataFactory.Tags);
     }
