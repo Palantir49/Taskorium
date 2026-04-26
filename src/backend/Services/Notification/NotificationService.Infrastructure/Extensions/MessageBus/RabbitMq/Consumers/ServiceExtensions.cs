@@ -13,7 +13,7 @@ internal static class ServiceExtensions
         internal void AddRabbitMqConsumers(IConfiguration configuration)
         {
             serviceCollection.AddRabbitMqConsumer<IssueCreatedIntegrationEvent, IssueCreatedEventHandler>(configuration,
-                "partner-manager-received");
+                "notification-received");
         }
     }
 }
