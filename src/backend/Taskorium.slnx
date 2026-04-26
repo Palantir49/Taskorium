@@ -15,8 +15,10 @@
         <Project Path="Services/Task/TaskService.Tests/TaskService.Tests.csproj"/>
     </Folder>
     <Folder Name="/Shared/">
-        <Project Path="Shared/Taskorium.Protos/Taskorium.Protos.csproj"/>
-        <Project Path="Shared/Taskorium.ServiceDefaults/Taskorium.ServiceDefaults.csproj"/>
+        <Project Path="Shared/Taskorium.IntegrationEvents/Taskorium.IntegrationEvents.csproj" />
+        <Project Path="Shared/Taskorium.MessageBus/Taskorium.MessageBus.csproj" />
+        <Project Path="Shared/Taskorium.Protos/Taskorium.Protos.csproj" />
+        <Project Path="Shared/Taskorium.ServiceDefaults/Taskorium.ServiceDefaults.csproj" />
     </Folder>
     <Folder Name="/Solution Items/">
         <File Path=".editorconfig"/>
@@ -26,5 +28,5 @@
         <File Path="global.json"/>
         <File Path="Readme.md"/>
     </Folder>
-    <Folder Name="/Services/"/>
+    <Folder Name="/Services/" />
 </Solution>
