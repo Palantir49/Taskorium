@@ -3,11 +3,14 @@ using TaskService.Domain.Entities.Enums;
 
 namespace TaskService.Domain.Entities;
 
-public class IssueStatus : BaseEntities
+public class IssueStatus : BaseEntities, ISoftDeletable
 {
     public Guid ProjectId { get; }
     public IssueStatusType Type { get; private set; }
     public int Position { get; private set; }
+    public bool IsDeleted { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
+
     //FAQ: а статусу и типу вообще нужно CreateDate? а то мб и не нужно от BaseEntities наследоваться
     protected IssueStatus() { }
 

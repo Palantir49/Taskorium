@@ -4,7 +4,7 @@ using TaskService.Domain.ValueObjects;
 
 namespace TaskService.Domain.Entities
 {
-    public class Issue : BaseEntities
+    public class Issue : BaseEntities, ISoftDeletable
     {
         public Guid ProjectId { get; }
         public Guid IssueStatusId { get; private set; }
@@ -18,6 +18,8 @@ namespace TaskService.Domain.Entities
         public DateTimeOffset? DueDate { get; private set; }
 
         public ICollection<Tag> Tags { get; private set; } = null!;
+        public bool IsDeleted { get; set; }
+        public DateTimeOffset? DeletedAt { get; set; }
 
         protected Issue() { }
 

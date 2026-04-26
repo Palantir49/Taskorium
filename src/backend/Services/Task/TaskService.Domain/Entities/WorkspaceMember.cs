@@ -6,12 +6,15 @@ using TaskService.Domain.Entities.Enums;
 
 namespace TaskService.Domain.Entities
 {
-    public class WorkspaceMember
+    public class WorkspaceMember : ISoftDeletable
     {
         public Guid UserId { get; private set; }
         public Guid WorkspaceId { get; private set; }
         public Roles Role { get; private set; }
         public DateTimeOffset JoinedAt { get; private set; }
+        public bool IsDeleted { get; set; }
+        public DateTimeOffset? DeletedAt { get; set; }
+
         public WorkspaceMember()
         {
 
