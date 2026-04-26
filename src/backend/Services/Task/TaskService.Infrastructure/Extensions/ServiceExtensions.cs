@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Extensions.Cache;
 using TaskService.Infrastructure.Extensions.Services.FileStorage;
+using TaskService.Infrastructure.Interceptors;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Extensions;
@@ -14,10 +15,13 @@ public static class ServiceExtensions
     {
         public void ConfigureInfrastructureLayer(IConfiguration configuration)
         {
-            services.AddDbContext<TaskServiceDbContext>(
-                options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
-                );
-            services.AddCache(configuration);
+            services.AddSingleton<SoftDeleteInterceptor>();
+            services.AddDbContext<TaskServiceDbContext>((sp, options) =>
+                {
+                    options.UseNpgsql(configuration.GetConnectionString("DevDefaultConnection"));
+                    options.AddInterceptors(sp.GetRequiredService<SoftDeleteInterceptor>());
+                });
+            services.AddCache(configuration); 
             services.ConfigureGrpcFileStorageClient(configuration);
         }
     }
