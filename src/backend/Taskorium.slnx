@@ -1,18 +1,23 @@
 <Solution>
     <Folder Name="/Services/FileStorage/">
-        <Project Path="Services/FileStorage/FileStorageService.API/FileStorageService.API.csproj"/>
-        <Project Path="Services/FileStorage/FileStorageService.Application/FileStorageService.Application.csproj"/>
-        <Project Path="Services/FileStorage/FileStorageService.Domain/FileStorageService.Domain.csproj"/>
-        <Project
-                Path="Services/FileStorage/FileStorageService.Infrastructure/FileStorageService.Infrastructure.csproj"/>
+        <Project Path="Services/FileStorage/FileStorageService.API/FileStorageService.API.csproj" />
+        <Project Path="Services/FileStorage/FileStorageService.Application/FileStorageService.Application.csproj" />
+        <Project Path="Services/FileStorage/FileStorageService.Domain/FileStorageService.Domain.csproj" />
+        <Project Path="Services/FileStorage/FileStorageService.Infrastructure/FileStorageService.Infrastructure.csproj" />
+    </Folder>
+    <Folder Name="/Services/Notification/">
+        <Project Path="Services/Notification/NotificationService.Api/NotificationService.Api.csproj" />
+        <Project Path="Services/Notification/NotificationService.Application/NotificationService.Application.csproj" />
+        <Project Path="Services/Notification/NotificationService.Domain/NotificationService.Domain.csproj" />
+        <Project Path="Services/Notification/NotificationService.Infrastructure/NotificationService.Infrastructure.csproj" />
     </Folder>
     <Folder Name="/Services/Task/">
-        <Project Path="Services/Task/TaskService.Api/TaskService.Api.csproj"/>
-        <Project Path="Services/Task/TaskService.Application/TaskService.Application.csproj"/>
-        <Project Path="Services/Task/TaskService.Contracts/TaskService.Contracts.csproj"/>
-        <Project Path="Services/Task/TaskService.Domain/TaskService.Domain.csproj"/>
-        <Project Path="Services/Task/TaskService.Infrastructure/TaskService.Infrastructure.csproj"/>
-        <Project Path="Services/Task/TaskService.Tests/TaskService.Tests.csproj"/>
+        <Project Path="Services/Task/TaskService.Api/TaskService.Api.csproj" />
+        <Project Path="Services/Task/TaskService.Application/TaskService.Application.csproj" />
+        <Project Path="Services/Task/TaskService.Contracts/TaskService.Contracts.csproj" />
+        <Project Path="Services/Task/TaskService.Domain/TaskService.Domain.csproj" />
+        <Project Path="Services/Task/TaskService.Infrastructure/TaskService.Infrastructure.csproj" />
+        <Project Path="Services/Task/TaskService.Tests/TaskService.Tests.csproj" />
     </Folder>
     <Folder Name="/Shared/">
         <Project Path="Shared/Taskorium.IntegrationEvents/Taskorium.IntegrationEvents.csproj" />
@@ -21,12 +26,12 @@
         <Project Path="Shared/Taskorium.ServiceDefaults/Taskorium.ServiceDefaults.csproj" />
     </Folder>
     <Folder Name="/Solution Items/">
-        <File Path=".editorconfig"/>
-        <File Path="Directory.Packages.props"/>
-        <File Path="Directory.Build.props"/>"
-        <File Path="NuGet.config"/>
-        <File Path="global.json"/>
-        <File Path="Readme.md"/>
+        <File Path=".editorconfig" />
+        <File Path="Directory.Packages.props" />
+        <File Path="Directory.Build.props" />"
+        <File Path="NuGet.config" />
+        <File Path="global.json" />
+        <File Path="Readme.md" />
     </Folder>
     <Folder Name="/Services/" />
 </Solution>
