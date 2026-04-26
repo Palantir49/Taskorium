@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NotificationService.Infrastructure.Extensions.Email;
 using NotificationService.Infrastructure.Extensions.MessageBus;
 using NotificationService.Infrastructure.Extensions.Persistence;
 
@@ -13,6 +14,7 @@ public static class ServiceExtensions
         {
             services.AddMessageBus(configuration);
             services.AddPersistence(configuration);
+            services.ConfigureEmailSenderService(configuration);
         }
     }
 }
