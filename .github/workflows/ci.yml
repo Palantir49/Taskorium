@@ -1,4 +1,4 @@
-﻿name: Taskorium CI
+﻿name: Taskorium CI (build && notification)
 
 on:
   pull_request:
@@ -14,7 +14,6 @@ on:
       - '.github/workflows/*.yml'
 
 jobs:
-  # ─── CI проверки: только для PR ───
   format-build-test:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
@@ -47,7 +46,6 @@ jobs:
         working-directory: ./src/backend/Services/Task/TaskService.Tests
         run: dotnet test --no-build --verbosity normal
 
-  # ─── Уведомление после CI (только для PR) ───
   notify-after-ci:
     if: github.event_name == 'pull_request'
     needs: format-build-test
@@ -66,7 +64,6 @@ jobs:
           bot_token: '${{ secrets.BOT_TOKEN }}'
           chat_id: '${{ secrets.CHAT_ID }}'
 
-  # ─── Уведомление о merge (только для push) ───
   notify-merge:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
