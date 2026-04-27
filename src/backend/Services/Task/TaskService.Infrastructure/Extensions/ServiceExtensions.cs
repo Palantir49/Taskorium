@@ -18,10 +18,14 @@ public static class ServiceExtensions
             services.AddSingleton<SoftDeleteInterceptor>();
             services.AddDbContext<TaskServiceDbContext>((sp, options) =>
                 {
-                    options.UseNpgsql(configuration.GetConnectionString("DevDefaultConnection"));
+                    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
                     options.AddInterceptors(sp.GetRequiredService<SoftDeleteInterceptor>());
+                    options.UseAsyncSeeding(async (context, _, cancellationToken) =>
+                    {
+
+                    });
                 });
-            services.AddCache(configuration); 
+            services.AddCache(configuration);
             services.ConfigureGrpcFileStorageClient(configuration);
         }
     }
