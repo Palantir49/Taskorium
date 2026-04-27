@@ -1,17 +1,13 @@
-﻿name: Taskorium CI
+﻿name: CI Checks
 
 on:
   pull_request:
     branches: [ "main", "dev" ]
-    types: [ opened, synchronize, reopened ]  # Явно указываем нужные события
+    types: [ opened, synchronize, reopened ]
     paths:
       - 'src/**'
-      - '.github/workflows/workflow.yml'
-  push:
-    branches: [ "main", "dev" ]  # Событие merge (или прямого пуша)
-    paths:
-      - 'src/**'
-      - '.github/workflows/workflow.yml'
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/notify.yml'
 
 jobs:
   format-build-test:
@@ -43,10 +39,3 @@ jobs:
       - name: Test
         working-directory: ./src/backend/Services/Task/TaskService.Tests
         run: dotnet test --no-build --verbosity normal
-
-      - name: Notify on Telegram
-        if: always()  # Отправляем уведомление при любом исходе
-        uses: EverythingSuckz/github-telegram-notify@main
-        with:
-          bot_token: '${{ secrets.BOT_TOKEN }}'
-          chat_id: '${{ secrets.CHAT_ID }}'
