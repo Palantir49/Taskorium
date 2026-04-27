@@ -1,8 +1,14 @@
-﻿name: Taskorium workflow
+﻿name: Taskorium CI
 
 on:
   pull_request:
     branches: [ "main", "dev" ]
+    types: [opened, synchronize, reopened]  # Явно указываем нужные события
+    paths:
+      - 'src/**'
+      - '.github/workflows/workflow.yml'
+  push:
+    branches: [ "main", "dev" ]  # Событие merge (или прямого пуша)
     paths:
       - 'src/**'
       - '.github/workflows/workflow.yml'
@@ -26,7 +32,7 @@ jobs:
         working-directory: ./src/backend
         run: dotnet restore Taskorium.slnx
 
-      - name: Format code
+      - name: Format check
         working-directory: ./src/backend
         run: dotnet format Taskorium.slnx --no-restore --verify-no-changes
 
@@ -38,8 +44,17 @@ jobs:
         working-directory: ./src/backend/Services/Task/TaskService.Tests
         run: dotnet test --no-build --verbosity normal
 
-      - name: Notify the commit on Telegram
+      - name: Notify on Telegram
+        if: always()  # Отправляем уведомление при любом исходе
         uses: EverythingSuckz/github-telegram-notify@main
         with:
           bot_token: '${{ secrets.BOT_TOKEN }}'
           chat_id: '${{ secrets.CHAT_ID }}'
+          notification_type: '${{ job.status }}'  # success / failure
+          message: |
+            📋 *${{ github.event_name == 'push' && '🔀 Слияние' || '📥 PR' }} в Taskorium*
+            Репозиторий: `${{ github.repository }}`
+            Ветка: `${{ github.ref_name }}`
+            Статус: `${{ job.status }}`
+            Автор: ${{ github.actor }}
+            Коммит: ${{ github.sha }}
