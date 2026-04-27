@@ -1,4 +1,4 @@
-﻿name: CI Checks
+﻿name: Taskorium CI
 
 on:
   pull_request:
@@ -6,13 +6,20 @@ on:
     types: [ opened, synchronize, reopened ]
     paths:
       - 'src/**'
-      - '.github/workflows/ci.yml'
-      - '.github/workflows/notify.yml'
+      - '.github/workflows/*.yml'
+  push:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'src/**'
+      - '.github/workflows/*.yml'
 
 jobs:
+  # ─── CI проверки: только для PR ───
   format-build-test:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-
+    outputs:
+      status: ${{ job.status }}
     steps:
       - uses: actions/checkout@v4
 
@@ -39,3 +46,33 @@ jobs:
       - name: Test
         working-directory: ./src/backend/Services/Task/TaskService.Tests
         run: dotnet test --no-build --verbosity normal
+
+  # ─── Уведомление после CI (только для PR) ───
+  notify-after-ci:
+    if: github.event_name == 'pull_request'
+    needs: format-build-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set message for PR
+        id: pr_msg
+        run: |
+          echo "title=📥 Pull Request" >> $GITHUB_OUTPUT
+          echo "action=${{ github.event.action }}" >> $GITHUB_OUTPUT
+          echo "status=${{ needs.format-build-test.result }}" >> $GITHUB_OUTPUT
+
+      - name: Notify after CI
+        uses: EverythingSuckz/github-telegram-notify@main
+        with:
+          bot_token: '${{ secrets.BOT_TOKEN }}'
+          chat_id: '${{ secrets.CHAT_ID }}'
+
+  # ─── Уведомление о merge (только для push) ───
+  notify-merge:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify merge
+        uses: EverythingSuckz/github-telegram-notify@main
+        with:
+          bot_token: '${{ secrets.BOT_TOKEN }}'
+          chat_id: '${{ secrets.CHAT_ID }}'
