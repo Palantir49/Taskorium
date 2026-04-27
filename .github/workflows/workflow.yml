@@ -3,7 +3,7 @@
 on:
   pull_request:
     branches: [ "main", "dev" ]
-    types: [opened, synchronize, reopened]  # Явно указываем нужные события
+    types: [ opened, synchronize, reopened ]  # Явно указываем нужные события
     paths:
       - 'src/**'
       - '.github/workflows/workflow.yml'
@@ -50,11 +50,3 @@ jobs:
         with:
           bot_token: '${{ secrets.BOT_TOKEN }}'
           chat_id: '${{ secrets.CHAT_ID }}'
-          notification_type: '${{ job.status }}'  # success / failure
-          message: |
-            📋 *${{ github.event_name == 'push' && '🔀 Слияние' || '📥 PR' }} в Taskorium*
-            Репозиторий: `${{ github.repository }}`
-            Ветка: `${{ github.ref_name }}`
-            Статус: `${{ job.status }}`
-            Автор: ${{ github.actor }}
-            Коммит: ${{ github.sha }}
