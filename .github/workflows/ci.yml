@@ -1,4 +1,4 @@
-﻿name: Taskorium CI (build && test && notification)
+﻿name: Taskorium CI
 
 on:
   pull_request:
