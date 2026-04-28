@@ -79,7 +79,7 @@ public class ProjectCreateHandler(TaskServiceDbContext context, HybridCache cach
 
         var userCacheKey = $"user_by_keycloak_id_{existUser.KeycloakId}";
         await cache.RemoveAsync(userCacheKey, cancellationToken);
-        
+
         return project.ToResponse();
     }
 }

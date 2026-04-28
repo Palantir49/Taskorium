@@ -13,11 +13,11 @@ public class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
     public void Configure(EntityTypeBuilder<Attachment> builder)
     {
         builder.HasKey(t => t.Id);
-        
+
         builder.Property(t => t.Id).ValueGeneratedNever();
-        
+
         builder.Property(t => t.IssueId).ValueGeneratedNever();
-        
+
         builder.Property(t => t.UploaderId).ValueGeneratedNever();
 
         builder.Property(t => t.StoragePath).HasMaxLength(2000);

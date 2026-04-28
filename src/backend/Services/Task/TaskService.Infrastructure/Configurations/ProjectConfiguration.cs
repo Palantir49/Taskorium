@@ -11,7 +11,7 @@ namespace TaskService.Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<Project> builder)
         {
             builder.HasKey(p => p.Id);
-            
+
             builder.Property(p => p.Id).ValueGeneratedNever();
 
             builder.Property(p => p.Name).HasConversion(
@@ -20,7 +20,7 @@ namespace TaskService.Infrastructure.Configurations
                 .IsRequired().HasMaxLength(225);
 
             builder.Property(p => p.Description).HasMaxLength(2000);
-            
+
             builder.Property(p => p.Abbreviation).HasMaxLength(5);
 
             builder.Property(p => p.CreatedDate).IsRequired();
