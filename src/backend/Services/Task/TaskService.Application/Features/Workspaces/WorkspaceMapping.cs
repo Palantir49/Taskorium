@@ -1,5 +1,4 @@
-﻿using TaskService.Application.Commands.Workspaces.Create;
-using TaskService.Application.Commands.Workspaces.Get;
+﻿using TaskService.Application.Features.Workspaces.Write.Command;
 using TaskService.Contracts.Workspace.Request;
 
 namespace TaskService.Application.Commands.Workspaces;

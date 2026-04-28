@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Commands.Workspaces.Get;
+using TaskService.Application.Features.Workspaces.Read.Query;
+using TaskService.Application.Features.Workspaces.Read.Result;
 using TaskService.Application.Mediator;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Features.Workspaces.Get;
+namespace TaskService.Application.Features.Workspaces.Read.Handler;
 
 public class GetWorkspaceHandler(TaskServiceDbContext context, HybridCache cache)
     : IRequestHandler<GetWorkspaceByIdQuery, GetWorkspacebyIdResult>

@@ -1,11 +1,13 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Features.Workspaces.Write.Command;
+using TaskService.Application.Features.Workspaces.Write.Result;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Enum;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Commands.Workspaces.Create;
+namespace TaskService.Application.Features.Workspaces.Write.Handler;
 
 public class CreateWorkspaceHandler(TaskServiceDbContext context, HybridCache cache)
     : IRequestHandler<CreateWorkspaceCommand, CreateWorkspaceResult>

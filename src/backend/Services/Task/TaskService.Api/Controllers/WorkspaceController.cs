@@ -1,15 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Projects.Command;
-using TaskService.Application.Commands.Workspaces.Create;
-using TaskService.Application.Commands.Workspaces.Get;
-using TaskService.Application.Features.Issues.Mapping;
-using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
-using TaskService.Application.Features.Workspaces.Delete;
-using TaskService.Application.Features.Workspaces.Get;
-using TaskService.Application.Features.Workspaces.Update;
-using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
@@ -17,6 +9,12 @@ using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Contracts.Workspace.Request;
 using TaskService.Contracts.Workspace.Response;
+using TaskService.Application.Features.Issues.Mapping;
+using TaskService.Application.Mapping;
+using TaskService.Application.Features.Workspaces.Read.Query;
+using TaskService.Application.Features.Workspaces.Write.Command;
+using TaskService.Application.Features.Workspaces.Read.Result;
+using TaskService.Application.Features.Workspaces.Write.Result;
 namespace TaskService.Api.Controllers;
 
 /*TODO Action: delete user from workspace
@@ -64,14 +62,14 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     }
 
     /// <summary>
-    ///     Получить список рабочих области
+    ///     Получить  рабочих областей
     /// </summary>
     /// ///
     /// <param name="query">Объект пагинации</param>
     /// <response code="200">Список рабочих областей успешно получен</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найдена рабочая область по заданному id</response>
-    [HttpGet("workspaces")]
+    [HttpGet("page")]
     [ActionName("GetWorkspacePageAsync")]
     [ProducesResponseType(typeof(GetWorkspacebyIdResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -88,6 +86,29 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
         return Ok(response);
     }
 
+    /// <summary>
+    ///     Получить страницу удаленных рабочих областей
+    /// </summary>
+    /// 
+    /// <param name="query">Объект пагинации</param>
+    /// <response code="200">Список удаленных рабочих областей</response>
+    /// <response code="400">Некорректный запрос</response>
+    [HttpGet("deleted")]
+    [ActionName(nameof(GetDeletedWorkspacePageAsync))]
+    [ProducesResponseType(typeof(GetWorkspacebyIdResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<GetDeletedWorkspacePageResult>> GetDeletedWorkspacePageAsync(
+      [FromQuery] GetDeletedWorkspacePageQuery query)
+    {
+        var response = await dispatcher.SendAsync(query);
+        if (response == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(response);
+    }
     /// <summary>
     ///     Создать новою рабочую область
     /// </summary>

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Features.Workspaces.Write.Command;
+using TaskService.Application.Features.Workspaces.Write.Result;
 using TaskService.Application.Mediator;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Features.Workspaces.Delete;
+namespace TaskService.Application.Features.Workspaces.Write.Handler;
 
 public class DeleteWorkspaceByIdHandler(TaskServiceDbContext context, HybridCache cache) : IRequestHandler<DeleteWorkspaceByIdCommand, DeleteWorkspaceByIdResult>
 {
