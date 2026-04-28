@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Projects;
+using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.IssueStatuses.Command;
 using TaskService.Application.Features.Projects.Command;
@@ -29,46 +30,26 @@ namespace TaskService.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class ProjectsController(IDispatcher dispatcher) : Controller
 {
-    /// <summary>
-    ///     Создать новый проект
-    /// </summary>
-    /// <remarks>
-    ///     Пример запроса:
-    ///     POST /api/v1/Projects
-    ///     {
-    ///     }
-    /// </remarks>
-    /// <param name="createProjectRequest">Данные о новом проекте</param>
-    /// <returns></returns>
-    /// <response code="201">Новый проект успешно создан</response>
-    /// <response code="400">Некорректный запрос</response>
-    [Authorize(Policy = "CanCreateProject")]
-    [HttpPost]
-    [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<ProjectResponse>> CreateProjectAsync(
-        [FromBody] CreateProjectRequest createProjectRequest)
-    {
-        var createProjectCommand = createProjectRequest.ToCommand();
-        var response = await dispatcher.SendAsync(createProjectCommand);
-        return CreatedAtAction(nameof(GetProjectByIdAsync), new { id = response.Id }, response);
-    }
 
     /// <summary>
     ///     Добавить пользователя в проект
     /// </summary>
-    /// <param name="command">Данные о проекте, пользователе и его роли</param>
+    /// <param name="projectId"></param>
+    /// <param name="request">Данные о проекте, пользователе и его роли</param>
     /// <returns></returns>
     /// <response code="201">Пользователь успешно добавлен в проект</response>
     /// <response code="400">Некорректный запрос</response>
     [Authorize(Policy = "CanAddUserToProject")]
-    [HttpPost("AddProjectMember")]
+    [HttpPost("{projectId:guid}/projectMember")]
+    [ActionName("AddUserToProjectAsync")]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<ProjectResponse>> AddUserToProjectAsync([FromBody] AddProjectMemberCommand command)
+    public async Task<ActionResult<ProjectResponse>> AddUserToProjectAsync([FromRoute] Guid projectId, [FromBody] AddProjectMemberRequest request)
     {
+        var command = new AddProjectMemberCommand(ProjectId: projectId,
+                                                  UserId: request.UserId,
+                                                  RoleDto: request.RoleDto);
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }
@@ -81,19 +62,19 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     ///     Пример запроса:
     ///     GET /api/v1/Projects/guid
     /// </remarks>
-    /// <param name="id">Идентификатор проекта</param>
+    /// <param name="projectId">Идентификатор проекта</param>
     /// <response code="200">Данные о проекте успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект по заданному id</response>
     [Authorize(Policy = "CanViewProject")]
-    [HttpGet("{id:guid}")]
+    [HttpGet("{projectId:guid}")]
     [ActionName("GetProjectByIdAsync")]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<ProjectResponse>> GetProjectByIdAsync(Guid id)
+    public async Task<ActionResult<ProjectResponse>> GetProjectByIdAsync([FromRoute] Guid projectId)
     {
-        var query = new ProjectGetByIdQuery(id);
+        var query = new ProjectGetByIdQuery(projectId);
         var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
@@ -107,22 +88,22 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     ///     {
     ///     }
     /// </remarks>
-    /// <param name="id">Идентификатор проекта</param>
+    /// <param name="projectId">Идентификатор проекта</param>
     /// <param name="updateProjectRequest">Обновленные данные проекта</param>
     /// <returns></returns>
     /// <response code="200">Данные о проекте успешно обновлены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект для обновления</response>
     [Authorize(Policy = "CanUpdateProject")]
-    [HttpPut("{id:guid}")]
+    [HttpPut("{projectId:guid}")]
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> UpdateProjectAsync(Guid id,
+    public async Task<ActionResult<IssueResponse>> UpdateProjectAsync([FromRoute] Guid projectId,
         [FromBody] UpdateProjectRequest updateProjectRequest)
     {
-        var command = ProjectMapping.ProjectUpdateCommand(id, updateProjectRequest);
+        var command = ProjectMapping.ProjectUpdateCommand(projectId, updateProjectRequest);
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }
@@ -136,21 +117,21 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     ///     {
     ///     }
     /// </remarks>
-    /// <param name="id">Идентификатор проекта</param>
+    /// <param name="projectId">Идентификатор проекта</param>
     /// <returns></returns>
     /// <response code="200">Данные о задачах проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
     [Authorize(Policy = "CanViewProject")]
-    [HttpGet("{id:guid}/Issues")]
+    [HttpGet("{projectId:guid}/Issues")]
     [ProducesResponseType(typeof(IEnumerable<IssueResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssuesByProjectidAsync(Guid id)
+    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssuesByProjectidAsync(Guid projectId)
     {
         //FAQ: а это нормальный возвращаемый тип?
-        var query = new IssueGetByProjectIdQuery(id);
+        var query = new IssueGetByProjectIdQuery(projectId);
         var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
@@ -164,21 +145,21 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     ///     {
     ///     }
     /// </remarks>
-    /// <param name="id">Идентификатор проекта</param>
+    /// <param name="projectId">Идентификатор проекта</param>
     /// <returns></returns>
     /// <response code="200">Данные о статусах задачи проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
     [Authorize(Policy = "CanViewProject")]
-    [HttpGet("{id:guid}/IssueStatuses")]
+    [HttpGet("{projectId:guid}/IssueStatuses")]
     [ProducesResponseType(typeof(IEnumerable<IssueStatusResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssuesStatusByProjectidAsync(Guid id)
+    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssuesStatusByProjectidAsync([FromRoute] Guid projectId)
     {
         //FAQ: а это нормальный возвращаемый тип?
-        var query = new IssueStatusGetByProjectIdQuery(id);
+        var query = new IssueStatusGetByProjectIdQuery(projectId);
         var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
@@ -192,20 +173,20 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     ///     {
     ///     }
     /// </remarks>
-    /// <param name="id">Идентификатор проекта</param>
+    /// <param name="projectId">Идентификатор проекта</param>
     /// <returns></returns>
     /// <response code="200">Данные о типах задач проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
-    [HttpGet("{id:guid}/Tags")]
+    [HttpGet("{projectId:guid}/Tags")]
     [ProducesResponseType(typeof(IEnumerable<TagResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<TagResponse>>> GetTagsByProjectidAsync(Guid id)
+    public async Task<ActionResult<IEnumerable<TagResponse>>> GetTagsByProjectidAsync([FromRoute] Guid projectId)
     {
         //FAQ: а это нормальный возвращаемый тип?
-        var query = new TagGetByProjectIdQuery(id);
+        var query = new TagGetByProjectIdQuery(projectId);
         var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
@@ -217,17 +198,17 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     ///     Пример запроса:
     ///     DELETE /api/v1/Projects/guid
     /// </remarks>
-    /// <param name="id">Идентификатор задачи для удаления</param>
+    /// <param name="projectId">Идентификатор задачи для удаления</param>
     /// <returns></returns>
     /// <response code="204">Задача успешно удалена</response>
     /// <response code="404">Не найдена задача для удаления</response>
     [Authorize(Policy = "CanViewProject")]
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{projectId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteProjectAsync(Guid id)
+    public async Task<IActionResult> DeleteProjectAsync([FromRoute] Guid projectId)
     {
-        ProjectDeleteByIdCommand command = new(id);
+        ProjectDeleteByIdCommand command = new(projectId);
         var response = await dispatcher.SendAsync(command);
         return NoContent();
     }

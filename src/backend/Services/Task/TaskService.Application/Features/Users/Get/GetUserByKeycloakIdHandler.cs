@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Features.WorkspaceMembers;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
 using TaskService.Infrastructure.Persistence;
@@ -25,13 +27,13 @@ public class GetUserByKeycloakIdHandler(TaskServiceDbContext context, HybridCach
             var userWorkspaces = existUser.WorkspaceMembers
                 .Select(x => new WorkSpaceMemberDto(x.WorkspaceId,
                     x.UserId,
-                    new RoleDto(x.Role.ToString())))
+                    x.Role.ToDto()))
                 .ToList();
 
             var userProjects = existUser.ProjectMembers
                 .Select(x => new ProjectMemberDto(x.ProjectId,
                     x.UserId,
-                    new RoleDto(x.Role.ToString())))
+                    x.Role.ToDto()))
                 .ToList();
 
             return new GetUserByKeycloakIdResult(existUser.Id, existUser.KeycloakId, userProjects, userWorkspaces);

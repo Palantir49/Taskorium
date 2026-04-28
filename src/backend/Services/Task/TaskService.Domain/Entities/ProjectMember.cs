@@ -1,8 +1,9 @@
-﻿using TaskService.Domain.Entities.Enums;
+﻿using TaskService.Domain.Entities.BaseEntity;
+using TaskService.Domain.Entities.Enums;
 
 namespace TaskService.Domain.Entities;
 
-public class ProjectMember
+public class ProjectMember : ISoftDeletable
 {
     protected ProjectMember()
     {
@@ -12,6 +13,9 @@ public class ProjectMember
     public Guid UserId { get; private set; }
     public Roles Role { get; private set; }
     public DateTimeOffset JoinedAt { get; private set; }
+    public bool IsDeleted { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
+
     private ProjectMember(Guid projectId, Guid userId, Roles role, DateTimeOffset joinedAt)
     {
         UserId = userId;

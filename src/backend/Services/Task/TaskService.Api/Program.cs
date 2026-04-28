@@ -82,6 +82,8 @@ if (app.Environment.IsDevelopment())
         options.AddHttpAuthentication("Bearer",
             opts => opts.WithToken(testToken));
     });
+
+    await app.Services.InitializeDatabaseAsync();
 }
 
 

@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Exceptions;
+using TaskService.Application.Features.WorkspaceMembers;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
 using TaskService.Domain.Entities;
@@ -34,7 +36,7 @@ public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache c
         }
 
         var projectMember =
-            ProjectMember.Create(command.ProjectId, command.UserId, command.RoleDto, DateTimeOffset.UtcNow);
+            ProjectMember.Create(command.ProjectId, command.UserId, command.RoleDto.ToEntity(), DateTimeOffset.UtcNow);
 
         await context.ProjectMembers.AddAsync(projectMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
@@ -44,6 +46,6 @@ public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache c
         await cache.RemoveAsync(cacheKey, cancellationToken);
         return new AddProjectMemberResult(existProject.Id,
             existUser.Id,
-            new RoleDto(projectMember.Role.ToString()));
+            projectMember.Role.ToDto());
     }
 }

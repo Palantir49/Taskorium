@@ -20,8 +20,11 @@ internal class IssueStatusConfiguration : IEntityTypeConfiguration<IssueStatus>
             .IsRequired().HasMaxLength(225);
 
         builder.Property(t => t.ProjectId).IsRequired();
+
         builder.Property(t => t.Type).IsRequired();
+
         builder.Property(t => t.Position).IsRequired();
+
         builder.Property(t => t.CreatedDate).IsRequired();
 
         builder.HasOne<Project>()
@@ -29,6 +32,9 @@ internal class IssueStatusConfiguration : IEntityTypeConfiguration<IssueStatus>
               .HasForeignKey(t => t.ProjectId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
-        builder.HasData(FakeDataFactory.IssueStatuses);
+
+        builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
+
+        //builder.HasData(FakeDataFactory.IssueStatuses);
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Exceptions;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
 using TaskService.Domain.Entities;
@@ -34,7 +35,7 @@ public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache
         }
 
         var workspaceMember =
-            WorkspaceMember.Create(command.WorkspaceId, command.UserId, command.Role, DateTimeOffset.UtcNow);
+            WorkspaceMember.Create(command.WorkspaceId, command.UserId, command.Role.ToEntity());
 
         await context.WorkspaceMembers.AddAsync(workspaceMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
@@ -46,6 +47,6 @@ public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache
 
         return new AddWorkspaceMemberResult(existWorkspace.Id,
             existUser.Id,
-            new RoleDto(workspaceMember.Role.ToString()));
+            workspaceMember.Role.ToDto());
     }
 }

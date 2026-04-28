@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using TaskService.Application.Commands.Workspaces.Get;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
 using TaskService.Infrastructure.Persistence;
@@ -22,7 +23,7 @@ namespace TaskService.Application.Features.WorkspaceMembers.GetAllUsers
             }
             var workspaceMembersDto = existUser.WorkspaceMembers.Select(x => new WorkSpaceMemberDto(WorkspaceId: x.WorkspaceId,
                                                                                                     UserId: x.UserId,
-                                                                                                    RoleDto: new RoleDto(x.Role.ToString())));
+                                                                                                    Role: x.Role.ToDto()));
 
             throw new NotImplementedException();
         }

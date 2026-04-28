@@ -13,9 +13,13 @@ public class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
     public void Configure(EntityTypeBuilder<Attachment> builder)
     {
         builder.HasKey(t => t.Id);
+
         builder.Property(t => t.Id).ValueGeneratedNever();
+
         builder.Property(t => t.IssueId).ValueGeneratedNever();
+
         builder.Property(t => t.UploaderId).ValueGeneratedNever();
+
         builder.Property(t => t.StoragePath).HasMaxLength(2000);
 
         builder.HasOne<User>()
@@ -29,6 +33,9 @@ public class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
               .HasForeignKey(t => t.IssueId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
-        builder.HasData(FakeDataFactory.Attachments);
+
+        builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
+
+        //builder.HasData(FakeDataFactory.Attachments);
     }
 }

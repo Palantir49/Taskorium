@@ -4,16 +4,17 @@ using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
 using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Mediator;
+using TaskService.Contracts.Enum;
 
 namespace TaskService.Api.Authorization.Handlers;
 
 /// <summary>
-///     Обработчик авторизации для рабоичих
+///     Обработчик авторизации для рабочей области
 /// </summary>
 public class WorkSpaceAccessHandler(
     IHttpContextAccessor httpContextAccessor,
     IDispatcher dispatcher,
-    ILogger<ProjectAccessHandler> logger)
+    ILogger<WorkSpaceAccessHandler> logger)
     : AuthorizationHandler<WorkSpaceAccessRequirement>
 {
     /// <summary>
@@ -23,13 +24,18 @@ public class WorkSpaceAccessHandler(
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
         WorkSpaceAccessRequirement requirement)
     {
-        logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над рабочей область",
+        logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над рабочей областью",
             requirement.Action);
-        var workspaceId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor);
+        if (requirement.Action == WorkSpaceAction.Create)
+        {
+            context.Succeed(requirement);
+            return;
+        }
+        var workspaceId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor, "workspaceId");
         if (workspaceId is null)
         {
             logger.LogInformation(
-                "В процессе авторизации для совершения действия {Action} над рабочей областью произошла ошибка: не удалось получить идентификатор задачи из запроса",
+                "В процессе авторизации для совершения действия {Action} над рабочей областью произошла ошибка: не удалось получить идентификатор рабочей области из запроса",
                 requirement.Action);
             context.Fail();
             return;
@@ -51,22 +57,22 @@ public class WorkSpaceAccessHandler(
 
         var wsMemberShip = user.WorkSpaceMembers?.FirstOrDefault(x => x.WorkspaceId == workspaceId);
 
-        switch (wsMemberShip?.RoleDto.roleName) //TODO enum
+        switch (wsMemberShip?.Role)
         {
-            case "Creator":
+            case RolesDto.Creator:
 
-            case "Admin": //TODO Set (unset) admin
+            case RolesDto.Admin: //TODO Set (unset) admin
                 context.Succeed(requirement);
                 return;
 
-            case "Member":
+            case RolesDto.Member:
                 if (requirement.Action is WorkSpaceAction.View or WorkSpaceAction.Update)
                 {
                     context.Succeed(requirement);
                 }
 
                 break;
-            case "Viewer":
+            case RolesDto.Viewer:
                 if (requirement.Action == WorkSpaceAction.View)
                 {
                     context.Succeed(requirement);

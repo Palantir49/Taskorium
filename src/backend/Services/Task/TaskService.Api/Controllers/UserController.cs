@@ -25,7 +25,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// ///
     /// <param name="id">Id пользователя</param>
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     [ActionName("GetUserByIdAsync")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -67,7 +67,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// ///
     /// <param name="query">Объект пагинации</param>
-    [HttpGet("GetAllUsers")]
+    [HttpGet("users")]
     [ActionName("GetAllUsersAsync")]
     [ProducesResponseType(typeof(GetUsersPageResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -107,7 +107,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// <param name="id">Id пользователя</param>
     /// <returns></returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -121,14 +121,16 @@ public class UserController(IDispatcher dispatcher) : Controller
     /// <summary>
     ///     Обновление логина пользователя
     /// </summary>
-    /// <param name="command">Id рабочей области и имя рабочей области</param>
+    /// <param name="id">Id пользователя</param>
+    /// <param name="email">Новое значение email</param>
     /// <returns></returns>
-    /// <response code="201">Имя рабочей области успешно обновлено</response>
+    /// <response code="201">Email пользователя успешно обновлен</response>
     /// <response code="400">Некорректный запрос</response>
-    [HttpPatch]
-    public async Task<ActionResult<UpdateUserEmailResult>> UpdateUserEmailAsync(
-        [FromBody] UpdateUserEmailCommand command)
+    [HttpPatch("{id:guid}")]
+    public async Task<ActionResult<UpdateUserEmailResult>> UpdateUserEmailAsync(Guid id,
+        [FromBody] string email)
     {
+        var command = new UpdateUserEmailCommand(id, email);
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }

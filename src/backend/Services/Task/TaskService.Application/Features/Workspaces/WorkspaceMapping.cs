@@ -12,7 +12,7 @@ public static class WorkspaceMapping
     //}
     public static CreateWorkspaceCommand ToCommand(this CreateWorkspaceRequest request)
     {
-        return new CreateWorkspaceCommand(Name: request.Name);
+        return new CreateWorkspaceCommand(Name: request.Name, OwnerId: request.OwnerId);
     }
     //TODO: UpdateCommand
     //TODO: DeleteCommand
