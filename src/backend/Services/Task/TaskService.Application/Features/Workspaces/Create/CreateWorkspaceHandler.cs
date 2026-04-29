@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Cache;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Enum;
@@ -7,7 +8,7 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Commands.Workspaces.Create;
 
-public class CreateWorkspaceHandler(TaskServiceDbContext context, HybridCache cache)
+public class CreateWorkspaceHandler(TaskServiceDbContext context, IAppCacheService cache)
     : IRequestHandler<CreateWorkspaceCommand, CreateWorkspaceResult>
 {
     public async Task<CreateWorkspaceResult> Handle(CreateWorkspaceCommand command,
@@ -29,8 +30,7 @@ public class CreateWorkspaceHandler(TaskServiceDbContext context, HybridCache ca
         await context.SaveChangesAsync(cancellationToken);
 
         //инвалидируем кэш
-        var cacheKey = $"user_by_keycloak_id_{existUser.KeycloakId}";
-        await cache.RemoveAsync(cacheKey, cancellationToken);
+        await cache.InvalidateUserByKeycloakIdCacheAsync(existUser.KeycloakId);
 
         return new CreateWorkspaceResult(
             workspace.Id,

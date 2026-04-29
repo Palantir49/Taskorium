@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Cache;
 using TaskService.Application.Exceptions;
 using TaskService.Application.Features.WorkspaceMembers;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
@@ -11,7 +12,7 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Commands.Workspaces.Create;
 
-public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache cache)
+public class AddProjectMemberHandler(TaskServiceDbContext context, IAppCacheService cache)
     : IRequestHandler<AddProjectMemberCommand, AddProjectMemberResult>
 {
     public async Task<AddProjectMemberResult> Handle(AddProjectMemberCommand command,
@@ -42,8 +43,7 @@ public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache c
         await context.SaveChangesAsync(cancellationToken);
 
         //инвалидируем кэш
-        var cacheKey = $"user_by_keycloak_id_{existUser.KeycloakId}";
-        await cache.RemoveAsync(cacheKey, cancellationToken);
+        await cache.InvalidateUserByKeycloakIdCacheAsync(existUser.KeycloakId);
         return new AddProjectMemberResult(existProject.Id,
             existUser.Id,
             projectMember.Role.ToDto());

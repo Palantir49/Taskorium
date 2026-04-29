@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Cache;
 using TaskService.Application.Commands.Projects;
 using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Exceptions;
@@ -9,11 +10,10 @@ using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
 using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Persistence;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TaskService.Application.Features.Projects.Handler;
 
-public class ProjectCreateHandler(TaskServiceDbContext context, HybridCache cache)
+public class ProjectCreateHandler(TaskServiceDbContext context, HybridCache cache, IAppCacheService appcache)
     : IRequestHandler<ProjectCreateCommand, ProjectResponse>
 {
     public async Task<ProjectResponse> Handle(ProjectCreateCommand command, CancellationToken cancellationToken = default)
@@ -77,8 +77,7 @@ public class ProjectCreateHandler(TaskServiceDbContext context, HybridCache cach
         var projectCacheKey = $"projects_by_workspace_{project.WorkspaceId}";
         await cache.RemoveAsync(projectCacheKey, cancellationToken);
 
-        var userCacheKey = $"user_by_keycloak_id_{existUser.KeycloakId}";
-        await cache.RemoveAsync(userCacheKey, cancellationToken);
+        await appcache.InvalidateUserByKeycloakIdCacheAsync(existUser.KeycloakId);
 
         return project.ToResponse();
     }

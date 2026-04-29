@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Cache;
 using TaskService.Application.Mediator;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Users.Delete;
 
-public class DeleteUserByIdAsync(TaskServiceDbContext context, HybridCache cache)
+public class DeleteUserByIdAsync(TaskServiceDbContext context, IAppCacheService cache)
     : IRequestHandler<DeleteUserByIdCommand, DeleteUserByIdResult>
 {
     public async Task<DeleteUserByIdResult> Handle(DeleteUserByIdCommand request,
@@ -20,8 +21,7 @@ public class DeleteUserByIdAsync(TaskServiceDbContext context, HybridCache cache
         await context.SaveChangesAsync(cancellationToken);
 
         //инвалидируем кэш
-        var cacheKey = $"user_by_keycloak_id_{user.KeycloakId}";
-        await cache.RemoveAsync(cacheKey, cancellationToken);
+        await cache.InvalidateUserByKeycloakIdCacheAsync(user.KeycloakId);
         return new DeleteUserByIdResult(user.Id,
             user.KeycloakId,
             user.Email.Value,
