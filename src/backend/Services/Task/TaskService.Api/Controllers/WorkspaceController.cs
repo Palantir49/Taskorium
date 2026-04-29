@@ -32,7 +32,7 @@ namespace TaskService.Api.Controllers;
 public class WorkspaceController(IDispatcher dispatcher) : Controller
 {
     /// <summary>
-    ///     Получить рабочей области по Id
+    ///     Получение рабочей области по Id
     /// </summary>
     /// ///
     /// <remarks>
@@ -62,7 +62,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     }
 
     /// <summary>
-    ///     Получить  рабочих областей
+    ///     Получить страницу рабочих областей
     /// </summary>
     /// ///
     /// <param name="query">Объект пагинации</param>
@@ -110,7 +110,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
         return Ok(response);
     }
     /// <summary>
-    ///     Создать новою рабочую область
+    ///     Создать новую рабочую область
     /// </summary>
     /// <remarks>
     ///     Пример запроса:
@@ -160,7 +160,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
         return Ok(response);
     }
     /// <summary>
-    ///     Создать новою задачу
+    ///     Создание задачи
     /// </summary>
     /// <remarks>
     ///     Пример запроса:
@@ -186,7 +186,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
         return Ok(response);
     }
     /// <summary>
-    ///     Создать проект в рабочей области рабочую область
+    ///     Создание проекта в рабочей области
     /// </summary>
     /// <param name="workspaceId">Id рабочей области</param>
     /// <param name="request">Данные создаваемого проекта</param>
