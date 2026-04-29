@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Cache;
+using TaskService.Application.Cache.Interfaces;
 using TaskService.Application.Commands.Projects;
 using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Exceptions;
@@ -13,7 +13,7 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Projects.Handler;
 
-public class ProjectCreateHandler(TaskServiceDbContext context, HybridCache cache, IAppCacheService appcache)
+public class ProjectCreateHandler(TaskServiceDbContext context, HybridCache cache, IUserCache appcache)
     : IRequestHandler<ProjectCreateCommand, ProjectResponse>
 {
     public async Task<ProjectResponse> Handle(ProjectCreateCommand command, CancellationToken cancellationToken = default)

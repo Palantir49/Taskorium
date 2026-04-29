@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Cache;
+using TaskService.Application.Cache.Interfaces;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Enum;
@@ -8,7 +8,7 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Commands.Workspaces.Create;
 
-public class CreateWorkspaceHandler(TaskServiceDbContext context, IAppCacheService cache)
+public class CreateWorkspaceHandler(TaskServiceDbContext context, IUserCache cache)
     : IRequestHandler<CreateWorkspaceCommand, CreateWorkspaceResult>
 {
     public async Task<CreateWorkspaceResult> Handle(CreateWorkspaceCommand command,

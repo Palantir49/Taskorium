@@ -6,6 +6,7 @@ using TaskService.Api.Handlers;
 using TaskService.Api.Middlewares;
 using TaskService.Api.Transformers;
 using TaskService.Application.Cache;
+using TaskService.Application.Cache.Interfaces;
 using TaskService.Application.Extensions;
 using TaskService.Infrastructure.Extensions;
 
@@ -14,7 +15,7 @@ builder.Configuration.Setup(builder.Environment.EnvironmentName);
 builder.Host.ValidateServices();
 builder.Services.AddServiceDefaults(builder.Configuration);
 builder.Services.AddScoped<RequestObservabilityMiddleware>();
-builder.Services.AddScoped<IAppCacheService, AppCacheService>();
+builder.Services.AddScoped<IUserCache, UserCache>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddHttpContextAccessor();

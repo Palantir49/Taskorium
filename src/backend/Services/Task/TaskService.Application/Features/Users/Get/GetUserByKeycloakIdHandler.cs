@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Cache;
+using TaskService.Application.Cache.Interfaces;
 using TaskService.Application.Features.WorkspaceMembers;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
@@ -9,7 +9,7 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Users.Get;
 
-public class GetUserByKeycloakIdHandler(/*TaskServiceDbContext context,*/ IAppCacheService cache)
+public class GetUserByKeycloakIdHandler(/*TaskServiceDbContext context,*/ IUserCache cache)
     : IRequestHandler<GetUserByKeycloakIdQuery, GetUserByKeycloakIdResult>
 {
     public async Task<GetUserByKeycloakIdResult> Handle(GetUserByKeycloakIdQuery query,

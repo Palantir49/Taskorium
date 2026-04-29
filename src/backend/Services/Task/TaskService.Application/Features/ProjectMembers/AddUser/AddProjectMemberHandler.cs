@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Cache;
+using TaskService.Application.Cache.Interfaces;
 using TaskService.Application.Exceptions;
 using TaskService.Application.Features.WorkspaceMembers;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
@@ -12,7 +12,7 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Commands.Workspaces.Create;
 
-public class AddProjectMemberHandler(TaskServiceDbContext context, IAppCacheService cache)
+public class AddProjectMemberHandler(TaskServiceDbContext context, IUserCache cache)
     : IRequestHandler<AddProjectMemberCommand, AddProjectMemberResult>
 {
     public async Task<AddProjectMemberResult> Handle(AddProjectMemberCommand command,

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Cache.Interfaces;
 using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Mapping;
 using TaskService.Contracts.Common.DTO;
@@ -8,10 +9,8 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Cache;
 
-public class AppCacheService(TaskServiceDbContext context, HybridCache cache) : IAppCacheService
+public class UserCache(TaskServiceDbContext context, HybridCache cache) : IUserCache
 {
-    private readonly string userByKeycloakIdcacheKey = $"user_by_keycloak_id";
-
     public Task<User?> GetUserByIdAsync(Guid id, CancellationToken ct = default)
     {
         throw new NotImplementedException();
@@ -24,7 +23,7 @@ public class AppCacheService(TaskServiceDbContext context, HybridCache cache) : 
 
     public async Task<GetUserByKeycloakIdResult> GetUserByKeycloakIdAsync(Guid id, CancellationToken ct = default)
     {
-        var cacheKey = $"{userByKeycloakIdcacheKey}_{id}";
+        var cacheKey = CacheKeys.UserByKeycloakId(id);
 
         return await cache.GetOrCreateAsync(cacheKey, async _ =>
         {
@@ -53,7 +52,7 @@ public class AppCacheService(TaskServiceDbContext context, HybridCache cache) : 
 
     public async Task InvalidateUserByKeycloakIdCacheAsync(Guid id, CancellationToken ct = default)
     {
-        var cacheKey = $"{userByKeycloakIdcacheKey}_{id}";
+        var cacheKey = CacheKeys.UserByKeycloakId(id);
         await cache.RemoveAsync(cacheKey, ct);
     }
 }

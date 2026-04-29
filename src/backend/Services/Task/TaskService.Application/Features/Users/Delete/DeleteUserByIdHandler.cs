@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Cache;
+using TaskService.Application.Cache.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Users.Delete;
 
-public class DeleteUserByIdAsync(TaskServiceDbContext context, IAppCacheService cache)
+public class DeleteUserByIdAsync(TaskServiceDbContext context, IUserCache cache)
     : IRequestHandler<DeleteUserByIdCommand, DeleteUserByIdResult>
 {
     public async Task<DeleteUserByIdResult> Handle(DeleteUserByIdCommand request,
