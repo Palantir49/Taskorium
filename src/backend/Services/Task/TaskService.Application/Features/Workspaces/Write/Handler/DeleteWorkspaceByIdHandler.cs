@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Features.Workspaces.Write.Command;
 using TaskService.Application.Features.Workspaces.Write.Result;
@@ -14,7 +15,7 @@ public class DeleteWorkspaceByIdHandler(TaskServiceDbContext context, HybridCach
 {
     public async Task<DeleteWorkspaceByIdResult> Handle(DeleteWorkspaceByIdCommand request, CancellationToken cancellationToken = default)
     {
-        var workspace = await context.Workspaces.FindAsync(request.Id);
+        var workspace = await context.Workspaces.Include(x => x.WorkspaceMembers).FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (workspace == null)
         {
             throw new ArgumentException();
