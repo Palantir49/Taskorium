@@ -25,6 +25,7 @@ public class Project : BaseEntities, ISoftDeletable
 
     public List<IssueStatus>? Statuses { get; protected set; } = new();
     public List<ProjectMember> ProjectMembers { get; private set; } = [];
+    public Workspace Workspace { get; set; } = null!;
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
 
