@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
+using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
@@ -12,7 +13,9 @@ namespace TaskService.Application.Features.Issues.Handler;
 
 public class IssueCreateHandler(
     TaskServiceDbContext context,
-    HybridCache cache /*, FileStorageService fileStorageService*/)
+    HybridCache cache,
+    //FileStorageService fileStorageService,
+    ICurrentUserContext currentUser)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
@@ -41,9 +44,12 @@ public class IssueCreateHandler(
             request.DueDate
         );
 
+        IssueAssignees assignee = IssueAssignees.Create(currentUser.User.Id, issue.Id, Roles.Creator);
+
         //TODO upload attachments if are not null or empty via fileStorageService
 
         await context.Issues.AddAsync(issue, cancellationToken);
+        await context.IssueAssignees.AddAsync(assignee, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         //инвалидация кэша
