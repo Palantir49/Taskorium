@@ -8,7 +8,18 @@ public class IssueAssugneesConfiguration : IEntityTypeConfiguration<IssueAssigne
 {
     public void Configure(EntityTypeBuilder<IssueAssignees> builder)
     {
-        builder.HasKey(t => new { t.UserId, t.IssueId });
+        builder.HasKey(k => new { k.UserId, k.IssueId });
+
+        builder.Property(p => p.UserId)
+            .IsRequired()
+            .ValueGeneratedNever();
+
+        builder.Property(p => p.IssueId)
+            .IsRequired()
+            .ValueGeneratedNever();
+
+        builder.Property(p => p.Role)
+            .IsRequired();
 
         builder.HasOne(x => x.User)
               .WithMany(x => x.issueAssignees)
