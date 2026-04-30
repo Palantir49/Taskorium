@@ -11,14 +11,14 @@ public class IssueAssugneesConfiguration : IEntityTypeConfiguration<IssueAssigne
         builder.HasKey(t => new { t.UserId, t.IssueId });
 
         builder.HasOne(x => x.User)
-              .WithMany()
+              .WithMany(x => x.issueAssignees)
               .HasForeignKey(t => t.UserId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Cascade);
 
 
         builder.HasOne(x => x.Issue)
-              .WithMany()
+              .WithMany(x => x.issueAssignees)
               .HasForeignKey(t => t.IssueId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Cascade);
