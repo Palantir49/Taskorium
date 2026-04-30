@@ -84,12 +84,6 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     public async Task<ActionResult<IssueResponse>> UpdateIssueAsync([FromRoute] Guid issueId,
         [FromBody] UpdateIssueRequest updateIssueRequest)
     {
-        //if (updateIssueRequest is null)
-        //{
-        //    return Task.FromResult<ActionResult<IssueResponse>>(Problem(type: "BadRequest", title: "Invalid request",
-        //        detail: "Некорректный запрос",
-        //        statusCode: StatusCodes.Status400BadRequest));
-        //}
         var command = IssueRequestToCommandMapping.CreateUpdateCommand(issueId, updateIssueRequest);
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
