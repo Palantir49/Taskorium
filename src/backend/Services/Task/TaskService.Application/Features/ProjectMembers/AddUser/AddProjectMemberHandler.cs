@@ -47,7 +47,7 @@ public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache c
 
         var cacheKey = $"user_by_keycloak_id_{existUser.KeycloakId}";
         await cache.RemoveAsync(cacheKey, cancellationToken);
-        
+
         return new AddProjectMemberResult(existProject.Id,
             existUser.Id,
             projectMember.Role.ToDto());

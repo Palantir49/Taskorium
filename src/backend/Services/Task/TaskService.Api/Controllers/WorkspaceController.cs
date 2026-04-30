@@ -1,6 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TaskService.Application.Features.Issues.Mapping;
+using TaskService.Application.Features.Projects.Write.Command;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
+using TaskService.Application.Features.Workspaces.Read.Query;
+using TaskService.Application.Features.Workspaces.Read.Result;
+using TaskService.Application.Features.Workspaces.Write.Command;
+using TaskService.Application.Features.Workspaces.Write.Result;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
@@ -8,13 +15,6 @@ using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Contracts.Workspace.Request;
 using TaskService.Contracts.Workspace.Response;
-using TaskService.Application.Features.Issues.Mapping;
-using TaskService.Application.Mapping;
-using TaskService.Application.Features.Workspaces.Read.Query;
-using TaskService.Application.Features.Workspaces.Write.Command;
-using TaskService.Application.Features.Workspaces.Read.Result;
-using TaskService.Application.Features.Workspaces.Write.Result;
-using TaskService.Application.Features.Projects.Write.Command;
 namespace TaskService.Api.Controllers;
 
 /*TODO Action: delete user from workspace
