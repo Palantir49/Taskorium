@@ -1,16 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Features.Projects.Command;
+using TaskService.Application.Features.Projects.Write.Command;
 using TaskService.Application.Mediator;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Features.Projects.Handler;
+namespace TaskService.Application.Features.Projects.Write.Handler;
 
-public class ProjectDeleteByIdHandler(TaskServiceDbContext context, HybridCache cache)
-    : IRequestHandler<ProjectDeleteByIdCommand, int>
+public class DeleteProjectByIdHandler(TaskServiceDbContext context, HybridCache cache)
+    : IRequestHandler<DeleteProjectByIdCommand, int>
 {
-    public async Task<int> Handle(ProjectDeleteByIdCommand request, CancellationToken cancellationToken = default)
+    public async Task<int> Handle(DeleteProjectByIdCommand request, CancellationToken cancellationToken = default)
     {
         Project project = await context.Projects.FindAsync(request.id, cancellationToken) ??
             throw new NullReferenceException($"Проект с id: {request.id} не найдена");

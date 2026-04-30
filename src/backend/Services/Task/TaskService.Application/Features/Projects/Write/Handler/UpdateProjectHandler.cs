@@ -1,16 +1,16 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Commands.Projects;
-using TaskService.Application.Features.Projects.Command;
+using TaskService.Application.Features.Projects.Write.Command;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Features.Projects.Handler;
+namespace TaskService.Application.Features.Projects.Write.Handler;
 
-public class ProjectUpdateHandler(TaskServiceDbContext context, HybridCache cache)
-    : IRequestHandler<ProjectUpdateCommand, ProjectResponse>
+public class UpdateProjectHandler(TaskServiceDbContext context, HybridCache cache)
+    : IRequestHandler<UpdateProjectCommand, ProjectResponse>
 {
-    public async Task<ProjectResponse> Handle(ProjectUpdateCommand request,
+    public async Task<ProjectResponse> Handle(UpdateProjectCommand request,
         CancellationToken cancellationToken = default)
     {
         var project = await context.Projects.FindAsync([request.id], cancellationToken) ??

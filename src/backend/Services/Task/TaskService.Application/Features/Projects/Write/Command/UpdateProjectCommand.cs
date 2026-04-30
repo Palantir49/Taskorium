@@ -1,9 +1,9 @@
 ﻿using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
 
-namespace TaskService.Application.Features.Projects.Command;
+namespace TaskService.Application.Features.Projects.Write.Command;
 
-public record ProjectUpdateCommand(
+public record UpdateProjectCommand(
     Guid id,
     string Name,
     string Description) : ICommand<ProjectResponse>;

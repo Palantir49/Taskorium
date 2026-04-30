@@ -1,16 +1,16 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Commands.Projects;
-using TaskService.Application.Features.Projects.Command;
+using TaskService.Application.Features.Projects.Read.Query;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Features.Projects.Handler;
+namespace TaskService.Application.Features.Projects.Read.Handler;
 
 public class ProjectGetByIdHandler(TaskServiceDbContext context, HybridCache cache)
-    : IRequestHandler<ProjectGetByIdQuery, ProjectResponse>
+    : IRequestHandler<GetProjectByIdQuery, ProjectResponse>
 {
-    public async Task<ProjectResponse> Handle(ProjectGetByIdQuery request,
+    public async Task<ProjectResponse> Handle(GetProjectByIdQuery request,
         CancellationToken cancellationToken = default)
     {
         var cacheKey = $"project_{request.Id}";

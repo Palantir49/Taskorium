@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Requests;
@@ -15,6 +14,7 @@ using TaskService.Application.Features.Workspaces.Read.Query;
 using TaskService.Application.Features.Workspaces.Write.Command;
 using TaskService.Application.Features.Workspaces.Read.Result;
 using TaskService.Application.Features.Workspaces.Write.Result;
+using TaskService.Application.Features.Projects.Write.Command;
 namespace TaskService.Api.Controllers;
 
 /*TODO Action: delete user from workspace
@@ -131,7 +131,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
         [FromBody] CreateWorkspaceCommand command)
     {
         var response = await dispatcher.SendAsync(command);
-        return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { response.Id }, response);
+        return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { workspaceId = response.Id }, response);
     }
 
     /// <summary>
@@ -200,7 +200,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ProjectResponse>> CreateProjectAsync([FromRoute] Guid workspaceId, [FromBody] CreateProjectRequest request)
     {
-        var command = new ProjectCreateCommand(Name: request.Name,
+        var command = new CreateProjectCommand(Name: request.Name,
                                                Description: request.Description,
                                                Abbreviation: request.Abbreviation,
                                                WorkspaceId: workspaceId,

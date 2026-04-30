@@ -1,17 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Commands.Projects;
-using TaskService.Application.Features.Projects.Command;
+using TaskService.Application.Features.Projects.Read.Query;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Features.Projects.Handler;
+namespace TaskService.Application.Features.Projects.Read.Handler;
 
-public class ProjectGetWorkspaceIdHandler(TaskServiceDbContext context, HybridCache cache)
-    : IRequestHandler<ProjectGetByWorkspaceIdQuery, IEnumerable<ProjectResponse>>
+public class GetProjectByWorkspaceIdHandler(TaskServiceDbContext context, HybridCache cache)
+    : IRequestHandler<GetProjectByWorkspaceIdQuery, IEnumerable<ProjectResponse>>
 {
-    public async Task<IEnumerable<ProjectResponse>> Handle(ProjectGetByWorkspaceIdQuery request,
+    public async Task<IEnumerable<ProjectResponse>> Handle(GetProjectByWorkspaceIdQuery request,
         CancellationToken cancellationToken = default)
     {
         var cacheKey = $"projects_by_workspace_{request.id}";

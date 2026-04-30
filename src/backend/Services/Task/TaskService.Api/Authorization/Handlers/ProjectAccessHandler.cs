@@ -2,7 +2,7 @@
 using TaskService.Api.Authorization.Actions;
 using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
-using TaskService.Application.Features.Projects.Command;
+using TaskService.Application.Features.Projects.Read.Query;
 using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
@@ -47,7 +47,7 @@ public class ProjectAccessHandler(
 
 
         //get project
-        var projectQuery = new ProjectGetByIdQuery(projectId);
+        var projectQuery = new GetProjectByIdQuery(projectId);
         var project = await dispatcher.SendAsync(projectQuery);
 
 

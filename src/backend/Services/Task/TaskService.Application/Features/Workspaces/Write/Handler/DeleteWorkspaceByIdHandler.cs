@@ -15,7 +15,11 @@ public class DeleteWorkspaceByIdHandler(TaskServiceDbContext context, HybridCach
 {
     public async Task<DeleteWorkspaceByIdResult> Handle(DeleteWorkspaceByIdCommand request, CancellationToken cancellationToken = default)
     {
-        var workspace = await context.Workspaces.Include(x => x.WorkspaceMembers).FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var workspace = await context.Workspaces.Include(w => w.WorkspaceMembers)
+                                                .Include(w => w.Projects)
+                                                .ThenInclude(p => p.ProjectMembers)
+                                                .AsSplitQuery()
+                                                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (workspace == null)
         {
             throw new ArgumentException();

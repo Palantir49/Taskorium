@@ -1,9 +1,9 @@
 ﻿using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
 
-namespace TaskService.Application.Commands.Projects.Command
+namespace TaskService.Application.Features.Projects.Write.Command
 {
-    public record ProjectCreateCommand(
+    public record CreateProjectCommand(
     string Name,
     string Description,
     string Abbreviation,

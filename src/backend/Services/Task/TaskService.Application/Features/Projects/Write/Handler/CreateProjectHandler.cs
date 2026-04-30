@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Commands.Projects;
-using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Exceptions;
+using TaskService.Application.Features.Projects.Write.Command;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Enum;
 using TaskService.Contracts.Project.Responses;
@@ -11,12 +11,12 @@ using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Persistence;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace TaskService.Application.Features.Projects.Handler;
+namespace TaskService.Application.Features.Projects.Write.Handler;
 
-public class ProjectCreateHandler(TaskServiceDbContext context, HybridCache cache)
-    : IRequestHandler<ProjectCreateCommand, ProjectResponse>
+public class CreateProjectHandler(TaskServiceDbContext context, HybridCache cache)
+    : IRequestHandler<CreateProjectCommand, ProjectResponse>
 {
-    public async Task<ProjectResponse> Handle(ProjectCreateCommand command, CancellationToken cancellationToken = default)
+    public async Task<ProjectResponse> Handle(CreateProjectCommand command, CancellationToken cancellationToken = default)
     {
         _ = await context.Workspaces.FindAsync([command.WorkspaceId], cancellationToken) ??
             throw new KeyNotFoundException($"Рабочая область с id: {command.WorkspaceId} не найдена");
