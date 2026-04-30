@@ -22,7 +22,7 @@ public class Project : BaseEntities, ISoftDeletable
     public DateTimeOffset? StartDate { get; private set; }
     public string Abbreviation { get; private set; } = null!;
     public DateTimeOffset? FinishDate { get; private set; }
-
+    public List<Issue>? Issues { get; protected set; } = new();
     public List<IssueStatus>? Statuses { get; protected set; } = new();
     public List<ProjectMember> ProjectMembers { get; private set; } = [];
     public Workspace Workspace { get; set; } = null!;

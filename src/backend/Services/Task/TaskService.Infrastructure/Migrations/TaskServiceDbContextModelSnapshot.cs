@@ -34,7 +34,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("IssueTag");
+                    b.ToTable("IssueTag", (string)null);
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Attachment", b =>
@@ -65,7 +65,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasIndex("UploaderId");
 
-                    b.ToTable("Attachments");
+                    b.ToTable("Attachments", (string)null);
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Issue", b =>
@@ -124,7 +124,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Issues");
+                    b.ToTable("Issues", (string)null);
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.IssueStatus", b =>
@@ -159,7 +159,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("IssueStatus");
+                    b.ToTable("IssueStatus", (string)null);
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Project", b =>
@@ -203,7 +203,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasIndex("WorkspaceId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.ProjectMember", b =>
@@ -231,7 +231,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ProjectMembers");
+                    b.ToTable("ProjectMembers", (string)null);
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Tag", b =>
@@ -260,7 +260,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.User", b =>
@@ -297,7 +297,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.Workspace", b =>
@@ -321,7 +321,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Workspaces");
+                    b.ToTable("Workspaces", (string)null);
                 });
 
             modelBuilder.Entity("TaskService.Domain.Entities.WorkspaceMember", b =>
@@ -349,7 +349,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasIndex("WorkspaceId");
 
-                    b.ToTable("WorkspaceMembers");
+                    b.ToTable("WorkspaceMembers", (string)null);
                 });
 
             modelBuilder.Entity("IssueTag", b =>
