@@ -1,32 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
-using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Infrastructure.Configurations
+namespace TaskService.Infrastructure.Configurations;
+
+public class IssueAssugneesConfiguration : IEntityTypeConfiguration<IssueAssignees>
 {
-    public class IssueAssugneesConfiguration : IEntityTypeConfiguration<IssueAssignees>
+    public void Configure(EntityTypeBuilder<IssueAssignees> builder)
     {
-        public void Configure(EntityTypeBuilder<IssueAssignees> builder)
-        {
-            builder.HasKey(t => new { t.UserId, t.IssueId });
+        builder.HasKey(t => new { t.UserId, t.IssueId });
 
-            builder.HasOne(x => x.User)
-                  .WithMany()
-                  .HasForeignKey(t => t.UserId)
-                  .IsRequired()
-                  .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(x => x.User)
+              .WithMany()
+              .HasForeignKey(t => t.UserId)
+              .IsRequired()
+              .OnDelete(DeleteBehavior.Cascade);
 
 
-            builder.HasOne(x => x.Issue)
-                  .WithMany()
-                  .HasForeignKey(t => t.IssueId)
-                  .IsRequired()
-                  .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(x => x.Issue)
+              .WithMany()
+              .HasForeignKey(t => t.IssueId)
+              .IsRequired()
+              .OnDelete(DeleteBehavior.Cascade);
 
-        }
     }
 }
