@@ -15,6 +15,8 @@ public class ProjectMember : ISoftDeletable
     public DateTimeOffset JoinedAt { get; private set; }
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
+    public User User { get; set; } = null!;
+    public Project Project { get; set; } = null!;
 
     private ProjectMember(Guid projectId, Guid userId, Roles role, DateTimeOffset joinedAt)
     {
