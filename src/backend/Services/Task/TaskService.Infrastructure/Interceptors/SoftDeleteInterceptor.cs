@@ -22,7 +22,7 @@ namespace TaskService.Infrastructure.Interceptors
 
                 entry.State = EntityState.Modified;
                 entry.Entity.IsDeleted = true;
-                entry.Entity.DeletedAt = DateTime.UtcNow;
+                entry.Entity.DeletedAt = DateTimeOffset.UtcNow;
 
                 CascadeSoftDelete(eventData.Context, entry.Entity);
             }
@@ -44,14 +44,14 @@ namespace TaskService.Infrastructure.Interceptors
                     {
                         if (child.IsDeleted) continue;
                         child.IsDeleted = true;
-                        child.DeletedAt = DateTime.UtcNow;
+                        child.DeletedAt = DateTimeOffset.UtcNow;
                         context.Entry(child).State = EntityState.Modified;
                     }
                 }
                 else if (navigation.CurrentValue is ISoftDeletable child && !child.IsDeleted)
                 {
                     child.IsDeleted = true;
-                    child.DeletedAt = DateTime.UtcNow;
+                    child.DeletedAt = DateTimeOffset.UtcNow;
                     context.Entry(child).State = EntityState.Modified;
                 }
             }
