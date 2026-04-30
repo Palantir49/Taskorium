@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Commands.Projects.Command;
-using TaskService.Application.Commands.Workspaces.Create;
-using TaskService.Application.Commands.Workspaces.Get;
 using TaskService.Application.Features.Issues.Mapping;
-using TaskService.Application.Features.Users.Get;
+using TaskService.Application.Features.Projects.Write.Command;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
-using TaskService.Application.Features.Workspaces.Delete;
-using TaskService.Application.Features.Workspaces.Get;
-using TaskService.Application.Features.Workspaces.Update;
+using TaskService.Application.Features.Workspaces.Read.Query;
+using TaskService.Application.Features.Workspaces.Read.Result;
+using TaskService.Application.Features.Workspaces.Write.Command;
+using TaskService.Application.Features.Workspaces.Write.Result;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Requests;
@@ -34,7 +32,7 @@ namespace TaskService.Api.Controllers;
 public class WorkspaceController(IDispatcher dispatcher) : Controller
 {
     /// <summary>
-    ///     Получить рабочей области по Id
+    ///     Получение рабочей области по Id
     /// </summary>
     /// ///
     /// <remarks>
@@ -64,14 +62,14 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     }
 
     /// <summary>
-    ///     Получить список рабочих области
+    ///     Получить страницу рабочих областей
     /// </summary>
     /// ///
     /// <param name="query">Объект пагинации</param>
     /// <response code="200">Список рабочих областей успешно получен</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найдена рабочая область по заданному id</response>
-    [HttpGet("workspaces")]
+    [HttpGet("page")]
     [ActionName("GetWorkspacePageAsync")]
     [ProducesResponseType(typeof(GetWorkspacebyIdResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -89,7 +87,30 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     }
 
     /// <summary>
-    ///     Создать новою рабочую область
+    ///     Получить страницу удаленных рабочих областей
+    /// </summary>
+    /// 
+    /// <param name="query">Объект пагинации</param>
+    /// <response code="200">Список удаленных рабочих областей</response>
+    /// <response code="400">Некорректный запрос</response>
+    [HttpGet("deleted")]
+    [ActionName(nameof(GetDeletedWorkspacePageAsync))]
+    [ProducesResponseType(typeof(GetWorkspacebyIdResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<GetDeletedWorkspacePageResult>> GetDeletedWorkspacePageAsync(
+      [FromQuery] GetDeletedWorkspacePageQuery query)
+    {
+        var response = await dispatcher.SendAsync(query);
+        if (response == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(response);
+    }
+    /// <summary>
+    ///     Создать новую рабочую область
     /// </summary>
     /// <remarks>
     ///     Пример запроса:
@@ -110,7 +131,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
         [FromBody] CreateWorkspaceCommand command)
     {
         var response = await dispatcher.SendAsync(command);
-        return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { response.Id }, response);
+        return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { workspaceId = response.Id }, response);
     }
 
     /// <summary>
@@ -139,7 +160,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
         return Ok(response);
     }
     /// <summary>
-    ///     Создать новою задачу
+    ///     Создание задачи
     /// </summary>
     /// <remarks>
     ///     Пример запроса:
@@ -165,7 +186,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
         return Ok(response);
     }
     /// <summary>
-    ///     Создать проект в рабочей области рабочую область
+    ///     Создание проекта в рабочей области
     /// </summary>
     /// <param name="workspaceId">Id рабочей области</param>
     /// <param name="request">Данные создаваемого проекта</param>
@@ -179,7 +200,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ProjectResponse>> CreateProjectAsync([FromRoute] Guid workspaceId, [FromBody] CreateProjectRequest request)
     {
-        var command = new ProjectCreateCommand(Name: request.Name,
+        var command = new CreateProjectCommand(Name: request.Name,
                                                Description: request.Description,
                                                Abbreviation: request.Abbreviation,
                                                WorkspaceId: workspaceId,

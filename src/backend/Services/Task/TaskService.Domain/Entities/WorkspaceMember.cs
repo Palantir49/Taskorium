@@ -14,7 +14,8 @@ namespace TaskService.Domain.Entities
         public DateTimeOffset JoinedAt { get; private set; }
         public bool IsDeleted { get; set; }
         public DateTimeOffset? DeletedAt { get; set; }
-
+        public Workspace Workspace { get; private set; } = null!;
+        public User User { get; private set; } = null!;
         public WorkspaceMember()
         {
 

@@ -1,6 +1,0 @@
-﻿using TaskService.Application.Mediator;
-using TaskService.Contracts.Project.Responses;
-
-namespace TaskService.Application.Features.Projects.Command;
-
-public record class ProjectGetByWorkspaceIdQuery(Guid id) : IQuery<IEnumerable<ProjectResponse>>;

@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Projects;
-using TaskService.Application.Commands.Projects.Command;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.IssueStatuses.Command;
-using TaskService.Application.Features.Projects.Command;
+using TaskService.Application.Features.Projects.Read.Query;
+using TaskService.Application.Features.Projects.Write.Command;
 using TaskService.Application.Features.Tags.Command;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
 using TaskService.Application.Mediator;
@@ -74,11 +74,30 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ProjectResponse>> GetProjectByIdAsync([FromRoute] Guid projectId)
     {
-        var query = new ProjectGetByIdQuery(projectId);
+        var query = new GetProjectByIdQuery(projectId);
         var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
-
+    /// <summary>
+    ///     Получение пользователей проекта
+    /// </summary>
+    /// 
+    /// <param name="projectId">Идентификатор проекта</param>
+    /// <response code="200">Данные о проекте успешно получены</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найден проект по заданному id</response>
+    [Authorize(Policy = "CanViewProject")]
+    [HttpGet("{projectId:guid}/members")]
+    [ActionName("GetProjectByIdAsync")]
+    [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ProjectResponse>> GetProjectMembersAsync([FromRoute] Guid projectId)
+    {
+        var query = new GetProjectMembersQuery(projectId);
+        var response = await dispatcher.SendAsync(query);
+        return Ok(response);
+    }
     /// <summary>
     ///     Обновить данные проекта по Id
     /// </summary>
@@ -208,7 +227,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteProjectAsync([FromRoute] Guid projectId)
     {
-        ProjectDeleteByIdCommand command = new(projectId);
+        DeleteProjectByIdCommand command = new(projectId);
         var response = await dispatcher.SendAsync(command);
         return NoContent();
     }

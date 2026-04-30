@@ -27,8 +27,8 @@ namespace TaskService.Infrastructure.Configurations
 
             builder.Property(p => p.WorkspaceId).IsRequired();
 
-            builder.HasOne<Workspace>()
-                .WithMany()
+            builder.HasOne(p => p.Workspace)
+                .WithMany(w => w.Projects)
                 .HasForeignKey(p => p.WorkspaceId);
 
             builder.Property(p => p.StartDate);

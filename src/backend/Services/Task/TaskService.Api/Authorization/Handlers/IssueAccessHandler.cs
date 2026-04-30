@@ -3,7 +3,7 @@ using TaskService.Api.Authorization.Actions;
 using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
 using TaskService.Application.Features.Issues.Command;
-using TaskService.Application.Features.Projects.Command;
+using TaskService.Application.Features.Projects.Read.Query;
 using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Enum;
@@ -49,7 +49,7 @@ public class IssueAccessHandler(
 
 
         //get project
-        var projectQuery = new ProjectGetByIdQuery(issue.ProjectId);
+        var projectQuery = new GetProjectByIdQuery(issue.ProjectId);
         var project = await dispatcher.SendAsync(projectQuery);
 
 

@@ -19,8 +19,11 @@ public class GetUserByKeycloakIdHandler(TaskServiceDbContext context, HybridCach
         return await cache.GetOrCreateAsync(cacheKey, async _ =>
         {
             var existUser = await context.Users
-                                .Include(x => x.WorkspaceMembers)
-                                .Include(x => x.ProjectMembers)
+                                .Include(u => u.WorkspaceMembers)
+                                    .ThenInclude(wm => wm.Workspace)
+                                .Include(u => u.ProjectMembers)
+                                .ThenInclude(pm => pm.Project)
+                                .AsSplitQuery()
                                 .FirstOrDefaultAsync(x => x.KeycloakId == query.KeycloakId, cancellationToken) ??
                             throw new KeyNotFoundException(
                                 $"Пользователь с таким keycloak id {query.KeycloakId} не существует");

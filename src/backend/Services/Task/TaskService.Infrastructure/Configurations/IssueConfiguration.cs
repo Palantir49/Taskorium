@@ -39,7 +39,7 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
         builder.Property(t => t.IssueType).IsRequired();
 
         builder.HasOne<Project>()
-              .WithMany()
+              .WithMany(x => x.Issues)
               .HasForeignKey(t => t.ProjectId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);

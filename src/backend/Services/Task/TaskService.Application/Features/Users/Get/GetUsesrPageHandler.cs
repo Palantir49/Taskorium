@@ -17,11 +17,11 @@ public class GetUsesrPageHandler(TaskServiceDbContext context) : IRequestHandler
         .AsNoTracking()
         .Skip(request.skip)
         .Take(request.take)
-        .Select(x => new UserResponse(id: x.Id,
-                                      keycloakId: x.KeycloakId,
-                                      email: x.Email.Value,
-                                      username: x.Username.Value,
-                                      createdAt: x.CreatedDate))
+        .Select(x => new UserResponse(Id: x.Id,
+                                      KeycloakId: x.KeycloakId,
+                                      Email: x.Email.Value,
+                                      UserName: x.Username.Value,
+                                      CreatedAt: x.CreatedDate))
         .ToListAsync();
 
         return new GetUsersPageResult(users: result);

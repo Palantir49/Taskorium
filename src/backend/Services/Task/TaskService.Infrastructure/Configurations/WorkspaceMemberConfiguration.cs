@@ -13,12 +13,12 @@ public class WorkspaceMemberConfiguration : IEntityTypeConfiguration<WorkspaceMe
 
         builder.Property(x => x.JoinedAt).IsRequired();
 
-        builder.HasOne<User>()
+        builder.HasOne(x => x.User)
             .WithMany(x => x.WorkspaceMembers)
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<Workspace>()
+        builder.HasOne(x => x.Workspace)
             .WithMany(x => x.WorkspaceMembers)
             .HasForeignKey(x => x.WorkspaceId)
             .OnDelete(DeleteBehavior.Cascade);

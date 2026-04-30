@@ -1,5 +1,4 @@
-﻿using TaskService.Application.Commands.Projects.Command;
-using TaskService.Application.Features.Projects.Command;
+﻿using TaskService.Application.Features.Projects.Write.Command;
 using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
@@ -29,9 +28,9 @@ public static class ProjectMapping
             CreatedDate: project.CreatedDate);
     }
 
-    public static ProjectUpdateCommand ProjectUpdateCommand(Guid id, UpdateProjectRequest request)
+    public static UpdateProjectCommand ProjectUpdateCommand(Guid id, UpdateProjectRequest request)
     {
-        return new ProjectUpdateCommand(
+        return new UpdateProjectCommand(
             id: id,
             Name: request.Name,
             Description: request.Description);
