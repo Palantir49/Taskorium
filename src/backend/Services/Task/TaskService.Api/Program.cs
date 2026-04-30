@@ -4,8 +4,10 @@ using Taskorium.ServiceDefaults;
 using TaskService.Api.Extensions;
 using TaskService.Api.Handlers;
 using TaskService.Api.Middlewares;
+using TaskService.Api.Middlewares.CurrentUserContext;
 using TaskService.Api.Transformers;
 using TaskService.Application.Extensions;
+using TaskService.Application.Interfaces;
 using TaskService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,8 @@ builder.Configuration.Setup(builder.Environment.EnvironmentName);
 builder.Host.ValidateServices();
 builder.Services.AddServiceDefaults(builder.Configuration);
 builder.Services.AddScoped<RequestObservabilityMiddleware>();
+builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+builder.Services.AddScoped<CurrentUserMiddleware>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddHttpContextAccessor();
@@ -64,6 +68,7 @@ app.UseExceptionHandler();
 // Включение CORS
 app.UseCors("AllowReactApp");
 app.UseAuthentication();
+app.UseMiddleware<CurrentUserMiddleware>();
 app.UseAuthorization();
 
 // Configure the HTTP request pipeline.

@@ -4,6 +4,7 @@ using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
 using TaskService.Application.Features.Projects.Command;
 using TaskService.Application.Features.Users.Get;
+using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Enum;
 
@@ -15,7 +16,8 @@ namespace TaskService.Api.Authorization.Handlers;
 public class ProjectAccessHandler(
     IHttpContextAccessor httpContextAccessor,
     IDispatcher dispatcher,
-    ILogger<ProjectAccessHandler> logger)
+    ILogger<ProjectAccessHandler> logger,
+    ICurrentUserContext userContext)
     : AuthorizationHandler<ProjectAccessRequirement>
 {
     /// <summary>
@@ -60,6 +62,7 @@ public class ProjectAccessHandler(
         }
 
         //get user
+        var tmpuser = userContext.User;
         var user = await dispatcher.SendAsync(new GetUserByKeycloakIdQuery(userKeyCloakId));
 
         var wsMemberShip = user.WorkSpaceMembers?.FirstOrDefault(x => x.WorkspaceId == project.WorkspaceId);
