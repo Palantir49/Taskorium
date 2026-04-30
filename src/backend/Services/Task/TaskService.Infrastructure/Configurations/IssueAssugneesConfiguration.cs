@@ -34,5 +34,6 @@ public class IssueAssugneesConfiguration : IEntityTypeConfiguration<IssueAssigne
               .IsRequired()
               .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
     }
 }

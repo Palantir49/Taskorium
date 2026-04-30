@@ -1,8 +1,9 @@
-﻿using TaskService.Domain.Entities.Enums;
+﻿using TaskService.Domain.Entities.BaseEntity;
+using TaskService.Domain.Entities.Enums;
 
 namespace TaskService.Domain.Entities;
 
-public class IssueAssignees
+public class IssueAssignees : ISoftDeletable
 {
     public Guid UserId { get; private set; }
     public User User { get; private set; } = null!;
@@ -11,6 +12,9 @@ public class IssueAssignees
     public Issue Issue { get; private set; } = null!;
 
     public Roles Role { get; private set; }
+
+    public bool IsDeleted { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
 
     protected IssueAssignees() { }
 
