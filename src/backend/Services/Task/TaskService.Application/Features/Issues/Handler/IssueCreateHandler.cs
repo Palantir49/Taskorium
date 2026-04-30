@@ -2,17 +2,21 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
+using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
 using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Persistence;
+using TaskService.Infrastructure.Services;
 
 namespace TaskService.Application.Features.Issues.Handler;
 
 public class IssueCreateHandler(
     TaskServiceDbContext context,
-    HybridCache cache /*, FileStorageService fileStorageService*/)
+    HybridCache cache,
+    FileStorageService fileStorageService,
+    ICurrentUserContext currentUser)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
@@ -41,9 +45,25 @@ public class IssueCreateHandler(
             request.DueDate
         );
 
-        //TODO upload attachments if are not null or empty via fileStorageService
+        IssueAssignees assignee = IssueAssignees.Create(
+            userId: currentUser.User.Id,
+            issueId: issue.Id,
+            role: Roles.Creator);
+
+        if (request.AttachmentDtos != null)
+        {
+            foreach (var attach in request.AttachmentDtos)
+            {
+                await fileStorageService.UploadAsync(
+                    name: attach.Name,
+                    contentType: attach.ContentType,
+                    stream: attach.Content,
+                    token: cancellationToken);
+            }
+        }
 
         await context.Issues.AddAsync(issue, cancellationToken);
+        await context.IssueAssignees.AddAsync(assignee, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         //инвалидация кэша

@@ -469,6 +469,100 @@ public class FakeDataFactory
            );
     }
 
+    public static IEnumerable<IssueAssignees> GetIssueAssignees()
+    {
+        yield return IssueAssignees.Create(
+     userId: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
+     issueId: Guid.Parse("00000000-0000-0000-0000-000000000001"),
+     role: Roles.Creator);
+
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000002"),
+            role: Roles.Creator);
+
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000003"),
+            role: Roles.Creator);
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("00000000-0000-0000-0000-000000000004"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000003"),
+            role: Roles.Member);
+
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000004"),
+            role: Roles.Creator);
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("00000000-0000-0000-0000-000000000777"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000004"),
+            role: Roles.Member);
+
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000005"),
+            role: Roles.Creator);
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("00000000-0000-0000-0000-000000000777"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000005"),
+            role: Roles.Member);
+
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000006"),
+            role: Roles.Creator);
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("00000000-0000-0000-0000-000000000777"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000006"),
+            role: Roles.Member);
+
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000007"),
+            role: Roles.Creator);
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("00000000-0000-0000-0000-000000000777"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000007"),
+            role: Roles.Member);
+
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000008"),
+            role: Roles.Creator);
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("00000000-0000-0000-0000-000000000777"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000008"),
+            role: Roles.Member);
+
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000009"),
+            role: Roles.Creator);
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("00000000-0000-0000-0000-000000000777"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000009"),
+            role: Roles.Member);
+
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000010"),
+            role: Roles.Creator);
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("00000000-0000-0000-0000-000000000777"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000010"),
+            role: Roles.Member);
+
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000011"),
+            role: Roles.Creator);
+        yield return IssueAssignees.Create(
+            userId: Guid.Parse("00000000-0000-0000-0000-000000000777"),
+            issueId: Guid.Parse("00000000-0000-0000-0000-000000000011"),
+            role: Roles.Member);
+    }
+
     public static IEnumerable<(Guid id, Tag tag)> GetTags()
     {
         yield return (
