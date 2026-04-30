@@ -46,8 +46,8 @@ public class IssueCreateHandler(
         );
 
         IssueAssignees assignee = IssueAssignees.Create(
-            userId: currentUser.User.Id, 
-            issueId: issue.Id, 
+            userId: currentUser.User.Id,
+            issueId: issue.Id,
             role: Roles.Creator);
 
         if (request.AttachmentDtos != null)
