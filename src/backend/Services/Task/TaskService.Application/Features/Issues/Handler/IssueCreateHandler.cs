@@ -8,13 +8,14 @@ using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
 using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Persistence;
+using TaskService.Infrastructure.Services;
 
 namespace TaskService.Application.Features.Issues.Handler;
 
 public class IssueCreateHandler(
     TaskServiceDbContext context,
     HybridCache cache,
-    //FileStorageService fileStorageService,
+    FileStorageService fileStorageService,
     ICurrentUserContext currentUser)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
@@ -44,9 +45,22 @@ public class IssueCreateHandler(
             request.DueDate
         );
 
-        IssueAssignees assignee = IssueAssignees.Create(currentUser.User.Id, issue.Id, Roles.Creator);
+        IssueAssignees assignee = IssueAssignees.Create(
+            userId: currentUser.User.Id, 
+            issueId: issue.Id, 
+            role: Roles.Creator);
 
-        //TODO upload attachments if are not null or empty via fileStorageService
+        if (request.AttachmentDtos != null)
+        {
+            foreach (var attach in request.AttachmentDtos)
+            {
+                await fileStorageService.UploadAsync(
+                    name: attach.Name,
+                    contentType: attach.ContentType,
+                    stream: attach.Content,
+                    token: cancellationToken);
+            }
+        }
 
         await context.Issues.AddAsync(issue, cancellationToken);
         await context.IssueAssignees.AddAsync(assignee, cancellationToken);
