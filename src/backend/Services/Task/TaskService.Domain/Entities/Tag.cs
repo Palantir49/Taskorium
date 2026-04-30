@@ -6,7 +6,7 @@ public class Tag : BaseEntities, ISoftDeletable
 {
     public Guid ProjectId { get; }
 
-    public List<Issue> Issues { get; private set; } = new();
+    public ICollection<Issue> Issues { get; private set; } = [];
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
 

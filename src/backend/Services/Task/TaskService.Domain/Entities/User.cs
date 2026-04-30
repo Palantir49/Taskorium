@@ -26,8 +26,8 @@ public class User : ISoftDeletable
     public UserName Username { get; private set; } = null!;
     public DateTimeOffset CreatedDate { get; }
     public string FullName { get; } = null!;
-    public List<WorkspaceMember> WorkspaceMembers { get; private set; } = [];
-    public List<ProjectMember> ProjectMembers { get; private set; } = [];
+    public ICollection<WorkspaceMember> WorkspaceMembers { get; private set; } = [];
+    public ICollection<ProjectMember> ProjectMembers { get; private set; } = [];
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
 

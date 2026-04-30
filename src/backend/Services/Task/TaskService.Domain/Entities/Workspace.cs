@@ -6,8 +6,8 @@ public class Workspace : BaseEntities, ISoftDeletable
 {
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
-    public List<WorkspaceMember> WorkspaceMembers { get; private set; } = [];
-    public List<Project> Projects { get; private set; } = [];
+    public ICollection<WorkspaceMember> WorkspaceMembers { get; private set; } = [];
+    public ICollection<Project> Projects { get; private set; } = [];
     protected Workspace() { }
     private Workspace(Guid id, string name) : base(id, name) { }
     public static Workspace Create(string name)
