@@ -10,7 +10,7 @@ public class CurrentUserContext : ICurrentUserContext
     /// <summary>
     /// Юзер
     /// </summary>
-    public GetUserByKeycloakIdResult? User { get; private set; }
+    public GetUserByKeycloakIdResult User { get; private set; } = null!;
 
     /// <summary>
     /// проверка инициализации юзера
