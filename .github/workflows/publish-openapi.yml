@@ -1,0 +1,52 @@
+﻿name: Publish OpenAPI
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'src/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        working-directory: ./src/backend
+        run: dotnet restore Taskorium.slnx
+
+      - name: Build and generate OpenAPI
+        working-directory: ./src/backend
+        run: dotnet build Taskorium.slnx --no-restore
+
+      - name: Prepare pages content
+        run: |
+          mkdir -p ./pages
+          cp openapi/openapi.json ./pages/openapi.json
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./pages
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
