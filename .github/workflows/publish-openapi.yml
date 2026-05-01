@@ -35,10 +35,23 @@ jobs:
         working-directory: ./src/backend
         run: dotnet build Taskorium.slnx --no-restore
 
-      - name: Prepare pages content
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install orval
+        run: npm install -g orval
+
+      - name: Prepare pages directory
+        run: mkdir -p ./pages/client
+
+      - name: Copy OpenAPI spec
+        run: cp openapi/openapi.json ./pages/openapi.json
+
+      - name: Generate TypeScript axios client
         run: |
-          mkdir -p ./pages
-          cp openapi/openapi.json ./pages/openapi.json
+          orval --input ./pages/openapi.json --output ./pages/client --client axios
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
