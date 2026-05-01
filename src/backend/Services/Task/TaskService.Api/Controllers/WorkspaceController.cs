@@ -62,6 +62,35 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     }
 
     /// <summary>
+    ///     Получение участников рабочей области
+    /// </summary>
+    /// ///
+    /// <remarks>
+    ///     Пример запроса:
+    ///     GET /api/v1/Workspaces/workspaceId/members
+    /// </remarks>
+    /// <param name="workspaceId">Идентификатор рабочей области</param>
+    /// <response code="200">Участники рабочей области получены успешно</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найдена рабочая область по заданному id</response>
+    [Authorize(Policy = "CanViewWorkSpace")]
+    [HttpGet("{workspaceId:guid}/members")]
+    [ProducesResponseType(typeof(WorkspaceMembersResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<WorkspaceMembersResponse>> GetWorkspaceMembersByIdAsync([FromRoute] Guid workspaceId)
+    {
+        var query = new GetWorkspaceMembersQuery(workspaceId);
+        var response = await dispatcher.SendAsync(query);
+        if (response == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(response);
+    }
+
+    /// <summary>
     ///     Получить страницу рабочих областей
     /// </summary>
     /// ///

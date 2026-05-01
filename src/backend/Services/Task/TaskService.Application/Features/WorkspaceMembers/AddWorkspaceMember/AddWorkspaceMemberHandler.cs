@@ -40,6 +40,9 @@ public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache
         await context.WorkspaceMembers.AddAsync(workspaceMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
+        var workspaceMemberscacheKey = $"workspaceMembers_{existWorkspace.Id}";
+        await cache.RemoveAsync(workspaceMemberscacheKey, cancellationToken);
+
         //инвалидируем кэш
         var cacheKey = $"user_by_keycloak_id_{existUser.KeycloakId}";
         await cache.RemoveAsync(cacheKey, cancellationToken);
