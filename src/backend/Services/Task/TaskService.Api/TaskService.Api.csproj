@@ -14,22 +14,31 @@
     <DocumentationFile>bin\Release\TaskService.Api.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <OpenApiDocumentsDirectory>../../../../../openapi</OpenApiDocumentsDirectory>
+    <OpenApiGenerateDocumentsOptions>--file-name openapi</OpenApiGenerateDocumentsOptions>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Scalar.AspNetCore"/>
   </ItemGroup>
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Shared\Taskorium.ServiceDefaults\Taskorium.ServiceDefaults.csproj" />
-    <ProjectReference Include="..\TaskService.Application\TaskService.Application.csproj" />
-    <ProjectReference Include="..\TaskService.Contracts\TaskService.Contracts.csproj" />
-    <ProjectReference Include="..\TaskService.Infrastructure\TaskService.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Taskorium.ServiceDefaults\Taskorium.ServiceDefaults.csproj"/>
+    <ProjectReference Include="..\TaskService.Application\TaskService.Application.csproj"/>
+    <ProjectReference Include="..\TaskService.Contracts\TaskService.Contracts.csproj"/>
+    <ProjectReference Include="..\TaskService.Infrastructure\TaskService.Infrastructure.csproj"/>
   </ItemGroup>
 
 
@@ -37,6 +46,11 @@
     <Content Include="..\..\..\.dockerignore">
       <Link>.dockerignore</Link>
     </Content>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="openapi\openapi.json"/>
   </ItemGroup>
 
 

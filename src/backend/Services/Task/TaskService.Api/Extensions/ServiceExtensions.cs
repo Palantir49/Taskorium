@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using Taskorium.ServiceDefaults;
 using TaskService.Api.Authorization.Actions;
 using TaskService.Api.Authorization.Handlers;
 using TaskService.Api.Authorization.Requirements;
@@ -17,15 +18,14 @@ public static class ServiceExtensions
         internal void ConfigureJwtAuthentication(IConfiguration configuration)
         {
             var authority = configuration["Authentication:Jwt:Authority"];
-            if (string.IsNullOrWhiteSpace(authority))
-            {
-                throw new Exception("Не задан authority");
-            }
-
             var audience = configuration["Authentication:Jwt:Audience"];
-            if (string.IsNullOrWhiteSpace(audience))
+
+            if ((string.IsNullOrWhiteSpace(authority) || string.IsNullOrWhiteSpace(audience)) &&
+                BuildTimeDetector.IsBuildTime)
             {
-                throw new Exception("Не задан audience");
+                services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer();
+                return;
             }
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
