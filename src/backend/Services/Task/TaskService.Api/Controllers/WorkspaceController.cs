@@ -203,7 +203,7 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     /// <returns></returns>
     /// <response code="201">Новая задача успешно создана</response>
     /// <response code="400">Некорректный запрос</response>
-    [Authorize(Policy = "CanCreateTask")]
+    //[Authorize(Policy = "CanCreateTask")]
     [HttpPost("{workspaceId:guid}/project/{projectId:guid}/issue")]
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]

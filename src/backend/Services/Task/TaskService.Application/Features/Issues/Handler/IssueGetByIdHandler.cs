@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Mediator;
@@ -16,9 +17,9 @@ public class IssueGetByIdHandler(TaskServiceDbContext context, HybridCache cache
 
         return await cache.GetOrCreateAsync(cacheKey, async _ =>
         {
-            var issue = await context.Issues.FindAsync([request.id], cancellationToken)
-                        ??
-                        throw new KeyNotFoundException($"задача с id: {request.id} не найдена");
+            var issue = await context.Issues.Include(x => x.Attachments)
+            .FirstOrDefaultAsync(x => x.Id == request.id, cancellationToken)
+            ?? throw new KeyNotFoundException($"задача с id: {request.id} не найдена");
 
             return issue.ToResponse();
         }, cancellationToken: cancellationToken);

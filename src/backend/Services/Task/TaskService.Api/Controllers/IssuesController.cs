@@ -47,7 +47,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     /// <response code="200">Данные о задаче успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найдена задача по заданному id</response>
-    [Authorize(Policy = "CanViewTask")]
+    //[Authorize(Policy = "CanViewTask")]
     [HttpGet("{id:guid}")]
     [ActionName("GetTaskByIdAsync")]
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]

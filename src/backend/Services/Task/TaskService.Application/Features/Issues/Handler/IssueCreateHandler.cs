@@ -30,8 +30,8 @@ public class IssueCreateHandler(
                 cancellationToken) ??
             throw new KeyNotFoundException($"Не найден статус инициализации задачи для проекта {request.ProjectId}");
 
+        //TODO: костыль. возможна гонка. нужно добавить отдельную таблицу счетчиков, которая будет возвращать будущий номер и при этом делать внутри ++
         var countIssue = await context.Issues.CountAsync(x => x.ProjectId == project.Id, cancellationToken);
-
         var issueKey = $"{project.Abbreviation}-{countIssue + 1}";
 
         var issue = Issue.Create(
@@ -50,25 +50,70 @@ public class IssueCreateHandler(
             issueId: issue.Id,
             role: Roles.Creator);
 
-        if (request.AttachmentDtos != null)
+
+        List<Attachment> attachments = new(request.AttachmentDtos?.Count ?? 0);
+        try
         {
-            foreach (var attach in request.AttachmentDtos)
+            if (request.AttachmentDtos != null)
             {
-                await fileStorageService.UploadAsync(
-                    name: attach.Name,
-                    contentType: attach.ContentType,
-                    stream: attach.Content,
-                    token: cancellationToken);
+                foreach (var attach in request.AttachmentDtos)
+                {
+                    Attachment attachment = Attachment.Create(
+                        issueId: issue.Id,
+                        uploaderId: currentUser.User.Id,
+                        fileName: attach.Name,
+                        contentType: attach.ContentType,
+                        contentLength: attach.ContentLength);
+
+                    //сброс позиции чтения файла
+                    if (attach.Content.CanSeek)
+                        attach.Content.Position = 0;
+
+                    await fileStorageService.UploadAsync(
+                        name: attachment.StoragePath,
+                        contentType: attach.ContentType,
+                        stream: attach.Content,
+                        token: cancellationToken);
+
+                    attachments.Add(attachment);
+                    issue.Attachments.Add(attachment);
+                }
             }
+
+            context.Issues.Add(issue);
+            context.IssueAssignees.Add(assignee);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch
+        {
+            if (attachments.Count > 0)
+            {
+                var tasks = attachments.Select(async delete =>
+                {
+                    try
+                    {
+                        await fileStorageService.DeleteAsync(delete.StoragePath, cancellationToken);
+                    }
+                    catch
+                    {
+                        //TODO: logger
+                    }
+                });
+                await Task.WhenAll(tasks);
+            }
+
+            throw;
         }
 
-        await context.Issues.AddAsync(issue, cancellationToken);
-        await context.IssueAssignees.AddAsync(assignee, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
-
-        //инвалидация кэша
-        var cacheKey = $"issues_by_project_id_{request.ProjectId}";
-        await cache.RemoveAsync(cacheKey, cancellationToken);
+        try
+        {
+            var cacheKey = $"issues_by_project_id_{request.ProjectId}";
+            await cache.RemoveAsync(cacheKey, cancellationToken);
+        }
+        catch
+        {
+            //TODO: logger
+        }
 
         return issue.ToResponse();
     }

@@ -1,4 +1,5 @@
 ﻿using TaskService.Application.Features.Collections.Mapping;
+using TaskService.Contracts.Attachment;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
 
@@ -19,7 +20,9 @@ public static class IssueToResponseMapping
             IssuePriority: issue.IssuePriority.ToResponse(),
             UpdatedDate: issue.UpdatedDate,
             DueDate: issue.DueDate,
-            ResolvedDate: issue.ResolvedDate);
+            ResolvedDate: issue.ResolvedDate,
+            attachment: issue.Attachments.Select(x => new AttachmentResponce(Id: x.Id, Name: x.FileName))
+            );
     }
 
     //FAQ: Будет ли у нас частичное получение данных?

@@ -18,7 +18,8 @@ namespace TaskService.Domain.Entities
         public DateTimeOffset? DueDate { get; private set; }
 
         public ICollection<Tag> Tags { get; private set; } = [];
-        public ICollection<IssueAssignees> issueAssignees { get; private set; } = [];
+        public ICollection<IssueAssignees> IssueAssignees { get; private set; } = [];
+        public ICollection<Attachment> Attachments { get; private set; } = [];
         public bool IsDeleted { get; set; }
         public DateTimeOffset? DeletedAt { get; set; }
 

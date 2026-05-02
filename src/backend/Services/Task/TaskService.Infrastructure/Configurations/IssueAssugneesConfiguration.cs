@@ -29,7 +29,7 @@ public class IssueAssugneesConfiguration : IEntityTypeConfiguration<IssueAssigne
 
 
         builder.HasOne(x => x.Issue)
-              .WithMany(x => x.issueAssignees)
+              .WithMany(x => x.IssueAssignees)
               .HasForeignKey(t => t.IssueId)
               .IsRequired()
               .OnDelete(DeleteBehavior.Cascade);

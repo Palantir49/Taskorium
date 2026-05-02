@@ -1,4 +1,4 @@
-﻿namespace TaskService.Application.Features.Issues.Dto;
+﻿namespace TaskService.Application.Features.Attachments.Dto;
 
 public record AttachmentDto
 {
