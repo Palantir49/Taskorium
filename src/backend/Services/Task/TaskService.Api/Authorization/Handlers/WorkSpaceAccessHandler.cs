@@ -44,7 +44,7 @@ public class WorkSpaceAccessHandler(
         if (!userContext.IsInitialized)
         {
             logger.LogInformation(
-                $"В процессе авторизации для совершения действия {Action} над рабочей областью {workspaceId} произошла ошибка: контекст текущего пользователя не инициализирован",
+                "В процессе авторизации для совершения действия {Action} над рабочей областью {workspaceId} произошла ошибка: контекст текущего пользователя не инициализирован",
                 requirement.Action, workspaceId);
             context.Fail();
             return;
@@ -79,7 +79,7 @@ public class WorkSpaceAccessHandler(
         }
 
         logger.LogInformation(
-            $"В процессе авторизации для совершения действия {Action} над рабочей областью {workspaceId} доступ не предоставлен: отсутствуют необходимые роли участника",
+            "В процессе авторизации для совершения действия {Action} над рабочей областью {workspaceId} доступ не предоставлен: отсутствуют необходимые роли участника",
             requirement.Action, workspaceId);
         context.Fail();
     }

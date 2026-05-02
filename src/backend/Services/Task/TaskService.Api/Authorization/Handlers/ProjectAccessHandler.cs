@@ -53,7 +53,7 @@ public class ProjectAccessHandler(
         if (!userContext.IsInitialized)
         {
             logger.LogInformation(
-                $"В процессе авторизации для совершения действия {Action} над проектом {projectId} произошла ошибка: контекст текущего пользователя не инициализирован",
+                "В процессе авторизации для совершения действия {Action} над проектом {projectId} произошла ошибка: контекст текущего пользователя не инициализирован",
                 requirement.Action, projectId);
             context.Fail();
             return;
@@ -115,7 +115,7 @@ public class ProjectAccessHandler(
         }
 
         logger.LogInformation(
-            $"В процессе авторизации для совершения действия {Action} над проектом {projectId} доступ не предоставлен: отсутствуют необходимые роли участника workspace/project",
+            "В процессе авторизации для совершения действия {Action} над проектом {projectId} доступ не предоставлен: отсутствуют необходимые роли участника workspace/project",
             requirement.Action, projectId);
         context.Fail();
     }

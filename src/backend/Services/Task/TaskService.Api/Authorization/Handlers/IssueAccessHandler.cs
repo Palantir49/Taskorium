@@ -57,7 +57,7 @@ public class IssueAccessHandler(
         if (!userContext.IsInitialized)
         {
             logger.LogInformation(
-                $"В процессе авторизации для совершения действия {Action} над задачей {issueId} произошла ошибка: контекст текущего пользователя не инициализирован",
+                "В процессе авторизации для совершения действия {Action} над задачей {issueId} произошла ошибка: контекст текущего пользователя не инициализирован",
                 requirement.Action, issueId);
             context.Fail();
             return;
@@ -119,7 +119,7 @@ public class IssueAccessHandler(
         }
 
         logger.LogInformation(
-            $"В процессе авторизации для совершения действия {Action} над задачей {issueId} доступ не предоставлен: отсутствуют необходимые роли участника workspace/project",
+            "В процессе авторизации для совершения действия {Action} над задачей {issueId} доступ не предоставлен: отсутствуют необходимые роли участника workspace/project",
             requirement.Action, issueId);
         context.Fail();
     }
