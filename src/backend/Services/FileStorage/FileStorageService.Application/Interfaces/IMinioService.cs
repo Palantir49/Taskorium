@@ -11,7 +11,7 @@ public interface IMinioService
 
     Task<Stream> DownloadFileAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
 
-    Task<bool> DeleteFileAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
+    Task DeleteFileAsync(string bucketName, string objectName, CancellationToken cancellationToken = default);
 
     Task<string> GetPresignedUrlAsync(string bucketName, string objectName, int expirySeconds,
         CancellationToken cancellationToken = default);

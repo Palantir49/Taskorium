@@ -19,6 +19,11 @@ public class ExceptionInterceptor(ILogger<ExceptionInterceptor> logger) : Interc
             logger.LogWarning(ex, "Validation error");
             throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
         }
+        catch (FileNotFoundException ex)
+        {
+            logger.LogWarning(ex, "File not found");
+            throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+        }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unhandled server error");

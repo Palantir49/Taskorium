@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Minio;
 using Minio.DataModel.Args;
+using Minio.Exceptions;
 
 namespace FileStorageService.Infrastructure.MinIO;
 
@@ -117,26 +118,30 @@ public class MinioService(IMinioClient minioClient, ILogger<MinioService> logger
     }
 
 
-    public async Task<bool> DeleteFileAsync(string bucketName, string objectName,
+    public async Task DeleteFileAsync(string bucketName, string objectName,
         CancellationToken cancellationToken = default)
     {
+        var statObjectArgs = new StatObjectArgs()
+            .WithBucket(bucketName)
+            .WithObject(objectName);
+
         try
         {
-            var removeObjectArgs = new RemoveObjectArgs()
-                .WithBucket(bucketName)
-                .WithObject(objectName);
-
-            await minioClient.RemoveObjectAsync(removeObjectArgs, cancellationToken);
-
-            logger.LogInformation("Файл {ObjectName} удален из бакета {BucketName}", objectName, bucketName);
-            return true;
+            await minioClient.StatObjectAsync(statObjectArgs, cancellationToken);
         }
-        catch (Exception ex)
+        catch (ObjectNotFoundException)
         {
-            logger.LogError(ex, "Ошибка при удалении файла {ObjectName} из бакета {BucketName}", objectName,
-                bucketName);
-            return false;
+            logger.LogWarning("Файл {ObjectName} не найден в бакете {BucketName}", objectName, bucketName);
+            throw new FileNotFoundException($"Файл {objectName} не найден в бакете {bucketName}");
         }
+
+        var removeObjectArgs = new RemoveObjectArgs()
+            .WithBucket(bucketName)
+            .WithObject(objectName);
+
+        await minioClient.RemoveObjectAsync(removeObjectArgs, cancellationToken);
+
+        logger.LogInformation("Файл {ObjectName} удален из бакета {BucketName}", objectName, bucketName);
     }
 
     public async Task<string> GetPresignedUrlAsync(string bucketName, string objectName,
