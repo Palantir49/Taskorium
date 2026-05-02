@@ -21,6 +21,7 @@ public class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
         builder.Property(t => t.UploaderId).ValueGeneratedNever();
 
         builder.Property(t => t.FileName).HasMaxLength(255);
+        builder.Property(t => t.ContentType).HasMaxLength(255);
         builder.Property(t => t.StoragePath).HasMaxLength(2000);
 
         builder.HasOne<User>()
