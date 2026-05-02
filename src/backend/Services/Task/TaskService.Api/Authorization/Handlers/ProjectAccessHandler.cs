@@ -3,7 +3,6 @@ using TaskService.Api.Authorization.Actions;
 using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
 using TaskService.Application.Features.Projects.Read.Query;
-using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Enum;
@@ -51,19 +50,16 @@ public class ProjectAccessHandler(
         var project = await dispatcher.SendAsync(projectQuery);
 
 
-        var userKeyCloakId = AuthorizationUtils.GetKeycloakUserId(httpContextAccessor);
-        if (userKeyCloakId is null)
+        if (!userContext.IsInitialized)
         {
             logger.LogInformation(
-                "В процессе авторизации для совершения действия {Action} над проектом {projectId} произошла ошибка: не удалось получить keycloakId пользователя из запроса",
+                $"В процессе авторизации для совершения действия {Action} над проектом {projectId} произошла ошибка: контекст текущего пользователя не инициализирован",
                 requirement.Action, projectId);
             context.Fail();
             return;
         }
 
-        //get user
-        var tmpuser = userContext.User;
-        var user = await dispatcher.SendAsync(new GetUserByKeycloakIdQuery(userKeyCloakId));
+        var user = userContext.User;
 
         var wsMemberShip = user.WorkSpaceMembers?.FirstOrDefault(x => x.WorkspaceId == project.WorkspaceId);
 
@@ -117,5 +113,10 @@ public class ProjectAccessHandler(
 
                 break;
         }
+
+        logger.LogInformation(
+            $"В процессе авторизации для совершения действия {Action} над проектом {projectId} доступ не предоставлен: отсутствуют необходимые роли участника workspace/project",
+            requirement.Action, projectId);
+        context.Fail();
     }
 }

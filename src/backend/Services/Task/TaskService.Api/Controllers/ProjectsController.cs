@@ -212,6 +212,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// <response code="200">Данные о типах задач проекта успешно получены</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найден проект</response>
+    [Authorize(Policy = "CanViewProject")]
     [HttpGet("{projectId:guid}/Tags")]
     [ProducesResponseType(typeof(IEnumerable<TagResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
