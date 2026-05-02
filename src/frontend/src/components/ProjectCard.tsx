@@ -1,28 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import CreateCard from "./CreateCard";
 import CreateProjectModal from "./CreateProjectModal";
+import { fetchProjectsByWorkspaceId } from "../api/projectService";
 import { ProjectResponse } from "../types/project";
-
-// Замоканый проект для тестирования
-const mockProject: ProjectResponse = {
-  id: "mock-1",
-  name: "Замоканный проект",
-  description: "Мок",
-  abbreviation: "TEST",
-  workspaceId: "mock-workspace",
-  createdDate: new Date().toISOString()
-};
 
 interface ProjectCardProps {
   workspaceId?: string;
-  onSelect?: (id: number) => void;
+  onSelect?: (projectId: string) => void;
 }
 
 export default function ProjectCard({ workspaceId, onSelect }: ProjectCardProps) {
   const [projects, setProjects] = useState<ProjectResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!workspaceId) {
+      setProjects([]);
+      return;
+    }
+
+    const loadProjects = async () => {
+      const data = await fetchProjectsByWorkspaceId(workspaceId);
+      setProjects(data);
+    };
+
+    loadProjects();
+  }, [workspaceId]);
 
   const handleProjectCreated = (newProject: ProjectResponse) => {
     setProjects([...projects, newProject]);
@@ -30,30 +35,8 @@ export default function ProjectCard({ workspaceId, onSelect }: ProjectCardProps)
 
   return (
     <>
-      {/* Замоканый проект для тестирования */}
-      <Card 
-        key={mockProject.id} 
-        className="border-gray-300" 
-        onClick={() => onSelect?.(0)}
-      >
-        <CardHeader className="pb-3">
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-lg">{mockProject.name}</CardTitle>
-            <Badge variant="secondary">В работе</Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="text-sm text-gray-600">
-            {mockProject.description}
-          </div>
-          <div className="text-sm text-gray-600">
-            Аббревиатура: <span className="font-semibold">{mockProject.abbreviation}</span>
-          </div>
-        </CardContent>
-      </Card>
-
-      {projects.map((project, index) => (
-        <Card key={project.id} className="border-gray-300" onClick={() => onSelect?.(index + 1)}>
+      {projects.map((project) => (
+        <Card key={project.id} className="border-gray-300" onClick={() => onSelect?.(project.id)}>
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <CardTitle className="text-lg">{project.name}</CardTitle>
@@ -70,9 +53,6 @@ export default function ProjectCard({ workspaceId, onSelect }: ProjectCardProps)
             )}
             <div className="text-sm text-gray-600">
               Аббревиатура: <span className="font-semibold">{project.abbreviation}</span>
-            </div>
-            <div className="text-sm text-gray-600">
-              ID проекта: <span className="font-semibold">{project.id}</span>
             </div>
           </CardContent>
         </Card>

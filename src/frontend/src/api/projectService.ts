@@ -65,6 +65,20 @@ export const fetchProjectById = async (id: string): Promise<ProjectResponse> => 
 };
 
 /**
+ *  Получить все проекты рабочей области
+ */
+export const fetchProjectsByWorkspaceId = async (workspaceId: string): Promise<ProjectResponse[]> => {
+  try {
+    const response = await api.get(`/Projects/workspace/${workspaceId}`);
+    console.log('fetchProjectsByWorkspaceId:', response.data);
+    return response.data || [];
+  } catch (error) {
+    console.error('fetchProjectsByWorkspaceId error:', error);
+    return [];
+  }
+};
+
+/**
  * Создать новый проект
  */
 export const createProject = async (projectData: CreateProjectRequest): Promise<ProjectResponse> => {

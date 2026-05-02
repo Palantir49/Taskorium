@@ -78,6 +78,21 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
         var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
+
+    /// <summary>
+    ///     Получить все проекты рабочей области
+    /// </summary>
+    [Authorize(Policy = "CanViewWorkSpace")]
+    [HttpGet("workspace/{workspaceId:guid}")]
+    [ProducesResponseType(typeof(IEnumerable<ProjectResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<IEnumerable<ProjectResponse>>> GetProjectsByWorkspaceIdAsync([FromRoute] Guid workspaceId)
+    {
+        var query = new GetProjectByWorkspaceIdQuery(workspaceId);
+        var response = await dispatcher.SendAsync(query);
+        return Ok(response);
+    }
     /// <summary>
     ///     Получение пользователей проекта
     /// </summary>

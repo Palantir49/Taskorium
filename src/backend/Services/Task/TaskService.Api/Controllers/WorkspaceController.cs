@@ -237,11 +237,16 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ProjectResponse>> CreateProjectAsync([FromRoute] Guid workspaceId, [FromBody] CreateProjectRequest request)
     {
+        if (!currentUserContext.IsInitialized)
+        {
+            return Unauthorized();
+        }
+
         var command = new CreateProjectCommand(Name: request.Name,
                                                Description: request.Description,
                                                Abbreviation: request.Abbreviation,
                                                WorkspaceId: workspaceId,
-                                               UserId: request.UserId);
+                                               UserId: currentUserContext.User.Id);
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }

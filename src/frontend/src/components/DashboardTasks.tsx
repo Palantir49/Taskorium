@@ -12,9 +12,10 @@ interface DashboardTasksProps {
   activeTab: string;
   onTabChange: React.Dispatch<React.SetStateAction<string>>;
   showHeader?: boolean;
+  projectId: string;
 }
 
-function DashboardTasks({ activeTab, onTabChange, showHeader = true }: DashboardTasksProps) {
+function DashboardTasks({ activeTab, onTabChange, showHeader = true, projectId }: DashboardTasksProps) {
   const authInfo = useAuthContext();
   
   const [showCreateForm, setShowCreateForm] = React.useState(false);
@@ -59,7 +60,7 @@ function DashboardTasks({ activeTab, onTabChange, showHeader = true }: Dashboard
   );
 
   return (
-    <TaskProvider>
+    <TaskProvider projectId={projectId}>
       <div className="app">
         {showHeader && authInfo.isAuthenticated && (
           <HeaderKanbanBoard
