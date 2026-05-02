@@ -50,8 +50,6 @@ public class IssueCreateHandler(
             issueId: issue.Id,
             role: Roles.Creator);
 
-        context.Issues.Add(issue);
-        context.IssueAssignees.Add(assignee);
 
         List<Attachment> attachments = new(request.AttachmentDtos?.Count ?? 0);
         try
@@ -76,10 +74,12 @@ public class IssueCreateHandler(
                         token: cancellationToken);
 
                     attachments.Add(attachment);
+                    issue.Attachments.Add(attachment);
                 }
-
-                context.AddRange(attachments);
             }
+
+            context.Issues.Add(issue);
+            context.IssueAssignees.Add(assignee);
             await context.SaveChangesAsync(cancellationToken);
         }
         catch
