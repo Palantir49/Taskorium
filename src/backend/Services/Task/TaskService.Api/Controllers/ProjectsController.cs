@@ -88,11 +88,11 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// <response code="404">Не найден проект по заданному id</response>
     [Authorize(Policy = "CanViewProject")]
     [HttpGet("{projectId:guid}/members")]
-    [ActionName("GetProjectByIdAsync")]
-    [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
+    [ActionName("GetProjectMembersAsync")]
+    [ProducesResponseType(typeof(ProjectMembersResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<ProjectResponse>> GetProjectMembersAsync([FromRoute] Guid projectId)
+    public async Task<ActionResult<ProjectMembersResponse>> GetProjectMembersAsync([FromRoute] Guid projectId)
     {
         var query = new GetProjectMembersQuery(projectId);
         var response = await dispatcher.SendAsync(query);
@@ -115,11 +115,11 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     /// <response code="404">Не найден проект для обновления</response>
     [Authorize(Policy = "CanUpdateProject")]
     [HttpPut("{projectId:guid}")]
-    [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> UpdateProjectAsync([FromRoute] Guid projectId,
+    public async Task<ActionResult<ProjectResponse>> UpdateProjectAsync([FromRoute] Guid projectId,
         [FromBody] UpdateProjectRequest updateProjectRequest)
     {
         var command = ProjectMapping.ProjectUpdateCommand(projectId, updateProjectRequest);
@@ -147,7 +147,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssuesByProjectidAsync(Guid projectId)
+    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssuesByProjectidAsync([FromRoute] Guid projectId)
     {
         //FAQ: а это нормальный возвращаемый тип?
         var query = new IssueGetByProjectIdQuery(projectId);
@@ -175,7 +175,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IEnumerable<IssueResponse>>> GetIssuesStatusByProjectidAsync([FromRoute] Guid projectId)
+    public async Task<ActionResult<IEnumerable<IssueStatusResponse>>> GetIssuesStatusByProjectidAsync([FromRoute] Guid projectId)
     {
         //FAQ: а это нормальный возвращаемый тип?
         var query = new IssueStatusGetByProjectIdQuery(projectId);
