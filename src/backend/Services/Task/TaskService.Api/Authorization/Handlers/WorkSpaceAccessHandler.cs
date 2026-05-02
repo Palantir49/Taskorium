@@ -2,8 +2,7 @@
 using TaskService.Api.Authorization.Actions;
 using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
-using TaskService.Application.Features.Users.Get;
-using TaskService.Application.Mediator;
+using TaskService.Application.Interfaces;
 using TaskService.Contracts.Enum;
 
 namespace TaskService.Api.Authorization.Handlers;
@@ -13,8 +12,8 @@ namespace TaskService.Api.Authorization.Handlers;
 /// </summary>
 public class WorkSpaceAccessHandler(
     IHttpContextAccessor httpContextAccessor,
-    IDispatcher dispatcher,
-    ILogger<WorkSpaceAccessHandler> logger)
+    ILogger<WorkSpaceAccessHandler> logger,
+    ICurrentUserContext userContext)
     : AuthorizationHandler<WorkSpaceAccessRequirement>
 {
     /// <summary>
@@ -42,18 +41,16 @@ public class WorkSpaceAccessHandler(
         }
 
 
-        var userKeyCloakId = AuthorizationUtils.GetKeycloakUserId(httpContextAccessor);
-        if (userKeyCloakId is null)
+        if (!userContext.IsInitialized)
         {
             logger.LogInformation(
-                "В процессе авторизации для совершения действия {Action} над рабочей областью {workspaceId} произошла ошибка: не удалось получить keycloakId пользователя из запроса",
+                "В процессе авторизации для совершения действия {Action} над рабочей областью {workspaceId} произошла ошибка: контекст текущего пользователя не инициализирован",
                 requirement.Action, workspaceId);
             context.Fail();
             return;
         }
 
-        //get user
-        var user = await dispatcher.SendAsync(new GetUserByKeycloakIdQuery(userKeyCloakId));
+        var user = userContext.User;
 
         var wsMemberShip = user.WorkSpaceMembers?.FirstOrDefault(x => x.WorkspaceId == workspaceId);
 
@@ -80,5 +77,10 @@ public class WorkSpaceAccessHandler(
 
                 break;
         }
+
+        logger.LogInformation(
+            "В процессе авторизации для совершения действия {Action} над рабочей областью {workspaceId} доступ не предоставлен: отсутствуют необходимые роли участника",
+            requirement.Action, workspaceId);
+        context.Fail();
     }
 }

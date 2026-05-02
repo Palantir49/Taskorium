@@ -1,4 +1,4 @@
-import { WorkspaceResponse, CreateWorkspaceRequest } from '../types/workspace';
+import { WorkspaceResponse, CreateWorkspaceRequest, UpdateWorkspaceRequest, AddUserToWorkspaceRequest } from '../types/workspace';
 import axios from 'axios';
 
 let tokenProvider: () => string | null = () => null;
@@ -47,7 +47,7 @@ api.interceptors.response.use(
  */
 export const fetchWorkspaceById = async (id: string): Promise<WorkspaceResponse> => {
   try {
-    const response = await api.get(`/WorkSpaces/${id}`);
+    const response = await api.get(`/Workspace/${id}`);
     console.log('fetchWorkspaceById:', response.data);
     return response.data;
   } catch (error) {
@@ -60,9 +60,9 @@ export const fetchWorkspaceById = async (id: string): Promise<WorkspaceResponse>
  * Получить страницу рабочих областей
  * (с пагинацией)
  */
-export const fetchWorkspacesPage = async (params?: any): Promise<any> => {
+export const fetchWorkspacesPage = async (params?: Record<string, string | number>): Promise<unknown> => {
   try {
-    const response = await api.get('/WorkSpaces/GetWorkspacePage', { params });
+    const response = await api.get('/Workspace/page', { params });
     console.log('fetchWorkspacesPage:', response.data);
     return response.data;
   } catch (error) {
@@ -77,7 +77,7 @@ export const fetchWorkspacesPage = async (params?: any): Promise<any> => {
 export const createWorkspace = async (workspaceData: CreateWorkspaceRequest): Promise<WorkspaceResponse> => {
   console.log('createWorkspace called:', workspaceData);
   try {
-    const response = await api.post('/WorkSpaces', workspaceData);
+    const response = await api.post('/Workspace', workspaceData);
     console.log('createWorkspace:', response.data);
     return response.data;
   } catch (error) {
@@ -89,10 +89,10 @@ export const createWorkspace = async (workspaceData: CreateWorkspaceRequest): Pr
 /**
  * Обновить название рабочей области
  */
-export const updateWorkspaceName = async (command: any): Promise<WorkspaceResponse> => {
-  console.log('updateWorkspaceName called:', command);
+export const updateWorkspaceName = async (workspaceId: string, command: UpdateWorkspaceRequest): Promise<WorkspaceResponse> => {
+  console.log('updateWorkspaceName called:', workspaceId, command);
   try {
-    const response = await api.patch('/WorkSpaces', command);
+    const response = await api.patch(`/Workspace/${workspaceId}`, command);
     console.log('updateWorkspaceName:', response.data);
     return response.data;
   } catch (error) {
@@ -104,10 +104,10 @@ export const updateWorkspaceName = async (command: any): Promise<WorkspaceRespon
 /**
  * Добавить пользователя в рабочую область
  */
-export const addUserToWorkspace = async (command: any): Promise<any> => {
-  console.log('addUserToWorkspace called:', command);
+export const addUserToWorkspace = async (workspaceId: string, command: AddUserToWorkspaceRequest): Promise<unknown> => {
+  console.log('addUserToWorkspace called:', workspaceId, command);
   try {
-    const response = await api.post('/WorkSpaces/adduser', command);
+    const response = await api.post(`/Workspace/${workspaceId}/users`, command);
     console.log('addUserToWorkspace:', response.data);
     return response.data;
   } catch (error) {
@@ -122,10 +122,8 @@ export const addUserToWorkspace = async (command: any): Promise<any> => {
  */
 export const fetchUserWorkspaces = async (): Promise<WorkspaceResponse[]> => {
   try {
-    const response = await api.get('/WorkSpaces/GetWorkspacePage');
+    const response = await api.get('/Workspace/page');
     console.log('fetchUserWorkspaces:', response.data);
-    
-    // Предполагаем, что бэкенд возвращает список рабочих областей в свойстве "workspaces" или напрямую
     if (response.data && Array.isArray(response.data.workspaces)) {
       return response.data.workspaces;
     } else if (response.data && Array.isArray(response.data)) {
@@ -146,10 +144,12 @@ export const fetchUserWorkspaces = async (): Promise<WorkspaceResponse[]> => {
 export const deleteWorkspace = async (id: string): Promise<void> => {
   console.log('deleteWorkspace:', id);
   try {
-    const response = await api.delete(`/WorkSpaces/${id}`);
+    const response = await api.delete(`/Workspace/${id}`);
     console.log('deleteWorkspace:', response.status);
   } catch (error) {
     console.error('deleteWorkspace error:', error);
     throw error;
   }
 };
+
+

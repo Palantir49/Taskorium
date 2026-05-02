@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { fetchTasks, updateTask, createTask, deleteTask, fetchTasksTestController } from '../api/taskService';
+import { fetchTasks, updateTask, createTask, deleteTask } from '../api/taskService';
+import { fetchIssuesByProjectId } from '../api/projectService';
 import { Task, TaskState, Action, ActionType, UpdateTaskData, CreateTaskData } from '../types';
 
 const TaskContext = createContext<TaskState & {
@@ -101,23 +102,24 @@ function taskReducer(state: TaskState, action: Action): TaskState {
 
 interface TaskProviderProps {
   children: ReactNode;
+  projectId: string;
 }
 
 // Провайдер контекста
-export function TaskProvider({ children }: TaskProviderProps) {
+export function TaskProvider({ children, projectId }: TaskProviderProps) {
   const [state, dispatch] = useReducer(taskReducer, initialState);
 
   // Загрузка задач при монтировании
   useEffect(() => {
-    loadTasks();
-    // Вызов тестового метода для проверки
-    fetchTasksTestController();
-  }, []);
+    loadTasks(projectId);
+  }, [projectId]);
 
-  const loadTasks = async (): Promise<void> => {
+  const loadTasks = async (currentProjectId?: string): Promise<void> => {
     dispatch({ type: ActionTypes.SET_LOADING, payload: true });
     try {
-      const tasks = await fetchTasks();
+      const tasks = currentProjectId
+        ? await fetchIssuesByProjectId(currentProjectId)
+        : await fetchTasks();
       dispatch({ type: ActionTypes.SET_TASKS, payload: tasks });
     } catch (error) {
       dispatch({ type: ActionTypes.SET_ERROR, payload: (error as Error).message });

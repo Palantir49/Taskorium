@@ -125,12 +125,13 @@ export const deleteTask = async (id: string): Promise<void> => {
 export const fetchUsers = async (): Promise<User[]> => {
   console.log('fetchUsers called');
   try {
-    const response = await api.get('/User/GetAllUsers');
+    const response = await api.get('/User/users');
     console.log('fetchUsers response data:', response.data);
     
-    // Возвращает объект с массивом пользователей в свойстве "users"
     if (response.data && Array.isArray(response.data.users)) {
       return response.data.users;
+    } else if (response.data && Array.isArray(response.data)) {
+      return response.data;
     } else {
       console.warn('Unexpected users response format:', response.data);
       return [];
@@ -138,19 +139,5 @@ export const fetchUsers = async (): Promise<User[]> => {
   } catch (error) {
     console.error('fetchUsers error:', error);
     return [];
-  }
-};
-
-/**
- * Тестовый контроллер для проверки API
- */
-export const fetchTasksTestController = async (): Promise<any> => {
-  try {
-    const response = await api.get('/Issues');
-    console.log('API test result:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('API test error:', error);
-    return null;
   }
 };

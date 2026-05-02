@@ -17,14 +17,15 @@ export default function StartDashboardCard({
   showHeader = true 
 }: StartDashboardCardsProps) {
   const authInfo = useAuthContext();
-  const [selectedProject, setSelectedProject] = useState<number | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | null>(null);
 
-  if (selectedProject !== null) {
+  if (selectedProjectId) {
     return <DashboardTasks 
       activeTab={activeTab}
       onTabChange={onTabChange}
       showHeader={showHeader}
+      projectId={selectedProjectId}
     />;
   }
 
@@ -52,22 +53,10 @@ export default function StartDashboardCard({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ProjectCard 
             workspaceId={selectedWorkspaceId || undefined}
-            onSelect={setSelectedProject}
+            onSelect={setSelectedProjectId}
           />
         </div>
       </div>
-
-      {/* Кнопка для возвращения к списку всех рабочих областей */}
-      {selectedWorkspaceId && (
-        <div className="mt-4">
-          <button
-            onClick={() => setSelectedWorkspaceId(null)}
-            className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
-          >
-            ← Вернуться ко всем рабочим областям
-          </button>
-        </div>
-      )}
     </div>
   );
 }

@@ -27,3 +27,18 @@ export interface ProjectResponse {
   workspaceId: string;
   createdDate: string;
 }
+
+export interface ProjectUserDto {
+  id: string;
+  keycloakId: string;
+  role: RoleDto;
+  joinedAt: string;
+  email: string;
+  userName: string;
+}
+
+export interface ProjectMembersResponse {
+  projectId: string;
+  projectName: string;
+  members: ProjectUserDto[];
+}
