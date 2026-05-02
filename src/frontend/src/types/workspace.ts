@@ -13,7 +13,12 @@ export interface CreateWorkspaceRequest {
 }
 
 export interface UpdateWorkspaceRequest {
+  name: string;
+}
 
+export interface AddUserToWorkspaceRequest {
+  userId: string;
+  role: RoleDto;
 }
 
 export interface WorkspaceResponse {

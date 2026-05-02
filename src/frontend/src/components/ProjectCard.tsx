@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import CreateCard from "./CreateCard";
 import CreateProjectModal from "./CreateProjectModal";
-import { fetchProjectsByWorkspaceId } from "../api/projectService";
 import { ProjectResponse } from "../types/project";
 
 // Замоканый проект для тестирования
@@ -24,17 +23,6 @@ interface ProjectCardProps {
 export default function ProjectCard({ workspaceId, onSelect }: ProjectCardProps) {
   const [projects, setProjects] = useState<ProjectResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (!workspaceId) return;
-
-    const loadProjects = async () => {
-      const data = await fetchProjectsByWorkspaceId(workspaceId);
-      setProjects(data);
-    };
-
-    loadProjects();
-  }, [workspaceId]);
 
   const handleProjectCreated = (newProject: ProjectResponse) => {
     setProjects([...projects, newProject]);

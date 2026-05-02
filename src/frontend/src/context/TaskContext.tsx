@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { fetchTasks, updateTask, createTask, deleteTask, fetchTasksTestController } from '../api/taskService';
+import { fetchTasks, updateTask, createTask, deleteTask } from '../api/taskService';
 import { Task, TaskState, Action, ActionType, UpdateTaskData, CreateTaskData } from '../types';
 
 const TaskContext = createContext<TaskState & {
@@ -110,8 +110,6 @@ export function TaskProvider({ children }: TaskProviderProps) {
   // Загрузка задач при монтировании
   useEffect(() => {
     loadTasks();
-    // Вызов тестового метода для проверки
-    fetchTasksTestController();
   }, []);
 
   const loadTasks = async (): Promise<void> => {

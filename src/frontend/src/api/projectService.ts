@@ -1,4 +1,5 @@
-import { ProjectResponse, CreateProjectRequest, UpdateProjectRequest } from '../types/project';
+import { ProjectResponse, CreateProjectRequest, UpdateProjectRequest, ProjectMembersResponse } from '../types/project';
+import { RoleDto } from '../types/common';
 import { IssueResponse } from '../types/issue';
 import { IssueStatusResponse } from '../types/issueStatus';
 import { TagResponse } from '../types/tag';
@@ -69,7 +70,8 @@ export const fetchProjectById = async (id: string): Promise<ProjectResponse> => 
 export const createProject = async (projectData: CreateProjectRequest): Promise<ProjectResponse> => {
   console.log('createProject called:', projectData);
   try {
-    const response = await api.post('/Projects', projectData);
+    const { workspaceId, ...body } = projectData;
+    const response = await api.post(`/Workspace/${workspaceId}/project`, body);
     console.log('createProject:', response.data);
     return response.data;
   } catch (error) {
@@ -110,10 +112,15 @@ export const deleteProject = async (id: string): Promise<void> => {
 /**
  * Добавить пользователя в проект
  */
-export const addUserToProject = async (command: any): Promise<any> => {
-  console.log('addUserToProject called:', command);
+export interface AddProjectMemberRequest {
+  userId: string;
+  roleDto: RoleDto;
+}
+
+export const addUserToProject = async (projectId: string, command: AddProjectMemberRequest): Promise<ProjectResponse> => {
+  console.log('addUserToProject called:', projectId, command);
   try {
-    const response = await api.post('/Projects/AddProjectMember', command);
+    const response = await api.post(`/Projects/${projectId}/projectMember`, command);
     console.log('addUserToProject:', response.data);
     return response.data;
   } catch (error) {
@@ -165,23 +172,15 @@ export const fetchTagsByProjectId = async (id: string): Promise<TagResponse[]> =
 };
 
 /**
- * Получить все проекты в рамках рабочей области
+ * Получить участников проекта
  */
-export const fetchProjectsByWorkspaceId = async (workspaceId: string): Promise<ProjectResponse[]> => {
+export const fetchProjectMembers = async (projectId: string): Promise<ProjectMembersResponse> => {
   try {
-    const response = await api.get(`/Projects?workspaceId=${workspaceId}`);
-    console.log('fetchProjectsByWorkspaceId:', response.data);
-    
-    if (response.data && Array.isArray(response.data.projects)) {
-      return response.data.projects;
-    } else if (response.data && Array.isArray(response.data)) {
-      return response.data;
-    } else {
-      console.warn('Unexpected projects response format:', response.data);
-      return [];
-    }
+    const response = await api.get(`/Projects/${projectId}/members`);
+    console.log('fetchProjectMembers:', response.data);
+    return response.data;
   } catch (error) {
-    console.error('fetchProjectsByWorkspaceId error:', error);
-    return [];
+    console.error('fetchProjectMembers error:', error);
+    throw error;
   }
 };
