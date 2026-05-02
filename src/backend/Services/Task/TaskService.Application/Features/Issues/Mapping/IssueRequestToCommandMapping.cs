@@ -1,6 +1,6 @@
 ﻿using TaskService.Application.Commands.Issues.Query;
+using TaskService.Application.Features.Attachments.Dto;
 using TaskService.Application.Features.Issues.Command;
-using TaskService.Application.Features.Issues.Dto;
 using TaskService.Contracts.Issue.Requests;
 
 namespace TaskService.Application.Features.Issues.Mapping;

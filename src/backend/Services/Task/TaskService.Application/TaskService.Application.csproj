@@ -16,4 +16,8 @@
     <PackageReference Include="Scrutor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Issues\Dto\" />
+  </ItemGroup>
+
 </Project>

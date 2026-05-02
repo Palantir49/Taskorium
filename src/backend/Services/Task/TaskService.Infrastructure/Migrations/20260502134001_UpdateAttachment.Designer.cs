@@ -12,8 +12,8 @@ using TaskService.Infrastructure.Persistence;
 namespace TaskService.Infrastructure.Migrations
 {
     [DbContext(typeof(TaskServiceDbContext))]
-    [Migration("20260502123322_AddedContentTypeToAttachment")]
-    partial class AddedContentTypeToAttachment
+    [Migration("20260502134001_UpdateAttachment")]
+    partial class UpdateAttachment
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,9 @@ namespace TaskService.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
+
+                    b.Property<long>("ContentLength")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ContentType")
                         .IsRequired()
