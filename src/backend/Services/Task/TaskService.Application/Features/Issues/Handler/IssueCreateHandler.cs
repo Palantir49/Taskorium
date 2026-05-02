@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.AccessControl;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
@@ -50,25 +51,64 @@ public class IssueCreateHandler(
             issueId: issue.Id,
             role: Roles.Creator);
 
-        if (request.AttachmentDtos != null)
-        {
-            foreach (var attach in request.AttachmentDtos)
-            {
-                await fileStorageService.UploadAsync(
-                    name: attach.Name,
-                    contentType: attach.ContentType,
-                    stream: attach.Content,
-                    token: cancellationToken);
-            }
-        }
-
         await context.Issues.AddAsync(issue, cancellationToken);
         await context.IssueAssignees.AddAsync(assignee, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
 
-        //инвалидация кэша
-        var cacheKey = $"issues_by_project_id_{request.ProjectId}";
-        await cache.RemoveAsync(cacheKey, cancellationToken);
+        List<Attachment> attachments = new(request.AttachmentDtos?.Count ?? 0);
+        try
+        {
+            if (request.AttachmentDtos != null)
+            {
+                foreach (var attach in request.AttachmentDtos)
+                {
+                    Attachment attachment = Attachment.Create(
+                        issueId: issue.Id,
+                        uploaderId: currentUser.User.Id,
+                        fileName: attach.Name);
+
+                    await fileStorageService.UploadAsync(
+                        name: attachment.StoragePath,
+                        contentType: attach.ContentType,
+                        stream: attach.Content,
+                        token: cancellationToken);
+
+                    attachments.Add(attachment);
+                }
+
+                context.AddRange(attachments);
+            }
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch
+        {
+            if (attachments is not null && attachments.Count > 0)
+            {
+                var tasks = attachments.Select(async delete =>
+                {
+                    try
+                    {
+                        await fileStorageService.DeleteAsync(delete.StoragePath, cancellationToken);
+                    }
+                    catch
+                    {
+                        //логгер?
+                    }
+                });
+                await Task.WhenAll(tasks);
+            }
+
+            throw;
+        }
+
+        try
+        {
+            var cacheKey = $"issues_by_project_id_{request.ProjectId}";
+            await cache.RemoveAsync(cacheKey, cancellationToken);
+        }
+        catch
+        {
+            //логгер?
+        }
 
         return issue.ToResponse();
     }
