@@ -5,6 +5,7 @@ using TaskService.Application.Features.Projects.Write.Command;
 using TaskService.Application.Features.WorkspaceMembers.AddUser;
 using TaskService.Application.Features.Workspaces.Read.Query;
 using TaskService.Application.Features.Workspaces.Read.Result;
+using TaskService.Application.Interfaces;
 using TaskService.Application.Features.Workspaces.Write.Command;
 using TaskService.Application.Features.Workspaces.Write.Result;
 using TaskService.Application.Mapping;
@@ -29,7 +30,7 @@ namespace TaskService.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
-public class WorkspaceController(IDispatcher dispatcher) : Controller
+public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext currentUserContext) : Controller
 {
     /// <summary>
     ///     Получение рабочей области по Id
@@ -106,6 +107,13 @@ public class WorkspaceController(IDispatcher dispatcher) : Controller
     public async Task<ActionResult<GetWorkspacePageResult>> GetWorkspacePageAsync(
         [FromQuery] GetWorkspacePageQuery query)
     {
+        if (!currentUserContext.IsInitialized)
+        {
+            return Unauthorized();
+        }
+
+        query = query with { UserId = currentUserContext.User.Id };
+
         var response = await dispatcher.SendAsync(query);
         if (response == null)
         {

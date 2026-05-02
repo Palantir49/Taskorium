@@ -16,14 +16,21 @@ public class GetWorkspacePageHandler(TaskServiceDbContext context) : IRequestHan
 {
     public async Task<GetWorkspacePageResult> Handle(GetWorkspacePageQuery request, CancellationToken cancellationToken)
     {
+        if (request.UserId is null)
+        {
+            return new GetWorkspacePageResult(workspaces: []);
+        }
+
         var result = await context.Workspaces
             .AsNoTracking()
+            .Where(workspace => workspace.WorkspaceMembers.Any(member => member.UserId == request.UserId.Value))
+            .OrderByDescending(workspace => workspace.CreatedDate)
             .Skip(request.Skip)
             .Take(request.Take)
             .Select(x => new WorkspaceResponse(id: x.Id,
                                                name: x.Name.Value,
                                                createdDate: x.CreatedDate))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return new GetWorkspacePageResult(workspaces: result);
     }
