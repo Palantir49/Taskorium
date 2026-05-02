@@ -15,6 +15,65 @@
     "version": "1.0.0-alpha.1"
   },
   "paths": {
+    "/api/Attachments/{id}": {
+      "get": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Скачать файл по идентификатору",
+        "description": "Пример запроса:\r\n```\r\nGET /api/v1/Attachments/{id}\r\n```\r\nВ ответ возвращается бинарный поток файла.\r\nЗаголовок `Content-Disposition: attachment` инициирует скачивание в браузере.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Уникальный идентификатор файла (GUID)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Файл успешно получен. Тело ответа — бинарные данные.",
+            "content": {
+              "application/octet-stream": { }
+            }
+          },
+          "400": {
+            "description": "Некорректный формат идентификатора",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Файл с указанным идентификатором не найден",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера при обращении к хранилищу",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/Collections/IssueType": {
       "get": {
         "tags": [
@@ -4271,6 +4330,9 @@
     }
   },
   "tags": [
+    {
+      "name": "Attachments"
+    },
     {
       "name": "Collections"
     },
