@@ -6,7 +6,7 @@ using TaskService.Infrastructure.Services;
 
 namespace TaskService.Application.Features.Attachments
 {
-    internal class AttachmentDownloadHandler(TaskServiceDbContext context,
+    public class AttachmentDownloadHandler(TaskServiceDbContext context,
         FileStorageService fileStorageService) : IRequestHandler<AttachmentDownloadQuery, AttachmentDto>
     {
         public async Task<AttachmentDto> Handle(AttachmentDownloadQuery request, CancellationToken cancellationToken = default)

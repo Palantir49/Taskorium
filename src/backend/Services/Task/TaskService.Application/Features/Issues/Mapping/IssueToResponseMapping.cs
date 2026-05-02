@@ -21,7 +21,7 @@ public static class IssueToResponseMapping
             UpdatedDate: issue.UpdatedDate,
             DueDate: issue.DueDate,
             ResolvedDate: issue.ResolvedDate,
-            attachment:issue.Attachments.Select(x=> new AttachmentResponce(Id: x.Id, Name: x.FileName))
+            attachment: issue.Attachments.Select(x => new AttachmentResponce(Id: x.Id, Name: x.FileName))
             );
     }
 

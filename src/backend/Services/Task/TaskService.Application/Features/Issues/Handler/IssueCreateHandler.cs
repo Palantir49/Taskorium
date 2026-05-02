@@ -66,7 +66,7 @@ public class IssueCreateHandler(
                         contentLength: attach.ContentLength);
 
                     //сброс позиции чтения файла
-                    if (attach.Content.CanSeek) 
+                    if (attach.Content.CanSeek)
                         attach.Content.Position = 0;
 
                     await fileStorageService.UploadAsync(

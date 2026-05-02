@@ -8,7 +8,7 @@ namespace TaskService.Api.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class AttachmentsController(IDispatcher dispatcher) : ControllerBase
     {
