@@ -31,8 +31,8 @@ public class IssueCreateHandler(
                 cancellationToken) ??
             throw new KeyNotFoundException($"Не найден статус инициализации задачи для проекта {request.ProjectId}");
 
+        //TODO: костыль. возможна гонка. нужно добавить отдельную таблицу счетчиков, которая будет возвращать будущий номер и при этом делать внутри ++
         var countIssue = await context.Issues.CountAsync(x => x.ProjectId == project.Id, cancellationToken);
-
         var issueKey = $"{project.Abbreviation}-{countIssue + 1}";
 
         var issue = Issue.Create(
@@ -51,8 +51,8 @@ public class IssueCreateHandler(
             issueId: issue.Id,
             role: Roles.Creator);
 
-        await context.Issues.AddAsync(issue, cancellationToken);
-        await context.IssueAssignees.AddAsync(assignee, cancellationToken);
+        context.Issues.Add(issue);
+        context.IssueAssignees.Add(assignee);
 
         List<Attachment> attachments = new(request.AttachmentDtos?.Count ?? 0);
         try
@@ -65,6 +65,10 @@ public class IssueCreateHandler(
                         issueId: issue.Id,
                         uploaderId: currentUser.User.Id,
                         fileName: attach.Name);
+
+                    //сброс позиции чтения файла
+                    if (attach.Content.CanSeek) 
+                        attach.Content.Position = 0;
 
                     await fileStorageService.UploadAsync(
                         name: attachment.StoragePath,
@@ -81,7 +85,7 @@ public class IssueCreateHandler(
         }
         catch
         {
-            if (attachments is not null && attachments.Count > 0)
+            if (attachments.Count > 0)
             {
                 var tasks = attachments.Select(async delete =>
                 {
@@ -91,7 +95,7 @@ public class IssueCreateHandler(
                     }
                     catch
                     {
-                        //логгер?
+                        //TODO: logger
                     }
                 });
                 await Task.WhenAll(tasks);
@@ -107,7 +111,7 @@ public class IssueCreateHandler(
         }
         catch
         {
-            //логгер?
+            //TODO: logger
         }
 
         return issue.ToResponse();
