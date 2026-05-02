@@ -4,7 +4,7 @@ namespace TaskService.Domain.Entities;
 
 public class Attachment : ISoftDeletable
 {
-    private Attachment(Guid id, Guid issueId, Guid uploaderId, string fileName, string storagePath)
+    private Attachment(Guid id, Guid issueId, Guid uploaderId, string fileName, string contentType, string storagePath)
     {
         Id = id;
         IssueId = issueId;
@@ -13,6 +13,7 @@ public class Attachment : ISoftDeletable
         FileName = fileName;
         // TODO: сделать VO для StoragePath. Name юзать из FileName
         StoragePath = storagePath;
+        ContentType = contentType;
     }
 
     public Guid Id { get; private set; }
@@ -22,13 +23,14 @@ public class Attachment : ISoftDeletable
     public Guid UploaderId { get; private set; }
     public string FileName { get; private set; }
     public string StoragePath { get; private set; }
+    public string ContentType { get; private set; }
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
 
-    public static Attachment Create(Guid issueId, Guid uploaderId, string fileName)
+    public static Attachment Create(Guid issueId, Guid uploaderId, string fileName, string contentType)
     {
         var storagePath =
             $"{DateTime.UtcNow.Year}/{DateTime.UtcNow.Month}/{DateTime.UtcNow.Day}/{issueId}/{fileName}";
-        return new Attachment(Guid.CreateVersion7(), issueId, uploaderId, fileName, storagePath);
+        return new Attachment(Guid.CreateVersion7(), issueId, uploaderId, fileName, contentType, storagePath);
     }
 }

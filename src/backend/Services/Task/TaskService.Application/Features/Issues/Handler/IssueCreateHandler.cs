@@ -61,7 +61,8 @@ public class IssueCreateHandler(
                     Attachment attachment = Attachment.Create(
                         issueId: issue.Id,
                         uploaderId: currentUser.User.Id,
-                        fileName: attach.Name);
+                        fileName: attach.Name,
+                        contentType: attach.ContentType);
 
                     //сброс позиции чтения файла
                     if (attach.Content.CanSeek) 
