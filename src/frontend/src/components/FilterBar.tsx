@@ -1,10 +1,10 @@
 import React from 'react';
 import { FaFilter, FaTimes, FaCog } from 'react-icons/fa';
 import { useTasks } from '../context/TaskContext';
-import { fetchUsers } from '../api/taskService';
-import { User } from '../types';
+import { fetchProjectMembers } from '../api/projectService';
 import { fetchIssuePriorities } from '../api/collectionService';
 import { IssuePriorityResponse } from '../types/issue';
+import { ProjectUserDto } from '../types/project';
 import ProjectSettingsModal from './ProjectSettingsModal';
 import './FilterBar.css';
 
@@ -14,14 +14,19 @@ interface FilterBarProps {
 
 function FilterBar({ projectId }: FilterBarProps) {
   const { filters, setFilter, resetFilters } = useTasks();
-  const [users, setUsers] = React.useState<User[]>([]);
+  const [users, setUsers] = React.useState<ProjectUserDto[]>([]);
   const [priorities, setPriorities] = React.useState<IssuePriorityResponse[]>([]);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
 
-  // Загрузка пользователей
+  // Загрузка участников проекта
   React.useEffect(() => {
-    fetchUsers().then(setUsers);
-  }, []);
+    fetchProjectMembers(projectId)
+      .then((response) => setUsers(response.members || []))
+      .catch((error) => {
+        console.error('Ошибка загрузки участников проекта:', error);
+        setUsers([]);
+      });
+  }, [projectId]);
 
   React.useEffect(() => {
     fetchIssuePriorities()
@@ -56,7 +61,7 @@ function FilterBar({ projectId }: FilterBarProps) {
               <option value="">Все</option>
               {users.map(user => (
                 <option key={user.id} value={user.id}>
-                  {user.username || user.email || user.id}
+                  {user.userName || user.email || user.id}
                 </option>
               ))}
             </select>
