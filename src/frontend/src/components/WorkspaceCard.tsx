@@ -8,10 +8,11 @@ import { fetchUserWorkspaces, deleteWorkspace } from "../api/workSpaceService";
 import { WorkspaceResponse } from "../types/workspace";
 
 interface WorkspaceCardProps {
+  selectedWorkspaceId?: string | null;
   onSelect?: (workspaceId: string) => void;
 }
 
-export default function WorkspaceCard({ onSelect }: WorkspaceCardProps) {
+export default function WorkspaceCard({ selectedWorkspaceId, onSelect }: WorkspaceCardProps) {
   const [workspaces, setWorkspaces] = useState<WorkspaceResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [workspaceToDelete, setWorkspaceToDelete] = useState<WorkspaceResponse | null>(null);
@@ -44,9 +45,14 @@ export default function WorkspaceCard({ onSelect }: WorkspaceCardProps) {
   return (
     <>
       {workspaces.map((workspace) => (
+        (() => {
+          const isSelected = selectedWorkspaceId === workspace.id;
+          return (
         <Card 
           key={workspace.id} 
-          className="relative border-gray-300 mx-auto w-full max-w-sm cursor-pointer hover:border-blue-500 transition-colors"
+          className={`relative mx-auto w-full max-w-sm cursor-pointer transition-colors ${
+            isSelected ? "border-blue-500" : "border-gray-300 hover:border-blue-500"
+          }`}
           onClick={() => onSelect?.(workspace.id)}
         >
           <button
@@ -76,6 +82,8 @@ export default function WorkspaceCard({ onSelect }: WorkspaceCardProps) {
             )}
           </CardContent>
         </Card>
+          );
+        })()
       ))}
       
       <CreateCard 

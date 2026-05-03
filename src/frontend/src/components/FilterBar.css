@@ -76,6 +76,24 @@
   background-color: #dc2626;
 }
 
+.settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.settings-btn:hover {
+  border-color: #9ca3af;
+  color: var(--text-primary);
+}
+
 @media (max-width: 768px) {
   .filter-bar-content {
     padding: 0 1rem;
@@ -100,5 +118,6 @@
     justify-content: center;
   }
 }
+
 
 

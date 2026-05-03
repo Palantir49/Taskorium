@@ -1,17 +1,35 @@
 import React from 'react';
-import { FaFilter, FaTimes } from 'react-icons/fa';
+import { FaFilter, FaTimes, FaCog } from 'react-icons/fa';
 import { useTasks } from '../context/TaskContext';
 import { fetchUsers } from '../api/taskService';
 import { User } from '../types';
+import { fetchIssuePriorities } from '../api/collectionService';
+import { IssuePriorityResponse } from '../types/issue';
+import ProjectSettingsModal from './ProjectSettingsModal';
 import './FilterBar.css';
 
-function FilterBar() {
+interface FilterBarProps {
+  projectId: string;
+}
+
+function FilterBar({ projectId }: FilterBarProps) {
   const { filters, setFilter, resetFilters } = useTasks();
   const [users, setUsers] = React.useState<User[]>([]);
+  const [priorities, setPriorities] = React.useState<IssuePriorityResponse[]>([]);
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
 
   // Загрузка пользователей
   React.useEffect(() => {
     fetchUsers().then(setUsers);
+  }, []);
+
+  React.useEffect(() => {
+    fetchIssuePriorities()
+      .then(setPriorities)
+      .catch((error) => {
+        console.error('Ошибка загрузки приоритетов:', error);
+        setPriorities([]);
+      });
   }, []);
 
   // Проверка, есть ли активные фильтры
@@ -38,7 +56,7 @@ function FilterBar() {
               <option value="">Все</option>
               {users.map(user => (
                 <option key={user.id} value={user.id}>
-                  {user.name}
+                  {user.username || user.email || user.id}
                 </option>
               ))}
             </select>
@@ -59,17 +77,18 @@ function FilterBar() {
           </div>
 
           <div className="filter-group">
-            <label htmlFor="filter-priority">Важность</label>
+            <label htmlFor="filter-priority">Приоритет</label>
             <select
               id="filter-priority"
               value={filters.priority}
               onChange={(e) => handleFilterChange('priority', e.target.value)}
             >
               <option value="">Все</option>
-              <option value="critical">Критичная</option>
-              <option value="high">Высокая</option>
-              <option value="medium">Средняя</option>
-              <option value="low">Низкая</option>
+              {priorities.map((priority) => (
+                <option key={priority.number} value={priority.name}>
+                  {priority.displayName}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -110,7 +129,17 @@ function FilterBar() {
             Сбросить фильтры
           </button>
         )}
+
+        <button className="settings-btn" onClick={() => setIsSettingsOpen(true)} title="Настройки проекта">
+          <FaCog />
+        </button>
       </div>
+
+      <ProjectSettingsModal
+        open={isSettingsOpen}
+        onOpenChange={setIsSettingsOpen}
+        projectId={projectId}
+      />
     </div>
   );
 }
