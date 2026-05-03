@@ -34,7 +34,7 @@ function DashboardTasks({ activeTab, onTabChange, showHeader = true, projectId }
     <>
       {activeTab === 'board' && (
         <>
-          <FilterBar />
+          <FilterBar projectId={projectId} />
           <KanbanBoard onCreateTask={handleOpenCreateForm} />
         </>
       )}

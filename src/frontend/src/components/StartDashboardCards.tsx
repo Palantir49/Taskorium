@@ -42,6 +42,7 @@ export default function StartDashboardCard({
         <h2 className="text-2xl font-bold mb-4">Рабочие области</h2>
         <div className="grid grid-cols-3 gap-6">
           <WorkspaceCard 
+            selectedWorkspaceId={selectedWorkspaceId}
             onSelect={setSelectedWorkspaceId}
           />
         </div>
