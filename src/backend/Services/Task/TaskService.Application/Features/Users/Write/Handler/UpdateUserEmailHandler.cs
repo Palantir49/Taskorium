@@ -1,8 +1,10 @@
-﻿using TaskService.Application.Mediator;
+﻿using TaskService.Application.Features.Users.Write.Command;
+using TaskService.Application.Features.Users.Write.Result;
+using TaskService.Application.Mediator;
 using TaskService.Domain.ValueObjects;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Features.Users.Update
+namespace TaskService.Application.Features.Users.Write.Handler
 {
     public class UpdateUserEmailHandler(TaskServiceDbContext context) : IRequestHandler<UpdateUserEmailCommand, UpdateUserEmailResult>
     {

@@ -7,6 +7,7 @@ using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TaskService.Application.Features.WorkspaceMembers.AddWorkspaceMember;
 
@@ -40,13 +41,15 @@ public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache
         await context.WorkspaceMembers.AddAsync(workspaceMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
+        //инвалидируем кэш
         var workspaceMemberscacheKey = $"workspaceMembers_{existWorkspace.Id}";
         await cache.RemoveAsync(workspaceMemberscacheKey, cancellationToken);
 
-        //инвалидируем кэш
         var cacheKey = $"user_by_keycloak_id_{existUser.KeycloakId}";
         await cache.RemoveAsync(cacheKey, cancellationToken);
 
+        var userWorkspacesCacheKey = $"user_workspaces_by_keycloak_id_{existUser.Id}";
+        await cache.RemoveAsync(userWorkspacesCacheKey, cancellationToken);
 
         return new AddWorkspaceMemberResult(existWorkspace.Id,
             existUser.Id,

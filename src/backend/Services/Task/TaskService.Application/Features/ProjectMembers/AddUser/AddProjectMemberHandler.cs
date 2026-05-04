@@ -8,6 +8,7 @@ using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TaskService.Application.Commands.Workspaces.Create;
 
@@ -47,6 +48,9 @@ public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache c
 
         var cacheKey = $"user_by_keycloak_id_{existUser.KeycloakId}";
         await cache.RemoveAsync(cacheKey, cancellationToken);
+
+        var userWorkspacescacheKey = $"user_workspace_projects_by_id_{existUser.Id}";
+        await cache.RemoveAsync(userWorkspacescacheKey, cancellationToken);
 
         return new AddProjectMemberResult(existProject.Id,
             existUser.Id,

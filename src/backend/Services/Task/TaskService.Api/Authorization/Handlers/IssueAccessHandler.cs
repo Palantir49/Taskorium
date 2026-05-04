@@ -5,6 +5,7 @@ using TaskService.Api.Authorization.Utils;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Projects.Read.Query;
 using TaskService.Application.Interfaces;
+using TaskService.Application.Features.Users.Read.Query;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Enum;
 

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using TaskService.Application.Features.Users.Read.Query;
+using TaskService.Application.Features.Users.Read.Result;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.User.Responses;
 using TaskService.Infrastructure.Persistence;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace TaskService.Application.Features.Users.Get;
+namespace TaskService.Application.Features.Users.Read.Handler;
 
 public class GetUsesrPageHandler(TaskServiceDbContext context) : IRequestHandler<GetUsersPageQuery, GetUsersPageResult>
 {

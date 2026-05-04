@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using TaskService.Contracts.Common.DTO;
 
-namespace TaskService.Application.Features.Users.Get
+namespace TaskService.Application.Features.Users.Read.Result
 {
     public record GetUserByKeycloakIdResult(
      Guid Id,

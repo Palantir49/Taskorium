@@ -1,12 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Features.Users.Read.Query;
+using TaskService.Application.Features.Users.Read.Result;
 using TaskService.Application.Features.WorkspaceMembers;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Features.Users.Get;
+namespace TaskService.Application.Features.Users.Read.Handler;
 
 public class GetUserByKeycloakIdHandler(TaskServiceDbContext context, HybridCache cache)
     : IRequestHandler<GetUserByKeycloakIdQuery, GetUserByKeycloakIdResult>
