@@ -1,9 +1,11 @@
 ﻿using TaskService.Application.Exceptions;
+using TaskService.Application.Features.Users.Write.Command;
+using TaskService.Application.Features.Users.Write.Result;
 using TaskService.Application.Mediator;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Features.Users.Create;
+namespace TaskService.Application.Features.Users.Write.Handler;
 
 public class CreateUserHandler(TaskServiceDbContext context)
     : IRequestHandler<CreateUserCommand, CreateUserResult>

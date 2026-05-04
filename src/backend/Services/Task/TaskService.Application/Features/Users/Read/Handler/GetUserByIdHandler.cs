@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Commands.Users.Get;
+using TaskService.Application.Features.Users.Read.Query;
+using TaskService.Application.Features.Users.Read.Result;
 using TaskService.Application.Mediator;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Application.Features.Users.Get;
+namespace TaskService.Application.Features.Users.Read.Handler;
 
 public class GetUserByIdHandler(TaskServiceDbContext context, HybridCache cache)
     : IRequestHandler<GetUserByIdQuery, GetUserByIdResult>

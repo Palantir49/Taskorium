@@ -1,4 +1,4 @@
-﻿using TaskService.Application.Features.Users.Get;
+﻿using TaskService.Application.Features.Users.Read.Result;
 
 namespace TaskService.Application.Interfaces;
 

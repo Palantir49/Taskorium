@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Commands.Users.Get;
 using TaskService.Application.Features.Users;
-using TaskService.Application.Features.Users.Create;
-using TaskService.Application.Features.Users.Delete;
-using TaskService.Application.Features.Users.Get;
-using TaskService.Application.Features.Users.Update;
+using TaskService.Application.Features.Users.Read.Query;
+using TaskService.Application.Features.Users.Read.Result;
+using TaskService.Application.Features.Users.Write.Command;
+using TaskService.Application.Features.Users.Write.Result;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.User.Requests;
 using TaskService.Contracts.User.Responses;
@@ -40,7 +39,26 @@ public class UserController(IDispatcher dispatcher) : Controller
 
         return Ok(userResponse);
     }
+    /// <summary>
+    ///     Получить рабочие области пользователя по keycloak id
+    /// </summary>
+    /// ///
+    /// <param name="keycloakId">KeycloakId пользователя</param>
+    [HttpGet("{keycloakId:guid}/workspaces")]
+    [ActionName("GetUserWorkspacesByIdAsync")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<GetUserByIdResult>> GetUserWorkspacesByIdAsync(Guid keycloakId)
+    {
+        var userResponse = await dispatcher.SendAsync(new GetUserWorkspacesByIdQuery(keycloakId));
+        if (userResponse == null)
+        {
+            return NotFound();
+        }
 
+        return Ok(userResponse);
+    }
     /// <summary>
     ///     Получить пользователя по keycloak id
     /// </summary>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TaskService.Application.Features.Users.Get;
 using TaskService.Application.Features.Workspaces.Read.Result;
 using TaskService.Application.Mediator;
 
