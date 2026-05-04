@@ -66,21 +66,13 @@ public class ProjectAccessHandler(
 
         switch (wsMemberShip?.Role) //TODO enum
         {
-            case RolesDto.Creator:
+            case WorkspaceRolesDto.Creator:
 
-            case RolesDto.Admin:
+            case WorkspaceRolesDto.Admin:
                 context.Succeed(requirement);
                 return;
 
-            case RolesDto.Member:
-                if (requirement.Action is ProjectAction.View or ProjectAction.Update)
-                {
-                    context.Succeed(requirement);
-                    return;
-                }
-
-                break;
-            case RolesDto.Viewer:
+            case WorkspaceRolesDto.Viewer:
                 if (requirement.Action == ProjectAction.View)
                 {
                     context.Succeed(requirement);
@@ -93,20 +85,20 @@ public class ProjectAccessHandler(
         var projectMemberShip = user.ProjectMembers?.FirstOrDefault(x => x.ProjectId == project.Id);
         switch (projectMemberShip?.Role) //TODO enum
         {
-            case RolesDto.Creator:
+            case ProjectRolesDto.Creator:
 
-            case RolesDto.Admin: //TODO Set and unset admin in project
+            case ProjectRolesDto.Admin: //TODO Set and unset admin in project
                 context.Succeed(requirement);
                 return;
 
-            case RolesDto.Member: //TODO add user assigned task issue
+            case ProjectRolesDto.Member: //TODO add user assigned task issue
                 if (requirement.Action is ProjectAction.View or ProjectAction.Update)
                 {
                     context.Succeed(requirement);
                 }
 
                 break;
-            case RolesDto.Viewer:
+            case ProjectRolesDto.Viewer:
                 if (requirement.Action == ProjectAction.View)
                 {
                     context.Succeed(requirement);

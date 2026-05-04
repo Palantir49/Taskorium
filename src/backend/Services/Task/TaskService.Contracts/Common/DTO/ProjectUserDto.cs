@@ -7,7 +7,7 @@ namespace TaskService.Contracts.Common.DTO;
 
 public record ProjectUserDto(Guid Id,
                            Guid KeycloakId,
-                           RolesDto Role,
+                           ProjectRolesDto Role,
                            DateTimeOffset JoinedAt,
                            string? Email = null,
                            string? UserName = null);

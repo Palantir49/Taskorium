@@ -48,7 +48,7 @@ public class IssueCreateHandler(
         IssueAssignees assignee = IssueAssignees.Create(
             userId: currentUser.User.Id,
             issueId: issue.Id,
-            role: Roles.Creator);
+            role: ProjectRoles.Creator);
 
 
         List<Attachment> attachments = new(request.AttachmentDtos?.Count ?? 0);

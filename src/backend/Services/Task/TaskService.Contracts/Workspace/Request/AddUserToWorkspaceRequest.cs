@@ -6,5 +6,5 @@ using TaskService.Contracts.Enum;
 
 namespace TaskService.Contracts.Workspace.Request;
 
-public record AddUserToWorkspaceRequest(Guid UserId, RolesDto Role);
+public record AddUserToWorkspaceRequest(Guid UserId, WorkspaceRolesDto Role);
 

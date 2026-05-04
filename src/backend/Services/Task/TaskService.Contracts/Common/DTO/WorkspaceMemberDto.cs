@@ -5,5 +5,5 @@ using TaskService.Contracts.Enum;
 
 namespace TaskService.Contracts.Common.DTO
 {
-    public record WorkSpaceMemberDto(Guid WorkspaceId, Guid UserId, RolesDto Role);
+    public record WorkSpaceMemberDto(Guid WorkspaceId, Guid UserId, WorkspaceRolesDto Role);
 }

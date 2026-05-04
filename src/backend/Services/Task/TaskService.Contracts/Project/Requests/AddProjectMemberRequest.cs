@@ -6,5 +6,5 @@ using TaskService.Contracts.Enum;
 
 namespace TaskService.Contracts.Project.Requests
 {
-    public record AddProjectMemberRequest(Guid UserId, RolesDto RoleDto);
+    public record AddProjectMemberRequest(Guid UserId, ProjectRolesDto RoleDto);
 }

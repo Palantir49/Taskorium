@@ -58,20 +58,14 @@ public class WorkSpaceAccessHandler(
 
         switch (wsMemberShip?.Role)
         {
-            case RolesDto.Creator:
+            case WorkspaceRolesDto.Creator:
 
-            case RolesDto.Admin: //TODO Set (unset) admin
+            case WorkspaceRolesDto.Admin: //TODO Set (unset) admin
                 context.Succeed(requirement);
                 return;
 
-            case RolesDto.Member:
-                if (requirement.Action is WorkSpaceAction.View or WorkSpaceAction.Update)
-                {
-                    context.Succeed(requirement);
-                }
 
-                break;
-            case RolesDto.Viewer:
+            case WorkspaceRolesDto.Viewer:
                 if (requirement.Action == WorkSpaceAction.View)
                 {
                     context.Succeed(requirement);

@@ -11,21 +11,21 @@ public class IssueAssignees : ISoftDeletable
     public Guid IssueId { get; private set; }
     public Issue Issue { get; private set; } = null!;
 
-    public Roles Role { get; private set; }
+    public ProjectRoles Role { get; private set; }
 
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
 
     protected IssueAssignees() { }
 
-    private IssueAssignees(Guid userId, Guid issueId, Roles role)
+    private IssueAssignees(Guid userId, Guid issueId, ProjectRoles role)
     {
         UserId = userId;
         IssueId = issueId;
         Role = role;
     }
 
-    public static IssueAssignees Create(Guid userId, Guid issueId, Roles role)
+    public static IssueAssignees Create(Guid userId, Guid issueId, ProjectRoles role)
     {
         return new IssueAssignees(
             userId: userId,
@@ -33,5 +33,5 @@ public class IssueAssignees : ISoftDeletable
             role: role);
     }
 
-    public void UpdateRole(Roles role) => Role = role;
+    public void UpdateRole(ProjectRoles role) => Role = role;
 }

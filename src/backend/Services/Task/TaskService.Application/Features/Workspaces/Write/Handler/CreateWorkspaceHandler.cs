@@ -25,7 +25,7 @@ public class CreateWorkspaceHandler(TaskServiceDbContext context, HybridCache ca
         {
             throw new KeyNotFoundException($"Пользователь с таким id {command.OwnerId} не существует");
         }
-        var workspaceMember = WorkspaceMember.Create(workspace.Id, command.OwnerId, RolesDto.Creator.ToEntity());
+        var workspaceMember = WorkspaceMember.Create(workspace.Id, command.OwnerId, WorkspaceRolesDto.Creator.ToEntity());
 
         await context.WorkspaceMembers.AddAsync(workspaceMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);

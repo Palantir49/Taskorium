@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TaskService.Domain.Entities.Enums;
 
-public enum Roles
+public enum ProjectRoles
 {
     Creator = 0, // полный доступ в созданной сущности и в ее потомках
     Admin = 1, //имеет доступ ко всем CRUD, может назначать наблюдателей и исполнителей в созданной сущности и ее потомках

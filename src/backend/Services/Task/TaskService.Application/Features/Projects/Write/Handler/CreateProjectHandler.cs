@@ -63,7 +63,7 @@ public class CreateProjectHandler(TaskServiceDbContext context, HybridCache cach
         }
 
         var projectMember =
-            ProjectMember.Create(project.Id, command.UserId, Roles.Creator, DateTimeOffset.UtcNow);
+            ProjectMember.Create(project.Id, command.UserId, ProjectRoles.Creator, DateTimeOffset.UtcNow);
 
         await context.Projects.AddAsync(project, cancellationToken);
         await context.IssueStatus.AddAsync(initStatus, cancellationToken);
