@@ -7,4 +7,4 @@ using TaskService.Domain.Entities;
 
 namespace TaskService.Application.Features.WorkspaceMembers.AddUser;
 
-public record AddWorkspaceMemberResult(Guid WorkspaceId, Guid UserId, RolesDto RoleDto);
+public record AddWorkspaceMemberResult(Guid WorkspaceId, Guid UserId, WorkspaceRolesDto RoleDto);

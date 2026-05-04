@@ -10,7 +10,7 @@ namespace TaskService.Domain.Entities
     {
         public Guid UserId { get; private set; }
         public Guid WorkspaceId { get; private set; }
-        public Roles Role { get; private set; }
+        public WorkspaceRoles Role { get; private set; }
         public DateTimeOffset JoinedAt { get; private set; }
         public bool IsDeleted { get; set; }
         public DateTimeOffset? DeletedAt { get; set; }
@@ -20,17 +20,17 @@ namespace TaskService.Domain.Entities
         {
 
         }
-        private WorkspaceMember(Guid workspaceId, Guid userId, Roles role, DateTimeOffset joinedAt)
+        private WorkspaceMember(Guid workspaceId, Guid userId, WorkspaceRoles role, DateTimeOffset joinedAt)
         {
             UserId = userId;
             WorkspaceId = workspaceId;
             Role = role;
             JoinedAt = joinedAt;
         }
-        public static WorkspaceMember Create(Guid workspaceId, Guid userId, Roles role, DateTimeOffset joinedAt)
+        public static WorkspaceMember Create(Guid workspaceId, Guid userId, WorkspaceRoles role, DateTimeOffset joinedAt)
         {
             return new WorkspaceMember(workspaceId, userId, role, joinedAt);
         }
-        public static WorkspaceMember Create(Guid workspaceId, Guid userId, Roles role) => Create(workspaceId, userId, role, DateTimeOffset.UtcNow);
+        public static WorkspaceMember Create(Guid workspaceId, Guid userId, WorkspaceRoles role) => Create(workspaceId, userId, role, DateTimeOffset.UtcNow);
     }
 }

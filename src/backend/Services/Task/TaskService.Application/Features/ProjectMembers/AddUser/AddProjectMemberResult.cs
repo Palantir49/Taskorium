@@ -7,4 +7,4 @@ using TaskService.Domain.Entities;
 
 namespace TaskService.Application.Features.WorkspaceMembers.AddUser;
 
-public record AddProjectMemberResult(Guid ProjectId, Guid UserId, RolesDto RoleDto);
+public record AddProjectMemberResult(Guid ProjectId, Guid UserId, ProjectRolesDto RoleDto);

@@ -5,5 +5,5 @@ using TaskService.Contracts.Enum;
 
 namespace TaskService.Contracts.Common.DTO
 {
-    public record ProjectMemberDto(Guid ProjectId, Guid UserId, RolesDto Role);
+    public record ProjectMemberDto(Guid ProjectId, Guid UserId, ProjectRolesDto Role);
 }

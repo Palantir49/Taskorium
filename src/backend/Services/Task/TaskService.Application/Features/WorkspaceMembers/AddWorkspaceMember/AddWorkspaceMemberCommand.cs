@@ -7,4 +7,4 @@ using TaskService.Domain.Entities.Enums;
 
 namespace TaskService.Application.Features.WorkspaceMembers.AddUser;
 
-public record AddWorkspaceMemberCommand(Guid WorkspaceId, Guid UserId, RolesDto Role) : ICommand<AddWorkspaceMemberResult>;
+public record AddWorkspaceMemberCommand(Guid WorkspaceId, Guid UserId, WorkspaceRolesDto Role) : ICommand<AddWorkspaceMemberResult>;
