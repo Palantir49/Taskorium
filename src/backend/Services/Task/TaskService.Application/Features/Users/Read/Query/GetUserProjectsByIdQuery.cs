@@ -6,6 +6,6 @@ using TaskService.Application.Mediator;
 
 namespace TaskService.Application.Features.Users.Read.Query
 {
-    public record GetUserProjectsByIdQuery(Guid Id,Guid WorkspaceId) : IQuery<GetUserProjectsByIdResult>;
+    public record GetUserProjectsByIdQuery(Guid Id, Guid WorkspaceId) : IQuery<GetUserProjectsByIdResult>;
 
 }
