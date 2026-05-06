@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   FaTimes,
   FaBug,
@@ -8,81 +8,22 @@ import {
   FaExclamationTriangle,
   FaInfoCircle,
   FaCircle,
-  FaSave,
   FaTrash
 } from 'react-icons/fa';
 import { useTasks } from '../context/TaskContext';
-import { fetchUsers } from '../api/taskService';
-import { TaskDetailSidebarProps, Task, User } from '../types';
+import { Task } from '../types';
+import TaskCreateForm from './TaskCreateForm';
 import './TaskDetailSidebar.css';
 
 function TaskDetailSidebar() {
-  const { selectedTask, setSelectedTask, updateTask, deleteTask } = useTasks();
-  const [users, setUsers] = useState<User[]>([]);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    issueStatusId: '1',
-    numberIssueType: 2,
-    numberIssuePriority: 2,
-    dueDate: ''
-  });
-
-  // Загрузка пользователей
-  useEffect(() => {
-    fetchUsers().then(setUsers);
-  }, []);
-
-  // Обновление формы при изменении выбранной задачи
-  useEffect(() => {
-    if (selectedTask) {
-      setFormData({
-        name: selectedTask.name || '',
-        description: selectedTask.description || '',
-        issueStatusId: selectedTask.taskStatusId,
-        numberIssueType: selectedTask.issueType.number,
-        numberIssuePriority: selectedTask.issuePriority.number,
-        dueDate: selectedTask.dueDate
-          ? selectedTask.dueDate.split('T')[0]
-          : ''
-      });
-      setIsEditing(false);
-    }
-  }, [selectedTask]);
+  const { selectedTask, setSelectedTask, deleteTask } = useTasks();
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [taskForEdit, setTaskForEdit] = useState<Task | null>(null);
 
   if (!selectedTask) return null;
 
   const handleClose = () => {
     setSelectedTask(null);
-    setIsEditing(false);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSave = async () => {
-    try {
-      const updates = {
-        name: formData.name,
-        description: formData.description,
-        issueStatusId: formData.issueStatusId,
-        numberIssueType: parseInt(formData.numberIssueType.toString()),
-        numberIssuePriority: parseInt(formData.numberIssuePriority.toString()),
-        dueDate: formData.dueDate ? formData.dueDate : null
-      };
-
-      await updateTask(selectedTask.id, updates);
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Ошибка при сохранении задачи:', error);
-      alert('Не удалось сохранить изменения');
-    }
   };
 
   const handleDelete = async () => {
@@ -95,6 +36,16 @@ function TaskDetailSidebar() {
         alert('Не удалось удалить задачу');
       }
     }
+  };
+
+  const handleOpenEditForm = () => {
+    setTaskForEdit(selectedTask);
+    setIsEditFormOpen(true);
+  };
+
+  const handleCloseEditForm = () => {
+    setIsEditFormOpen(false);
+    setTaskForEdit(null);
   };
 
   const getTypeIcon = (type: string) => {
@@ -136,82 +87,7 @@ function TaskDetailSidebar() {
         </div>
 
         <div className="sidebar-content">
-          {isEditing ? (
-            <>
-              <div className="form-group">
-                <label>Название</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Описание</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="form-textarea"
-                  rows={4}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Тип задачи</label>
-                <select
-                  name="numberIssueType"
-                  value={formData.numberIssueType}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="1">Ошибка</option>
-                  <option value="2">Фича</option>
-                  <option value="3">Улучшение</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Важность</label>
-                <select
-                  name="numberIssuePriority"
-                  value={formData.numberIssuePriority}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="4">Критичная</option>
-                  <option value="3">Высокая</option>
-                  <option value="2">Средняя</option>
-                  <option value="1">Низкая</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Дедлайн</label>
-                <input
-                  type="date"
-                  name="dueDate"
-                  value={formData.dueDate}
-                  onChange={handleChange}
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-actions">
-                <button className="btn-save" onClick={handleSave}>
-                  <FaSave />
-                  Сохранить
-                </button>
-                <button className="btn-cancel" onClick={() => setIsEditing(false)}>
-                  Отмена
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
+          <>
               <div className="detail-section">
                 <div className="detail-header">
                   <h3>{selectedTask.name}</h3>
@@ -271,7 +147,7 @@ function TaskDetailSidebar() {
               </div>
 
               <div className="detail-actions">
-                <button className="btn-edit" onClick={() => setIsEditing(true)}>
+                <button className="btn-edit" onClick={handleOpenEditForm}>
                   Редактировать
                 </button>
                 <button className="btn-delete" onClick={handleDelete}>
@@ -279,10 +155,18 @@ function TaskDetailSidebar() {
                   Удалить
                 </button>
               </div>
-            </>
-          )}
+          </>
         </div>
       </div>
+
+      <TaskCreateForm
+        isOpen={isEditFormOpen}
+        onClose={handleCloseEditForm}
+        projectId={selectedTask.projectId}
+        mode="edit"
+        task={taskForEdit}
+        onSaved={handleClose}
+      />
     </div>
   );
 }
