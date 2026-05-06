@@ -1,41 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import {
   FaTimes,
-  FaSave
+  FaPaperclip
 } from 'react-icons/fa';
 import { useTasks } from '../context/TaskContext';
-import { fetchUsers } from '../api/taskService';
-import { TaskCreateFormProps, User } from '../types';
+import { createTaskInProject } from '../api/taskService';
+import { fetchProjectById } from '../api/projectService';
+import { fetchIssuePriorities, fetchIssueTypes } from '../api/collectionService';
+import { TaskCreateFormProps } from '../types';
+import { IssuePriorityResponse, IssueTypeResponse } from '../types/issue';
 import './TaskDetailSidebar.css';
 
-function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCreateFormProps) {
-  const { createTask } = useTasks();
-  const [users, setUsers] = useState<User[]>([]);
+function TaskCreateForm({ isOpen, onClose, projectId, initialStatus = 'backlog' }: TaskCreateFormProps) {
+  const { loadTasks } = useTasks();
+  const [issueTypes, setIssueTypes] = useState<IssueTypeResponse[]>([]);
+  const [issuePriorities, setIssuePriorities] = useState<IssuePriorityResponse[]>([]);
+  const [workspaceId, setWorkspaceId] = useState<string>('');
+  const [attachments, setAttachments] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    projectId: '1', // По умолчанию проект 1
-    numberIssueType: 2, // По умолчанию функция
-    numberIssuePriority: 2, // По умолчанию средний приоритет
+    numberIssueType: 0,
+    numberIssuePriority: 0,
     dueDate: ''
   });
 
-  // Загрузка пользователей
   useEffect(() => {
-    if (isOpen) {
-      fetchUsers().then(setUsers);
-      // Сброс формы при открытии
-      setFormData({
-        name: '',
-        description: '',
-        projectId: '1',
-        numberIssueType: 2,
-        numberIssuePriority: 2,
-        dueDate: ''
-      });
-    }
-  }, [isOpen, initialStatus]);
+    if (!isOpen) return;
+
+    const loadFormData = async () => {
+      try {
+        const [types, priorities, project] = await Promise.all([
+          fetchIssueTypes(),
+          fetchIssuePriorities(),
+          fetchProjectById(projectId),
+        ]);
+
+        setIssueTypes(types);
+        setIssuePriorities(priorities);
+        setWorkspaceId(project.workspaceId);
+
+        setFormData({
+          name: '',
+          description: '',
+          numberIssueType: types[0]?.number ?? 0,
+          numberIssuePriority: priorities[0]?.number ?? 0,
+          dueDate: ''
+        });
+        setAttachments([]);
+      } catch (error) {
+        console.error('Ошибка загрузки данных для формы создания задачи:', error);
+      }
+    };
+
+    loadFormData();
+  }, [isOpen, initialStatus, projectId]);
 
   if (!isOpen) return null;
 
@@ -47,8 +67,13 @@ function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCrea
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'numberIssueType' || name === 'numberIssuePriority' ? Number(value) : value
     }));
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    setAttachments(files);
   };
 
   const handleSave = async () => {
@@ -57,18 +82,32 @@ function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCrea
       return;
     }
 
+    if (!workspaceId) {
+      alert('Не удалось определить рабочую область проекта');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const taskData = {
-        name: formData.name.trim(),
-        description: formData.description.trim(),
-        projectId: formData.projectId,
-        numberIssueType: parseInt(formData.numberIssueType.toString()),
-        numberIssuePriority: parseInt(formData.numberIssuePriority.toString()),
-        dueDate: formData.dueDate ? formData.dueDate : null
-      };
+      const taskFormData = new FormData();
+      taskFormData.append('name', formData.name.trim());
+      taskFormData.append('projectId', projectId);
+      taskFormData.append('numberIssueType', formData.numberIssueType.toString());
+      taskFormData.append('numberIssuePriority', formData.numberIssuePriority.toString());
 
-      await createTask(taskData);
+      if (formData.description.trim()) {
+        taskFormData.append('description', formData.description.trim());
+      }
+      if (formData.dueDate) {
+        taskFormData.append('dueDate', formData.dueDate);
+      }
+
+      attachments.forEach((file) => {
+        taskFormData.append('attachments', file);
+      });
+
+      await createTaskInProject(workspaceId, projectId, taskFormData);
+      await loadTasks();
       onClose();
     } catch (error) {
       console.error('Ошибка при создании задачи:', error);
@@ -122,25 +161,49 @@ function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCrea
               onChange={handleChange}
               className="form-select"
             >
-              <option value="1">Ошибка</option>
-              <option value="2">Фича</option>
-              <option value="3">Улучшение</option>
+              {issueTypes.map((type) => (
+                <option key={type.number} value={type.number}>
+                  {type.displayName}
+                </option>
+              ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label>Важность</label>
+            <label>Приоритет задачи</label>
             <select
               name="numberIssuePriority"
               value={formData.numberIssuePriority}
               onChange={handleChange}
               className="form-select"
             >
-              <option value="4">Критичная</option>
-              <option value="3">Высокая</option>
-              <option value="2">Средняя</option>
-              <option value="1">Низкая</option>
+              {issuePriorities.map((priority) => (
+                <option key={priority.number} value={priority.number}>
+                  {priority.displayName}
+                </option>
+              ))}
             </select>
+          </div>
+
+          <div className="form-group">
+            <label>Документы</label>
+            <div className="attachments-row">
+              <span className="attachments-text">
+                {attachments.length > 0
+                  ? attachments.map((f) => f.name).join(', ')
+                  : 'Файлы не выбраны'}
+              </span>
+
+              <label className="attachment-clip-btn" title="Прикрепить файл">
+                <FaPaperclip />
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleFileSelect}
+                  style={{ display: 'none' }}
+                />
+              </label>
+             </div>
           </div>
 
           <div className="form-group">
@@ -160,7 +223,6 @@ function TaskCreateForm({ isOpen, onClose, initialStatus = 'backlog' }: TaskCrea
               onClick={handleSave}
               disabled={isLoading}
             >
-              <FaSave />
               {isLoading ? 'Создание...' : 'Создать'}
             </button>
             <button

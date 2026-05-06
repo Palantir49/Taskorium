@@ -102,6 +102,7 @@ export interface TaskDetailSidebarProps {
 export interface TaskCreateFormProps {
     isOpen: boolean;
     onClose: () => void;
+    projectId: string;
     initialStatus?: TaskStatus;
 }
 

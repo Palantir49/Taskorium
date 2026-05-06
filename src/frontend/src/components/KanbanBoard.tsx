@@ -22,10 +22,9 @@ import './KanbanBoard.css';
 const statusOrder = ['backlog', 'in-progress', 'testing', 'pause', 'done'];
 
 interface KanbanBoardProps {
-  onCreateTask?: (status: string) => void;
 }
 
-function KanbanBoard({ onCreateTask }: KanbanBoardProps) {
+function KanbanBoard({}: KanbanBoardProps) {
   const { tasks, filters, updateTask, setSelectedTask, selectedTask } = useTasks();
   const [activeTask, setActiveTask] = React.useState<Task | null>(null);
 
@@ -118,7 +117,6 @@ function KanbanBoard({ onCreateTask }: KanbanBoardProps) {
               tasks={groupedTasks[status] || []}
               onTaskClick={handleTaskClick}
               isSidebarOpen={!!selectedTask}
-              onCreateTask={onCreateTask}
             />
           ))}
         </div>

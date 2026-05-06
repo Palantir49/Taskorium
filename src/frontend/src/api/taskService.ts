@@ -106,6 +106,33 @@ export const createTask = async (taskData: CreateTaskData): Promise<Task> => {
 };
 
 /**
+ * Создать новую задачу в проекте (DTO + attachments через multipart/form-data)
+ */
+export const createTaskInProject = async (
+  workspaceId: string,
+  projectId: string,
+  taskFormData: FormData
+): Promise<Task> => {
+  console.log('createTaskInProject called:', workspaceId, projectId);
+  try {
+    const response = await api.post(
+      `/Workspace/${workspaceId}/project/${projectId}/issue`,
+      taskFormData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    console.log('createTaskInProject:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('createTaskInProject error:', error);
+    throw error;
+  }
+};
+
+/**
  * Удалить задачу
  */
 export const deleteTask = async (id: string): Promise<void> => {

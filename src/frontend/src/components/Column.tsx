@@ -34,7 +34,7 @@ const columnConfig: Record<TaskStatus, { title: string; color: string; id: strin
   }
 };
 
-function Column({ status, tasks, onTaskClick, isSidebarOpen, onCreateTask }: ColumnProps) {
+function Column({ status, tasks, onTaskClick, isSidebarOpen }: ColumnProps) {
   const config = columnConfig[status];
 
   const { setNodeRef, isOver } = useDroppable({
@@ -44,12 +44,6 @@ function Column({ status, tasks, onTaskClick, isSidebarOpen, onCreateTask }: Col
       status
     }
   });
-
-  const handleAddTask = () => {
-    if (onCreateTask) {
-      onCreateTask(status);
-    }
-  };
 
   return (
     <>
@@ -75,9 +69,6 @@ function Column({ status, tasks, onTaskClick, isSidebarOpen, onCreateTask }: Col
               />
             ))
           )}
-          <button className="add-task-btn" onClick={handleAddTask} title="Добавить задачу">
-            +
-          </button>
         </div>
       </div>
       {status !== 'done' && <div className="column-divider"></div>}
