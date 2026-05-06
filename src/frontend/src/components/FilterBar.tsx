@@ -10,9 +10,10 @@ import './FilterBar.css';
 
 interface FilterBarProps {
   projectId: string;
+  onCreateTask?: () => void;
 }
 
-function FilterBar({ projectId }: FilterBarProps) {
+function FilterBar({ projectId, onCreateTask }: FilterBarProps) {
   const { filters, setFilter, resetFilters } = useTasks();
   const [users, setUsers] = React.useState<ProjectUserDto[]>([]);
   const [priorities, setPriorities] = React.useState<IssuePriorityResponse[]>([]);
@@ -134,6 +135,10 @@ function FilterBar({ projectId }: FilterBarProps) {
             Сбросить фильтры
           </button>
         )}
+
+        <button className="create-task-main-btn" onClick={onCreateTask}>
+          Создать задачу
+        </button>
 
         <button className="settings-btn" onClick={() => setIsSettingsOpen(true)} title="Настройки проекта">
           <FaCog />

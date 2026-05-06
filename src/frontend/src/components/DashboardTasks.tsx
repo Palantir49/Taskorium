@@ -34,8 +34,8 @@ function DashboardTasks({ activeTab, onTabChange, showHeader = true, projectId }
     <>
       {activeTab === 'board' && (
         <>
-          <FilterBar projectId={projectId} />
-          <KanbanBoard onCreateTask={handleOpenCreateForm} />
+          <FilterBar projectId={projectId} onCreateTask={() => handleOpenCreateForm('backlog')} />
+          <KanbanBoard />
         </>
       )}
       {activeTab === 'analytics' && (
@@ -54,6 +54,7 @@ function DashboardTasks({ activeTab, onTabChange, showHeader = true, projectId }
       <TaskCreateForm
         isOpen={showCreateForm}
         onClose={handleCloseCreateForm}
+        projectId={projectId}
         initialStatus={createFormStatus}
       />
     </>
