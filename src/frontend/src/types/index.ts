@@ -104,6 +104,9 @@ export interface TaskCreateFormProps {
     onClose: () => void;
     projectId: string;
     initialStatus?: TaskStatus;
+    mode?: 'create' | 'edit';
+    task?: Task | null;
+    onSaved?: () => void;
 }
 
 export interface AuthInfo {

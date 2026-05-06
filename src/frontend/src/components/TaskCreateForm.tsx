@@ -11,8 +11,16 @@ import { TaskCreateFormProps } from '../types';
 import { IssuePriorityResponse, IssueTypeResponse } from '../types/issue';
 import './TaskDetailSidebar.css';
 
-function TaskCreateForm({ isOpen, onClose, projectId, initialStatus = 'backlog' }: TaskCreateFormProps) {
-  const { loadTasks } = useTasks();
+function TaskCreateForm({
+  isOpen,
+  onClose,
+  projectId,
+  initialStatus = 'backlog',
+  mode = 'create',
+  task = null,
+  onSaved
+}: TaskCreateFormProps) {
+  const { loadTasks, updateTask } = useTasks();
   const [issueTypes, setIssueTypes] = useState<IssueTypeResponse[]>([]);
   const [issuePriorities, setIssuePriorities] = useState<IssuePriorityResponse[]>([]);
   const [workspaceId, setWorkspaceId] = useState<string>('');
@@ -41,13 +49,23 @@ function TaskCreateForm({ isOpen, onClose, projectId, initialStatus = 'backlog' 
         setIssuePriorities(priorities);
         setWorkspaceId(project.workspaceId);
 
-        setFormData({
-          name: '',
-          description: '',
-          numberIssueType: types[0]?.number ?? 0,
-          numberIssuePriority: priorities[0]?.number ?? 0,
-          dueDate: ''
-        });
+        setFormData(
+          mode === 'edit' && task
+            ? {
+                name: task.name || '',
+                description: task.description || '',
+                numberIssueType: task.issueType?.number ?? (types[0]?.number ?? 0),
+                numberIssuePriority: task.issuePriority?.number ?? (priorities[0]?.number ?? 0),
+                dueDate: task.dueDate ? task.dueDate.split('T')[0] : ''
+              }
+            : {
+                name: '',
+                description: '',
+                numberIssueType: types[0]?.number ?? 0,
+                numberIssuePriority: priorities[0]?.number ?? 0,
+                dueDate: ''
+              }
+        );
         setAttachments([]);
       } catch (error) {
         console.error('Ошибка загрузки данных для формы создания задачи:', error);
@@ -55,7 +73,7 @@ function TaskCreateForm({ isOpen, onClose, projectId, initialStatus = 'backlog' 
     };
 
     loadFormData();
-  }, [isOpen, initialStatus, projectId]);
+  }, [isOpen, initialStatus, projectId, mode, task]);
 
   if (!isOpen) return null;
 
@@ -89,29 +107,42 @@ function TaskCreateForm({ isOpen, onClose, projectId, initialStatus = 'backlog' 
 
     setIsLoading(true);
     try {
-      const taskFormData = new FormData();
-      taskFormData.append('name', formData.name.trim());
-      taskFormData.append('projectId', projectId);
-      taskFormData.append('numberIssueType', formData.numberIssueType.toString());
-      taskFormData.append('numberIssuePriority', formData.numberIssuePriority.toString());
+      if (mode === 'edit' && task) {
+        await updateTask(task.id, {
+          name: formData.name.trim(),
+          description: formData.description.trim() || undefined,
+          issueStatusId: task.taskStatusId,
+          numberIssueType: formData.numberIssueType,
+          numberIssuePriority: formData.numberIssuePriority,
+          dueDate: formData.dueDate || null
+        });
+      } else {
+        const taskFormData = new FormData();
+        taskFormData.append('name', formData.name.trim());
+        taskFormData.append('projectId', projectId);
+        taskFormData.append('numberIssueType', formData.numberIssueType.toString());
+        taskFormData.append('numberIssuePriority', formData.numberIssuePriority.toString());
 
-      if (formData.description.trim()) {
-        taskFormData.append('description', formData.description.trim());
+        if (formData.description.trim()) {
+          taskFormData.append('description', formData.description.trim());
+        }
+        if (formData.dueDate) {
+          taskFormData.append('dueDate', formData.dueDate);
+        }
+
+        attachments.forEach((file) => {
+          taskFormData.append('attachments', file);
+        });
+
+        await createTaskInProject(workspaceId, projectId, taskFormData);
       }
-      if (formData.dueDate) {
-        taskFormData.append('dueDate', formData.dueDate);
-      }
 
-      attachments.forEach((file) => {
-        taskFormData.append('attachments', file);
-      });
-
-      await createTaskInProject(workspaceId, projectId, taskFormData);
       await loadTasks();
+      onSaved?.();
       onClose();
     } catch (error) {
-      console.error('Ошибка при создании задачи:', error);
-      alert('Не удалось создать задачу');
+      console.error('Ошибка при сохранении задачи:', error);
+      alert(mode === 'edit' ? 'Не удалось обновить задачу' : 'Не удалось создать задачу');
     } finally {
       setIsLoading(false);
     }
@@ -121,7 +152,7 @@ function TaskCreateForm({ isOpen, onClose, projectId, initialStatus = 'backlog' 
     <div className="task-detail-sidebar-overlay" onClick={handleClose}>
       <div className="task-detail-sidebar" onClick={(e) => e.stopPropagation()}>
         <div className="sidebar-header">
-          <h2>Создать задачу</h2>
+          <h2>{mode === 'edit' ? 'Редактировать задачу' : 'Создать задачу'}</h2>
           <button className="close-btn" onClick={handleClose}>
             <FaTimes />
           </button>
@@ -185,26 +216,28 @@ function TaskCreateForm({ isOpen, onClose, projectId, initialStatus = 'backlog' 
             </select>
           </div>
 
-          <div className="form-group">
-            <label>Документы</label>
-            <div className="attachments-row">
-              <span className="attachments-text">
-                {attachments.length > 0
-                  ? attachments.map((f) => f.name).join(', ')
-                  : 'Файлы не выбраны'}
-              </span>
+          {mode === 'create' && (
+            <div className="form-group">
+              <label>Документы</label>
+              <div className="attachments-row">
+                <span className="attachments-text">
+                  {attachments.length > 0
+                    ? attachments.map((f) => f.name).join(', ')
+                    : 'Файлы не выбраны'}
+                </span>
 
-              <label className="attachment-clip-btn" title="Прикрепить файл">
-                <FaPaperclip />
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileSelect}
-                  style={{ display: 'none' }}
-                />
-              </label>
-             </div>
-          </div>
+                <label className="attachment-clip-btn" title="Прикрепить файл">
+                  <FaPaperclip />
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleFileSelect}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+               </div>
+            </div>
+          )}
 
           <div className="form-group">
             <label>Дедлайн</label>
@@ -223,7 +256,7 @@ function TaskCreateForm({ isOpen, onClose, projectId, initialStatus = 'backlog' 
               onClick={handleSave}
               disabled={isLoading}
             >
-              {isLoading ? 'Создание...' : 'Создать'}
+              {isLoading ? (mode === 'edit' ? 'Сохранение...' : 'Создание...') : (mode === 'edit' ? 'Сохранить' : 'Создать')}
             </button>
             <button
               className="btn-cancel"
