@@ -27,7 +27,7 @@ public static class IssueRequestToCommandMapping
             request.NumberIssueType,
             request.NumberIssuePriority,
             request.Description,
-            request.DueDate,
+            request.DueDate?.ToUniversalTime(),
             attachments
         );
     }
@@ -40,7 +40,7 @@ public static class IssueRequestToCommandMapping
             request.IssueStatusId,
             Description: request.Description,
             numberIssueType: request.NumberIssueType,
-            DueDate: request.DueDate
+            DueDate: request.DueDate?.ToUniversalTime()
         );
     }
 
