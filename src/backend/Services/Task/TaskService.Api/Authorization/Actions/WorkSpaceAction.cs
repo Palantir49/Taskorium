@@ -7,10 +7,12 @@ public enum WorkSpaceAction
     /// <summary>
     /// </summary>
     View,
-
     /// <summary>
     /// </summary>
     Create,
+    /// <summary>
+    /// </summary>
+    CreateProject,
 
     /// <summary>
     /// </summary>

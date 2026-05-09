@@ -62,7 +62,7 @@ public static class ServiceExtensions
                     p => p.AddRequirements(new WorkSpaceAccessRequirement(WorkSpaceAction.DeleteUser)))
                 .AddPolicy("CanViewProject", p => p.AddRequirements(new ProjectAccessRequirement(ProjectAction.View)))
                 .AddPolicy("CanCreateProject",
-                    p => p.AddRequirements(new ProjectAccessRequirement(ProjectAction.Create)))
+                    p => p.AddRequirements(new WorkSpaceAccessRequirement(WorkSpaceAction.CreateProject)))
                 .AddPolicy("CanUpdateProject",
                     p => p.AddRequirements(new ProjectAccessRequirement(ProjectAction.Update)))
                 .AddPolicy("CanDeleteProject",
@@ -72,7 +72,7 @@ public static class ServiceExtensions
                 .AddPolicy("CanDeleteUserFromProject",
                     p => p.AddRequirements(new ProjectAccessRequirement(ProjectAction.DeleteUser)))
                 .AddPolicy("CanViewTask", p => p.AddRequirements(new IssueAccessRequirement(IssueAction.View)))
-                .AddPolicy("CanCreateTask", p => p.AddRequirements(new IssueAccessRequirement(IssueAction.Create)))
+                .AddPolicy("CanCreateTask", p => p.AddRequirements(new ProjectAccessRequirement(ProjectAction.CreateIssue)))
                 .AddPolicy("CanUpdateTask", p => p.AddRequirements(new IssueAccessRequirement(IssueAction.Update)))
                 .AddPolicy("CanDeleteTask", p => p.AddRequirements(new IssueAccessRequirement(IssueAction.Delete)));
 
