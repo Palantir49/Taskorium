@@ -2,17 +2,13 @@
 
 /// <summary>
 /// </summary>
-public enum IssueAction
+public enum CommentAction
 {
-    /// <summary>
-    /// </summary>
-    View,
-
     /// <summary>
     /// </summary>
     Update,
 
     /// <summary>
     /// </summary>
-    Delete
+    Delete,
 }

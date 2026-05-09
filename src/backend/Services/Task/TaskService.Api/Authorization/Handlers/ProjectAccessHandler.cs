@@ -30,11 +30,7 @@ public class ProjectAccessHandler(
 
         logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над проектом",
             requirement.Action);
-        if (requirement.Action == ProjectAction.Create)
-        {
-            context.Succeed(requirement);
-            return;
-        }
+
         var projectId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor, "projectId");
         if (projectId is null)
         {
@@ -70,13 +66,13 @@ public class ProjectAccessHandler(
 
             case WorkspaceRolesDto.Admin:
                 context.Succeed(requirement);
-                return;
+                break;
 
             case WorkspaceRolesDto.Viewer:
                 if (requirement.Action == ProjectAction.View)
                 {
                     context.Succeed(requirement);
-                    return;
+                    break;
                 }
 
                 break;

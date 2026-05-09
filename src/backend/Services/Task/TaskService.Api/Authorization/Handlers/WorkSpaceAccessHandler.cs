@@ -27,7 +27,9 @@ public class WorkSpaceAccessHandler(
     {
         logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над рабочей областью",
             requirement.Action);
-        if (requirement.Action == WorkSpaceAction.Create)
+
+
+        if (requirement.Action == WorkSpaceAction.Create && userContext.IsInitialized)
         {
             context.Succeed(requirement);
             return;
@@ -51,8 +53,8 @@ public class WorkSpaceAccessHandler(
             context.Fail();
             return;
         }
-
         var user = userContext.User;
+
 
         var wsMemberShip = user.WorkSpaceMembers?.FirstOrDefault(x => x.WorkspaceId == workspaceId);
 
