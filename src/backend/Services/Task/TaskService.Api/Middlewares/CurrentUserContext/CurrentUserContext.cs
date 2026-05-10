@@ -1,4 +1,4 @@
-﻿using TaskService.Application.Features.Users.Read.Result;
+﻿using TaskService.Application.Features.Users.Read.GetUserByKeycloakId;
 using TaskService.Application.Interfaces;
 
 namespace TaskService.Api.Middlewares.CurrentUserContext;

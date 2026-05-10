@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Features.Users;
-using TaskService.Application.Features.Users.Read.Query;
-using TaskService.Application.Features.Users.Read.Result;
-using TaskService.Application.Features.Users.Write.Command;
-using TaskService.Application.Features.Users.Write.Result;
+using TaskService.Application.Features.Users.Read.GetUserById;
+using TaskService.Application.Features.Users.Read.GetUserByKeycloakId;
+using TaskService.Application.Features.Users.Read.GetUserWorkspacesById;
+using TaskService.Application.Features.Users.Read.GetUsesrPage;
+using TaskService.Application.Features.Users.Write.CreateUser;
+using TaskService.Application.Features.Users.Write.DeleteUserById;
+using TaskService.Application.Features.Users.Write.UpdateUserEmail;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.User.Requests;
 using TaskService.Contracts.User.Responses;
