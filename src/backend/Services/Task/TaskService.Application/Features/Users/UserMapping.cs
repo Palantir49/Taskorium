@@ -1,5 +1,5 @@
-﻿using TaskService.Application.Features.Users.Read.Query;
-using TaskService.Application.Features.Users.Write.Command;
+﻿using TaskService.Application.Features.Users.Read.GetUserById;
+using TaskService.Application.Features.Users.Write.CreateUser;
 using TaskService.Contracts.User.Requests;
 using TaskService.Domain.ValueObjects;
 

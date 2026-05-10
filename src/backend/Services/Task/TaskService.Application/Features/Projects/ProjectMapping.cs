@@ -1,4 +1,4 @@
-﻿using TaskService.Application.Features.Projects.Write.Command;
+﻿using TaskService.Application.Features.Projects.Write.UpdateProject;
 using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
