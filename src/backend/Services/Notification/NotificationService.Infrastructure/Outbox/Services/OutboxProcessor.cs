@@ -80,9 +80,10 @@ public sealed class OutboxProcessor(
         INotificationSender notificationSenderService, CancellationToken stoppingToken)
     {
         using var loggerScope = logger.BeginScope(new Dictionary<string, object>
-            {
-                ["OutBoxMessageId"] = message.Id, ["NotificationId"] = message.NotificationId
-            }
+        {
+            ["OutBoxMessageId"] = message.Id,
+            ["NotificationId"] = message.NotificationId
+        }
         );
 
         logger.LogInformation("Начало обработки сообщения");
