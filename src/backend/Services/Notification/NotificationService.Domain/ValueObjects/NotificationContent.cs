@@ -6,7 +6,7 @@ public record NotificationContent
         string subject,
         string body,
         string? actionUrl,
-        Dictionary<string, object>? metadata)
+        Dictionary<string, string>? metadata)
     {
         Subject = subject;
         Body = body;
@@ -14,17 +14,17 @@ public record NotificationContent
         Metadata = metadata ?? [];
     }
 
-    public string Subject { get; }
-    public string Body { get; }
+    public string Subject { get; private set; }
+    public string Body { get; private set; }
 
-    public string? ActionUrl { get; }
-    public Dictionary<string, object> Metadata { get; }
+    public string? ActionUrl { get; private set; }
+    public Dictionary<string, string> Metadata { get; private set; }
 
     public static NotificationContent Create(
         string subject,
         string body,
         string? actionUrl = null,
-        Dictionary<string, object>? metadata = null)
+        Dictionary<string, string>? metadata = null)
     {
         return new NotificationContent(
             subject, body, actionUrl, metadata);
