@@ -6,9 +6,9 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.WorkspaceMembers.Read.GetWorkspaceMembersHandler
 {
-    public class GetWorkspaceMembersHandler(TaskServiceDbContext context) : IRequestHandler<GetWorkspaceMembersQuery, GetWorkspaceMembersResult>
+    public class GetWorkspaceMembersByKeycloakIdHandler(TaskServiceDbContext context) : IRequestHandler<GetWorkspaceMembersByKeycloakIdQuery, GetWorkspaceMembersByKeycloakIdResult>
     {
-        public async Task<GetWorkspaceMembersResult> Handle(GetWorkspaceMembersQuery request, CancellationToken cancellationToken = default)
+        public async Task<GetWorkspaceMembersByKeycloakIdResult> Handle(GetWorkspaceMembersByKeycloakIdQuery request, CancellationToken cancellationToken = default)
         {
             var existUser = context.Users.Include(user => user.WorkspaceMembers).FirstOrDefault(x => x.KeycloakId == request.KeyoclakId);
             if (existUser is null)
