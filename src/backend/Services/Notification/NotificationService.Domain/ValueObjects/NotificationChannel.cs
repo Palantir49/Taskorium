@@ -29,14 +29,14 @@ public record NotificationChannel
         MaxRetries = maxRetries;
     }
 
-    public ChannelType Type { get; }
-    public string Address { get; }
-    public ChannelStatus Status { get; init; }
-    public string? ErrorMessage { get; init; }
-    public DateTime? SentAt { get; init; }
-    public DateTime? LastAttemptAt { get; init; }
-    public int RetryCount { get; init; }
-    public int MaxRetries { get; }
+    public ChannelType Type { get; private set; }
+    public string Address { get; private set; }
+    public ChannelStatus Status { get; set; }
+    public string? ErrorMessage { get; set; }
+    public DateTime? SentAt { get; private set; }
+    public DateTime? LastAttemptAt { get; private set; }
+    public int RetryCount { get; private init; }
+    public int MaxRetries { get; private set; }
 
     public bool CanRetry => RetryCount < MaxRetries &&
                             Status == ChannelStatus.Failed;
