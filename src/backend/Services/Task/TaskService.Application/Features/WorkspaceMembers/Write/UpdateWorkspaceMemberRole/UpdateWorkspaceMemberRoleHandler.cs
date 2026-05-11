@@ -39,6 +39,9 @@ namespace TaskService.Application.Features.WorkspaceMembers.Write.UpdateWorkspac
             var userWorkspacescacheKey = $"user_workspaces_by_keycloak_id_{user.Id}";
             await cache.RemoveAsync(userWorkspacescacheKey, cancellationToken);
 
+            var workspacemembersCacheKey = $"workspaceMembers_{request.WorkspaceId}";
+            await cache.RemoveAsync(workspacemembersCacheKey, cancellationToken);
+
             return new AddWorkspaceMemberResult(existWorkspaceMember.WorkspaceId, existWorkspaceMember.UserId, existWorkspaceMember.Role.ToDto());
         }
     }
