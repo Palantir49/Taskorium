@@ -6,6 +6,7 @@ using TaskService.Application.Features.WorkspaceMembers.Read.GetWorkspaceMembers
 using TaskService.Application.Features.WorkspaceMembers.Write.Command;
 using TaskService.Application.Features.Workspaces.Read.GetDeletedWorkspace;
 using TaskService.Application.Features.Workspaces.Read.GetWorkspaceById;
+using TaskService.Application.Features.Workspaces.Read.GetWorkspaceMembers;
 using TaskService.Application.Features.Workspaces.Read.GetWorkspacePage;
 using TaskService.Application.Features.Workspaces.Write.AddWorkspaceMember;
 using TaskService.Application.Features.Workspaces.Write.CreateWorkspace;
