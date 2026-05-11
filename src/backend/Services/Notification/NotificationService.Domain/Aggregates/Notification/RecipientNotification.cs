@@ -6,8 +6,6 @@ namespace NotificationService.Domain.Aggregates.Notification;
 
 public class RecipientNotification
 {
-    private readonly List<NotificationChannel> _channels = [];
-
     private RecipientNotification(
         Recipient recipient,
         NotificationContent content,
@@ -18,13 +16,13 @@ public class RecipientNotification
         Status = status;
     }
 
-    public Recipient Recipient { get; }
+    public Recipient Recipient { get; private set; }
     public NotificationContent Content { get; private set; }
     public RecipientNotificationStatus Status { get; private set; }
-    public IReadOnlyCollection<NotificationChannel> Channels => _channels.AsReadOnly();
+    public List<NotificationChannel> Channels { get; private set; } = [];
 
     public static RecipientNotification Create(
-        NotificationId notificationId,
+        Guid notificationId,
         Recipient recipient,
         NotificationContent content)
     {
@@ -37,7 +35,7 @@ public class RecipientNotification
     }
 
     public static RecipientNotification CreateMuted(
-        NotificationId notificationId,
+        Guid notificationId,
         Recipient recipient,
         NotificationContent content)
     {
@@ -58,7 +56,7 @@ public class RecipientNotification
             if (string.IsNullOrWhiteSpace(address))
             {
                 // Канал недоступен - пропускаем
-                _channels.Add(NotificationChannel.Create(type, "unavailable"));
+                Channels.Add(NotificationChannel.Create(type, "unavailable"));
                 continue;
             }
 
@@ -67,17 +65,17 @@ public class RecipientNotification
                 !Recipient.PreferredChannels.Contains(type))
             {
                 // Канал не в списке предпочтительных
-                _channels.Add(NotificationChannel.Create(type, address)
+                Channels.Add(NotificationChannel.Create(type, address)
                     .MarkAsSkipped("Not in preferred channels"));
                 continue;
             }
 
             // Создаем активный канал для отправки
-            _channels.Add(NotificationChannel.Create(type, address));
+            Channels.Add(NotificationChannel.Create(type, address));
         }
 
         // Если все каналы пропущены или недоступны
-        if (_channels.All(c => c.Status is ChannelStatus.Skipped or ChannelStatus.Failed))
+        if (Channels.All(c => c.Status is ChannelStatus.Skipped or ChannelStatus.Failed))
         {
             Status = RecipientNotificationStatus.Failed;
         }
@@ -86,8 +84,8 @@ public class RecipientNotification
     public void MarkChannelSent(ChannelType channelType, DateTime sentAt)
     {
         var channel = FindChannel(channelType);
-        var index = _channels.IndexOf(channel);
-        _channels[index] = channel.MarkAsSent(sentAt);
+        var index = Channels.IndexOf(channel);
+        Channels[index] = channel.MarkAsSent(sentAt);
 
         UpdateStatus();
     }
@@ -95,15 +93,15 @@ public class RecipientNotification
     public void MarkChannelFailed(ChannelType channelType, string error)
     {
         var channel = FindChannel(channelType);
-        var index = _channels.IndexOf(channel);
+        var index = Channels.IndexOf(channel);
 
         if (channel.CanRetry)
         {
-            _channels[index] = channel.RecordRetryAttempt();
+            Channels[index] = channel.RecordRetryAttempt();
         }
         else
         {
-            _channels[index] = channel.MarkAsFailed(error);
+            Channels[index] = channel.MarkAsFailed(error);
         }
 
         UpdateStatus();
@@ -112,15 +110,15 @@ public class RecipientNotification
     public void SkipChannel(ChannelType channelType, string reason)
     {
         var channel = FindChannel(channelType);
-        var index = _channels.IndexOf(channel);
-        _channels[index] = channel.MarkAsSkipped(reason);
+        var index = Channels.IndexOf(channel);
+        Channels[index] = channel.MarkAsSkipped(reason);
 
         UpdateStatus();
     }
 
     private NotificationChannel FindChannel(ChannelType channelType)
     {
-        var channel = _channels.FirstOrDefault(c => c.Type == channelType);
+        var channel = Channels.FirstOrDefault(c => c.Type == channelType);
         if (channel == null)
         {
             throw new NotificationDomainException(
@@ -132,22 +130,22 @@ public class RecipientNotification
 
     private void UpdateStatus()
     {
-        if (_channels.Count == 0)
+        if (Channels.Count == 0)
         {
             Status = RecipientNotificationStatus.Failed;
             return;
         }
 
-        if (_channels.All(c => c.Status == ChannelStatus.Sent))
+        if (Channels.All(c => c.Status == ChannelStatus.Sent))
         {
             Status = RecipientNotificationStatus.Delivered;
         }
-        else if (_channels.All(c =>
+        else if (Channels.All(c =>
                      c.Status is ChannelStatus.Failed or ChannelStatus.Skipped))
         {
             Status = RecipientNotificationStatus.Failed;
         }
-        else if (_channels.Any(c => c.Status == ChannelStatus.Sent))
+        else if (Channels.Any(c => c.Status == ChannelStatus.Sent))
         {
             Status = RecipientNotificationStatus.PartiallyDelivered;
         }
