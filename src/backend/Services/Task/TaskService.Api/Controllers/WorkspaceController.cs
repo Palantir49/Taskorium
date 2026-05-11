@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Features.Projects.Write.CreateProject;
 using TaskService.Application.Features.WorkspaceMembers.Read.GetWorkspaceMembersHandler;
+using TaskService.Application.Features.WorkspaceMembers.Write.Command;
 using TaskService.Application.Features.Workspaces.Read.GetDeletedWorkspace;
 using TaskService.Application.Features.Workspaces.Read.GetWorkspaceById;
 using TaskService.Application.Features.Workspaces.Read.GetWorkspacePage;
@@ -278,7 +279,27 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
         var response = await dispatcher.SendAsync(command);
         return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { response.id }, response);
     }
-
+    /// <summary>
+    ///     Обновление роли участника рабочей области
+    /// </summary>
+    /// <param name="workspaceId">Id рабочей области и имя рабочей области</param>
+    /// <param name="userId">Id пользователя</param>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <response code="201">Имя рабочей области успешно обновлено</response>
+    /// <response code="400">Некорректный запрос</response>
+    [Authorize(Policy = "CanUpdateWorkSpace")]
+    [HttpPatch("{workspaceId:guid}/member/{userId}")]
+    [ProducesResponseType(typeof(AddWorkspaceMemberResult), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<AddWorkspaceMemberResult>> UpdateWorkspaceMemberRoleAsync([FromRoute] Guid workspaceId, Guid userId,
+        [FromBody] UpdateWorkspaceMemberRoleRequest request)
+    {
+        var command = new UpdateWorkspaceMemberRoleCommand(workspaceId, userId, request.NewRole);
+        var response = await dispatcher.SendAsync(command);
+        return Ok(response);
+    }
     /// <summary>
     ///     Удалить рабочую область
     /// </summary>
