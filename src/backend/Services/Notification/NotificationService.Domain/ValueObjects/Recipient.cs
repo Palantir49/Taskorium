@@ -32,12 +32,12 @@ public record Recipient
         PreferredChannels = preferredChannels?.AsReadOnly() ?? new List<ChannelType>().AsReadOnly();
     }
 
-    public RecipientId Id { get; }
-    public string UserId { get; }
-    public string FullName { get; }
-    public string? Email { get; }
-    public string? Phone { get; }
-    public bool IsMuted { get; }
+    public RecipientId Id { get; private set; }
+    public string UserId { get; private set; }
+    public string FullName { get; private set; }
+    public string? Email { get; private set; }
+    public string? Phone { get; private set; }
+    public bool IsMuted { get; private set; }
     public IReadOnlyCollection<ChannelType> PreferredChannels { get; }
 
     public static Recipient FromIntegrationEvent(NotificationRecipient dto)
