@@ -1,40 +1,35 @@
-﻿using NotificationService.Domain.Enums;
+﻿using NotificationService.Domain.Aggregates.Abstracts;
+using NotificationService.Domain.Enums;
 using NotificationService.Domain.Exceptions;
 using NotificationService.Domain.ValueObjects;
 
 namespace NotificationService.Domain.Aggregates.Notification;
 
-public class Notification
+public class Notification : AggregateRoot
 {
-    // Получатели
-    private readonly List<RecipientNotification> _recipientNotifications = [];
-
     private Notification(
         IdempotencyKey eventIdempotencyKey,
         IEnumerable<Recipient> recipients,
         NotificationContent content)
     {
-        Id = NotificationId.CreateNew();
+        Id = Guid.CreateVersion7();
         EventIdempotencyKey = eventIdempotencyKey;
         Status = NotificationStatus.Pending;
-        CreatedAt = DateTime.UtcNow;
+        CreatedAtUtc = DateTime.UtcNow;
 
         InitializeRecipients(recipients, content);
     }
 
-    public NotificationId Id { get; }
     public IdempotencyKey EventIdempotencyKey { get; private set; }
 
 
     public NotificationStatus Status { get; private set; }
-    public DateTimeOffset CreatedAt { get; private set; }
+    public DateTimeOffset CreatedAtUtc { get; private set; }
     public DateTimeOffset CompletedAt { get; private set; }
 
-    public IReadOnlyCollection<RecipientNotification> RecipientNotifications
-        => _recipientNotifications.AsReadOnly();
+    public List<RecipientNotification> RecipientNotifications { get; private set; } = [];
 
 
-    // Фабричный метод
     public static Notification Create(
         IdempotencyKey eventIdempotencyKey,
         IEnumerable<Recipient> recipients,
@@ -57,20 +52,20 @@ public class Notification
             // Пропускаем заглушенных пользователей
             if (recipient.IsMuted)
             {
-                _recipientNotifications.Add(
+                RecipientNotifications.Add(
                     RecipientNotification.CreateMuted(Id, recipient, content));
                 continue;
             }
 
             var recipientNotification = RecipientNotification.Create(
                 Id, recipient, content);
-            _recipientNotifications.Add(recipientNotification);
+            RecipientNotifications.Add(recipientNotification);
         }
     }
 
     private void Validate()
     {
-        if (_recipientNotifications.Count == 0)
+        if (RecipientNotifications.Count == 0)
         {
             throw new NotificationDomainException(
                 "Notification must have at least one recipient");
@@ -121,7 +116,7 @@ public class Notification
 
     private RecipientNotification FindRecipient(RecipientId recipientId)
     {
-        var recipient = _recipientNotifications
+        var recipient = RecipientNotifications
             .FirstOrDefault(r => r.Recipient.Id == recipientId);
 
         if (recipient == null)
@@ -135,7 +130,7 @@ public class Notification
 
     private void UpdateOverallStatus()
     {
-        var allChannels = _recipientNotifications
+        var allChannels = RecipientNotifications
             .SelectMany(r => r.Channels)
             .ToList();
 
@@ -175,7 +170,7 @@ public class Notification
     public IReadOnlyCollection<(RecipientId RecipientId, NotificationChannel Channel)>
         GetRetryableChannels()
     {
-        return _recipientNotifications
+        return RecipientNotifications
             .SelectMany(r => r.Channels
                 .Where(c => c.CanRetry)
                 .Select(c => (r.Recipient.Id, c)))
@@ -197,6 +192,17 @@ public class Notification
         }
 
         Status = NotificationStatus.Cancelled;
+        CompletedAt = DateTime.UtcNow;
+    }
+
+    public void MarkProcessed()
+    {
+        if (Status is NotificationStatus.Cancelled or NotificationStatus.Failed)
+        {
+            throw new InvalidOperationException("Нельзя доставить ошибочные сообщения");
+        }
+
+        Status = NotificationStatus.Delivered;
         CompletedAt = DateTime.UtcNow;
     }
 }

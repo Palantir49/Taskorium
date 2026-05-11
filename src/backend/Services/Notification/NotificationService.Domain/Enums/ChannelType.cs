@@ -3,5 +3,6 @@
 public enum ChannelType
 {
     Email = 0,
-    Sms = 1
+    Sms = 1,
+    Push = 2
 }

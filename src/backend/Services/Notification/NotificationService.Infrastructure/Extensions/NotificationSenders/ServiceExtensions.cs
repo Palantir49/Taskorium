@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NotificationService.Application.Interfaces.Email;
-using NotificationService.Infrastructure.Email.Options;
-using NotificationService.Infrastructure.Email.Services;
+using NotificationService.Application.Interfaces.NotificationSenders;
+using NotificationService.Infrastructure.NotificationSenders.Options;
+using NotificationService.Infrastructure.NotificationSenders.Services;
 
-namespace NotificationService.Infrastructure.Extensions.Email;
+namespace NotificationService.Infrastructure.Extensions.NotificationSenders;
 
 internal static class ServiceExtensions
 {
@@ -18,8 +18,8 @@ internal static class ServiceExtensions
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 
-
-            serviceCollection.AddScoped<IEmailSenderService, EmailSenderService>();
+            serviceCollection.AddScoped<INotificationSender, NotificationSender>();
+            serviceCollection.AddScoped<IChannelSender, EmailSenderService>();
         }
     }
 }

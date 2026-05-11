@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.Setup(builder.Environment.EnvironmentName);
 builder.Host.ValidateServices();
 builder.Services.AddServiceDefaults(builder.Configuration);
+builder.Logging.ConfigureOpenTelemetry();
 builder.Services.AddScoped<RequestObservabilityMiddleware>();
 builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
 builder.Services.AddScoped<CurrentUserMiddleware>();

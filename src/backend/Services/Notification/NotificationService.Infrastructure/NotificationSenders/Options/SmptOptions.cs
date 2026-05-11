@@ -1,4 +1,4 @@
-﻿namespace NotificationService.Infrastructure.Email.Options;
+﻿namespace NotificationService.Infrastructure.NotificationSenders.Options;
 
 public sealed record SmtpOptions
 {

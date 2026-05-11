@@ -11,4 +11,6 @@ public record MongoDbOptions
     public required string Password { get; init; }
     public required string AuthSource { get; init; }
     public required string Database { get; init; }
+
+    public required string ReplicaSet { get; init; }
 }

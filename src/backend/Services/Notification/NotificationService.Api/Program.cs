@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi;
+using NotificationService.Application.Extensions;
 using NotificationService.Infrastructure.Extensions;
 using Scalar.AspNetCore;
 using Taskorium.ServiceDefaults;
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.Setup(builder.Environment.EnvironmentName);
 builder.Host.ValidateServices();
 builder.Services.AddServiceDefaults(builder.Configuration);
+builder.Logging.ConfigureOpenTelemetry();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi(options =>
 {
@@ -31,6 +33,7 @@ builder.Services.AddOpenApi(options =>
         return Task.CompletedTask;
     });
 });
+builder.Services.ConfigureApplicationLayer();
 builder.Services.ConfigureInfrastructureLayer(builder.Configuration);
 var app = builder.Build();
 app.UseServiceDefaults(builder.Configuration);
