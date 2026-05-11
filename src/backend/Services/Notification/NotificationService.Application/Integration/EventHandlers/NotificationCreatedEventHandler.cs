@@ -1,12 +1,26 @@
-﻿using Taskorium.IntegrationEvents.Notifications;
+﻿using Mediator;
+using Microsoft.Extensions.Logging;
+using NotificationService.Application.Mapping;
+using Taskorium.IntegrationEvents.Notifications;
 using Taskorium.MessageBus.Abstractions;
 
 namespace NotificationService.Application.Integration.EventHandlers;
 
-public class NotificationCreatedEventHandler : IEventHandler<NotificationCreatedIntegrationEvent>
+public class NotificationCreatedEventHandler(
+    ILogger<NotificationCreatedEventHandler> logger,
+    NotificationMapper notificationMapper,
+    IMediator mediator)
+    : IEventHandler<NotificationCreatedIntegrationEvent>
 {
-    public Task Handle(NotificationCreatedIntegrationEvent @event, CancellationToken cancellationToken = default)
+    public async Task Handle(NotificationCreatedIntegrationEvent @event, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Принято событие типа {EventType}. Ключ идемпотентности: {IdempotencyKey}",
+            typeof(NotificationCreatedEventHandler), @event.Id);
+
+        var command = notificationMapper.MapToCreateNotificationCommand(@event);
+
+        var result = await mediator.Send(command, cancellationToken);
+        logger.LogInformation("Событие {IdempotencyKey} обработано. Notification id: {NotificationId}", @event.Id,
+            result.NotificationId);
     }
 }
