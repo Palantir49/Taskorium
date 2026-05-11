@@ -1,42 +1,73 @@
 ﻿using System.Linq.Expressions;
 using MongoDB.Driver;
+using NotificationService.Domain.Aggregates.Abstracts;
+using NotificationService.Domain.Aggregates.Outbox;
 using NotificationService.Domain.Repositories.Interfaces;
 using NotificationService.Infrastructure.Persistence.Mongo.Contexts;
 
 namespace NotificationService.Infrastructure.Persistence.Mongo.Repositories.Abstracts;
 
 public abstract class RepositoryBase<T>(NotificationDbContext context)
-    : IRepository<T> where T : Domain.Aggregates.Notification.Notification
+    : IRepository<T> where T : AggregateRoot
 {
-    private readonly IMongoCollection<T> _collection = GetCollection(context);
+    //  private readonly IClientSessionHandle? session = context.CurrentSession;
+    protected readonly IMongoCollection<T> Collection = GetCollection(context);
 
-    public async Task<T> GetByIdAsync(Guid id)
+
+    public async Task<T?> GetByIdAsync(Guid id)
     {
-        return await _collection.Find(x => x.EventIdempotencyKey.Value == id).FirstOrDefaultAsync();
+        var filter = Builders<T>.Filter.Eq(x => x.Id, id);
+        var session = context.CurrentSession;
+        return session is not null
+            ? await Collection.Find(session, filter).FirstOrDefaultAsync()
+            : await Collection.Find(filter).FirstOrDefaultAsync();
     }
 
     public async Task AddAsync(T entity)
     {
-        await _collection.InsertOneAsync(entity);
+        var session = context.CurrentSession;
+        if (session is not null)
+        {
+            await Collection.InsertOneAsync(session, entity);
+        }
+        else
+        {
+            await Collection.InsertOneAsync(entity);
+        }
     }
 
-    public async Task GetByConditionAsync(Expression<Func<T, bool>> expression)
+    public async Task<List<T>> GetByConditionAsync(
+        Expression<Func<T, bool>> expression)
     {
-        await _collection.Find(expression).ToListAsync();
+        var session = context.CurrentSession;
+        return session is not null
+            ? await Collection.Find(session, expression).ToListAsync()
+            : await Collection.Find(expression).ToListAsync();
     }
 
     public async Task<bool> UpdateOneAsync(T entity)
     {
-        var result = await _collection.ReplaceOneAsync(x => x.Id == entity.Id, entity);
+        var session = context.CurrentSession;
+        var filter = Builders<T>.Filter.Eq(x => x.Id, entity.Id);
+
+        var result = session is not null
+            ? await Collection.ReplaceOneAsync(session, filter, entity)
+            : await Collection.ReplaceOneAsync(filter, entity);
+
         return result.ModifiedCount > 0;
     }
 
     public async Task<bool> DeleteOneAsync(T entity)
     {
-        var result = await _collection.DeleteOneAsync(x => x.Id == entity.Id);
+        var session = context.CurrentSession;
+        var filter = Builders<T>.Filter.Eq(x => x.Id, entity.Id);
+
+        var result = session is not null
+            ? await Collection.DeleteOneAsync(session, filter)
+            : await Collection.DeleteOneAsync(filter);
+
         return result.DeletedCount > 0;
     }
-
 
     private static IMongoCollection<T> GetCollection(NotificationDbContext context)
     {
@@ -47,6 +78,12 @@ public abstract class RepositoryBase<T>(NotificationDbContext context)
             return (IMongoCollection<T>)context.Notifications;
         }
 
-        throw new InvalidOperationException($"Unknown collection for type {type.Name}");
+        if (type == typeof(OutBoxMessage))
+        {
+            return (IMongoCollection<T>)context.OutBoxMessages;
+        }
+
+        throw new InvalidOperationException(
+            $"Unknown collection for type {type.Name}");
     }
 }
