@@ -13,8 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailKit" />
+    <PackageReference Include="MailKit"/>
     <PackageReference Include="MongoDB.Driver"/>
+    <PackageReference Include="SharpCompress"/>
+    <PackageReference Include="Snappier"/>
   </ItemGroup>
 
 </Project>
