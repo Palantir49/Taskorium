@@ -7,7 +7,7 @@ using NotificationService.Application.Interfaces.NotificationSenders;
 using NotificationService.Domain.Aggregates.Notification;
 using NotificationService.Domain.Enums;
 using NotificationService.Domain.ValueObjects;
-using NotificationService.Infrastructure.Email.Options;
+using NotificationService.Infrastructure.NotificationSenders.Options;
 using Taskorium.ServiceDefaults.Result;
 
 namespace NotificationService.Infrastructure.NotificationSenders.Services;
