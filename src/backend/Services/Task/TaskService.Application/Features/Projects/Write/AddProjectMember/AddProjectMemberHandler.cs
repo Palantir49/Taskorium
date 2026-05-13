@@ -29,7 +29,7 @@ public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache c
         {
             throw new KeyNotFoundException($"Пользователь с  id {command.UserId} не существует");
         }
-        var projectWorkspace = await context.WorkspaceMembers.FindAsync(new { command.UserId, existProject.WorkspaceId }, cancellationToken);
+        var projectWorkspace = await context.WorkspaceMembers.FindAsync([command.UserId, existProject.WorkspaceId], cancellationToken);
         if (projectWorkspace is null)
         {
             throw new KeyNotFoundException($"Пользователь с  id {command.UserId} не состоит в рабочей области с id {existProject.Workspace}");
