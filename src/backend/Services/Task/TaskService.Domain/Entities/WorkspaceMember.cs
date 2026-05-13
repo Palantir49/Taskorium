@@ -28,12 +28,12 @@ namespace TaskService.Domain.Entities
         {
             return new WorkspaceMember(workspaceId, userId, role, joinedAt);
         }
-        public static WorkspaceMember Create(Guid workspaceId, Guid userId, WorkspaceRoles role) 
+        public static WorkspaceMember Create(Guid workspaceId, Guid userId, WorkspaceRoles role)
             => Create(workspaceId, userId, role, DateTimeOffset.UtcNow);
 
         public void SetRole(WorkspaceRoles role)
         {
-            Role = role;    
+            Role = role;
         }
     }
 }
