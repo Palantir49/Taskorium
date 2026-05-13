@@ -4,12 +4,14 @@
         <Project Path="Services/FileStorage/FileStorageService.Application/FileStorageService.Application.csproj" />
         <Project Path="Services/FileStorage/FileStorageService.Domain/FileStorageService.Domain.csproj" />
         <Project Path="Services/FileStorage/FileStorageService.Infrastructure/FileStorageService.Infrastructure.csproj" />
+        <Project Path="Services/FileStorage/FileStorageService.Tests/FileStorageService.Tests.csproj" />
     </Folder>
     <Folder Name="/Services/Notification/">
         <Project Path="Services/Notification/NotificationService.Api/NotificationService.Api.csproj" />
         <Project Path="Services/Notification/NotificationService.Application/NotificationService.Application.csproj" />
         <Project Path="Services/Notification/NotificationService.Domain/NotificationService.Domain.csproj" />
         <Project Path="Services/Notification/NotificationService.Infrastructure/NotificationService.Infrastructure.csproj" />
+        <Project Path="Services/Notification/NotificationService.Tests/NotificationService.Tests.csproj" />
     </Folder>
     <Folder Name="/Services/Task/">
         <Project Path="Services/Task/TaskService.Api/TaskService.Api.csproj" />
