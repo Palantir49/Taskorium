@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { fetchTasks, updateTask, createTask, deleteTask } from '../api/taskService';
+import { updateTask, createTask, deleteTask } from '../api/taskService';
 import { fetchIssuesByProjectId } from '../api/projectService';
 import { Task, TaskState, Action, ActionType, UpdateTaskData, CreateTaskData } from '../types';
 
@@ -111,15 +111,13 @@ export function TaskProvider({ children, projectId }: TaskProviderProps) {
 
   // Загрузка задач при монтировании
   useEffect(() => {
-    loadTasks(projectId);
+    loadTasks();
   }, [projectId]);
 
-  const loadTasks = async (currentProjectId?: string): Promise<void> => {
+  const loadTasks = async (): Promise<void> =>  {
     dispatch({ type: ActionTypes.SET_LOADING, payload: true });
     try {
-      const tasks = currentProjectId
-        ? await fetchIssuesByProjectId(currentProjectId)
-        : await fetchTasks();
+      const tasks = await fetchIssuesByProjectId(projectId);
       dispatch({ type: ActionTypes.SET_TASKS, payload: tasks });
     } catch (error) {
       dispatch({ type: ActionTypes.SET_ERROR, payload: (error as Error).message });
