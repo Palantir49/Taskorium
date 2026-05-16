@@ -91,7 +91,25 @@ function TaskCreateForm({
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
-    setAttachments(files);
+    if (!files.length) return;
+
+    setAttachments((prev) => {
+      const existingKeys = new Set(prev.map((f) => `${f.name}_${f.size}_${f.lastModified}`));
+      const newFiles = files.filter((f) => !existingKeys.has(`${f.name}_${f.size}_${f.lastModified}`));
+      return [...prev, ...newFiles];
+    });
+
+    e.target.value = '';
+  };
+
+  const handleRemoveAttachment = (indexToRemove: number) => {
+    setAttachments((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} Б`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`;
   };
 
   const handleSave = async () => {
@@ -219,12 +237,27 @@ function TaskCreateForm({
           {mode === 'create' && (
             <div className="form-group">
               <label>Документы</label>
-              <div className="attachments-row">
-                <span className="attachments-text">
-                  {attachments.length > 0
-                    ? attachments.map((f) => f.name).join(', ')
-                    : 'Файлы не выбраны'}
-                </span>
+              <div className="attachments-row" style={{ alignItems: 'flex-start' }}>
+                <div className="attachments-text" style={{ flex: 1 }}>
+                  {attachments.length > 0 ? (
+                    <>
+                      {attachments.map((file, index) => (
+                        <div key={`${file.name}_${file.size}_${file.lastModified}`} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
+                          <span>{file.name} ({formatFileSize(file.size)})</span>
+                          <button
+                            type="button"
+                            className="text-gray-500 hover:text-red-600"
+                            onClick={() => handleRemoveAttachment(index)}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    'Файлы не выбраны'
+                  )}
+                </div>
 
                 <label className="attachment-clip-btn" title="Прикрепить файл">
                   <FaPaperclip />
