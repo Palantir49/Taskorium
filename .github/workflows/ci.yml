@@ -196,26 +196,6 @@ jobs:
           echo '${{ secrets.APPSETTINGS_TASK_SERVICE }}' > src/backend/Services/Task/TaskService.Api/appsettings.Production.json
           jq empty src/backend/Services/Task/TaskService.Api/appsettings.Production.json
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-
-      - name: Restore solution
-        working-directory: src/backend
-        run: dotnet restore Taskorium.slnx
-
-      - name: Build solution and generate OpenAPI
-        working-directory: src/backend
-        run: dotnet build Taskorium.slnx --no-restore
-
-      - name: Upload OpenAPI spec artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: openapi-spec
-          path: openapi/openapi.json 
-          retention-days: 1
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -349,17 +329,44 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium/taskorium-frontend:${{ steps.tag.outputs.value }}
 
-  # ─────────────────────────────────────────────
-  # Publish OpenAPI → GitHub Pages (только main)
-  # ─────────────────────────────────────────────
+
+  generate-openapi:
+    if: |
+      github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore solution
+        working-directory: src/backend
+        run: dotnet restore Taskorium.slnx
+
+      - name: Build solution and generate OpenAPI
+        working-directory: src/backend
+        run: dotnet build Taskorium.slnx --no-restore
+
+      - name: Upload OpenAPI spec artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-spec
+          path: openapi/openapi.json
+          retention-days: 1
+
   publish-openapi:
     needs:
+      - generate-openapi
       - build-and-push-task-service
       - build-and-push-file-storage-service
       - build-and-push-notification-service
     if: |
       always() &&
       github.event_name == 'push' &&
+      needs.generate-openapi.result == 'success' &&
       (needs.build-and-push-task-service.result == 'success' || needs.build-and-push-task-service.result == 'skipped') &&
       (needs.build-and-push-file-storage-service.result == 'success' || needs.build-and-push-file-storage-service.result == 'skipped') &&
       (needs.build-and-push-notification-service.result == 'success' || needs.build-and-push-notification-service.result == 'skipped')
@@ -372,7 +379,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # Артефакт загружается в build-and-push-task-service в рамках того же run
       - name: Download OpenAPI spec
         uses: actions/download-artifact@v4
         with:
