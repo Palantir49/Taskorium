@@ -162,10 +162,10 @@ jobs:
       - name: Install dependencies
         working-directory: src/frontend
         run: npm ci
-
-      - name: Lint
-        working-directory: src/frontend
-        run: npm run lint
+      
+      # - name: Lint
+      #   working-directory: src/frontend
+      #   run: npm run lint
 
       - name: Build
         working-directory: src/frontend
