@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TaskService.Infrastructure.Extensions.Cache;
 using TaskService.Infrastructure.Extensions.Services.FileStorage;
+using TaskService.Infrastructure.Extensions.Services.MessageBus;
 using TaskService.Infrastructure.Interceptors;
 using TaskService.Infrastructure.Persistence;
 
@@ -35,6 +36,7 @@ public static class ServiceExtensions
 
             services.AddCache(configuration);
             services.ConfigureGrpcFileStorageClient(configuration);
+            services.AddMessageBus(configuration);
         }
     }
     extension(IServiceProvider provider)

@@ -1,7 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using Taskorium.IntegrationEvents.Dto;
+using Taskorium.IntegrationEvents.Notifications;
+using Taskorium.MessageBus.Abstractions;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
+using TaskService.Application.Features.Projects.Read.Query;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
@@ -16,7 +20,9 @@ public class IssueCreateHandler(
     TaskServiceDbContext context,
     HybridCache cache,
     FileStorageService fileStorageService,
-    ICurrentUserContext currentUser)
+    ICurrentUserContext currentUser,
+    IEventBus eventBus,
+    IDispatcher dispatcher)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
@@ -83,6 +89,38 @@ public class IssueCreateHandler(
             context.Issues.Add(issue);
             context.IssueAssignees.Add(assignee);
             await context.SaveChangesAsync(cancellationToken);
+
+            var content = new NotificationEventContent
+            {
+                Subject = $"Создана задача {issueKey}",
+                Body = $"Задача '{issue.Name}' успешно создана",
+                ActionUrl = $"/projects/{issue.ProjectId}/issues/{issue.Id}",
+                Metadata = new Dictionary<string, string>
+                {
+                    ["issueId"] = issue.Id.ToString(),
+                    ["issueKey"] = issueKey,
+                    ["projectId"] = issue.ProjectId.ToString(),
+                    ["creatorId"] = currentUser.User.Id.ToString()
+                }
+            };
+
+            var membersQuery = new GetProjectMembersQuery(request.ProjectId);
+            var membersResult = await dispatcher.SendAsync(membersQuery, cancellationToken);
+
+            var recipients = membersResult.Members
+                .Where(m => !string.IsNullOrWhiteSpace(m.Email))
+                .GroupBy(m => m.UserId)
+                .Select(g => g.First())
+                .Select(m => new NotificationRecipient
+                    {
+                        UserId = m.UserId.ToString(),
+                        FullName = m.UserName ?? "",
+                        Email = m.Email
+                    })
+                .Where(e => e.Email != null)
+                .ToList();
+
+            await eventBus.PublishAsync(new NotificationCreatedIntegrationEvent(content, recipients), cancellationToken);
         }
         catch
         {
