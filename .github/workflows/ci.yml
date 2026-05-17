@@ -215,7 +215,7 @@ jobs:
           context: src/backend
           file: src/backend/Services/Task/TaskService.Api/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium/task-service:${{ steps.tag.outputs.value }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/task-service:${{ steps.tag.outputs.value }}
 
   build-and-push-file-storage-service:
     needs: format-build-test-file-storage-service
@@ -254,7 +254,7 @@ jobs:
           context: src/backend
           file: src/backend/Services/FileStorage/FileStorageService.API/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium/file-storage-service:${{ steps.tag.outputs.value }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/file-storage-service:${{ steps.tag.outputs.value }}
 
   build-and-push-notification-service:
     needs: format-build-test-notification-service
@@ -293,7 +293,7 @@ jobs:
           context: src/backend
           file: src/backend/Services/Notification/NotificationService.Api/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium/notification-service:${{ steps.tag.outputs.value }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/notification-service:${{ steps.tag.outputs.value }}
 
   build-and-push-frontend:
     needs: format-build-test-frontend
@@ -327,7 +327,7 @@ jobs:
           context: src/frontend
           file: src/frontend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium/taskorium-frontend:${{ steps.tag.outputs.value }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium-frontend:${{ steps.tag.outputs.value }}
 
 
   generate-openapi:
