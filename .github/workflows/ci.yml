@@ -212,7 +212,7 @@ jobs:
       - name: Build and push TaskService
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: src/backend
           file: src/backend/Services/Task/TaskService.Api/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium/task-service:${{ steps.tag.outputs.value }}
@@ -251,7 +251,7 @@ jobs:
       - name: Build and push FileStorageService
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: src/backend
           file: src/backend/Services/FileStorage/FileStorageService.API/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium/file-storage-service:${{ steps.tag.outputs.value }}
@@ -290,7 +290,7 @@ jobs:
       - name: Build and push NotificationService
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: src/backend
           file: src/backend/Services/Notification/NotificationService.Api/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium/notification-service:${{ steps.tag.outputs.value }}
@@ -324,7 +324,7 @@ jobs:
       - name: Build and push Frontend
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: src/frontend
           file: src/frontend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium/taskorium-frontend:${{ steps.tag.outputs.value }}
