@@ -111,7 +111,7 @@ function TaskDetailSidebar() {
               </div>
 
               <div className="detail-section">
-                <label>Важность</label>
+                <label>Приоритет</label>
                 <p className="detail-text">
                   {selectedTask.issuePriority.displayName}
                 </p>

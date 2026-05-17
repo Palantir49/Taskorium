@@ -2,8 +2,8 @@ import React from 'react';
 import { FaFilter, FaTimes, FaCog } from 'react-icons/fa';
 import { useTasks } from '../context/TaskContext';
 import { fetchProjectMembers } from '../api/projectService';
-import { fetchIssuePriorities } from '../api/collectionService';
-import { IssuePriorityResponse } from '../types/issue';
+import { fetchIssuePriorities, fetchIssueTypes } from '../api/collectionService';
+import { IssuePriorityResponse, IssueTypeResponse } from '../types/issue';
 import { ProjectUserDto } from '../types/project';
 import ProjectSettingsModal from './ProjectSettingsModal';
 import './FilterBar.css';
@@ -18,6 +18,7 @@ function FilterBar({ projectId, onCreateTask }: FilterBarProps) {
   const [users, setUsers] = React.useState<ProjectUserDto[]>([]);
   const [priorities, setPriorities] = React.useState<IssuePriorityResponse[]>([]);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+  const [issueTypes, setIssueTypes] = React.useState<IssueTypeResponse[]>([]);
 
   // Загрузка участников проекта
   React.useEffect(() => {
@@ -35,6 +36,15 @@ function FilterBar({ projectId, onCreateTask }: FilterBarProps) {
       .catch((error) => {
         console.error('Ошибка загрузки приоритетов:', error);
         setPriorities([]);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    fetchIssueTypes()
+      .then(setIssueTypes)
+      .catch((error) => {
+        console.error('Ошибка загрузки типов задач:', error);
+        setIssueTypes([]);
       });
   }, []);
 
@@ -76,9 +86,11 @@ function FilterBar({ projectId, onCreateTask }: FilterBarProps) {
               onChange={(e) => handleFilterChange('type', e.target.value)}
             >
               <option value="">Все</option>
-              <option value="bug">Ошибка</option>
-              <option value="feature">Фича</option>
-              <option value="improvement">Улучшение</option>
+              {issueTypes.map((type) => (
+                <option key={type.number} value={type.name}>
+                  {type.displayName}
+                </option>
+              ))}
             </select>
           </div>
 
