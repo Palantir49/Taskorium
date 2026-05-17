@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TaskService.Domain.Repositories;
+using TaskService.Infrastructure.Extensions.Cache;
+using TaskService.Infrastructure.Extensions.Services.FileStorage;
+using TaskService.Infrastructure.Interceptors;
 using TaskService.Infrastructure.Persistence;
-using TaskService.Infrastructure.Repositories;
 
 namespace TaskService.Infrastructure.Extensions;
 
@@ -13,13 +15,37 @@ public static class ServiceExtensions
     {
         public void ConfigureInfrastructureLayer(IConfiguration configuration)
         {
-            services.AddDbContext<TaskServiceDbContext>(options => options.UseNpgsql(
-                configuration.GetConnectionString("DefaultConnection")));
+            services.AddSingleton<SoftDeleteInterceptor>();
+            services.AddDbContext<TaskServiceDbContext>((sp, options) =>
+                {
+                    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+                    options.AddInterceptors(sp.GetRequiredService<SoftDeleteInterceptor>());
+                    options.UseAsyncSeeding(async (context, _, cancellationToken) =>
+                    {
+                        FakeDataFactory fake = new FakeDataFactory();
+                        await fake.Seed((TaskServiceDbContext)context, cancellationToken);
+                    });
+                    options.UseSeeding((context, _) =>
+                    {
+                        FakeDataFactory fake = new FakeDataFactory();
+                        fake.Seed((TaskServiceDbContext)context);
+                    });
+                });
 
-            services.AddScoped<IIssueRepository, IssueRepository>();
-            services.AddScoped<IProjectRepository, ProjectRepository>();
-            services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddCache(configuration);
+            services.ConfigureGrpcFileStorageClient(configuration);
+        }
+    }
+    extension(IServiceProvider provider)
+    {
+        public async Task InitializeDatabaseAsync()
+        {
+            using var scope = provider.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<TaskServiceDbContext>();
+
+            // Автоматически вызывает все зарегистрированные UseAsyncSeeding
+            await context.Database.EnsureCreatedAsync();
         }
     }
 }

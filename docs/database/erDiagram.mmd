@@ -2,19 +2,19 @@ erDiagram
     Users {
         Guid id PK
         Guid keycloak_id
-        varchar(50) login
         varchar(100) email
         varchar(50) username "Отображаемое имя"
-        timestamp created_at
+        timestamp CreateDate
     }
 
     Workspaces {
         Guid id PK
-        varchar(100) name
+        varchar(225) name
         bigint owner_id FK "→ Users.id"
         timestamp created_at
     }
 
+    %%Не реализовано
     WorkspaceMembers {
         Guid workspace_id PK,FK "→ Workspaces.id"
         Guid user_id PK,FK "→ Users.id"
@@ -25,11 +25,12 @@ erDiagram
     Projects {
         Guid id PK
         Guid workspace_id FK "→ Workspaces.id"
-        varchar(100) name
+        varchar(225) name
         text description
-        timestamp created_at
+        DateTimeOffset created_at
     }
 
+    %%Не реализовано
     ProjectMembers {
         Guid project_id PK,FK "→ Projects.id"
         Guid user_id PK,FK "→ Users.id"
@@ -55,27 +56,32 @@ erDiagram
 
     Issues {
         Guid id PK
-        bigint project_id FK "→ Projects.id"
+        Guid ProjectId FK "→ Projects.id"
+        %%Не реализовано
         varchar(20) key "PROJ-123"
-        varchar(255) summary
-        text description
-        int issue_type_id FK "→ IssueTypes.id"
-        int status_id FK "→ Statuses.id"
+        varchar(225) Name
+        text Description
+        Guid issue_type_id FK "→ IssueTypes.id"
+        Guid status_id FK "→ Statuses.id"
         Guid reporter_id FK "→ Users.id"
-        int priority "1-5, где 1 - наивысший"
-        timestamp created_at
-        timestamp updated_at
-        timestamp resolved_at "NULL"
-        timestamp due_date "NULL"
-    }
+        %%Не реализовано
+        int priority
+        %%Даты программно
+        DateTimeOffset CreatedDate
+        DateTimeOffset UpdatedDate
+        DateTimeOffset ResolvedDate "NULL"
+        DateTimeOffset DueDate "NULL"
 
+    }
+    
+    %%Не реализовано
     IssueAssignees {
         Guid issue_id PK,FK "→ Issues.id"
         Guid user_id PK,FK "→ Users.id"
         timestamp assigned_at
         boolean is_lead "основной исполнитель"
     }
-
+    %%Не реализовано
     Comments {
         Guid id PK
         Guid issue_id FK "→ Issues.id"
@@ -84,14 +90,14 @@ erDiagram
         timestamp created_at
         timestamp updated_at "NULL"
     }
-
+    %%Не реализовано
     Attachments {
         Guid id PK
         Guid issue_id FK "→ Issues.id"
         Guid uploader_id FK "→ Users.id"
         varchar(512) storage_path
     }
-
+    %%Не реализовано
     StatusTransitions {
         Guid id PK
         Guid workspace_id FK
@@ -101,21 +107,20 @@ erDiagram
     }
 
 
-    Workspaces ||--o{ Projects : "содержит"
+    %%Workspaces ||--o{ Projects : "содержит"
     Workspaces ||--o{ WorkspaceMembers : "имеет участников"
-    Workspaces }o--|| Users : "владелец"
 
     Projects ||--o{ Issues : "содержит задачи"
+    Projects ||--o{ Workspaces : "группируется в"
     Projects ||--o{ ProjectMembers : "имеет участников"
     Projects ||--o{ IssueTypes : "определяет типы задач"
     Projects ||--o{ Statuses : "определяет статусы"
     Projects ||--o{ StatusTransitions : "определяет переходы"
 
 
-    Issues ||--o{ IssueAssignees : "имеет исполнителей"
+    Issues ||--o{ IssueAssignees : "имеет участников"
     Issues ||--o{ Comments : "содержит комментарии"
     Issues ||--o{ Attachments : "содержит файлы"
-    Issues }o--|| Users : "автор (reporter)"
     Issues }o--|| IssueTypes : "тип задачи"
     Issues }o--|| Statuses : "текущий статус"
 

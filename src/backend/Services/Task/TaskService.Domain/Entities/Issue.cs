@@ -1,46 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TaskService.Domain.Entities.BaseEntity;
+﻿using TaskService.Domain.Entities.BaseEntity;
+using TaskService.Domain.Entities.Enums;
+using TaskService.Domain.ValueObjects;
 
 namespace TaskService.Domain.Entities
 {
-    public class Issue : BaseEntityTask
+    public class Issue : BaseEntities, ISoftDeletable
     {
         public Guid ProjectId { get; }
-        public Guid TaskTypeId { get; private set; }
-        public Guid TaskStatusId { get; private set; }
+        public Guid IssueStatusId { get; private set; }
         public string? Description { get; private set; }
-        public Guid? ReporterId { get; private set; }
-        //TODO: возможно стоит добавить дату начала, чтобы условно выводить промежуток, котогда она в работе
-        //+ когда назначена и когда в работу взяли
+        public IssueKey Key { get; private set; } = null!;
+        public IssueType IssueType { get; private set; }
+        public IssuePriority IssuePriority { get; private set; }
+        public DateTimeOffset? StartDate { get; private set; }
         public DateTimeOffset? ResolvedDate { get; private set; }
         public DateTimeOffset? UpdatedDate { get; private set; }
         public DateTimeOffset? DueDate { get; private set; }
 
-        //TODO: уточтить за ключ
-        //сокращение проекта + номер задачи по порядку
-        //         //public varchar(20) key "PROJ-123"
+        public ICollection<Tag> Tags { get; private set; } = [];
+        public ICollection<IssueAssignees> IssueAssignees { get; private set; } = [];
+        public ICollection<Attachment> Attachments { get; private set; } = [];
+        public bool IsDeleted { get; set; }
+        public DateTimeOffset? DeletedAt { get; set; }
 
-        private Issue(Guid id, string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId,
-        Guid? reporterId, DateTimeOffset createdDate, DateTimeOffset? updatedDate, DateTimeOffset? dueDate,
-        DateTimeOffset? resolvedDate) : base(id, name, createdDate)
+        protected Issue() { }
+
+        private Issue(Guid id, string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate) : base(id, name)
         {
             ProjectId = projectId;
-            TaskTypeId = taskTypeId;
-            TaskStatusId = taskStatusId;
+            Key = new IssueKey(key);
+            IssueStatusId = taskStatusId;
             Description = description?.Trim();
-            ReporterId = reporterId;
-            UpdatedDate = updatedDate;
             DueDate = dueDate;
-            ResolvedDate = resolvedDate;
+            IssueType = (IssueType)numberIssueType;
+            IssuePriority = (IssuePriority)numberIssuePriority;
         }
 
-        public static Issue Create(string name, string? description, Guid projectId, Guid taskTypeId, Guid taskStatusId,
-        Guid? reporterId, DateTimeOffset? dueDate)
+        public static Issue Create(string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate)
         {
-            return new Issue(Guid.CreateVersion7(), name, description, projectId, taskTypeId, taskStatusId, reporterId,
-            DateTimeOffset.UtcNow, null, null, dueDate);
+            return new Issue(
+                id: Guid.CreateVersion7(),
+                name: name,
+                description: description,
+                key: key,
+                projectId: projectId,
+                taskStatusId: taskStatusId,
+                numberIssueType: numberIssueType,
+                numberIssuePriority: numberIssuePriority,
+                dueDate: dueDate);
         }
 
         public override void UpdateName(string newName)
@@ -61,18 +68,23 @@ namespace TaskService.Domain.Entities
             UpdatedDate = DateTimeOffset.UtcNow;
         }
 
-        //TODO: а как изменять ResolvedDate? по сути оно должно ставится с соответствующим статусом.
-        //уточнить этот момент, а пока bool
-        public void ChangeStatus(Guid newTaskStatusId, bool resolved = false)
+        public void UpdateStatus(IssueStatus status)
         {
-            TaskStatusId = newTaskStatusId;
+            IssueStatusId = status.Id;
             UpdatedDate = DateTimeOffset.UtcNow;
-            ResolvedDate = resolved ? DateTimeOffset.UtcNow : null;
+
+            if (status.Type == IssueStatusType.Process && StartDate == default(DateTimeOffset))
+                StartDate = DateTimeOffset.UtcNow;
+
+            if (status.Type == IssueStatusType.Success || status.Type == IssueStatusType.Rejected)
+                ResolvedDate = DateTimeOffset.UtcNow;
+            else
+                ResolvedDate = null;
         }
 
-        public void UpdateType(Guid newTaskTypeId)
+        public void UpdateType(int numberType)
         {
-            TaskTypeId = newTaskTypeId;
+            IssueType = (IssueType)numberType;
             UpdatedDate = DateTimeOffset.UtcNow;
         }
     }

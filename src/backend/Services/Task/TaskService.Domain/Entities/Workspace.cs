@@ -1,19 +1,17 @@
 ﻿using TaskService.Domain.Entities.BaseEntity;
 
-namespace TaskService.Domain.Entities
+namespace TaskService.Domain.Entities;
+
+public class Workspace : BaseEntities, ISoftDeletable
 {
-    public class Workspace : BaseEntityTask
+    public bool IsDeleted { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
+    public ICollection<WorkspaceMember> WorkspaceMembers { get; private set; } = [];
+    public ICollection<Project> Projects { get; private set; } = [];
+    protected Workspace() { }
+    private Workspace(Guid id, string name) : base(id, name) { }
+    public static Workspace Create(string name)
     {
-        private Workspace(Guid id, string name, DateTimeOffset createdDate, Guid? ownerId) : base(id, name, createdDate)
-        {
-            OwnerId = ownerId;
-        }
-
-        public Guid? OwnerId { get; private set; }
-
-        public static Workspace Create(string name, Guid? ownerId = null)
-        {
-            return new Workspace(Guid.CreateVersion7(), name, DateTimeOffset.UtcNow, ownerId);
-        }
+        return new Workspace(Guid.CreateVersion7(), name);
     }
 }

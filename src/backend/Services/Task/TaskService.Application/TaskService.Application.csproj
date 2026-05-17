@@ -1,18 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Features\Issues\Dto\**" />
+    <Compile Remove="Wrapper\**" />
+    <EmbeddedResource Remove="Features\Issues\Dto\**" />
+    <EmbeddedResource Remove="Wrapper\**" />
+    <None Remove="Features\Issues\Dto\**" />
+    <None Remove="Wrapper\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Features\WorkspaceMembers\Write\UpdateWorkspaceMemberRole\UpdateWorkspaceMemberRoleCommand.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TaskService.Contracts\TaskService.Contracts.csproj" />
     <ProjectReference Include="..\TaskService.Domain\TaskService.Domain.csproj" />
+    <ProjectReference Include="..\TaskService.Infrastructure\TaskService.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Scrutor" />
   </ItemGroup>
 
 </Project>

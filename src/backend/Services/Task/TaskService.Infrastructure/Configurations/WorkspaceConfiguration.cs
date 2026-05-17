@@ -4,6 +4,8 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
+using TaskService.Domain.ValueObjects;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations
 {
@@ -11,16 +13,22 @@ namespace TaskService.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Workspace> builder)
         {
-            builder.HasKey(t => t.Id);
+            builder.HasKey(w => w.Id);
 
-            builder.Property(t => t.Id).ValueGeneratedNever();
+            builder.Property(w => w.Id).ValueGeneratedNever();
 
-            builder.Property(t => t.Name).IsRequired().HasMaxLength(225);
+            builder.Property(w => w.Name)
+                .HasConversion(name => name.Value, value => new BaseEntityName(value))
+                .IsRequired()
+                .HasMaxLength(225);
 
-            builder.Property(t => t.CreatedDate).IsRequired();
-
-            builder.Property(t => t.OwnerId);
-
+            builder.Property(w => w.CreatedDate).IsRequired();
+            builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
+            //builder.Property(w => w.OwnerId);
+            //builder.HasOne<User>()
+            //    .WithMany()
+            //    .HasForeignKey(w => w.OwnerId);
+            //builder.HasData(FakeDataFactory.Workspaces);
         }
     }
 }

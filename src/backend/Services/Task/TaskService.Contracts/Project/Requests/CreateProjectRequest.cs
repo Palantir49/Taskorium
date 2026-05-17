@@ -3,4 +3,4 @@
 public record CreateProjectRequest(
     string Name,
     string Description,
-    Guid WorkspaceId);
+    string Abbreviation);

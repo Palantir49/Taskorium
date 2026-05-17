@@ -8,6 +8,7 @@ namespace TaskService.Contracts.Project.Responses
         Guid Id,
         string Name,
         string? Description,
+        string Abbreviation,
         Guid WorkspaceId,
         DateTimeOffset CreatedDate);
 }

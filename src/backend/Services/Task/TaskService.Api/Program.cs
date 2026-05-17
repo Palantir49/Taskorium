@@ -1,18 +1,26 @@
 ﻿using Microsoft.OpenApi;
 using Scalar.AspNetCore;
+using Taskorium.ServiceDefaults;
+using TaskService.Api.Extensions;
+using TaskService.Api.Handlers;
+using TaskService.Api.Middlewares;
+using TaskService.Api.Middlewares.CurrentUserContext;
+using TaskService.Api.Transformers;
 using TaskService.Application.Extensions;
+using TaskService.Application.Interfaces;
 using TaskService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", false, true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true)
-    .AddEnvironmentVariables()
-    .Build();
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Configuration.Setup(builder.Environment.EnvironmentName);
+builder.Host.ValidateServices();
+builder.Services.AddServiceDefaults(builder.Configuration);
+builder.Logging.ConfigureOpenTelemetry();
+builder.Services.AddScoped<RequestObservabilityMiddleware>();
+builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+builder.Services.AddScoped<CurrentUserMiddleware>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer((document, context, cancellationToken) =>
@@ -22,8 +30,8 @@ builder.Services.AddOpenApi(options =>
         document.Info.Description = "API для управления проектами и задачами";
         document.Info.Contact = new OpenApiContact
         {
-            Name = "https://github.com/Palantir49",
-            Email = "Vadim Ryzhenkov",
+            Name = "Vadim Ryzhenkov",
+            Email = "mr.palantir9191@mail.ru",
             Url = new Uri("https://github.com/Palantir49")
         };
 
@@ -34,6 +42,8 @@ builder.Services.AddOpenApi(options =>
         };
         return Task.CompletedTask;
     });
+
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
 // Политику CORS
@@ -41,28 +51,49 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5000")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins("http://localhost*")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
+
+builder.Services.ConfigureJwtAuthentication(builder.Configuration);
+builder.Services.ConfigureAuthorization();
 
 builder.Services.AddControllers();
 //configure infrastructure layer
 builder.Services.ConfigureInfrastructureLayer(builder.Configuration);
 builder.Services.ConfigureApplicationLayer();
 var app = builder.Build();
-
+app.UseExceptionHandler();
 // Включение CORS
 app.UseCors("AllowReactApp");
+app.UseAuthentication();
+app.UseMiddleware<CurrentUserMiddleware>();
+app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+    {
+        options.Authentication = new ScalarAuthenticationOptions { PreferredSecuritySchemes = ["Bearer"] };
+        var testToken = builder.Configuration["Authentication:Jwt:TestToken"];
+        if (string.IsNullOrWhiteSpace(testToken))
+        {
+            throw new ArgumentNullException(testToken);
+        }
+
+        options.AddHttpAuthentication("Bearer",
+            opts => opts.WithToken(testToken));
+    });
+
+    await app.Services.InitializeDatabaseAsync();
 }
 
-app.UseHttpsRedirection();
+
+app.UseServiceDefaults(builder.Configuration);
 app.MapControllers();
+app.UseMiddleware<RequestObservabilityMiddleware>();
 app.Run();

@@ -1,14 +1,18 @@
-﻿namespace TaskService.Contracts.Issue.Responses;
+﻿using TaskService.Contracts.Attachment;
+using TaskService.Contracts.Collections;
+
+namespace TaskService.Contracts.Issue.Responses;
 
 public record IssueResponse(
     Guid Id,
     string Name,
+    string? Description,
     Guid ProjectId,
-    Guid TaskTypeId,
     Guid TaskStatusId,
+    IssueTypeResponse IssueType,
+    IssuePriorityResponse IssuePriority,
     DateTimeOffset CreatedDate,
-    string? Description = null,
-    Guid? ReporterId = null,
-    DateTimeOffset? UpdatedDate = null,
-    DateTimeOffset? DueDate = null,
-    DateTimeOffset? ResolvedDate = null);
+    DateTimeOffset? UpdatedDate,
+    DateTimeOffset? DueDate,
+    DateTimeOffset? ResolvedDate,
+    IEnumerable<AttachmentResponce>? attachment);
