@@ -6,6 +6,8 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["Directory.Packages.props", "Directory.Packages.props"]
+COPY ["Directory.Build.props", "Directory.Build.props"]
 COPY ["Services/Task/TaskService.Api/TaskService.Api.csproj", "Services/Task/TaskService.Api/"]
 COPY ["Services/Task/TaskService.Domain/TaskService.Domain.csproj", "Services/Task/TaskService.Domain/"]
 COPY ["Shared/Taskorium.Protos/Taskorium.Protos.csproj", "Shared/Taskorium.Protos/"]
