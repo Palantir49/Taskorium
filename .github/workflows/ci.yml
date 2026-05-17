@@ -83,6 +83,13 @@ jobs:
         working-directory: src/backend/Services/Task/TaskService.Tests
         run: dotnet test --configuration Release --verbosity normal
 
+      - name: Upload OpenAPI spec artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-spec
+          path: openapi/openapi.json
+  
+  
   format-build-test-file-storage-service:
     needs: check-changes
     if: github.event_name == 'pull_request' && needs.check-changes.outputs.file-storage-service == 'true'
@@ -348,32 +355,85 @@ jobs:
           file: src/frontend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium/taskorium-frontend:${{ steps.tag.outputs.value }}
-          
-          # ─────────────────────────────────────────────
-          # Уведомления
-          # ─────────────────────────────────────────────
-          #notify-after-ci:
-          #if: github.event_name == 'pull_request'
-          #needs:
-          #- format-build-test-task-service
-          #- format-build-test-file-storage-service
-          #- format-build-test-notification-service
-          #runs-on: ubuntu-latest
-          #steps:
-          #- name: Notify after CI
-          #uses: EverythingSuckz/github-telegram-notify@main
-          #with:
-          #bot_token: ${{ secrets.BOT_TOKEN }}
-          #chat_id: ${{ secrets.CHAT_ID }}
-          
-          #notify-merge:
-          #if: github.event_name == 'push'
-          #runs-on: ubuntu-latest
-          #steps:
-          #- uses: actions/checkout@v4
-          
-          #- name: Notify merge
-          #uses: EverythingSuckz/github-telegram-notify@main
-          #with:
-          #bot_token: ${{ secrets.BOT_TOKEN }}
-          #chat_id: ${{ secrets.CHAT_ID }}
+  
+  publish-openapi:
+    needs:
+      - build-and-push-task-service
+      - build-and-push-file-storage-service
+      - build-and-push-notification-service
+    if: |
+      always() &&
+      github.event_name == 'push' &&
+      (needs.build-and-push-task-service.result == 'success' || needs.build-and-push-task-service.result == 'skipped') &&
+      (needs.build-and-push-file-storage-service.result == 'success' || needs.build-and-push-file-storage-service.result == 'skipped') &&
+      (needs.build-and-push-notification-service.result == 'success' || needs.build-and-push-notification-service.result == 'skipped')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download OpenAPI spec
+        uses: actions/download-artifact@v4
+        with:
+          name: openapi-spec
+          path: ./pages
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install orval
+        run: npm install -g orval
+
+      - name: Prepare client directory
+        run: mkdir -p ./pages/client
+
+      - name: Generate TypeScript axios client
+        run: orval --input ./pages/openapi.json --output ./pages/client --client axios
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./pages
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        
+        # ─────────────────────────────────────────────
+        # Уведомления
+        # ─────────────────────────────────────────────
+  notify-after-ci:
+    if: github.event_name == 'pull_request'
+    needs:
+      - format-build-test-task-service
+      - format-build-test-file-storage-service
+      - format-build-test-notification-service
+      - format-build-test-frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify after CI
+        uses: EverythingSuckz/github-telegram-notify@main
+        with:
+          bot_token: ${{ secrets.BOT_TOKEN }}
+          chat_id: ${{ secrets.CHAT_ID }}
+
+  notify-merge:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Notify merge
+        uses: EverythingSuckz/github-telegram-notify@main
+        with:
+          bot_token: ${{ secrets.BOT_TOKEN }}
+          chat_id: ${{ secrets.CHAT_ID }}        
