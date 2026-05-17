@@ -21,4 +21,11 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="appsettings.Production.json"/>
+    <None Include="appsettings.Production.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
