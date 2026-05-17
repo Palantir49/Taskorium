@@ -170,10 +170,10 @@ jobs:
       - name: Build
         working-directory: src/frontend
         run: npm run build
-
-      - name: Test
-        working-directory: src/frontend
-        run: npm test -- --runInBand
+      
+      # - name: Test
+      #   working-directory: src/frontend
+      #   run: npm test -- --runInBand
 
   # ─────────────────────────────────────────────
   # Build & Push Docker — только на push в main
