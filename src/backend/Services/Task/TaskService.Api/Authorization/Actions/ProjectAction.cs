@@ -10,7 +10,7 @@ public enum ProjectAction
 
     /// <summary>
     /// </summary>
-    Create,
+    CreateIssue,
 
     /// <summary>
     /// </summary>

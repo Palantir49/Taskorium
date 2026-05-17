@@ -3,8 +3,7 @@ using TaskService.Api.Authorization.Actions;
 using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
 using TaskService.Application.Features.Issues.Command;
-using TaskService.Application.Features.Projects.Read.Query;
-using TaskService.Application.Features.Users.Read.Query;
+using TaskService.Application.Features.Projects.Read.GetProjectById;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Enum;
@@ -31,10 +30,6 @@ public class IssueAccessHandler(
         logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над задачей",
             requirement.Action);
 
-        if (requirement.Action == IssueAction.Create)
-        {
-            context.Succeed(requirement);
-        }
         var issueId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor, "issueId");
         if (issueId is null)
         {

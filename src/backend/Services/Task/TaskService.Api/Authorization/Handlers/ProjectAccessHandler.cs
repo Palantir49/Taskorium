@@ -2,8 +2,7 @@
 using TaskService.Api.Authorization.Actions;
 using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
-using TaskService.Application.Features.Projects.Read.Query;
-using TaskService.Application.Features.Users.Read.Query;
+using TaskService.Application.Features.Projects.Read.GetProjectById;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Enum;
@@ -30,11 +29,7 @@ public class ProjectAccessHandler(
 
         logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над проектом",
             requirement.Action);
-        if (requirement.Action == ProjectAction.Create)
-        {
-            context.Succeed(requirement);
-            return;
-        }
+
         var projectId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor, "projectId");
         if (projectId is null)
         {
@@ -70,13 +65,13 @@ public class ProjectAccessHandler(
 
             case WorkspaceRolesDto.Admin:
                 context.Succeed(requirement);
-                return;
+                break;
 
             case WorkspaceRolesDto.Viewer:
                 if (requirement.Action == ProjectAction.View)
                 {
                     context.Succeed(requirement);
-                    return;
+                    break;
                 }
 
                 break;

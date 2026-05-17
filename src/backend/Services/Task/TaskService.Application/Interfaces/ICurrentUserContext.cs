@@ -1,4 +1,4 @@
-﻿using TaskService.Application.Features.Users.Read.Result;
+﻿using TaskService.Application.Features.Users.Read.GetUserByKeycloakId;
 
 namespace TaskService.Application.Interfaces;
 

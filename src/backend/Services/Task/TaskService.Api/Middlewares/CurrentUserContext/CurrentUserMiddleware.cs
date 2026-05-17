@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Features.Users.Read.Query;
+using TaskService.Application.Features.Users.Read.GetUserByKeycloakId;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 
