@@ -30,15 +30,14 @@ builder.Services.AddOpenApi(options =>
         document.Info.Description = "API для управления проектами и задачами";
         document.Info.Contact = new OpenApiContact
         {
-            Name = "https://github.com/Palantir49",
-            Email = "Vadim Ryzhenkov",
+            Name = "Vadim Ryzhenkov",
+            Email = "mr.palantir9191@mail.ru",
             Url = new Uri("https://github.com/Palantir49")
         };
 
         document.Info.License = new OpenApiLicense
         {
-            Name = "MIT License",
-            Url = new Uri("https://opensource.org/licenses/MIT")
+            Name = "MIT License", Url = new Uri("https://opensource.org/licenses/MIT")
         };
         return Task.CompletedTask;
     });
