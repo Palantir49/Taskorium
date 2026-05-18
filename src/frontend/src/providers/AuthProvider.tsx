@@ -6,6 +6,7 @@ import {AuthInfo} from "../types";
 import { setTokenProvider as setTaskTokenProvider } from '../api/taskService';
 import { setTokenProvider as setWorkspaceTokenProvider } from '../api/workSpaceService';
 import { setTokenProvider as setProjectTokenProvider } from '../api/projectService';
+import { setTokenProvider as setIssueStatusTokenProvider } from '../api/issueStatusService';
 
 // Создаем контекст аутентификации
 const AuthContext = createContext<AuthInfo | null>(null);
@@ -30,6 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setTaskTokenProvider(() => token);
         setWorkspaceTokenProvider(() => token);
         setProjectTokenProvider(() => token);
+        setIssueStatusTokenProvider(() => token);
     }, [auth.user]);
 
     const handleLogout = () => auth.signoutRedirect();

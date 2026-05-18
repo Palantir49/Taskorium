@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { fetchIssueStatusesByProjectId, fetchTagsByProjectId } from '../api/projectService';
 import { createIssueStatus, deleteIssueStatus } from '../api/issueStatusService';
@@ -20,6 +21,7 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
   const [loading, setLoading] = React.useState(false);
   const [newStatusName, setNewStatusName] = React.useState('');
   const [createError, setCreateError] = React.useState<string | null>(null);
+  const [deleteError, setDeleteError] = React.useState<string | null>(null);
   const [isCreating, setIsCreating] = React.useState(false);
   const [statusToDeleteId, setStatusToDeleteId] = React.useState<string | null>(null);
 
@@ -56,11 +58,16 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
 
   const handleDeleteStatus = async (statusId: string) => {
     try {
+      setDeleteError(null);
       await deleteIssueStatus(statusId);
       setStatuses((prev) => prev.filter((item) => item.id !== statusId));
       setStatusToDeleteId(null);
     } catch (error) {
       console.error('Ошибка удаления статуса:', error);
+      const message =axios.isAxiosError(error) ? 
+      error.response?.data?.detail || 'Не удалось удалить статус' : 'Не удалось удалить статус';
+      setDeleteError(message);
+
     }
   };
 
@@ -70,6 +77,7 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
     setActiveTab('statuses');
     setStatusToDeleteId(null);
     setCreateError(null);
+    setDeleteError(null);
     const loadStatuses = async () => {
       setLoading(true);
       try {
@@ -200,6 +208,7 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
                   </button>
                 </div>
                 {createError && <p className="text-red-500 text-xs mt-1">{createError}</p>}
+                {deleteError && (<p className="text-red-500 text-xs mt-2">{deleteError}</p>)}
               </div>
             </div>
           )}
