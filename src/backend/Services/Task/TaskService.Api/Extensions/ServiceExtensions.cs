@@ -33,7 +33,7 @@ public static class ServiceExtensions
                 {
                     options.Authority = authority;
                     options.Audience = audience;
-                    options.RequireHttpsMetadata = true;
+                    options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -72,7 +72,8 @@ public static class ServiceExtensions
                 .AddPolicy("CanDeleteUserFromProject",
                     p => p.AddRequirements(new ProjectAccessRequirement(ProjectAction.DeleteUser)))
                 .AddPolicy("CanViewTask", p => p.AddRequirements(new IssueAccessRequirement(IssueAction.View)))
-                .AddPolicy("CanCreateTask", p => p.AddRequirements(new ProjectAccessRequirement(ProjectAction.CreateIssue)))
+                .AddPolicy("CanCreateTask",
+                    p => p.AddRequirements(new ProjectAccessRequirement(ProjectAction.CreateIssue)))
                 .AddPolicy("CanUpdateTask", p => p.AddRequirements(new IssueAccessRequirement(IssueAction.Update)))
                 .AddPolicy("CanDeleteTask", p => p.AddRequirements(new IssueAccessRequirement(IssueAction.Delete)));
 
