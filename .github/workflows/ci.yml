@@ -307,6 +307,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
+      - name: Create .env for frontend
+        run: |
+          echo '${{ secrets.ENV_TASKORIUM_FRONTEND }}' > src/frontend/.env
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
