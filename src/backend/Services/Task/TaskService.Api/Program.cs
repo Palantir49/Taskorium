@@ -45,13 +45,16 @@ builder.Services.AddOpenApi(options =>
 
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
-
 // Политику CORS
+var corsOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? throw new ArgumentNullException(builder.Configuration["Cors:AllowedOrigins"]);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost*")
+        policy.WithOrigins(corsOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
