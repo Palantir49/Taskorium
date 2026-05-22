@@ -2,18 +2,16 @@
 
 namespace TaskService.Domain.Entities;
 
-public class Workspace : BaseEntities
+public class Workspace : BaseEntities, ISoftDeletable
 {
+    public bool IsDeleted { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
+    public ICollection<WorkspaceMember> WorkspaceMembers { get; private set; } = [];
+    public ICollection<Project> Projects { get; private set; } = [];
     protected Workspace() { }
-
-    private Workspace(Guid id, string name, Guid ownerId) : base(id, name)
+    private Workspace(Guid id, string name) : base(id, name) { }
+    public static Workspace Create(string name)
     {
-        OwnerId = ownerId;
-    }
-    public Guid? OwnerId { get; private set; }
-    public List<WorkspaceMember> WorkspaceMembers { get; private set; } = [];
-    public static Workspace Create(string name, Guid ownerId)
-    {
-        return new Workspace(Guid.CreateVersion7(), name, ownerId);
+        return new Workspace(Guid.CreateVersion7(), name);
     }
 }

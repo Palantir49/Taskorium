@@ -1,0 +1,5 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Taskorium.IntegrationEvents\Taskorium.IntegrationEvents.csproj" />
+  </ItemGroup>
+</Project>

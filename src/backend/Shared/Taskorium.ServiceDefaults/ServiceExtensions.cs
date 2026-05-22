@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -43,6 +44,7 @@ public static class ServiceExtensions
                         .AddAspNetCoreInstrumentation()
                         .AddHttpClientInstrumentation()
                         .AddEntityFrameworkCoreInstrumentation()
+                        .AddRabbitMQInstrumentation()
                         .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName))
                         .AddSource($"{serviceName}*")
                         .AddOtlpExporter(opts =>
@@ -107,6 +109,18 @@ public static class ServiceExtensions
         {
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy(), ["live", "ready"]);
+        }
+    }
+
+    extension(ILoggingBuilder loggingBuilder)
+    {
+        public void ConfigureOpenTelemetry()
+        {
+            loggingBuilder.AddOpenTelemetry(logging =>
+            {
+                logging.IncludeScopes = true;
+                logging.IncludeFormattedMessage = true;
+            });
         }
     }
 }

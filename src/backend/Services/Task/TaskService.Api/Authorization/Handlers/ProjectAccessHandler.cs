@@ -2,9 +2,10 @@
 using TaskService.Api.Authorization.Actions;
 using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
-using TaskService.Application.Features.Projects.Command;
-using TaskService.Application.Features.Users.Get;
+using TaskService.Application.Features.Projects.Read.GetProjectById;
+using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
+using TaskService.Contracts.Enum;
 
 namespace TaskService.Api.Authorization.Handlers;
 
@@ -14,7 +15,8 @@ namespace TaskService.Api.Authorization.Handlers;
 public class ProjectAccessHandler(
     IHttpContextAccessor httpContextAccessor,
     IDispatcher dispatcher,
-    ILogger<ProjectAccessHandler> logger)
+    ILogger<ProjectAccessHandler> logger,
+    ICurrentUserContext userContext)
     : AuthorizationHandler<ProjectAccessRequirement>
 {
     /// <summary>
@@ -24,9 +26,11 @@ public class ProjectAccessHandler(
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
         ProjectAccessRequirement requirement)
     {
+
         logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над проектом",
             requirement.Action);
-        var projectId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor);
+
+        var projectId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor, "projectId");
         if (projectId is null)
         {
             logger.LogInformation(
@@ -38,68 +42,58 @@ public class ProjectAccessHandler(
 
 
         //get project
-        var projectQuery = new ProjectGetByIdQuery(projectId);
+        var projectQuery = new GetProjectByIdQuery(projectId);
         var project = await dispatcher.SendAsync(projectQuery);
 
 
-        var userKeyCloakId = AuthorizationUtils.GetKeycloakUserId(httpContextAccessor);
-        if (userKeyCloakId is null)
+        if (!userContext.IsInitialized)
         {
             logger.LogInformation(
-                "В процессе авторизации для совершения действия {Action} над проектом {projectId} произошла ошибка: не удалось получить keycloakId пользователя из запроса",
+                "В процессе авторизации для совершения действия {Action} над проектом {projectId} произошла ошибка: контекст текущего пользователя не инициализирован",
                 requirement.Action, projectId);
             context.Fail();
             return;
         }
 
-        //get user
-        var user = await dispatcher.SendAsync(new GetUserByKeycloakIdQuery(userKeyCloakId));
+        var user = userContext.User;
 
         var wsMemberShip = user.WorkSpaceMembers?.FirstOrDefault(x => x.WorkspaceId == project.WorkspaceId);
 
-        switch (wsMemberShip?.RoleDto.roleName) //TODO enum
+        switch (wsMemberShip?.Role) //TODO enum
         {
-            case "Creator":
+            case WorkspaceRolesDto.Creator:
 
-            case "Admin":
+            case WorkspaceRolesDto.Admin:
                 context.Succeed(requirement);
-                return;
-
-            case "Member":
-                if (requirement.Action is ProjectAction.View or ProjectAction.Update)
-                {
-                    context.Succeed(requirement);
-                    return;
-                }
-
                 break;
-            case "Viewer":
+
+            case WorkspaceRolesDto.Viewer:
                 if (requirement.Action == ProjectAction.View)
                 {
                     context.Succeed(requirement);
-                    return;
+                    break;
                 }
 
                 break;
         }
 
         var projectMemberShip = user.ProjectMembers?.FirstOrDefault(x => x.ProjectId == project.Id);
-        switch (projectMemberShip?.RoleDto.roleName) //TODO enum
+        switch (projectMemberShip?.Role) //TODO enum
         {
-            case "Creator":
+            case ProjectRolesDto.Creator:
 
-            case "Admin": //TODO Set and unset admin in project
+            case ProjectRolesDto.Admin: //TODO Set and unset admin in project
                 context.Succeed(requirement);
                 return;
 
-            case "Member": //TODO add user assigned task issue
+            case ProjectRolesDto.Member: //TODO add user assigned task issue
                 if (requirement.Action is ProjectAction.View or ProjectAction.Update)
                 {
                     context.Succeed(requirement);
                 }
 
                 break;
-            case "Viewer":
+            case ProjectRolesDto.Viewer:
                 if (requirement.Action == ProjectAction.View)
                 {
                     context.Succeed(requirement);
@@ -107,5 +101,10 @@ public class ProjectAccessHandler(
 
                 break;
         }
+
+        logger.LogInformation(
+            "В процессе авторизации для совершения действия {Action} над проектом {projectId} доступ не предоставлен: отсутствуют необходимые роли участника workspace/project",
+            requirement.Action, projectId);
+        context.Fail();
     }
 }

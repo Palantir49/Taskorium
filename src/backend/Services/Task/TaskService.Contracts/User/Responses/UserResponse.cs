@@ -4,9 +4,9 @@ using System.Text;
 
 namespace TaskService.Contracts.User.Responses
 {
-    public record UserResponse(Guid id,
-                               Guid keycloakId,
-                               string? email = null,
-                               string? username = null,
-                               DateTimeOffset? createdAt = null);
+    public record UserResponse(Guid Id,
+                               Guid KeycloakId,
+                               string? Email = null,
+                               string? UserName = null,
+                               DateTimeOffset? CreatedAt = null);
 }

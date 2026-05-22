@@ -16,16 +16,15 @@ import { useTasks } from '../context/TaskContext';
 import { filterTasks, groupTasksByStatus } from '../utils/filterTasks';
 import Column from './Column';
 import TaskCard from './TaskCard';
-import { Task, TaskStatus } from '../types';
+import { Task } from '../types';
 import './KanbanBoard.css';
 
-const statusOrder: TaskStatus[] = ['backlog', 'in-progress', 'testing', 'pause', 'done'];
+const statusOrder = ['backlog', 'in-progress', 'testing', 'pause', 'done'];
 
 interface KanbanBoardProps {
-  onCreateTask?: (status: TaskStatus) => void;
 }
 
-function KanbanBoard({ onCreateTask }: KanbanBoardProps) {
+function KanbanBoard({}: KanbanBoardProps) {
   const { tasks, filters, updateTask, setSelectedTask, selectedTask } = useTasks();
   const [activeTask, setActiveTask] = React.useState<Task | null>(null);
 
@@ -74,24 +73,26 @@ function KanbanBoard({ onCreateTask }: KanbanBoardProps) {
     // Если задача перетащена в другую колонку
     if (over.data.current?.type === 'column') {
       const newStatus = over.data.current.status;
-      if (activeTask.status !== newStatus) {
+      // В DTO статус задачи хранится в issueStatusId, поэтому пока не реализовано
+      /*if (activeTask.taskStatusId !== newStatus) {
         try {
-          await updateTask(activeTask.id, { status: newStatus });
+          await updateTask(activeTask.id, { issueStatusId: newStatus });
         } catch (error) {
           console.error('Ошибка при обновлении задачи:', error);
         }
-      }
+      }*/
     }
     // Если задача перетащена на другую задачу
     else if (over.data.current?.type === 'task') {
       const overTask = over.data.current.task;
-      if (activeTask.status !== overTask.status) {
+      // В DTO статус задачи хранится в issueStatusId, поэтому пока не реализовано
+      /*if (activeTask.taskStatusId !== overTask.taskStatusId) {
         try {
-          await updateTask(activeTask.id, { status: overTask.status });
+          await updateTask(activeTask.id, { issueStatusId: overTask.taskStatusId });
         } catch (error) {
           console.error('Ошибка при обновлении задачи:', error);
         }
-      }
+      }*/
     }
   };
 
@@ -116,7 +117,6 @@ function KanbanBoard({ onCreateTask }: KanbanBoardProps) {
               tasks={groupedTasks[status] || []}
               onTaskClick={handleTaskClick}
               isSidebarOpen={!!selectedTask}
-              onCreateTask={onCreateTask}
             />
           ))}
         </div>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations;
 
@@ -24,16 +25,21 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
         builder.Property(t => t.JoinedAt)
             .IsRequired(); ;
 
-        builder.HasOne<Project>()
+        builder.HasOne(x => x.Project)
             .WithMany(x => x.ProjectMembers)
             .HasForeignKey(t => t.ProjectId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne<User>()
+        builder.HasOne(x => x.User)
             .WithMany(x => x.ProjectMembers)
             .HasForeignKey(t => t.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
+
+        //builder.HasData(FakeDataFactory.ProjectMembers);
+
     }
 }

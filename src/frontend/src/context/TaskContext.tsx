@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { fetchTasks, updateTask, createTask, deleteTask, fetchTasksTestController } from '../api/taskService';
+import { updateTask, createTask, deleteTask } from '../api/taskService';
+import { fetchIssuesByProjectId } from '../api/projectService';
 import { Task, TaskState, Action, ActionType, UpdateTaskData, CreateTaskData } from '../types';
 
 const TaskContext = createContext<TaskState & {
   loadTasks: () => Promise<void>;
-  updateTask: (id: number, updates: UpdateTaskData) => Promise<Task>;
+  updateTask: (id: string, updates: UpdateTaskData) => Promise<Task>;
   createTask: (taskData: CreateTaskData) => Promise<Task>;
-  deleteTask: (id: number) => Promise<void>;
+  deleteTask: (id: string) => Promise<void>;
   setSelectedTask: (task: Task | null) => void;
   setFilter: (key: keyof TaskState['filters'], value: string) => void;
   resetFilters: () => void;
@@ -101,30 +102,29 @@ function taskReducer(state: TaskState, action: Action): TaskState {
 
 interface TaskProviderProps {
   children: ReactNode;
+  projectId: string;
 }
 
 // Провайдер контекста
-export function TaskProvider({ children }: TaskProviderProps) {
+export function TaskProvider({ children, projectId }: TaskProviderProps) {
   const [state, dispatch] = useReducer(taskReducer, initialState);
 
   // Загрузка задач при монтировании
   useEffect(() => {
     loadTasks();
-    // Вызов тестового метода для проверки
-    fetchTasksTestController();
-  }, []);
+  }, [projectId]);
 
-  const loadTasks = async (): Promise<void> => {
+  const loadTasks = async (): Promise<void> =>  {
     dispatch({ type: ActionTypes.SET_LOADING, payload: true });
     try {
-      const tasks = await fetchTasks();
+      const tasks = await fetchIssuesByProjectId(projectId);
       dispatch({ type: ActionTypes.SET_TASKS, payload: tasks });
     } catch (error) {
       dispatch({ type: ActionTypes.SET_ERROR, payload: (error as Error).message });
     }
   };
 
-  const handleUpdateTask = async (id: number, updates: UpdateTaskData): Promise<Task> => {
+  const handleUpdateTask = async (id: string, updates: UpdateTaskData): Promise<Task> => {
     try {
       const updatedTask = await updateTask(id, updates);
       dispatch({ type: ActionTypes.UPDATE_TASK, payload: updatedTask });
@@ -146,7 +146,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
     }
   };
 
-  const handleDeleteTask = async (id: number): Promise<void> => {
+  const handleDeleteTask = async (id: string): Promise<void> => {
     try {
       await deleteTask(id);
       dispatch({ type: ActionTypes.REMOVE_TASK, payload: id });

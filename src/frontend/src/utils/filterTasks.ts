@@ -11,24 +11,25 @@ import { Task, TaskFilters } from '../types';
 export function filterTasks(tasks: Task[], filters: TaskFilters): Task[] {
   return tasks.filter(task => {
     // Фильтр по исполнителю
-    if (filters.assignedTo && task.assignedTo?.id !== parseInt(filters.assignedTo)) {
+    // В DTO не указан пользователь, поэтому фильтр пока не работает
+    /*if (filters.assignedTo && task.assignedTo?.id !== filters.assignedTo) {
       return false;
-    }
+    }*/
 
     // Фильтр по типу задачи
-    if (filters.type && task.type !== filters.type) {
+    if (filters.type && task.issueType.name !== filters.type) {
       return false;
     }
 
     // Фильтр по важности
-    if (filters.priority && task.priority !== filters.priority) {
+    if (filters.priority && task.issuePriority.name !== filters.priority) {
       return false;
     }
 
     // Фильтр по дате создания
     if (filters.createdAt) {
       const now = new Date();
-      const taskDate = new Date(task.createdAt);
+      const taskDate = new Date(task.createdDate);
 
       switch (filters.createdAt) {
         case 'today':
@@ -61,10 +62,10 @@ export function filterTasks(tasks: Task[], filters: TaskFilters): Task[] {
       switch (filters.deadline) {
          // Показываем только задачи с просроченным дедлайном, которые еще не выполнены
         case 'overdue':
-          if (!task.deadline) return true;
+          if (!task.dueDate) return true;
           // Исключаем выполненные задачи
-          if (task.status === 'done') return false;
-          const overdueDeadline = new Date(task.deadline);
+          if (task.resolvedDate) return false;
+          const overdueDeadline = new Date(task.dueDate);
           overdueDeadline.setHours(0, 0, 0, 0);
           // Дедлайн должен быть меньше сегодняшней даты (просрочен)
           if (overdueDeadline >= now) return false;
@@ -72,8 +73,8 @@ export function filterTasks(tasks: Task[], filters: TaskFilters): Task[] {
 
         case 'this-week':
           // Показываем задачи с дедлайном на этой неделе (сегодня + 7 дней)
-          if (!task.deadline) return false;
-          const weekDeadline = new Date(task.deadline);
+          if (!task.dueDate) return false;
+          const weekDeadline = new Date(task.dueDate);
           weekDeadline.setHours(0, 0, 0, 0);
           const weekEnd = new Date(now);
           weekEnd.setDate(weekEnd.getDate() + 7);
@@ -82,8 +83,8 @@ export function filterTasks(tasks: Task[], filters: TaskFilters): Task[] {
 
         case 'this-month':
           // Показываем задачи с дедлайном в этом месяце (от сегодня до конца месяца)
-          if (!task.deadline) return false;
-          const monthDeadline = new Date(task.deadline);
+          if (!task.dueDate) return false;
+          const monthDeadline = new Date(task.dueDate);
           monthDeadline.setHours(0, 0, 0, 0);
           const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
           monthEnd.setHours(23, 59, 59, 999);
@@ -93,7 +94,7 @@ export function filterTasks(tasks: Task[], filters: TaskFilters): Task[] {
 
         case 'no-deadline':
           // Показываем только задачи без дедлайна
-          if (task.deadline) return false;
+          if (task.dueDate) return false;
           break;
 
         default:
@@ -118,9 +119,8 @@ export function groupTasksByStatus(tasks: Task[]): Record<string, Task[]> {
   };
 
   tasks.forEach(task => {
-    if (statuses[task.status]) {
-      statuses[task.status].push(task);
-    }
+    // В DTO статус задачи хранится в taskStatusId, поэтому пока просто добавляем все задачи в 'backlog'
+    statuses['backlog'].push(task);
   });
 
   return statuses;

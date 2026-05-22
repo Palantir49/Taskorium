@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
 using TaskService.Domain.ValueObjects;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations;
 
@@ -27,5 +28,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                 username => username.ToString(),
                 value => new UserName(value))
             .IsRequired().HasMaxLength(225);
+
+        builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
+
+
+        //builder.HasData(FakeDataFactory.Users);
     }
 }

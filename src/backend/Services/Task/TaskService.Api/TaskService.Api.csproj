@@ -14,10 +14,19 @@
     <DocumentationFile>bin\Release\TaskService.Api.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <OpenApiDocumentsDirectory>../../../../../openapi</OpenApiDocumentsDirectory>
+    <OpenApiGenerateDocumentsOptions>--file-name openapi</OpenApiGenerateDocumentsOptions>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -40,4 +49,9 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="openapi\openapi.json"/>
+  </ItemGroup>
+
+  
 </Project>

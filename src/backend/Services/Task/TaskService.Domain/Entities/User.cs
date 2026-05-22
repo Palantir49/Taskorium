@@ -1,8 +1,9 @@
-﻿using TaskService.Domain.ValueObjects;
+﻿using TaskService.Domain.Entities.BaseEntity;
+using TaskService.Domain.ValueObjects;
 
 namespace TaskService.Domain.Entities;
 
-public class User
+public class User : ISoftDeletable
 {
     private User()
     {
@@ -25,9 +26,11 @@ public class User
     public UserName Username { get; private set; } = null!;
     public DateTimeOffset CreatedDate { get; }
     public string FullName { get; } = null!;
-    public List<WorkspaceMember> WorkspaceMembers { get; private set; } = [];
-    public List<ProjectMember> ProjectMembers { get; private set; } = [];
-
+    public ICollection<WorkspaceMember> WorkspaceMembers { get; private set; } = [];
+    public ICollection<ProjectMember> ProjectMembers { get; private set; } = [];
+    public ICollection<IssueAssignees> issueAssignees { get; private set; } = [];
+    public bool IsDeleted { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
 
     public static User Create(Guid keycloakId, UserName userName, EmailAdress email, string fullName)
     {

@@ -17,7 +17,6 @@ public class IssueStatusUpdateHandler(TaskServiceDbContext context) : IRequestHa
         status.UpdateName(request.name);
         status.UpdatePosition(request.position);
         status.UpdateType(Enum.Parse<IssueStatusType>(request.type));
-        status.UpdateColor(request.color);
 
         context.IssueStatus.Update(status);
         await context.SaveChangesAsync(cancellationToken);

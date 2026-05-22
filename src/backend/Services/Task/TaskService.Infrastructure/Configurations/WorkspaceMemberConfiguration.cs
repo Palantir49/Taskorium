@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
-using TaskService.Domain.ValueObjects;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations;
 
@@ -9,18 +9,16 @@ public class WorkspaceMemberConfiguration : IEntityTypeConfiguration<WorkspaceMe
 {
     public void Configure(EntityTypeBuilder<WorkspaceMember> builder)
     {
-        builder.HasKey(x => x.UserId);
-
-        builder.HasKey(x => x.WorkspaceId);
+        builder.HasKey(x => new { x.UserId, x.WorkspaceId });
 
         builder.Property(x => x.JoinedAt).IsRequired();
 
-        builder.HasOne<User>()
+        builder.HasOne(x => x.User)
             .WithMany(x => x.WorkspaceMembers)
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<Workspace>()
+        builder.HasOne(x => x.Workspace)
             .WithMany(x => x.WorkspaceMembers)
             .HasForeignKey(x => x.WorkspaceId)
             .OnDelete(DeleteBehavior.Cascade);
@@ -28,5 +26,9 @@ public class WorkspaceMemberConfiguration : IEntityTypeConfiguration<WorkspaceMe
         builder.Property(x => x.Role)
             .IsRequired()
             .HasConversion<string>();
+
+        builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
+
+        //builder.HasData(FakeDataFactory.WorkspaceMembers);
     }
 }

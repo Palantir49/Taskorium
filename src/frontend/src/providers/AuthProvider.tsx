@@ -1,19 +1,38 @@
-﻿import React from 'react';
+﻿import React, { createContext, useContext, useEffect } from 'react';
 import {useAuth} from 'react-oidc-context';
-import { HeaderAuthorization } from '../components/HeaderAuthorization';
 import {useCreateUser} from '../hooks/useCreateUser';
 import {useUserFullName} from '../hooks/useUserFullName';
-import {AuthProviderProps, AuthInfo} from "../types";
+import {AuthInfo} from "../types";
+import { setTokenProvider as setTaskTokenProvider } from '../api/taskService';
+import { setTokenProvider as setWorkspaceTokenProvider } from '../api/workSpaceService';
+import { setTokenProvider as setProjectTokenProvider } from '../api/projectService';
+import { setTokenProvider as setIssueStatusTokenProvider } from '../api/issueStatusService';
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({
-                                                              children,
-                                                              activeTab,
-                                                              onTabChange,
-                                                              showHeader = true,
-                                                          }) => {
+// Создаем контекст аутентификации
+const AuthContext = createContext<AuthInfo | null>(null);
+
+// Хук для использования контекста аутентификации
+export const useAuthContext = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuthContext must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const auth = useAuth();
     const {syncStatus, syncError} = useCreateUser(); // авто-синхронизация
     const userFullName = useUserFullName();
+
+    // Установка провайдера токена для всех API-запросов
+    useEffect(() => {
+        const token = auth.user?.access_token || null;
+        setTaskTokenProvider(() => token);
+        setWorkspaceTokenProvider(() => token);
+        setProjectTokenProvider(() => token);
+        setIssueStatusTokenProvider(() => token);
+    }, [auth.user]);
 
     const handleLogout = () => auth.signoutRedirect();
 
@@ -37,25 +56,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         );
     }
 
-    // Показываем контент только если синхронизация успешна или еще не начата
+    // Создаем authInfo для контекста
     const authInfo: AuthInfo = {
         isAuthenticated: auth.isAuthenticated,
         userFullName,
-        onLogin: () => {
-        },
+        onLogin: () => {},
         onLogout: handleLogout,
     };
 
     return (
-        <>
-            {showHeader && auth.isAuthenticated && activeTab && (
-                <HeaderAuthorization
-                    activeTab={activeTab as any}
-                    onTabChange={onTabChange as any}
-                    authInfo={authInfo}
-                />
-            )}
+        <AuthContext.Provider value={authInfo}>
             {children}
-        </>
+        </AuthContext.Provider>
     );
 };

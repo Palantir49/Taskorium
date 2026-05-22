@@ -1,5 +1,4 @@
-﻿using TaskService.Application.Commands.Workspaces.Create;
-using TaskService.Application.Commands.Workspaces.Get;
+﻿using TaskService.Application.Features.Workspaces.Write.CreateWorkspace;
 using TaskService.Contracts.Workspace.Request;
 
 namespace TaskService.Application.Commands.Workspaces;
@@ -12,7 +11,7 @@ public static class WorkspaceMapping
     //}
     public static CreateWorkspaceCommand ToCommand(this CreateWorkspaceRequest request)
     {
-        return new CreateWorkspaceCommand(Name: request.Name, ownerId: request.OwnerId);
+        return new CreateWorkspaceCommand(Name: request.Name, OwnerId: request.OwnerId);
     }
     //TODO: UpdateCommand
     //TODO: DeleteCommand

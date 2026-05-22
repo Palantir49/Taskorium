@@ -1,9 +1,13 @@
-﻿namespace TaskService.Contracts.Issue.Requests;
+﻿using Microsoft.AspNetCore.Http;
 
-public record class IssueCreateRequest(
+namespace TaskService.Contracts.Issue.Requests;
+
+//TODO issue assignees
+public record IssueCreateRequest(
     string Name,
     Guid ProjectId,
-    Guid IssueTypeId,
-    Guid IssueStatusId,
+    int NumberIssueType,
+    int NumberIssuePriority,
     string? Description = null,
-    DateTimeOffset? DueDate = null);
+    DateTimeOffset? DueDate = null,
+    List<IFormFile>? Attachments = null);

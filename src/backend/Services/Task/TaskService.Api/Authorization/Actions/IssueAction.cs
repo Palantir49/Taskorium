@@ -10,10 +10,6 @@ public enum IssueAction
 
     /// <summary>
     /// </summary>
-    Create,
-
-    /// <summary>
-    /// </summary>
     Update,
 
     /// <summary>

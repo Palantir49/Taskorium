@@ -1,12 +1,17 @@
-﻿using TaskService.Application.Mediator;
+﻿using TaskService.Application.Features.Attachments.Dto;
+using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 
-namespace TaskService.Application.Commands.Issues.Command;
+namespace TaskService.Application.Features.Issues.Command;
+
+//TODO issue assignees
+
 
 public record IssueCreateCommand(
     string Name,
     Guid ProjectId,
-    Guid IssueTypeId,
-    Guid IssueStatusId,
+    int NumberIssueType,
+    int NumberIssuePriority,
     string? Description = null,
-    DateTimeOffset? DueDate = null) : ICommand<IssueResponse>;
+    DateTimeOffset? DueDate = null,
+    List<AttachmentDto>? AttachmentDtos = null) : ICommand<IssueResponse>;

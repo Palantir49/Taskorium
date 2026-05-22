@@ -76,6 +76,47 @@
   background-color: #dc2626;
 }
 
+.settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.settings-btn:hover {
+  border-color: #9ca3af;
+  color: var(--text-primary);
+}
+
+.create-task-main-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1rem;
+  background: #2563eb;
+  color: #fff;
+  border: 1px solid #1d4ed8;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.create-task-main-btn:hover {
+  background: #1d4ed8;
+}
+
+.create-task-main-btn:active {
+  transform: translateY(1px);
+}
+
 @media (max-width: 768px) {
   .filter-bar-content {
     padding: 0 1rem;
@@ -99,6 +140,12 @@
     width: 100%;
     justify-content: center;
   }
+
+  .create-task-main-btn {
+    width: 100%;
+  }
 }
+
+
 
 

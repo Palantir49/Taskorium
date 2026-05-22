@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Commands.Users.Get;
 using TaskService.Application.Features.Users;
-using TaskService.Application.Features.Users.Create;
-using TaskService.Application.Features.Users.Delete;
-using TaskService.Application.Features.Users.Get;
-using TaskService.Application.Features.Users.Update;
+using TaskService.Application.Features.Users.Read.GetUserById;
+using TaskService.Application.Features.Users.Read.GetUserByKeycloakId;
+using TaskService.Application.Features.Users.Read.GetUserWorkspacesById;
+using TaskService.Application.Features.Users.Read.GetUsesrPage;
+using TaskService.Application.Features.Users.Write.CreateUser;
+using TaskService.Application.Features.Users.Write.DeleteUserById;
+using TaskService.Application.Features.Users.Write.UpdateUserEmail;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.User.Requests;
 using TaskService.Contracts.User.Responses;
@@ -25,7 +27,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// ///
     /// <param name="id">Id пользователя</param>
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     [ActionName("GetUserByIdAsync")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -40,7 +42,26 @@ public class UserController(IDispatcher dispatcher) : Controller
 
         return Ok(userResponse);
     }
+    /// <summary>
+    ///     Получить рабочие области пользователя по keycloak id
+    /// </summary>
+    /// ///
+    /// <param name="keycloakId">KeycloakId пользователя</param>
+    [HttpGet("{keycloakId:guid}/workspaces")]
+    [ActionName("GetUserWorkspacesByIdAsync")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<GetUserByIdResult>> GetUserWorkspacesByIdAsync(Guid keycloakId)
+    {
+        var userResponse = await dispatcher.SendAsync(new GetUserWorkspacesByIdQuery(keycloakId));
+        if (userResponse == null)
+        {
+            return NotFound();
+        }
 
+        return Ok(userResponse);
+    }
     /// <summary>
     ///     Получить пользователя по keycloak id
     /// </summary>
@@ -67,7 +88,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// ///
     /// <param name="query">Объект пагинации</param>
-    [HttpGet("GetAllUsers")]
+    [HttpGet("users")]
     [ActionName("GetAllUsersAsync")]
     [ProducesResponseType(typeof(GetUsersPageResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -99,7 +120,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     {
         var userCommand = request.ToCommand();
         var response = await dispatcher.SendAsync(userCommand);
-        return CreatedAtAction(nameof(GetUserByIdAsync), new { response.id }, response);
+        return CreatedAtAction(nameof(GetUserByIdAsync), new { response.Id }, response);
     }
 
     /// <summary>
@@ -107,7 +128,7 @@ public class UserController(IDispatcher dispatcher) : Controller
     /// </summary>
     /// <param name="id">Id пользователя</param>
     /// <returns></returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -121,14 +142,16 @@ public class UserController(IDispatcher dispatcher) : Controller
     /// <summary>
     ///     Обновление логина пользователя
     /// </summary>
-    /// <param name="command">Id рабочей области и имя рабочей области</param>
+    /// <param name="id">Id пользователя</param>
+    /// <param name="email">Новое значение email</param>
     /// <returns></returns>
-    /// <response code="201">Имя рабочей области успешно обновлено</response>
+    /// <response code="201">Email пользователя успешно обновлен</response>
     /// <response code="400">Некорректный запрос</response>
-    [HttpPatch]
-    public async Task<ActionResult<UpdateUserEmailResult>> UpdateUserEmailAsync(
-        [FromBody] UpdateUserEmailCommand command)
+    [HttpPatch("{id:guid}")]
+    public async Task<ActionResult<UpdateUserEmailResult>> UpdateUserEmailAsync(Guid id,
+        [FromBody] string email)
     {
+        var command = new UpdateUserEmailCommand(id, email);
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }
