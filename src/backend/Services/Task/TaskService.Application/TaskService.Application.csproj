@@ -7,6 +7,9 @@
     <None Remove="Features\Issues\Dto\**" />
     <None Remove="Wrapper\**" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Features\WorkspaceMembers\Write\UpdateWorkspaceMemberRole\UpdateWorkspaceMemberRoleCommand.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\Taskorium.IntegrationEvents\Taskorium.IntegrationEvents.csproj" />

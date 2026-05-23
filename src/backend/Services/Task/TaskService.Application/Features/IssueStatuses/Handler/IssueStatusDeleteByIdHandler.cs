@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TaskService.Application.Exceptions;
 using TaskService.Application.Features.IssueStatuses.Command;
 using TaskService.Application.Mediator;
 using TaskService.Domain.Entities;
@@ -14,12 +15,11 @@ public class IssueStatusDeleteByIdHandler(TaskServiceDbContext context) : IReque
         IssueStatus status = await context.IssueStatus.FindAsync(new object[] { request.id }) ??
             throw new NullReferenceException($"Статус с id: {request.id} не найден");
 
-        //FAQ: а точно в репозитории для этого нужно заводить или через all делать?
-        List<Issue> issue = await context.Set<Issue>().ToListAsync();
-        //GetByIssueStatusIdAsync(statusId: status.Id, cancellationToken);
+        bool hasIssues = await context.Set<Issue>()
+            .AnyAsync(x => x.IssueStatusId == status.Id, cancellationToken);
 
-        if (issue != null && issue.Count > 0)
-            throw new NullReferenceException($"Нельзя удалить статус, пока существуют связанные задачи");
+        if (hasIssues)
+            throw new ConflictException($"Нельзя удалить статус, пока существуют связанные задачи");
         //TODO: изменить исключение на подходящее
 
         var removeres = context.IssueStatus.Remove(status);

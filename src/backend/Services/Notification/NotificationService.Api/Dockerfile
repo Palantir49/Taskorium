@@ -5,6 +5,8 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["Directory.Packages.props", "Directory.Packages.props"]
+COPY ["Directory.Build.props", "Directory.Build.props"]
 COPY ["Services/Notification/NotificationService.Api/NotificationService.Api.csproj", "Services/Notification/NotificationService.Api/"]
 COPY ["Shared/Taskorium.ServiceDefaults/Taskorium.ServiceDefaults.csproj", "Shared/Taskorium.ServiceDefaults/"]
 COPY ["Services/Notification/NotificationService.Infrastructure/NotificationService.Infrastructure.csproj", "Services/Notification/NotificationService.Infrastructure/"]

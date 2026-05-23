@@ -16,10 +16,7 @@ namespace TaskService.Domain.Entities
         public DateTimeOffset? DeletedAt { get; set; }
         public Workspace Workspace { get; private set; } = null!;
         public User User { get; private set; } = null!;
-        public WorkspaceMember()
-        {
-
-        }
+        public WorkspaceMember() { }
         private WorkspaceMember(Guid workspaceId, Guid userId, WorkspaceRoles role, DateTimeOffset joinedAt)
         {
             UserId = userId;
@@ -31,6 +28,12 @@ namespace TaskService.Domain.Entities
         {
             return new WorkspaceMember(workspaceId, userId, role, joinedAt);
         }
-        public static WorkspaceMember Create(Guid workspaceId, Guid userId, WorkspaceRoles role) => Create(workspaceId, userId, role, DateTimeOffset.UtcNow);
+        public static WorkspaceMember Create(Guid workspaceId, Guid userId, WorkspaceRoles role)
+            => Create(workspaceId, userId, role, DateTimeOffset.UtcNow);
+
+        public void SetRole(WorkspaceRoles role)
+        {
+            Role = role;
+        }
     }
 }

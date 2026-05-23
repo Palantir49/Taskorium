@@ -30,8 +30,8 @@ builder.Services.AddOpenApi(options =>
         document.Info.Description = "API для управления проектами и задачами";
         document.Info.Contact = new OpenApiContact
         {
-            Name = "https://github.com/Palantir49",
-            Email = "Vadim Ryzhenkov",
+            Name = "Vadim Ryzhenkov",
+            Email = "mr.palantir9191@mail.ru",
             Url = new Uri("https://github.com/Palantir49")
         };
 
@@ -45,13 +45,16 @@ builder.Services.AddOpenApi(options =>
 
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
-
 // Политику CORS
+var corsOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? throw new ArgumentNullException(builder.Configuration["Cors:AllowedOrigins"]);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost*")
+        policy.WithOrigins(corsOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

@@ -14,11 +14,48 @@ on:
       - '.github/workflows/*.yml'
 
 jobs:
-  format-build-test:
-    if: github.event_name == 'pull_request'
+  # ─────────────────────────────────────────────
+  # Определяем какие сервисы изменились (только PR)
+  # ─────────────────────────────────────────────
+  check-changes:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     outputs:
-      status: ${{ job.status }}
+      task-service: ${{ steps.filter.outputs.task-service }}
+      file-storage-service: ${{ steps.filter.outputs.file-storage-service }}
+      notification-service: ${{ steps.filter.outputs.notification-service }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            task-service:
+              - 'src/backend/Services/Task/**'
+              - 'src/backend/Shared/Taskorium.IntegrationEvents/**'
+              - 'src/backend/Shared/Taskorium.MessageBus/**'
+              - 'src/backend/Shared/Taskorium.ServiceDefaults/**'
+              - 'src/backend/Shared/Taskorium.Protos/**'
+            file-storage-service:
+              - 'src/backend/Services/FileStorage/**'
+              - 'src/backend/Shared/Taskorium.ServiceDefaults/**'
+              - 'src/backend/Shared/Taskorium.Protos/**'
+            notification-service:
+              - 'src/backend/Services/Notification/**'
+              - 'src/backend/Shared/Taskorium.ServiceDefaults/**'
+              - 'src/backend/Shared/Taskorium.MessageBus/**'
+              - 'src/backend/Shared/Taskorium.IntegrationEvents/**'
+            frontend:
+              - 'src/frontend/**'
+
+  # ─────────────────────────────────────────────
+  # Format / Build / Test — только на PR
+  # ─────────────────────────────────────────────
+  format-build-test-task-service:
+    needs: check-changes
+    if: github.event_name == 'pull_request' && needs.check-changes.outputs.task-service == 'true'
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -31,38 +68,370 @@ jobs:
         run: dotnet --info
 
       - name: Restore dependencies
-        working-directory: ./src/backend
-        run: dotnet restore Taskorium.slnx
+        working-directory: src/backend/Services/Task/TaskService.Api
+        run: dotnet restore
 
       - name: Format check
-        working-directory: ./src/backend
-        run: dotnet format Taskorium.slnx --no-restore --verify-no-changes
+        working-directory: src/backend/Services/Task/TaskService.Api
+        run: dotnet format --no-restore --verify-no-changes
 
       - name: Build
-        working-directory: ./src/backend
-        run: dotnet build Taskorium.slnx --no-restore
+        working-directory: src/backend/Services/Task/TaskService.Api
+        run: dotnet build --no-restore --configuration Release
 
       - name: Test
-        working-directory: ./src/backend/Services/Task/TaskService.Tests
-        run: dotnet test --no-build --verbosity normal
+        working-directory: src/backend/Services/Task/TaskService.Tests
+        run: dotnet test --configuration Release --verbosity normal
 
-  notify-after-ci:
-    if: github.event_name == 'pull_request'
-    needs: format-build-test
+  format-build-test-file-storage-service:
+    needs: check-changes
+    if: github.event_name == 'pull_request' && needs.check-changes.outputs.file-storage-service == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Set message for PR
-        id: pr_msg
-        run: |
-          echo "title=📥 Pull Request" >> $GITHUB_OUTPUT
-          echo "action=${{ github.event.action }}" >> $GITHUB_OUTPUT
-          echo "status=${{ needs.format-build-test.result }}" >> $GITHUB_OUTPUT
+      - uses: actions/checkout@v4
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Show SDK info
+        run: dotnet --info
+
+      - name: Restore dependencies
+        working-directory: src/backend/Services/FileStorage/FileStorageService.API
+        run: dotnet restore
+
+      - name: Format check
+        working-directory: src/backend/Services/FileStorage/FileStorageService.API
+        run: dotnet format --no-restore --verify-no-changes
+
+      - name: Build
+        working-directory: src/backend/Services/FileStorage/FileStorageService.API
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        working-directory: src/backend/Services/FileStorage/FileStorageService.Tests
+        run: dotnet test --configuration Release --verbosity normal
+
+  format-build-test-notification-service:
+    needs: check-changes
+    if: github.event_name == 'pull_request' && needs.check-changes.outputs.notification-service == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Show SDK info
+        run: dotnet --info
+
+      - name: Restore dependencies
+        working-directory: src/backend/Services/Notification/NotificationService.Api
+        run: dotnet restore
+
+      - name: Format check
+        working-directory: src/backend/Services/Notification/NotificationService.Api
+        run: dotnet format --no-restore --verify-no-changes
+
+      - name: Build
+        working-directory: src/backend/Services/Notification/NotificationService.Api
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        working-directory: src/backend/Services/Notification/NotificationService.Tests
+        run: dotnet test --configuration Release --verbosity normal
+
+  format-build-test-frontend:
+    needs: check-changes
+    if: github.event_name == 'pull_request' && needs.check-changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: 'npm'
+          cache-dependency-path: src/frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: src/frontend
+        run: npm ci
+
+      # - name: Lint
+      #   working-directory: src/frontend
+      #   run: npm run lint
+
+      - name: Build
+        working-directory: src/frontend
+        run: npm run build
+
+      # - name: Test
+      #   working-directory: src/frontend
+      #   run: npm test -- --runInBand
+
+  # ─────────────────────────────────────────────
+  # Build & Push Docker — только на push в main
+  # ─────────────────────────────────────────────
+  build-and-push-task-service:
+    needs: format-build-test-task-service
+    if: |
+      always() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      (needs.format-build-test-task-service.result == 'success' ||
+       needs.format-build-test-task-service.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create appsettings.Production.json for TaskService
+        run: |
+          echo '${{ secrets.APPSETTINGS_TASK_SERVICE }}' > src/backend/Services/Task/TaskService.Api/appsettings.Production.json
+          jq empty src/backend/Services/Task/TaskService.Api/appsettings.Production.json
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Get tag name
+        id: tag
+        run: echo "value=latest" >> $GITHUB_OUTPUT
+
+      - name: Build and push TaskService
+        uses: docker/build-push-action@v5
+        with:
+          context: src/backend
+          file: src/backend/Services/Task/TaskService.Api/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/task-service:${{ steps.tag.outputs.value }}
+
+  build-and-push-file-storage-service:
+    needs: format-build-test-file-storage-service
+    if: |
+      always() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      (needs.format-build-test-file-storage-service.result == 'success' ||
+       needs.format-build-test-file-storage-service.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create appsettings.Production.json for FileStorageService
+        run: |
+          echo '${{ secrets.APPSETTINGS_FILE_STORAGE_SERVICE }}' > src/backend/Services/FileStorage/FileStorageService.API/appsettings.Production.json
+          jq empty src/backend/Services/FileStorage/FileStorageService.API/appsettings.Production.json
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Get tag name
+        id: tag
+        run: echo "value=latest" >> $GITHUB_OUTPUT
+
+      - name: Build and push FileStorageService
+        uses: docker/build-push-action@v5
+        with:
+          context: src/backend
+          file: src/backend/Services/FileStorage/FileStorageService.API/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/file-storage-service:${{ steps.tag.outputs.value }}
+
+  build-and-push-notification-service:
+    needs: format-build-test-notification-service
+    if: |
+      always() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      (needs.format-build-test-notification-service.result == 'success' ||
+       needs.format-build-test-notification-service.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create appsettings.Production.json for NotificationService
+        run: |
+          echo '${{ secrets.APPSETTINGS_NOTIFICATION_SERVICE }}' > src/backend/Services/Notification/NotificationService.Api/appsettings.Production.json
+          jq empty src/backend/Services/Notification/NotificationService.Api/appsettings.Production.json
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Get tag name
+        id: tag
+        run: echo "value=latest" >> $GITHUB_OUTPUT
+
+      - name: Build and push NotificationService
+        uses: docker/build-push-action@v5
+        with:
+          context: src/backend
+          file: src/backend/Services/Notification/NotificationService.Api/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/notification-service:${{ steps.tag.outputs.value }}
+
+  build-and-push-frontend:
+    needs: format-build-test-frontend
+    if: |
+      always() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      (needs.format-build-test-frontend.result == 'success' ||
+       needs.format-build-test-frontend.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Create .env for frontend
+        run: |
+          echo '${{ secrets.ENV_TASKORIUM_FRONTEND }}' > src/frontend/.env
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Get tag name
+        id: tag
+        run: echo "value=latest" >> $GITHUB_OUTPUT
+
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: src/frontend
+          file: src/frontend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskorium-frontend:${{ steps.tag.outputs.value }}
+
+
+  generate-openapi:
+    if: |
+      github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore solution
+        working-directory: src/backend
+        run: dotnet restore Taskorium.slnx
+
+      - name: Build solution and generate OpenAPI
+        working-directory: src/backend
+        run: dotnet build Taskorium.slnx --no-restore
+
+      - name: Upload OpenAPI spec artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-spec
+          path: openapi/openapi.json
+          retention-days: 1
+
+  publish-openapi:
+    needs:
+      - generate-openapi
+      - build-and-push-task-service
+      - build-and-push-file-storage-service
+      - build-and-push-notification-service
+    if: |
+      always() &&
+      github.event_name == 'push' &&
+      needs.generate-openapi.result == 'success' &&
+      (needs.build-and-push-task-service.result == 'success' || needs.build-and-push-task-service.result == 'skipped') &&
+      (needs.build-and-push-file-storage-service.result == 'success' || needs.build-and-push-file-storage-service.result == 'skipped') &&
+      (needs.build-and-push-notification-service.result == 'success' || needs.build-and-push-notification-service.result == 'skipped')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download OpenAPI spec
+        uses: actions/download-artifact@v4
+        with:
+          name: openapi-spec
+          path: ./pages
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install orval
+        run: npm install -g orval
+
+      - name: Prepare client directory
+        run: mkdir -p ./pages/client
+
+      - name: Generate TypeScript axios client
+        run: orval --input ./pages/openapi.json --output ./pages/client --client axios
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./pages
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # ─────────────────────────────────────────────
+  # Уведомления
+  # ─────────────────────────────────────────────
+  notify-after-ci:
+    if: github.event_name == 'pull_request'
+    needs:
+      - format-build-test-task-service
+      - format-build-test-file-storage-service
+      - format-build-test-notification-service
+      - format-build-test-frontend
+    runs-on: ubuntu-latest
+    steps:
       - name: Notify after CI
         uses: EverythingSuckz/github-telegram-notify@main
         with:
-          bot_token: '${{ secrets.BOT_TOKEN }}'
-          chat_id: '${{ secrets.CHAT_ID }}'
+          bot_token: ${{ secrets.BOT_TOKEN }}
+          chat_id: ${{ secrets.CHAT_ID }}
 
   notify-merge:
     if: github.event_name == 'push'
@@ -73,5 +442,5 @@ jobs:
       - name: Notify merge
         uses: EverythingSuckz/github-telegram-notify@main
         with:
-          bot_token: '${{ secrets.BOT_TOKEN }}'
-          chat_id: '${{ secrets.CHAT_ID }}'
+          bot_token: ${{ secrets.BOT_TOKEN }}
+          chat_id: ${{ secrets.CHAT_ID }}
