@@ -5,7 +5,7 @@ using Taskorium.IntegrationEvents.Notifications;
 using Taskorium.MessageBus.Abstractions;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
-using TaskService.Application.Features.Projects.Read.Query;
+using TaskService.Application.Features.Projects.Read.GetProjectMembers;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
