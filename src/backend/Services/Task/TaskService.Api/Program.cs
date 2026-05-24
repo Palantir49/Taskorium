@@ -9,6 +9,7 @@ using TaskService.Api.Transformers;
 using TaskService.Application.Extensions;
 using TaskService.Application.Interfaces;
 using TaskService.Infrastructure.Extensions;
+using TaskService.Infrastructure.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.Setup(builder.Environment.EnvironmentName);
@@ -21,6 +22,10 @@ builder.Services.AddScoped<CurrentUserMiddleware>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = builder.Environment.IsDevelopment();
+});
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer((document, context, cancellationToken) =>
@@ -56,7 +61,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(corsOrigins)
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials(); // Обязательно для SignalR long-polling / SSE транспортов
     });
 });
 
@@ -99,4 +105,5 @@ if (app.Environment.IsDevelopment())
 app.UseServiceDefaults(builder.Configuration);
 app.MapControllers();
 app.UseMiddleware<RequestObservabilityMiddleware>();
+app.MapHub<NotificationHub>("/hubs/notifications");
 app.Run();

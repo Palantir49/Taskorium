@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TaskService.Application.Mediator;
+﻿using TaskService.Application.Mediator;
 
 namespace TaskService.Application.Features.Workspaces.Write.CreateWorkspace;
 
-public record CreateWorkspaceCommand(string Name, Guid OwnerId) : ICommand<CreateWorkspaceResult>;
+public record CreateWorkspaceCommand(string Name) : ICommand<CreateWorkspaceResult>;
