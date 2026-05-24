@@ -1,19 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TaskService.Application.Commands.Workspaces;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Features.Projects.Write.CreateProject;
-using TaskService.Application.Features.WorkspaceMembers.Read.GetWorkspaceMembersHandler;
 using TaskService.Application.Features.WorkspaceMembers.Write.Command;
 using TaskService.Application.Features.Workspaces.Read.GetDeletedWorkspace;
 using TaskService.Application.Features.Workspaces.Read.GetWorkspaceById;
 using TaskService.Application.Features.Workspaces.Read.GetWorkspaceMembers;
 using TaskService.Application.Features.Workspaces.Read.GetWorkspacePage;
 using TaskService.Application.Features.Workspaces.Write.AddWorkspaceMember;
-using TaskService.Application.Features.Workspaces.Write.CreateWorkspace;
 using TaskService.Application.Features.Workspaces.Write.DeleteWorkspaceById;
 using TaskService.Application.Features.Workspaces.Write.UpdateWorkspaceName;
 using TaskService.Application.Interfaces;
-using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
@@ -21,6 +19,7 @@ using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Contracts.Workspace.Request;
 using TaskService.Contracts.Workspace.Response;
+
 namespace TaskService.Api.Controllers;
 
 /*TODO Action: delete user from workspace
@@ -131,7 +130,6 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
     /// <summary>
     ///     Получить страницу удаленных рабочих областей
     /// </summary>
-    /// 
     /// <param name="query">Объект пагинации</param>
     /// <response code="200">Список удаленных рабочих областей</response>
     /// <response code="400">Некорректный запрос</response>
@@ -141,7 +139,7 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<GetDeletedWorkspacePageResult>> GetDeletedWorkspacePageAsync(
-      [FromQuery] GetDeletedWorkspacePageQuery query)
+        [FromQuery] GetDeletedWorkspacePageQuery query)
     {
         var response = await dispatcher.SendAsync(query);
         if (response == null)
@@ -151,6 +149,7 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
 
         return Ok(response);
     }
+
     /// <summary>
     ///     Создать новую рабочую область
     /// </summary>
@@ -160,7 +159,7 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
     ///     {
     ///     }
     /// </remarks>
-    /// <param name="command">Данные о новой задаче</param>
+    /// <param name="request">Данные о новой задаче</param>
     /// <returns></returns>
     /// <response code="201">Новая задача успешно создана</response>
     /// <response code="400">Некорректный запрос</response>
@@ -170,8 +169,9 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<WorkspaceResponse>> CreateWorkspaceAsync(
-        [FromBody] CreateWorkspaceCommand command)
+        [FromBody] CreateWorkspaceRequest request)
     {
+        var command = request.ToCommand();
         var response = await dispatcher.SendAsync(command);
         return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { workspaceId = response.Id }, response);
     }
@@ -195,12 +195,14 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
     [ProducesResponseType(typeof(AddWorkspaceMemberResult), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<WorkspaceResponse>> AddUserToWorkspaceAsync([FromRoute] Guid workspaceId, [FromBody] AddUserToWorkspaceRequest request)
+    public async Task<ActionResult<WorkspaceResponse>> AddUserToWorkspaceAsync([FromRoute] Guid workspaceId,
+        [FromBody] AddUserToWorkspaceRequest request)
     {
-        var command = new AddWorkspaceMemberCommand(WorkspaceId: workspaceId, UserId: request.UserId, Role: request.Role);
+        var command = new AddWorkspaceMemberCommand(workspaceId, request.UserId, request.Role);
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }
+
     /// <summary>
     ///     Создание задачи
     /// </summary>
@@ -221,12 +223,14 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
     [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromRoute] Guid workspaceId, [FromRoute] Guid projectId, [FromForm] IssueCreateRequest createIssueRequest)
+    public async Task<ActionResult<IssueResponse>> CreateIssueAsync([FromRoute] Guid workspaceId,
+        [FromRoute] Guid projectId, [FromForm] IssueCreateRequest createIssueRequest)
     {
         var createIssueCommand = createIssueRequest.ToCommand();
         var response = await dispatcher.SendAsync(createIssueCommand);
         return Ok(response);
     }
+
     /// <summary>
     ///     Создание проекта в рабочей области
     /// </summary>
@@ -240,21 +244,23 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
     [ProducesResponseType(typeof(AddWorkspaceMemberResult), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<ProjectResponse>> CreateProjectAsync([FromRoute] Guid workspaceId, [FromBody] CreateProjectRequest request)
+    public async Task<ActionResult<ProjectResponse>> CreateProjectAsync([FromRoute] Guid workspaceId,
+        [FromBody] CreateProjectRequest request)
     {
         if (!currentUserContext.IsInitialized)
         {
             return Unauthorized();
         }
 
-        var command = new CreateProjectCommand(Name: request.Name,
-                                               Description: request.Description,
-                                               Abbreviation: request.Abbreviation,
-                                               WorkspaceId: workspaceId,
-                                               UserId: currentUserContext.User.Id);
+        var command = new CreateProjectCommand(request.Name,
+            request.Description,
+            request.Abbreviation,
+            workspaceId,
+            currentUserContext.User.Id);
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }
+
     /// <summary>
     ///     Обновление названия рабочей области
     /// </summary>
@@ -280,6 +286,7 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
         var response = await dispatcher.SendAsync(command);
         return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { response.id }, response);
     }
+
     /// <summary>
     ///     Обновление роли участника рабочей области
     /// </summary>
@@ -294,13 +301,15 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
     [ProducesResponseType(typeof(AddWorkspaceMemberResult), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<AddWorkspaceMemberResult>> UpdateWorkspaceMemberRoleAsync([FromRoute] Guid workspaceId, Guid userId,
+    public async Task<ActionResult<AddWorkspaceMemberResult>> UpdateWorkspaceMemberRoleAsync(
+        [FromRoute] Guid workspaceId, Guid userId,
         [FromBody] UpdateWorkspaceMemberRoleRequest request)
     {
         var command = new UpdateWorkspaceMemberRoleCommand(workspaceId, userId, request.NewRole);
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }
+
     /// <summary>
     ///     Удалить рабочую область
     /// </summary>
