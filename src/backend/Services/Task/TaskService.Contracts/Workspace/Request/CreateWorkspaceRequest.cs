@@ -1,5 +1,3 @@
-﻿
-namespace TaskService.Contracts.Workspace.Request
-{
-    public record class CreateWorkspaceRequest(string Name, Guid OwnerId);
-}
+﻿namespace TaskService.Contracts.Workspace.Request;
+
+public record CreateWorkspaceRequest(string Name);
