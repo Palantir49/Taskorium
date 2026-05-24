@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using TaskService.Infrastructure.Hubs;
 
 namespace TaskService.Infrastructure.Services;

@@ -1,4 +1,4 @@
-namespace TaskService.Infrastructure.Hubs;
+﻿namespace TaskService.Infrastructure.Hubs;
 
 /// <summary>
 ///     Типизированный интерфейс SignalR-клиента.
