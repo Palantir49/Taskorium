@@ -5,7 +5,7 @@ using TaskService.Infrastructure.Outbox.Models;
 namespace TaskService.Infrastructure.Outbox.Persistence;
 
 /// <summary>
-/// Конфигурация схемы таблицы outbox_messages
+/// Конфигурация схемы таблицы OutboxMessage
 /// </summary>
 public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
@@ -14,7 +14,7 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
     /// </summary>
     public void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {
-        builder.ToTable("outbox_messages");
+        builder.ToTable("OutboxMessage");
 
         builder.HasKey(x => x.Id);
 
