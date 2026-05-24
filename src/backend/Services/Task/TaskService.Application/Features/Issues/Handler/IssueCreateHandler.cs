@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using Taskorium.IntegrationEvents.Dto;
 using Taskorium.IntegrationEvents.Notifications;
-using Taskorium.MessageBus.Abstractions;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Features.Projects.Read.GetProjectMembers;
@@ -11,6 +10,7 @@ using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
 using TaskService.Domain.Entities.Enums;
+using TaskService.Infrastructure.Outbox.Interfaces;
 using TaskService.Infrastructure.Persistence;
 using TaskService.Infrastructure.Services;
 
@@ -21,7 +21,7 @@ public class IssueCreateHandler(
     HybridCache cache,
     FileStorageService fileStorageService,
     ICurrentUserContext currentUser,
-    IEventBus eventBus,
+    IOutboxMessageFactory outboxMessageFactory,
     IDispatcher dispatcher)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
@@ -88,9 +88,8 @@ public class IssueCreateHandler(
 
             context.Issues.Add(issue);
             context.IssueAssignees.Add(assignee);
-            await context.SaveChangesAsync(cancellationToken);
 
-            var content = new NotificationEventContent
+            var eventContent = new NotificationEventContent
             {
                 Subject = $"Создана задача {issueKey}",
                 Body = $"Задача '{issue.Name}' успешно создана",
@@ -104,11 +103,12 @@ public class IssueCreateHandler(
                 }
             };
 
+            //Собрали всех учатсников проекта
             var membersQuery = new GetProjectMembersQuery(request.ProjectId);
             var membersResult = await dispatcher.SendAsync(membersQuery, cancellationToken);
 
             var recipients = membersResult.Members
-                .Where(m => !string.IsNullOrWhiteSpace(m.Email))
+                .Where(m => !string.IsNullOrWhiteSpace(m.Email) && m.UserId != currentUser.User.Id)
                 .GroupBy(m => m.UserId)
                 .Select(g => g.First())
                 .Select(m => new NotificationRecipient
@@ -120,7 +120,14 @@ public class IssueCreateHandler(
                 .Where(e => e.Email != null)
                 .ToList();
 
-            await eventBus.PublishAsync(new NotificationCreatedIntegrationEvent(content, recipients), cancellationToken);
+            //Создали событие для уведомления участников проекта о создании новой задачи
+            var integrationEvent = new NotificationCreatedIntegrationEvent(eventContent, recipients);
+            //TODO: вынести создание события в отдельный сервис, который будет принимать тип события и контент, а дальше уже внутри определять как создавать событие и кому отправлять
+            var outboxMessage = outboxMessageFactory.Create(integrationEvent, nameof(NotificationCreatedIntegrationEvent));
+
+            context.OutboxMessages.Add(outboxMessage);
+
+            await context.SaveChangesAsync(cancellationToken);
         }
         catch
         {
