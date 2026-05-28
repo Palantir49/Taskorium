@@ -1,17 +1,15 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useAuth} from 'react-oidc-context';
 import {AuthProvider} from './providers/AuthProvider';
 import {NotificationProvider} from './context/NotificationContext';
 import {NotificationToastContainer} from './components/NotificationBell';
 import LoginGate from './components/auth/LoginGate';
 import StartDashboardCards from './components/StartDashboardCards';
+import DashboardTasks from './components/DashboardTasks';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 
-type TabType = 'board' | 'analytics' | 'docs';
-
 function App() {
-    const [activeTab, setActiveTab] = useState<string>('board');
-
     const auth = useAuth();
 
     // Показываем загрузку аутентификации
@@ -24,11 +22,11 @@ function App() {
     const content = auth.isAuthenticated ? (
         <NotificationProvider>
             <AuthProvider>
-                <StartDashboardCards
-                    activeTab={activeTab}
-                    onTabChange={setActiveTab}
-                    showHeader={auth.isAuthenticated}
-                />
+                <Routes>
+                    <Route path="/" element={<StartDashboardCards showHeader={auth.isAuthenticated} />} />
+                    <Route path="/projects/:projectId" element={<DashboardTasks showHeader={auth.isAuthenticated} />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                 </Routes>
                 <NotificationToastContainer />
             </AuthProvider>
         </NotificationProvider>
