@@ -1,5 +1,6 @@
 import { FaSignInAlt, FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
 import { AuthInfo } from '../types';
+import './AuthenticatedComponent.css';
 
 interface AuthenticatedComponentProps {
   authInfo: AuthInfo;
