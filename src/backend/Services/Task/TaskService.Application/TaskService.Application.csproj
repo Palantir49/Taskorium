@@ -12,6 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Taskorium.IntegrationEvents\Taskorium.IntegrationEvents.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Taskorium.MessageBus\Taskorium.MessageBus.csproj" />
     <ProjectReference Include="..\TaskService.Contracts\TaskService.Contracts.csproj" />
     <ProjectReference Include="..\TaskService.Domain\TaskService.Domain.csproj" />
     <ProjectReference Include="..\TaskService.Infrastructure\TaskService.Infrastructure.csproj" />

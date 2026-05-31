@@ -36,7 +36,7 @@ namespace TaskService.Application.Features.Projects.Read.GetProjectMembers
 
                 foreach (var x in existProject.ProjectMembers)
                 {
-                    members.Add(new ProjectUserDto(Id: x.User.Id, KeycloakId: x.User.KeycloakId, Role: x.Role.ToDto(), JoinedAt: x.JoinedAt, Email: x.User.Email.Value, UserName: x.User.Username.Value));
+                    members.Add(new ProjectUserDto(UserId: x.User.Id, KeycloakId: x.User.KeycloakId, Role: x.Role.ToDto(), JoinedAt: x.JoinedAt, Email: x.User.Email.Value, UserName: x.User.Username.Value));
                 }
 
                 return new ProjectMembersResponse(ProjectId: existProject.Id, ProjectName: existProject.Name.Value, Members: members);

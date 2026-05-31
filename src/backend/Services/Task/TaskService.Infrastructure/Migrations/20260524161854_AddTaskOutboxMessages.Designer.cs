@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskService.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using TaskService.Infrastructure.Persistence;
 namespace TaskService.Infrastructure.Migrations
 {
     [DbContext(typeof(TaskServiceDbContext))]
-    partial class TaskServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260524161854_AddTaskOutboxMessages")]
+    partial class AddTaskOutboxMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -425,7 +428,7 @@ namespace TaskService.Infrastructure.Migrations
 
                     b.HasIndex("Status", "OccurredOnUtc");
 
-                    b.ToTable("OutboxMessage", (string)null);
+                    b.ToTable("outbox_messages", (string)null);
                 });
 
             modelBuilder.Entity("IssueTag", b =>
