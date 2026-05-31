@@ -8,35 +8,83 @@ import {
   useSensor,
   useSensors
 } from '@dnd-kit/core';
-import {
-  arrayMove,
-  sortableKeyboardCoordinates
-} from '@dnd-kit/sortable';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useTasks } from '../context/TaskContext';
-import { filterTasks, groupTasksByStatus } from '../utils/filterTasks';
+import { fetchIssueStatusesByProjectId } from '../api/projectService';
+import { filterTasks } from '../utils/filterTasks';
 import Column from './Column';
 import TaskCard from './TaskCard';
 import { Task } from '../types';
+import { IssueStatusResponse } from '../types/issueStatus';
 import './KanbanBoard.css';
 
-const statusOrder = ['backlog', 'in-progress', 'testing', 'pause', 'done'];
-
 interface KanbanBoardProps {
+  projectId: string;
 }
 
-function KanbanBoard({}: KanbanBoardProps) {
+const COLOR_STATUS = [
+  'gray', 'lightblue', 'yellow', 'palegreen', 'pink',
+  'lavander', 'green'
+];
+
+const getStableColorById = (position: number): string => {
+  return COLOR_STATUS[position];
+};
+
+function KanbanBoard({ projectId }: KanbanBoardProps) {
   const { tasks, filters, updateTask, setSelectedTask, selectedTask } = useTasks();
   const [activeTask, setActiveTask] = React.useState<Task | null>(null);
+  const [statuses, setStatuses] = React.useState<IssueStatusResponse[]>([]);
+  const [loadingStatuses, setLoadingStatuses] = React.useState(false);
+
+  React.useEffect(() => {
+    const loadStatuses = async () => {
+      setLoadingStatuses(true);
+      try {
+        const data = await fetchIssueStatusesByProjectId(projectId);
+        const sorted = [...(data ?? [])].sort((a, b) => a.position - b.position);
+        setStatuses(sorted);
+      } catch (error) {
+        console.error('Ошибка загрузки статусов проекта:', error);
+        setStatuses([]);
+      } finally {
+        setLoadingStatuses(false);
+      }
+    };
+
+    loadStatuses();
+  }, [projectId]);
 
   // Фильтрация задач
   const filteredTasks = React.useMemo(() => {
     return filterTasks(tasks, filters);
   }, [tasks, filters]);
 
-  // Группировка задач по статусам
+  // Группировка задач по статусам проекта
   const groupedTasks = React.useMemo(() => {
-    return groupTasksByStatus(filteredTasks);
-  }, [filteredTasks]);
+    const groups: Record<string, Task[]> = {};
+    statuses.forEach((status) => {
+      groups[status.id] = [];
+    });
+
+    filteredTasks.forEach((task) => {
+      if (groups[task.taskStatusId]) {
+        groups[task.taskStatusId].push(task);
+      }
+      // задачи с неизвестным статусом скрываем
+    });
+
+    return groups;
+  }, [filteredTasks, statuses]);
+
+  const getUpdatePayload = (task: Task, issueStatusId: string) => ({
+    name: task.name,
+    issueStatusId,
+    numberIssueType: task.issueType.number,
+    numberIssuePriority: task.issuePriority.number,
+    description: task.description,
+    dueDate: task.dueDate ?? null,
+  });
 
   // Настройка сенсоров для drag-and-drop
   const sensors = useSensors(
@@ -66,33 +114,29 @@ function KanbanBoard({}: KanbanBoardProps) {
     if (!over) return;
 
     const activeTask = active.data.current?.task;
-    const overId = over.id;
-
     if (!activeTask) return;
 
-    // Если задача перетащена в другую колонку
+    // Если задача перенесена в другую колонку
     if (over.data.current?.type === 'column') {
-      const newStatus = over.data.current.status;
-      // В DTO статус задачи хранится в issueStatusId, поэтому пока не реализовано
-      /*if (activeTask.taskStatusId !== newStatus) {
+      const newStatusId = over.data.current.statusId;
+      if (activeTask.taskStatusId !== newStatusId) {
         try {
-          await updateTask(activeTask.id, { issueStatusId: newStatus });
+          await updateTask(activeTask.id, getUpdatePayload(activeTask, newStatusId));
         } catch (error) {
           console.error('Ошибка при обновлении задачи:', error);
         }
-      }*/
+      }
     }
-    // Если задача перетащена на другую задачу
+    // Если задача перенесена в другую колонку
     else if (over.data.current?.type === 'task') {
       const overTask = over.data.current.task;
-      // В DTO статус задачи хранится в issueStatusId, поэтому пока не реализовано
-      /*if (activeTask.taskStatusId !== overTask.taskStatusId) {
+      if (activeTask.taskStatusId !== overTask.taskStatusId) {
         try {
-          await updateTask(activeTask.id, { issueStatusId: overTask.taskStatusId });
+          await updateTask(activeTask.id, getUpdatePayload(activeTask, overTask.taskStatusId));
         } catch (error) {
           console.error('Ошибка при обновлении задачи:', error);
         }
-      }*/
+      }
     }
   };
 
@@ -100,6 +144,14 @@ function KanbanBoard({}: KanbanBoardProps) {
   const handleTaskClick = (task: Task) => {
     setSelectedTask(task);
   };
+
+  if (loadingStatuses) {
+    return (
+      <div className="kanban-board">
+        <p className="text-gray-500 text-sm">Загрузка статусов проекта...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="kanban-board">
@@ -110,11 +162,13 @@ function KanbanBoard({}: KanbanBoardProps) {
         onDragEnd={handleDragEnd}
       >
         <div className={`kanban-board-content ${selectedTask ? 'sidebar-open' : ''}`}>
-          {statusOrder.map(status => (
+          {statuses.map((status, index) => (
             <Column
-              key={status}
-              status={status}
-              tasks={groupedTasks[status] || []}
+              key={status.id}
+              statusId={status.id}
+              title={status.name}
+              color={getStableColorById(status.position)}
+              tasks={groupedTasks[status.id] || []}
               onTaskClick={handleTaskClick}
               isSidebarOpen={!!selectedTask}
             />

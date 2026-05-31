@@ -3,45 +3,25 @@ import { useDroppable } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import TaskCard from './TaskCard';
-import { ColumnProps, Task, TaskStatus } from '../types';
+import { Task } from '../types';
 import './Column.css';
 
-const columnConfig: Record<TaskStatus, { title: string; color: string; id: string }> = {
-  backlog: {
-    title: 'Бэклог',
-    color: 'var(--column-backlog)',
-    id: 'backlog'
-  },
-  'in-progress': {
-    title: 'В работе',
-    color: 'var(--column-in-progress)',
-    id: 'in-progress'
-  },
-  testing: {
-    title: 'В тестировании',
-    color: 'var(--column-testing)',
-    id: 'testing'
-  },
-  pause: {
-    title: 'Пауза',
-    color: 'var(--column-pause)',
-    id: 'pause'
-  },
-  done: {
-    title: 'Готово',
-    color: 'var(--column-done)',
-    id: 'done'
-  }
-};
+interface ColumnProps {
+  statusId: string;
+  title: string;
+  color: string;
+  tasks: Task[];
+  onTaskClick?: (task: Task) => void;
+  isSidebarOpen?: boolean;
+}
 
-function Column({ status, tasks, onTaskClick, isSidebarOpen }: ColumnProps) {
-  const config = columnConfig[status];
+function Column({ statusId, title, color, tasks, onTaskClick, isSidebarOpen }: ColumnProps) {
 
   const { setNodeRef, isOver } = useDroppable({
-    id: status,
+    id: statusId,
     data: {
       type: 'column',
-      status
+      statusId
     }
   });
 
@@ -51,9 +31,9 @@ function Column({ status, tasks, onTaskClick, isSidebarOpen }: ColumnProps) {
         ref={setNodeRef}
         className={`column ${isOver ? 'column-over' : ''} ${isSidebarOpen ? 'sidebar-open' : ''}`}
       >
-        <div className="column-header" style={{ backgroundColor: config.color }}>
+        <div className="column-header" style={{ backgroundColor: color }}>
           <h2 className="column-title">
-            {config.title}
+            {title}
             <span className="column-count">({tasks.length})</span>
           </h2>
         </div>
@@ -71,7 +51,7 @@ function Column({ status, tasks, onTaskClick, isSidebarOpen }: ColumnProps) {
           )}
         </div>
       </div>
-      {status !== 'done' && <div className="column-divider"></div>}
+      <div className="column-divider"></div>
     </>
   );
 }
