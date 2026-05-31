@@ -37,7 +37,7 @@ function Header({activeTab, onTabChange, authInfo}: HeaderProps) {
                     </nav>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div className="header-content-right">
                     <NotificationBell />
                     <AuthenticatedComponent authInfo={authInfo} />
                 </div>

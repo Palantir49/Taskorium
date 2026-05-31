@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using TaskService.Domain.Entities;
+using TaskService.Infrastructure.Outbox.Models;
 
 namespace TaskService.Infrastructure.Persistence;
 
@@ -18,6 +19,7 @@ public class TaskServiceDbContext : DbContext
     public DbSet<IssueStatus> IssueStatus { get; set; } = null!;
     public DbSet<IssueAssignees> IssueAssignees { get; set; } = null!;
     public DbSet<Tag> Tags { get; set; } = null!;
+    public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

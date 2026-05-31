@@ -389,6 +389,45 @@ namespace TaskService.Infrastructure.Migrations
                     b.ToTable("WorkspaceMembers");
                 });
 
+            modelBuilder.Entity("TaskService.Infrastructure.Outbox.Models.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LastError")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<DateTimeOffset>("OccurredOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("ProcessedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Retries")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status", "OccurredOnUtc");
+
+                    b.ToTable("OutboxMessage", (string)null);
+                });
+
             modelBuilder.Entity("IssueTag", b =>
                 {
                     b.HasOne("TaskService.Domain.Entities.Issue", null)

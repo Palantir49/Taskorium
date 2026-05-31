@@ -9,7 +9,7 @@ interface HeaderStartBoardProps {
 export const HeaderStartBoard = ({ authInfo }: HeaderStartBoardProps) => {
   return (
     <header className="header-start">
-      <div className="header-content">
+      <div className="header-start-content">
         <div className="logo">
 
         </div>

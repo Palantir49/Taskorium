@@ -4,6 +4,7 @@ import App from "./App";
 import './index.css'
 import {AuthProvider} from "react-oidc-context";
 import {WebStorageStateStore} from 'oidc-client-ts'
+import { BrowserRouter } from 'react-router-dom';
 
 const oidcConfig = {
     authority: import.meta.env.VITE_OIDC_AUTHORITY,
@@ -34,7 +35,9 @@ if (!container) {
 ReactDOM.createRoot(container).render(
     <React.StrictMode>
         <AuthProvider {...oidcConfig}>
-            <App/>
+            <BrowserRouter>
+                <App/>
+            </BrowserRouter>
         </AuthProvider>
     </React.StrictMode>
 )

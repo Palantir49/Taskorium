@@ -3,7 +3,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TaskService.Infrastructure.Extensions.Cache;
 using TaskService.Infrastructure.Extensions.Services.FileStorage;
+using TaskService.Infrastructure.Extensions.Services.MessageBus;
 using TaskService.Infrastructure.Interceptors;
+using TaskService.Infrastructure.Outbox.Interfaces;
+using TaskService.Infrastructure.Outbox.Options;
+using TaskService.Infrastructure.Outbox.Processing;
 using TaskService.Infrastructure.Persistence;
 using TaskService.Infrastructure.Services;
 
@@ -37,6 +41,15 @@ public static class ServiceExtensions
 
             services.AddCache(configuration);
             services.ConfigureGrpcFileStorageClient(configuration);
+            services.AddMessageBus(configuration);
+
+            // Outbox
+            services.Configure<OutboxOptions>(configuration.GetSection("Outbox"));
+            services.AddScoped<IOutboxSerializer, SystemTextJsonOutboxSerializer>();
+            services.AddScoped<IOutboxMessageFactory, OutboxMessageFactory>();
+            services.AddScoped<IOutboxProcessor, OutboxProcessor>();
+            services.AddScoped<IOutboxPublisher, OutboxPublisher>();
+            services.AddHostedService<OutboxProcessorHostedService>();
         }
     }
 

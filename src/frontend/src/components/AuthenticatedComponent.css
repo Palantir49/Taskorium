@@ -1,0 +1,139 @@
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.auth-user-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    background-color: var(--bg-primary);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.user-icon {
+    color: #3b82f6;
+    font-size: 1rem;
+}
+
+.user-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.auth-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.auth-button:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.login-button {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.login-button:hover {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+.logout-button {
+    background-color: var(--bg-primary);
+    color: var(--text-secondary);
+}
+
+.logout-button:hover {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.auth-icon {
+    font-size: 0.875rem;
+}
+
+.auth-text {
+    font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+    .auth-user-section {
+        gap: 0.5rem;
+    }
+
+    .user-info {
+        padding: 0.375rem;
+    }
+
+    .user-name {
+        max-width: 120px;
+        font-size: 0.8125rem;
+    }
+
+    .auth-button {
+        padding: 0.5rem;
+    }
+
+    .auth-text {
+        display: none;
+    }
+
+    .auth-icon {
+        margin: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-user-section {
+        gap: 0.25rem;
+    }
+
+    .user-info {
+        gap: 0.25rem;
+        padding: 0.25rem;
+    }
+
+    .user-name {
+        max-width: 80px;
+        font-size: 0.75rem;
+    }
+
+    .auth-button {
+        padding: 0.375rem;
+    }
+
+    .user-icon,
+    .auth-icon {
+        font-size: 0.875rem;
+    }
+}

@@ -7,16 +7,23 @@ import TaskDetailSidebar from './TaskDetailSidebar';
 import TaskCreateForm from './TaskCreateForm';
 import HeaderKanbanBoard from './HeaderKanbanBoard';
 import {TaskStatus} from '../types';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 interface DashboardTasksProps {
-  activeTab: string;
-  onTabChange: React.Dispatch<React.SetStateAction<string>>;
   showHeader?: boolean;
-  projectId: string;
 }
 
-function DashboardTasks({ activeTab, onTabChange, showHeader = true, projectId }: DashboardTasksProps) {
+function DashboardTasks({ showHeader = true }: DashboardTasksProps) {
   const authInfo = useAuthContext();
+  const { projectId = '' } = useParams<{ projectId: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') ?? 'board';
+
+  const handleTabChange = (tab: string) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('tab', tab);
+    setSearchParams(next);
+  };
   
   const [showCreateForm, setShowCreateForm] = React.useState(false);
   const [createFormStatus, setCreateFormStatus] = React.useState<TaskStatus>('backlog');
@@ -66,7 +73,7 @@ function DashboardTasks({ activeTab, onTabChange, showHeader = true, projectId }
         {showHeader && authInfo.isAuthenticated && (
           <HeaderKanbanBoard
             activeTab={activeTab}
-            onTabChange={onTabChange}
+            onTabChange={handleTabChange}
             authInfo={authInfo}
           />
         )}
