@@ -14,8 +14,8 @@ public class DeleteProjectByIdHandler(TaskServiceDbContext context, HybridCache 
         Project project = await context.Projects.FindAsync(request.id, cancellationToken) ??
             throw new NullReferenceException($"Проект с id: {request.id} не найдена");
         List<Issue> issues = await context.Issues.Where(x => x.ProjectId == project.Id).ToListAsync();
-        if (issues != null && issues.Count > 0)
-            throw new NullReferenceException($"Нельзя удалить статус, пока существуют связанные задачи");
+        //if (issues != null && issues.Count > 0)
+        //    throw new NullReferenceException($"Нельзя удалить статус, пока существуют связанные задачи");
         //TODO: изменить исключение на подходящее
 
         List<IssueStatus> statuses = await context.IssueStatus.Where(x => x.ProjectId == project.Id).ToListAsync();
