@@ -7,6 +7,8 @@ import { setTokenProvider as setTaskTokenProvider } from '../api/taskService';
 import { setTokenProvider as setWorkspaceTokenProvider } from '../api/workSpaceService';
 import { setTokenProvider as setProjectTokenProvider } from '../api/projectService';
 import { setTokenProvider as setIssueStatusTokenProvider } from '../api/issueStatusService';
+import { signalRService } from '../api/signalRService';
+import { useNotifications } from '../context/NotificationContext';
 
 // Создаем контекст аутентификации
 const AuthContext = createContext<AuthInfo | null>(null);
@@ -24,6 +26,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const auth = useAuth();
     const {syncStatus, syncError} = useCreateUser(); // авто-синхронизация
     const userFullName = useUserFullName();
+    const { addNotification } = useNotifications();
 
     // Установка провайдера токена для всех API-запросов
     useEffect(() => {
@@ -33,6 +36,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setProjectTokenProvider(() => token);
         setIssueStatusTokenProvider(() => token);
     }, [auth.user]);
+
+    // Управление SignalR-соединением: подключаем после авторизации, отклю��аем при выходе
+    useEffect(() => {
+        if (auth.isAuthenticated && auth.user?.access_token) {
+            signalRService.start(
+                () => auth.user?.access_token ?? null,
+                (message) => addNotification(message)
+            );
+        } else {
+            signalRService.stop();
+        }
+
+        return () => {
+            // При размонтировании провайдера (логаут / перезагрузка) — закрываем соединение
+            signalRService.stop();
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [auth.isAuthenticated, auth.user?.access_token]);
 
     const handleLogout = () => auth.signoutRedirect();
 

@@ -23,6 +23,7 @@ public class IssueCreateHandler(
     ICurrentUserContext currentUser,
     IOutboxMessageFactory outboxMessageFactory,
     IDispatcher dispatcher)
+    //IssueNotificationService notificationService)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
@@ -51,10 +52,10 @@ public class IssueCreateHandler(
             request.DueDate
         );
 
-        IssueAssignees assignee = IssueAssignees.Create(
-            userId: currentUser.User.Id,
-            issueId: issue.Id,
-            role: ProjectRoles.Creator);
+        var assignee = IssueAssignees.Create(
+            currentUser.User.Id,
+            issue.Id,
+            ProjectRoles.Creator);
 
 
         List<Attachment> attachments = new(request.AttachmentDtos?.Count ?? 0);
@@ -64,22 +65,24 @@ public class IssueCreateHandler(
             {
                 foreach (var attach in request.AttachmentDtos)
                 {
-                    Attachment attachment = Attachment.Create(
-                        issueId: issue.Id,
-                        uploaderId: currentUser.User.Id,
-                        fileName: attach.Name,
-                        contentType: attach.ContentType,
-                        contentLength: attach.ContentLength);
+                    var attachment = Attachment.Create(
+                        issue.Id,
+                        currentUser.User.Id,
+                        attach.Name,
+                        attach.ContentType,
+                        attach.ContentLength);
 
                     //сброс позиции чтения файла
                     if (attach.Content.CanSeek)
+                    {
                         attach.Content.Position = 0;
+                    }
 
                     await fileStorageService.UploadAsync(
-                        name: attachment.StoragePath,
-                        contentType: attach.ContentType,
-                        stream: attach.Content,
-                        token: cancellationToken);
+                        attachment.StoragePath,
+                        attach.ContentType,
+                        attach.Content,
+                        cancellationToken);
 
                     attachments.Add(attachment);
                     issue.Attachments.Add(attachment);
@@ -108,7 +111,10 @@ public class IssueCreateHandler(
             var membersResult = await dispatcher.SendAsync(membersQuery, cancellationToken);
 
             var recipients = membersResult.Members
-                .Where(m => !string.IsNullOrWhiteSpace(m.Email) && m.UserId != currentUser.User.Id)
+                .Where(m => !string.IsNullOrWhiteSpace(m.Email)
+                            && m.UserId != currentUser.User.Id )
+                            //Нужна ли проверка на роли?
+                            //&& (m.Role == Contracts.Enum.ProjectRolesDto.Admin || m.Role == Contracts.Enum.ProjectRolesDto.Creator))
                 .GroupBy(m => m.UserId)
                 .Select(g => g.First())
                 .Select(m => new NotificationRecipient
@@ -159,6 +165,42 @@ public class IssueCreateHandler(
         {
             //TODO: logger
         }
+
+        //Отправка в нотификатор напрямую
+        //try
+        //{
+        //    //TODO cache
+        //    // Получаем Keycloak ID участников проекта с правами Creator/Admin (руководители).
+        //    var managerKeycloakIds = await context.ProjectMembers
+        //        .Where(pm => pm.ProjectId == request.ProjectId
+        //                     && !pm.IsDeleted
+        //                     && (pm.Role == ProjectRoles.Creator || pm.Role == ProjectRoles.Admin))
+        //        .Join(context.Users,
+        //            pm => pm.UserId,
+        //            u => u.Id,
+        //            (pm, u) => u.KeycloakId)
+        //        .ToListAsync(cancellationToken);
+
+        //    // Исполнитель = текущий пользователь (создатель задачи).
+        //    // Объединяем с менеджерами и убираем дубликаты.
+        //    var recipientKeycloakIds = managerKeycloakIds
+        //        .Append(currentUser.User.KeycloakId)
+        //        .Distinct()
+        //        .Select(id => id.ToString());
+
+        //    await notificationService.NotifyIssueCreatedAsync(
+        //        issue.Id,
+        //        issue.Name.ToString(),
+        //        issue.Key.Value,
+        //        project.Id,
+        //        project.Name.ToString(),
+        //        recipientKeycloakIds,
+        //        cancellationToken);
+        //}
+        //catch
+        //{
+        //    //TODO: logger — не прерываем основной поток при сбое уведомления
+        //}
 
         return issue.ToResponse();
     }

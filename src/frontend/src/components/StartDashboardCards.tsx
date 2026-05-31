@@ -2,32 +2,23 @@ import React, { useState } from "react";
 import { useAuthContext } from "../providers/AuthProvider";
 import WorkspaceCard from "./WorkspaceCard";
 import ProjectCard from "./ProjectCard";
-import DashboardTasks from "./DashboardTasks";
 import { HeaderStartBoard } from "./HeaderStartBoard";
+import { useNavigate } from "react-router-dom";
 
 interface StartDashboardCardsProps {
-  activeTab: string;
-  onTabChange: React.Dispatch<React.SetStateAction<string>>;
   showHeader?: boolean;
 }
 
 export default function StartDashboardCard({ 
-  activeTab, 
-  onTabChange, 
   showHeader = true 
 }: StartDashboardCardsProps) {
   const authInfo = useAuthContext();
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  if (selectedProjectId) {
-    return <DashboardTasks 
-      activeTab={activeTab}
-      onTabChange={onTabChange}
-      showHeader={showHeader}
-      projectId={selectedProjectId}
-    />;
-  }
+  const handleProjectSelect = (projectId: string) => {
+    navigate(`/projects/${projectId}?tab=board`);
+  };
 
   return (
     <div className="min-h-screen p-8">
@@ -54,7 +45,7 @@ export default function StartDashboardCard({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ProjectCard 
             workspaceId={selectedWorkspaceId || undefined}
-            onSelect={setSelectedProjectId}
+            onSelect={handleProjectSelect}
           />
         </div>
       </div>
