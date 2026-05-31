@@ -1,4 +1,4 @@
-namespace TaskService.Infrastructure.Outbox.Interfaces;
+﻿namespace TaskService.Infrastructure.Outbox.Interfaces;
 
 /// <summary>
 /// Контракт сериализатора для Outbox payload.
