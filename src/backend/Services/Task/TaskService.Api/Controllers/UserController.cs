@@ -43,24 +43,23 @@ public class UserController(IDispatcher dispatcher) : Controller
         return Ok(userResponse);
     }
     /// <summary>
-    ///     Получить рабочие области пользователя по keycloak id
+    ///     Получить рабочие области пользователя по  id
     /// </summary>
     /// ///
-    /// <param name="keycloakId">KeycloakId пользователя</param>
-    [HttpGet("{keycloakId:guid}/workspaces")]
+    /// <param name="Id">KeycloakId пользователя</param>
+    [HttpGet("{id:guid}/workspaces")]
     [ActionName("GetUserWorkspacesByIdAsync")]
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<UsersWorkspaceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<GetUserByIdResult>> GetUserWorkspacesByIdAsync(Guid keycloakId)
+    public async Task<ActionResult<List<UsersWorkspaceResponse>>> GetUserWorkspacesByIdAsync(Guid Id)
     {
-        var userResponse = await dispatcher.SendAsync(new GetUserWorkspacesByIdQuery(keycloakId));
-        if (userResponse == null)
+        var result = await dispatcher.SendAsync(new GetUserWorkspacesByIdQuery(Id));
+        if (result == null)
         {
             return NotFound();
         }
-
-        return Ok(userResponse);
+        return Ok(result.UsersWorkspaces);
     }
     /// <summary>
     ///     Получить пользователя по keycloak id

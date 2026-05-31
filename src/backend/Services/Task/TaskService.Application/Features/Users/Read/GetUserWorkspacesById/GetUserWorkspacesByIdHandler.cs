@@ -1,8 +1,10 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
+using TaskService.Contracts.User.Responses;
 using TaskService.Contracts.Workspace.Response;
 using TaskService.Infrastructure.Persistence;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -14,7 +16,7 @@ namespace TaskService.Application.Features.Users.Read.GetUserWorkspacesById
     {
         public async Task<GetUserWorkspacesByIdResult> Handle(GetUserWorkspacesByIdQuery query, CancellationToken cancellationToken = default)
         {
-            var cacheKey = $"user_workspaces_by_keycloak_id_{query.Id}";
+            var cacheKey = $"user_workspaces_by_id_{query.Id}";
 
             return await cache.GetOrCreateAsync(cacheKey, async _ =>
             {
@@ -27,12 +29,13 @@ namespace TaskService.Application.Features.Users.Read.GetUserWorkspacesById
                                     $"Пользователь с таким keycloak id {query.Id} не существует");
 
                 var userWorkspaces = existUser.WorkspaceMembers
-                    .Select(x => new WorkspaceResponse(x.Workspace.Id,
-                        x.Workspace.Name.Value,
-                        x.Workspace.CreatedDate))
+                    .Select(x => new UsersWorkspaceResponse(x.Workspace.Id,
+                                                                 x.Role.ToDto(),
+                                                                 x.Workspace.Name.Value,
+                                                                 x.Workspace.CreatedDate))
                     .ToList();
-
-                return new GetUserWorkspacesByIdResult(userWorkspaces);
+                var result = new GetUserWorkspacesByIdResult(userWorkspaces);
+                return result;
             }, cancellationToken: cancellationToken);
         }
     }
