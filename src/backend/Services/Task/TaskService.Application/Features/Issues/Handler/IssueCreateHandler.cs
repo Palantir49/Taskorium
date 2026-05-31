@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Taskorium.IntegrationEvents.Dto;
 using Taskorium.IntegrationEvents.Notifications;
@@ -51,6 +52,9 @@ public class IssueCreateHandler(
             request.NumberIssuePriority,
             request.DueDate
         );
+
+        if (issue.CreatedDate < issue.DueDate)
+            throw new ValidationException("Дата выполнения не может быть раньше даты создания");
 
         var assignee = IssueAssignees.Create(
             currentUser.User.Id,
