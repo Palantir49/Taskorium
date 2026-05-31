@@ -8,4 +8,4 @@ public record class IssueStatusCreateCommand(
     Guid projectId,
     int numberType,
     int position,
-    string? color) : ICommand<IssueStatusResponse>;
+    string color) : ICommand<IssueStatusResponse>;
