@@ -1,4 +1,4 @@
-using TaskService.Infrastructure.Outbox.Models;
+﻿using TaskService.Infrastructure.Outbox.Models;
 
 namespace TaskService.Infrastructure.Outbox.Interfaces;
 
