@@ -25,11 +25,11 @@ public class OutboxPublisher(
         switch (message.Type)
         {
             case nameof(NotificationCreatedIntegrationEvent):
-            {
-                var integrationEvent = outboxSerializer.Deserialize<NotificationCreatedIntegrationEvent>(message.Payload);
-                await eventBus.PublishAsync(integrationEvent, cancellationToken);
-                break;
-            }
+                {
+                    var integrationEvent = outboxSerializer.Deserialize<NotificationCreatedIntegrationEvent>(message.Payload);
+                    await eventBus.PublishAsync(integrationEvent, cancellationToken);
+                    break;
+                }
             default:
                 logger.LogWarning("Неизвестный тип outbox-сообщения: {MessageType}, id: {OutboxMessageId}", message.Type, message.Id);
                 throw new InvalidOperationException($"Неизвестный тип outbox-сообщения: {message.Type}");

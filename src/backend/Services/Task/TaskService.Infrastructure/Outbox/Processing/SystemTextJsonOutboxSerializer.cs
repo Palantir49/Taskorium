@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using TaskService.Infrastructure.Outbox.Interfaces;
 
 namespace TaskService.Infrastructure.Outbox.Processing;

@@ -112,17 +112,17 @@ public class IssueCreateHandler(
 
             var recipients = membersResult.Members
                 .Where(m => !string.IsNullOrWhiteSpace(m.Email)
-                            && m.UserId != currentUser.User.Id )
-                            //Нужна ли проверка на роли?
-                            //&& (m.Role == Contracts.Enum.ProjectRolesDto.Admin || m.Role == Contracts.Enum.ProjectRolesDto.Creator))
+                            && m.UserId != currentUser.User.Id)
+                //Нужна ли проверка на роли?
+                //&& (m.Role == Contracts.Enum.ProjectRolesDto.Admin || m.Role == Contracts.Enum.ProjectRolesDto.Creator))
                 .GroupBy(m => m.UserId)
                 .Select(g => g.First())
                 .Select(m => new NotificationRecipient
-                    {
-                        UserId = m.UserId.ToString(),
-                        FullName = m.UserName ?? "",
-                        Email = m.Email
-                    })
+                {
+                    UserId = m.UserId.ToString(),
+                    FullName = m.UserName ?? "",
+                    Email = m.Email
+                })
                 .Where(e => e.Email != null)
                 .ToList();
 
