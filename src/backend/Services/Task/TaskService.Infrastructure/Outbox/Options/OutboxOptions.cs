@@ -18,5 +18,5 @@ public class OutboxOptions
     /// <summary>
     /// Интервал опроса outbox в секундах.
     /// </summary>
-    public int PollingIntervalSeconds { get; set; } = 5;
+    public int PollingIntervalSeconds { get; set; } = 30;
 }
