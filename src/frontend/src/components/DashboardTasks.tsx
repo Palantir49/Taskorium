@@ -42,7 +42,7 @@ function DashboardTasks({ showHeader = true }: DashboardTasksProps) {
       {activeTab === 'board' && (
         <>
           <FilterBar projectId={projectId} onCreateTask={() => handleOpenCreateForm('backlog')} />
-          <KanbanBoard />
+          <KanbanBoard projectId={projectId} />
         </>
       )}
       {activeTab === 'analytics' && (
