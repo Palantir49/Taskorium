@@ -23,8 +23,8 @@ public class IssueCreateHandler(
     FileStorageService fileStorageService,
     ICurrentUserContext currentUser,
     IOutboxMessageFactory outboxMessageFactory,
-    IDispatcher dispatcher)
-    //IssueNotificationService notificationService)
+    IDispatcher dispatcher,
+    IssueNotificationService notificationService)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
     public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
@@ -116,17 +116,17 @@ public class IssueCreateHandler(
 
             var recipients = membersResult.Members
                 .Where(m => !string.IsNullOrWhiteSpace(m.Email)
-                            && m.UserId != currentUser.User.Id)
-                //Нужна ли проверка на роли?
-                //&& (m.Role == Contracts.Enum.ProjectRolesDto.Admin || m.Role == Contracts.Enum.ProjectRolesDto.Creator))
+                            && m.UserId != currentUser.User.Id )
+                            //Нужна ли проверка на роли?
+                            //&& (m.Role == Contracts.Enum.ProjectRolesDto.Admin || m.Role == Contracts.Enum.ProjectRolesDto.Creator))
                 .GroupBy(m => m.UserId)
                 .Select(g => g.First())
                 .Select(m => new NotificationRecipient
-                {
-                    UserId = m.UserId.ToString(),
-                    FullName = m.UserName ?? "",
-                    Email = m.Email
-                })
+                    {
+                        UserId = m.UserId.ToString(),
+                        FullName = m.UserName ?? "",
+                        Email = m.Email
+                    })
                 .Where(e => e.Email != null)
                 .ToList();
 
@@ -170,41 +170,47 @@ public class IssueCreateHandler(
             //TODO: logger
         }
 
-        //Отправка в нотификатор напрямую
-        //try
-        //{
-        //    //TODO cache
-        //    // Получаем Keycloak ID участников проекта с правами Creator/Admin (руководители).
-        //    var managerKeycloakIds = await context.ProjectMembers
-        //        .Where(pm => pm.ProjectId == request.ProjectId
-        //                     && !pm.IsDeleted
-        //                     && (pm.Role == ProjectRoles.Creator || pm.Role == ProjectRoles.Admin))
-        //        .Join(context.Users,
-        //            pm => pm.UserId,
-        //            u => u.Id,
-        //            (pm, u) => u.KeycloakId)
-        //        .ToListAsync(cancellationToken);
+        try
+        {
+            //TODO cache
+            // Получаем Keycloak ID участников проекта с правами Creator/Admin (руководители).
+            var managerKeycloakIds = await context.ProjectMembers
+                .Where(pm => pm.ProjectId == request.ProjectId
+                             && !pm.IsDeleted
+                             && (pm.Role == ProjectRoles.Creator || pm.Role == ProjectRoles.Admin))
+                .Join(context.Users,
+                    pm => pm.UserId,
+                    u => u.Id,
+                    (pm, u) => u.KeycloakId)
+                .ToListAsync(cancellationToken);
 
-        //    // Исполнитель = текущий пользователь (создатель задачи).
-        //    // Объединяем с менеджерами и убираем дубликаты.
-        //    var recipientKeycloakIds = managerKeycloakIds
-        //        .Append(currentUser.User.KeycloakId)
-        //        .Distinct()
-        //        .Select(id => id.ToString());
+            var assigneeKeycloakIds = request.AssigneeDtos is { Count: > 0 }
+                ? await context.Users
+                    .Where(u => request.AssigneeDtos.Select(a => a.UserId).Contains(u.Id))
+                    .Select(u => u.KeycloakId)
+                    .ToListAsync(cancellationToken)
+                : [];
 
-        //    await notificationService.NotifyIssueCreatedAsync(
-        //        issue.Id,
-        //        issue.Name.ToString(),
-        //        issue.Key.Value,
-        //        project.Id,
-        //        project.Name.ToString(),
-        //        recipientKeycloakIds,
-        //        cancellationToken);
-        //}
-        //catch
-        //{
-        //    //TODO: logger — не прерываем основной поток при сбое уведомления
-        //}
+
+            // Объединяем с менеджерами и убираем дубликаты.
+            var recipientKeycloakIds = managerKeycloakIds
+                .Concat(assigneeKeycloakIds)
+                .Distinct()
+                .Select(id => id.ToString());
+
+            await notificationService.NotifyIssueCreatedAsync(
+                issue.Id,
+                issue.Name.ToString(),
+                issue.Key.Value,
+                project.Id,
+                project.Name.ToString(),
+                recipientKeycloakIds,
+                cancellationToken);
+        }
+        catch
+        {
+            //TODO: logger — не прерываем основной поток при сбое уведомления
+        }
 
         return issue.ToResponse();
     }

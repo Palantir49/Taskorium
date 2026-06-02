@@ -5,7 +5,6 @@ using TaskService.Contracts.Issue.Requests;
 
 namespace TaskService.Application.Features.Issues.Mapping;
 
-
 //TODO issue assignees
 public static class IssueRequestToCommandMapping
 {
@@ -28,7 +27,8 @@ public static class IssueRequestToCommandMapping
             request.NumberIssuePriority,
             request.Description,
             request.DueDate?.ToUniversalTime(),
-            attachments
+            attachments,
+            request.Assignees
         );
     }
 
