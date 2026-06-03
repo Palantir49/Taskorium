@@ -28,7 +28,7 @@ public sealed class IssueNotificationService(
         var message = new HubNotificationMessage(
             NotificationEventTypes.IssueCreated,
             "Новая задача",
-            $"Вам назначена задача «{issueName}» в проекте «{projectName}»",
+            $"В проекте «{projectName}» создана новая задача «{issueName}» ",
             payload,
             DateTimeOffset.UtcNow);
 
