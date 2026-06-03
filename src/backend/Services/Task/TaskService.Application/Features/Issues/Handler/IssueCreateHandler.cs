@@ -152,7 +152,7 @@ public sealed class IssueCreateHandler(
                 pm => pm.UserId,
                 u => u.Id,
                 (pm, u) => new { u.KeycloakId, UserName = u.FullName, u.Email })
-            .Where(x => x.KeycloakId != currentUser.User.KeycloakId)
+            // .Where(x => x.KeycloakId != currentUser.User.KeycloakId)
             .ToListAsync(ct);
 
         return
