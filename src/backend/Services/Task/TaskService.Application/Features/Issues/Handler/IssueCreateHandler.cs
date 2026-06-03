@@ -161,7 +161,7 @@ public sealed class IssueCreateHandler(
                 .Where(x => !string.IsNullOrWhiteSpace(x.Email.Value))
                 .Select(x => new IssueRecipient
                 {
-                    KeycloakId = x.KeycloakId, UserName = x.UserName, Email = x.Email!.Value
+                    KeycloakId = x.KeycloakId, UserName = x.UserName, Email = x.Email.Value
                 })
                 .Distinct()
         ];
@@ -308,9 +308,7 @@ public sealed class IssueCreateHandler(
         var notificationRecipients = recipients
             .Select(r => new NotificationRecipient
             {
-                UserId = r.KeycloakId.ToString(),
-                FullName = r.UserName,
-                Email = r.Email
+                UserId = r.KeycloakId.ToString(), FullName = r.UserName, Email = r.Email
             })
             .ToList();
 
