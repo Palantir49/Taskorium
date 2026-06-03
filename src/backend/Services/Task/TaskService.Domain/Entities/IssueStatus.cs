@@ -24,7 +24,7 @@ public class IssueStatus : BaseEntities, ISoftDeletable
         Color = color;
     }
 
-    public static IssueStatus Create(string name, int numberType, int position,string color, Guid projectId)
+    public static IssueStatus Create(string name, int numberType, int position, string color, Guid projectId)
     {
         return new IssueStatus(
             id: Guid.CreateVersion7(),

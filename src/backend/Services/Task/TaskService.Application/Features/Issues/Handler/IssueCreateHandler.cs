@@ -1,211 +1,393 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Logging;
 using Taskorium.IntegrationEvents.Dto;
 using Taskorium.IntegrationEvents.Notifications;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
-using TaskService.Application.Features.Projects.Read.GetProjectMembers;
 using TaskService.Application.Interfaces;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
 using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Outbox.Interfaces;
+using TaskService.Infrastructure.Outbox.Models;
 using TaskService.Infrastructure.Persistence;
 using TaskService.Infrastructure.Services;
 
 namespace TaskService.Application.Features.Issues.Handler;
 
-public class IssueCreateHandler(
+/// <summary>
+///     Обрабатывает команду создания задачи.
+///     Оркестрирует: создание доменной сущности, загрузку вложений,
+///     сохранение в БД, инвалидацию кэша и отправку уведомлений.
+/// </summary>
+public sealed class IssueCreateHandler(
     TaskServiceDbContext context,
     HybridCache cache,
     FileStorageService fileStorageService,
     ICurrentUserContext currentUser,
     IOutboxMessageFactory outboxMessageFactory,
-    IDispatcher dispatcher)
-    //IssueNotificationService notificationService)
+    IssueNotificationService notificationService,
+    ILogger<IssueCreateHandler> logger,
+    IHttpContextAccessor httpContextAccessor)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
-    public async Task<IssueResponse> Handle(IssueCreateCommand request, CancellationToken cancellationToken = default)
+    public async Task<IssueResponse> Handle(
+        IssueCreateCommand request,
+        CancellationToken cancellationToken = default)
     {
-        var project = await context.Projects.FindAsync([request.ProjectId], cancellationToken) ??
-                      throw new KeyNotFoundException($"Проект с id: {request.ProjectId} не найдена");
+        logger.LogInformation("Начало создания задачи для проекта {ProjectId}", request.ProjectId);
 
-        var status =
-            await context.IssueStatus.FirstOrDefaultAsync(
-                element => element.ProjectId == request.ProjectId && element.Type == IssueStatusType.Initial,
-                cancellationToken) ??
-            throw new KeyNotFoundException($"Не найден статус инициализации задачи для проекта {request.ProjectId}");
+        var (project, initialStatus) = await LoadProjectDataAsync(request.ProjectId, cancellationToken);
+        var issueKey = await GenerateIssueKeyAsync(project, cancellationToken);
+        var issue = BuildIssue(request, issueKey, initialStatus.Id);
 
-        //TODO: костыль. возможна гонка. нужно добавить отдельную таблицу счетчиков, которая будет возвращать будущий номер и при этом делать внутри ++
-        var countIssue = await context.Issues.CountAsync(x => x.ProjectId == project.Id, cancellationToken);
-        var issueKey = $"{project.Abbreviation}-{countIssue + 1}";
+        ValidateDueDate(issue);
 
-        var issue = Issue.Create(
+        // Единый список получателей — используется и для email (outbox), и для push (SignalR)
+        var recipients = await ResolveRecipientsAsync(request, cancellationToken);
+
+        await PersistIssueAsync(request, issue, issueKey, recipients, cancellationToken);
+
+        logger.LogInformation("Задача {IssueKey} успешно создана", issueKey);
+
+        await InvalidateCacheAsync(request.ProjectId, cancellationToken);
+        await SendPushNotificationsAsync(issue, project, recipients, cancellationToken);
+
+        return issue.ToResponse();
+    }
+
+    // -------------------------------------------------------------------------
+    // Загрузка данных
+    // -------------------------------------------------------------------------
+
+    private async Task<(Project project, IssueStatus initialStatus)> LoadProjectDataAsync(
+        Guid projectId,
+        CancellationToken ct)
+    {
+        var project = await context.Projects.FindAsync([projectId], ct)
+                      ?? throw new KeyNotFoundException($"Проект с id {projectId} не найден");
+
+        var initialStatus = await context.IssueStatus
+                                .FirstOrDefaultAsync(s => s.ProjectId == projectId && s.Type == IssueStatusType.Initial,
+                                    ct)
+                            ?? throw new KeyNotFoundException(
+                                $"Статус инициализации задачи для проекта {projectId} не найден");
+
+        return (project, initialStatus);
+    }
+
+    // -------------------------------------------------------------------------
+    // Генерация ключа задачи
+    // -------------------------------------------------------------------------
+
+    /// <remarks>
+    ///     TODO: заменить на атомарный счётчик в отдельной таблице во избежание гонки
+    ///     при параллельном создании задач в одном проекте.
+    /// </remarks>
+    private async Task<string> GenerateIssueKeyAsync(Project project, CancellationToken ct)
+    {
+        var count = await context.Issues.CountAsync(i => i.ProjectId == project.Id, ct);
+        return $"{project.Abbreviation}-{count + 1}";
+    }
+
+    // -------------------------------------------------------------------------
+    // Построение доменной сущности
+    // -------------------------------------------------------------------------
+
+    private static Issue BuildIssue(IssueCreateCommand request, string issueKey, Guid statusId)
+    {
+        return Issue.Create(
             request.Name,
             request.Description,
             issueKey,
             request.ProjectId,
-            status.Id,
+            statusId,
             request.NumberIssueType,
             request.NumberIssuePriority,
-            request.DueDate
-        );
+            request.DueDate);
+    }
 
-        if (issue.CreatedDate < issue.DueDate)
+    // -------------------------------------------------------------------------
+    // Валидация
+    // -------------------------------------------------------------------------
+
+    private static void ValidateDueDate(Issue issue)
+    {
+        if (issue.DueDate.HasValue && issue.DueDate < issue.CreatedDate)
+        {
             throw new ValidationException("Дата выполнения не может быть раньше даты создания");
+        }
+    }
 
-        var assignee = IssueAssignees.Create(
-            currentUser.User.Id,
-            issue.Id,
-            ProjectRoles.Creator);
+    // -------------------------------------------------------------------------
+    // Единый список получателей (email + push)
+    // -------------------------------------------------------------------------
 
+    /// <summary>
+    ///     Загружает из БД менеджеров проекта (Creator/Admin) и исполнителей задачи,
+    ///     исключая самого создателя задачи.
+    ///     Результат используется как для email-уведомлений (outbox), так и для push (SignalR).
+    /// </summary>
+    private async Task<List<IssueRecipient>> ResolveRecipientsAsync(
+        IssueCreateCommand request,
+        CancellationToken ct)
+    {
+        var assigneeUserIds = request.AssigneeDtos is { Count: > 0 }
+            ? request.AssigneeDtos.Select(a => a.UserId).ToHashSet()
+            : [];
 
-        List<Attachment> attachments = new(request.AttachmentDtos?.Count ?? 0);
+        var rawRecipients = await context.ProjectMembers
+            .Where(pm => pm.ProjectId == request.ProjectId
+                         && !pm.IsDeleted
+                         && (pm.Role == ProjectRoles.Creator
+                             || pm.Role == ProjectRoles.Admin
+                             || assigneeUserIds.Contains(pm.UserId)))
+            .Join(
+                context.Users.Where(u => !u.IsDeleted),
+                pm => pm.UserId,
+                u => u.Id,
+                (pm, u) => new { u.KeycloakId, UserName = u.FullName, u.Email })
+            .Where(x => x.KeycloakId != currentUser.User.KeycloakId)
+            .ToListAsync(ct);
+
+        return
+        [
+            .. rawRecipients
+                .Where(x => !string.IsNullOrWhiteSpace(x.Email.Value))
+                .Select(x => new IssueRecipient
+                {
+                    KeycloakId = x.KeycloakId, UserName = x.UserName, Email = x.Email.Value
+                })
+                .Distinct()
+        ];
+    }
+
+    // -------------------------------------------------------------------------
+    // Сохранение: вложения + исполнители + задача + outbox
+    // -------------------------------------------------------------------------
+
+    private async Task PersistIssueAsync(
+        IssueCreateCommand request,
+        Issue issue,
+        string issueKey,
+        List<IssueRecipient> recipients,
+        CancellationToken ct)
+    {
+        var uploadedAttachments = new List<Attachment>(request.AttachmentDtos?.Count ?? 0);
+
         try
         {
-            if (request.AttachmentDtos != null)
-            {
-                foreach (var attach in request.AttachmentDtos)
-                {
-                    var attachment = Attachment.Create(
-                        issue.Id,
-                        currentUser.User.Id,
-                        attach.Name,
-                        attach.ContentType,
-                        attach.ContentLength);
-
-                    //сброс позиции чтения файла
-                    if (attach.Content.CanSeek)
-                    {
-                        attach.Content.Position = 0;
-                    }
-
-                    await fileStorageService.UploadAsync(
-                        attachment.StoragePath,
-                        attach.ContentType,
-                        attach.Content,
-                        cancellationToken);
-
-                    attachments.Add(attachment);
-                    issue.Attachments.Add(attachment);
-                }
-            }
+            await UploadAttachmentsAsync(request, issue, uploadedAttachments, ct);
+            AddAssignees(request, issue);
 
             context.Issues.Add(issue);
-            context.IssueAssignees.Add(assignee);
+            context.OutboxMessages.Add(BuildNotificationOutboxMessage(issue, issueKey, recipients));
 
-            var eventContent = new NotificationEventContent
-            {
-                Subject = $"Создана задача {issueKey}",
-                Body = $"Задача '{issue.Name}' успешно создана",
-                ActionUrl = $"/projects/{issue.ProjectId}/issues/{issue.Id}",
-                Metadata = new Dictionary<string, string>
-                {
-                    ["issueId"] = issue.Id.ToString(),
-                    ["issueKey"] = issueKey,
-                    ["projectId"] = issue.ProjectId.ToString(),
-                    ["creatorId"] = currentUser.User.Id.ToString()
-                }
-            };
-
-            //Собрали всех учатсников проекта
-            var membersQuery = new GetProjectMembersQuery(request.ProjectId);
-            var membersResult = await dispatcher.SendAsync(membersQuery, cancellationToken);
-
-            var recipients = membersResult.Members
-                .Where(m => !string.IsNullOrWhiteSpace(m.Email)
-                            && m.UserId != currentUser.User.Id)
-                //Нужна ли проверка на роли?
-                //&& (m.Role == Contracts.Enum.ProjectRolesDto.Admin || m.Role == Contracts.Enum.ProjectRolesDto.Creator))
-                .GroupBy(m => m.UserId)
-                .Select(g => g.First())
-                .Select(m => new NotificationRecipient
-                {
-                    UserId = m.UserId.ToString(),
-                    FullName = m.UserName ?? "",
-                    Email = m.Email
-                })
-                .Where(e => e.Email != null)
-                .ToList();
-
-            //Создали событие для уведомления участников проекта о создании новой задачи
-            var integrationEvent = new NotificationCreatedIntegrationEvent(eventContent, recipients);
-            //TODO: вынести создание события в отдельный сервис, который будет принимать тип события и контент, а дальше уже внутри определять как создавать событие и кому отправлять
-            var outboxMessage = outboxMessageFactory.Create(integrationEvent, nameof(NotificationCreatedIntegrationEvent));
-
-            context.OutboxMessages.Add(outboxMessage);
-
-            await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(ct);
         }
-        catch
+        catch (Exception ex)
         {
-            if (attachments.Count > 0)
-            {
-                var tasks = attachments.Select(async delete =>
-                {
-                    try
-                    {
-                        await fileStorageService.DeleteAsync(delete.StoragePath, cancellationToken);
-                    }
-                    catch
-                    {
-                        //TODO: logger
-                    }
-                });
-                await Task.WhenAll(tasks);
-            }
-
+            logger.LogError(ex, "Ошибка при создании задачи {IssueKey}", issueKey);
+            await RollbackAttachmentsAsync(uploadedAttachments, ct);
             throw;
         }
+    }
 
+    // -------------------------------------------------------------------------
+    // Вложения
+    // -------------------------------------------------------------------------
+
+    private async Task UploadAttachmentsAsync(
+        IssueCreateCommand request,
+        Issue issue,
+        List<Attachment> uploaded,
+        CancellationToken ct)
+    {
+        if (request.AttachmentDtos is not { Count: > 0 })
+        {
+            return;
+        }
+
+        foreach (var dto in request.AttachmentDtos)
+        {
+            var attachment = Attachment.Create(
+                issue.Id,
+                currentUser.User.Id,
+                dto.Name,
+                dto.ContentType,
+                dto.ContentLength);
+
+            if (dto.Content.CanSeek)
+            {
+                dto.Content.Position = 0;
+            }
+
+            await fileStorageService.UploadAsync(
+                attachment.StoragePath,
+                dto.ContentType,
+                dto.Content,
+                ct);
+
+            uploaded.Add(attachment);
+            issue.Attachments.Add(attachment);
+        }
+    }
+
+    private async Task RollbackAttachmentsAsync(List<Attachment> attachments, CancellationToken ct)
+    {
+        if (attachments.Count == 0)
+        {
+            return;
+        }
+
+        var deleteTasks = attachments.Select(async a =>
+        {
+            try
+            {
+                await fileStorageService.DeleteAsync(a.StoragePath, ct);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Не удалось удалить вложение {StoragePath} при откате", a.StoragePath);
+            }
+        });
+
+        await Task.WhenAll(deleteTasks);
+    }
+
+    // -------------------------------------------------------------------------
+    // Исполнители
+    // -------------------------------------------------------------------------
+
+    private void AddAssignees(IssueCreateCommand request, Issue issue)
+    {
+        if (request.AssigneeDtos is not { Count: > 0 })
+        {
+            return;
+        }
+
+        foreach (var assignee in request.AssigneeDtos.Select(dto => IssueAssignees.Create(
+                     dto.UserId,
+                     issue.Id,
+                     dto.ProjectRolesDto.ToEntity())))
+        {
+            context.IssueAssignees.Add(assignee);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Outbox-сообщение (email через очередь)
+    // -------------------------------------------------------------------------
+
+    private OutboxMessage BuildNotificationOutboxMessage(
+        Issue issue,
+        string issueKey,
+        List<IssueRecipient> recipients)
+    {
+        var clientUrl = GetClientUrl(httpContextAccessor);
+        var eventContent = new NotificationEventContent
+        {
+            Subject = $"Создана задача {issueKey}",
+            Body = $"Задача '{issue.Name}' успешно создана",
+            ActionUrl = clientUrl,
+            Metadata = new Dictionary<string, string>
+            {
+                ["issueId"] = issue.Id.ToString(),
+                ["issueKey"] = issueKey,
+                ["projectId"] = issue.ProjectId.ToString(),
+                ["creatorId"] = currentUser.User.KeycloakId.ToString()
+            }
+        };
+
+        // KeycloakId используется как UserId в NotificationRecipient,
+        var notificationRecipients = recipients
+            .Select(r => new NotificationRecipient
+            {
+                UserId = r.KeycloakId.ToString(), FullName = r.UserName, Email = r.Email
+            })
+            .ToList();
+
+        var integrationEvent = new NotificationCreatedIntegrationEvent(eventContent, notificationRecipients);
+        return outboxMessageFactory.Create(integrationEvent, nameof(NotificationCreatedIntegrationEvent));
+    }
+
+    // -------------------------------------------------------------------------
+    // Инвалидация кэша
+    // -------------------------------------------------------------------------
+
+    private async Task InvalidateCacheAsync(Guid projectId, CancellationToken ct)
+    {
         try
         {
-            var cacheKey = $"issues_by_project_id_{request.ProjectId}";
-            await cache.RemoveAsync(cacheKey, cancellationToken);
+            await cache.RemoveAsync($"issues_by_project_id_{projectId}", ct);
         }
-        catch
+        catch (Exception ex)
         {
-            //TODO: logger
+            logger.LogError(ex, "Ошибка инвалидации кэша для проекта {ProjectId}", projectId);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Push-уведомления (SignalR)
+    // -------------------------------------------------------------------------
+
+    private async Task SendPushNotificationsAsync(
+        Issue issue,
+        Project project,
+        List<IssueRecipient> recipients,
+        CancellationToken ct)
+    {
+        try
+        {
+            var keycloakIds = recipients.Select(r => r.KeycloakId.ToString());
+
+            await notificationService.NotifyIssueCreatedAsync(
+                issue.Id,
+                issue.Name.ToString(),
+                issue.Key.Value,
+                project.Id,
+                project.Name.ToString(),
+                keycloakIds,
+                ct);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Ошибка отправки push-уведомления для задачи {IssueId}", issue.Id);
+        }
+    }
+
+    private static string GetClientUrl(IHttpContextAccessor httpContextAccessor)
+    {
+        var context = httpContextAccessor.HttpContext;
+        if (context == null)
+        {
+            throw new ArgumentException("Не удалось получить контекст запроса");
         }
 
-        //Отправка в нотификатор напрямую
-        //try
-        //{
-        //    //TODO cache
-        //    // Получаем Keycloak ID участников проекта с правами Creator/Admin (руководители).
-        //    var managerKeycloakIds = await context.ProjectMembers
-        //        .Where(pm => pm.ProjectId == request.ProjectId
-        //                     && !pm.IsDeleted
-        //                     && (pm.Role == ProjectRoles.Creator || pm.Role == ProjectRoles.Admin))
-        //        .Join(context.Users,
-        //            pm => pm.UserId,
-        //            u => u.Id,
-        //            (pm, u) => u.KeycloakId)
-        //        .ToListAsync(cancellationToken);
+        var request = context.Request;
+        if (!request.Headers.TryGetValue("Referer", out var referer))
+        {
+            throw new ArgumentException("Не удалось получить URL клиента из запроса");
+        }
 
-        //    // Исполнитель = текущий пользователь (создатель задачи).
-        //    // Объединяем с менеджерами и убираем дубликаты.
-        //    var recipientKeycloakIds = managerKeycloakIds
-        //        .Append(currentUser.User.KeycloakId)
-        //        .Distinct()
-        //        .Select(id => id.ToString());
+        if (string.IsNullOrWhiteSpace(referer))
+        {
+            throw new ArgumentNullException(nameof(referer));
+        }
 
-        //    await notificationService.NotifyIssueCreatedAsync(
-        //        issue.Id,
-        //        issue.Name.ToString(),
-        //        issue.Key.Value,
-        //        project.Id,
-        //        project.Name.ToString(),
-        //        recipientKeycloakIds,
-        //        cancellationToken);
-        //}
-        //catch
-        //{
-        //    //TODO: logger — не прерываем основной поток при сбое уведомления
-        //}
+        return referer.ToString();
+    }
 
-        return issue.ToResponse();
+
+    private record IssueRecipient
+    {
+        internal Guid KeycloakId { get; init; }
+        internal required string UserName { get; init; }
+        internal string? Email { get; init; }
     }
 }

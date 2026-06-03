@@ -1,11 +1,9 @@
 ﻿using TaskService.Application.Features.Attachments.Dto;
 using TaskService.Application.Mediator;
+using TaskService.Contracts.Common.DTO;
 using TaskService.Contracts.Issue.Responses;
 
 namespace TaskService.Application.Features.Issues.Command;
-
-//TODO issue assignees
-
 
 public record IssueCreateCommand(
     string Name,
@@ -14,4 +12,5 @@ public record IssueCreateCommand(
     int NumberIssuePriority,
     string? Description = null,
     DateTimeOffset? DueDate = null,
-    List<AttachmentDto>? AttachmentDtos = null) : ICommand<IssueResponse>;
+    List<AttachmentDto>? AttachmentDtos = null,
+    List<IssueAssigneesDto>? AssigneeDtos = null) : ICommand<IssueResponse>;

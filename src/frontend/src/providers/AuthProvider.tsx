@@ -1,40 +1,34 @@
-﻿import React, { createContext, useContext, useEffect } from 'react';
+﻿import React, {createContext, useContext, useEffect} from 'react';
 import {useAuth} from 'react-oidc-context';
 import {useCreateUser} from '../hooks/useCreateUser';
 import {useUserFullName} from '../hooks/useUserFullName';
 import {AuthInfo} from "../types";
-import { setTokenProvider as setTaskTokenProvider } from '../api/taskService';
-import { setTokenProvider as setWorkspaceTokenProvider } from '../api/workSpaceService';
-import { setTokenProvider as setProjectTokenProvider } from '../api/projectService';
-import { setTokenProvider as setIssueStatusTokenProvider } from '../api/issueStatusService';
-import { signalRService } from '../api/signalRService';
-import { useNotifications } from '../context/NotificationContext';
+import {setTokenProvider} from '../api/axios';
+import {signalRService} from '../api/signalRService';
+import {useNotifications} from '../context/NotificationContext';
 
 // Создаем контекст аутентификации
 const AuthContext = createContext<AuthInfo | null>(null);
 
 // Хук для использования контекста аутентификации
 export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuthContext must be used within an AuthProvider');
-  }
-  return context;
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuthContext must be used within an AuthProvider');
+    }
+    return context;
 };
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const auth = useAuth();
     const {syncStatus, syncError} = useCreateUser(); // авто-синхронизация
     const userFullName = useUserFullName();
-    const { addNotification } = useNotifications();
+    const {addNotification} = useNotifications();
 
     // Установка провайдера токена для всех API-запросов
     useEffect(() => {
         const token = auth.user?.access_token || null;
-        setTaskTokenProvider(() => token);
-        setWorkspaceTokenProvider(() => token);
-        setProjectTokenProvider(() => token);
-        setIssueStatusTokenProvider(() => token);
+        setTokenProvider(() => token);
     }, [auth.user]);
 
     // Управление SignalR-соединением: подключаем после авторизации, отклю��аем при выходе
@@ -52,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // При размонтировании провайдера (логаут / перезагрузка) — закрываем соединение
             signalRService.stop();
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [auth.isAuthenticated, auth.user?.access_token]);
 
     const handleLogout = () => auth.signoutRedirect();
@@ -81,7 +75,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const authInfo: AuthInfo = {
         isAuthenticated: auth.isAuthenticated,
         userFullName,
-        onLogin: () => {},
+        onLogin: () => {
+        },
         onLogout: handleLogout,
     };
 

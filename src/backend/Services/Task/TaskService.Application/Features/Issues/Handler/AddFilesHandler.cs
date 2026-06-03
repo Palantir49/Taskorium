@@ -23,55 +23,55 @@ namespace TaskService.Application.Features.Issues.Handler
             }
             List<Attachment> attachments = new(request.Attachments.Count);
 
-                try
+            try
+            {
+                foreach (var attach in request.Attachments)
                 {
-                    foreach (var attach in request.Attachments)
-                    {
-                        var attachment = Attachment.Create(
-                            request.IssueId,
-                            currentUser.User.Id,
-                            attach.Name,
-                            attach.ContentType,
-                            attach.ContentLength);
+                    var attachment = Attachment.Create(
+                        request.IssueId,
+                        currentUser.User.Id,
+                        attach.Name,
+                        attach.ContentType,
+                        attach.ContentLength);
 
-                        //сброс позиции чтения файла
-                        if (attach.Content.CanSeek)
+                    //сброс позиции чтения файла
+                    if (attach.Content.CanSeek)
+                    {
+                        attach.Content.Position = 0;
+                    }
+
+                    await fileStorageService.UploadAsync(
+                        attachment.StoragePath,
+                        attach.ContentType,
+                        attach.Content,
+                        cancellationToken);
+
+                    context.Attachments.Add(attachment);
+                    attachments.Add(attachment);
+                }
+                await context.SaveChangesAsync(cancellationToken);
+                return attachments.Select(x => new AttachmentResponce(Id: x.Id, Name: x.FileName));
+            }
+            catch
+            {
+                if (attachments.Count > 0)
+                {
+                    var tasks = attachments.Select(async delete =>
+                    {
+                        try
                         {
-                            attach.Content.Position = 0;
+                            await fileStorageService.DeleteAsync(delete.StoragePath, cancellationToken);
                         }
-
-                        await fileStorageService.UploadAsync(
-                            attachment.StoragePath,
-                            attach.ContentType,
-                            attach.Content,
-                            cancellationToken);
-
-                        context.Attachments.Add(attachment);
-                        attachments.Add(attachment);
-                    }
-                    await context.SaveChangesAsync(cancellationToken);
-                    return attachments.Select(x => new AttachmentResponce(Id: x.Id, Name: x.FileName));
-                }
-                catch
-                {
-                    if (attachments.Count > 0)
-                    {
-                        var tasks = attachments.Select(async delete =>
+                        catch
                         {
-                            try
-                            {
-                                await fileStorageService.DeleteAsync(delete.StoragePath, cancellationToken);
-                            }
-                            catch
-                            {
-                                //TODO: logger
-                            }
-                        });
-                        await Task.WhenAll(tasks);
-                    }
-
-                    throw;
+                            //TODO: logger
+                        }
+                    });
+                    await Task.WhenAll(tasks);
                 }
+
+                throw;
+            }
         }
     }
 }
