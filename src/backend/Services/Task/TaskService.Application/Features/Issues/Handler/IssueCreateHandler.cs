@@ -152,7 +152,7 @@ public sealed class IssueCreateHandler(
                 pm => pm.UserId,
                 u => u.Id,
                 (pm, u) => new { u.KeycloakId, UserName = u.FullName, u.Email })
-            .Where(x => x.KeycloakId != currentUser.User.KeycloakId)
+            // .Where(x => x.KeycloakId != currentUser.User.KeycloakId)
             .ToListAsync(ct);
 
         return
@@ -308,7 +308,9 @@ public sealed class IssueCreateHandler(
         var notificationRecipients = recipients
             .Select(r => new NotificationRecipient
             {
-                UserId = r.KeycloakId.ToString(), FullName = r.UserName, Email = r.Email
+                UserId = r.KeycloakId.ToString(),
+                FullName = r.UserName,
+                Email = r.Email
             })
             .ToList();
 

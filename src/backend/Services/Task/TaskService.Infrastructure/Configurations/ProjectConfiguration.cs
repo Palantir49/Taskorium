@@ -2,42 +2,41 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
 using TaskService.Domain.ValueObjects;
-using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Infrastructure.Configurations
+namespace TaskService.Infrastructure.Configurations;
+
+internal class ProjectConfiguration : IEntityTypeConfiguration<Project>
 {
-    internal class ProjectConfiguration : IEntityTypeConfiguration<Project>
+    public void Configure(EntityTypeBuilder<Project> builder)
     {
-        public void Configure(EntityTypeBuilder<Project> builder)
-        {
-            builder.HasKey(p => p.Id);
+        builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.Id).ValueGeneratedNever();
+        builder.Property(p => p.Id).ValueGeneratedNever();
 
-            builder.Property(p => p.Name).HasConversion(
+        builder.Property(p => p.Name).HasConversion(
                 name => name.ToString(),
                 value => new BaseEntityName(value))
-                .IsRequired().HasMaxLength(225);
+            .IsRequired().HasMaxLength(225);
 
-            builder.Property(p => p.Description).HasMaxLength(2000);
+        builder.Property(p => p.Description).HasMaxLength(2000);
 
-            builder.Property(p => p.Abbreviation).HasMaxLength(5);
+        builder.Property(p => p.Abbreviation).HasMaxLength(5);
 
-            builder.Property(p => p.CreatedDate).IsRequired();
+        builder.Property(p => p.CreatedDate).IsRequired();
 
-            builder.Property(p => p.WorkspaceId).IsRequired();
+        builder.Property(p => p.WorkspaceId).IsRequired();
 
-            builder.HasOne(p => p.Workspace)
-                .WithMany(w => w.Projects)
-                .HasForeignKey(p => p.WorkspaceId);
+        builder.HasOne(p => p.Workspace)
+            .WithMany(w => w.Projects)
+            .HasForeignKey(p => p.WorkspaceId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Property(p => p.StartDate);
+        builder.Property(p => p.StartDate);
 
-            builder.Property(p => p.FinishDate);
+        builder.Property(p => p.FinishDate);
 
-            builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
+        builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
 
-            //builder.HasData(FakeDataFactory.Projects);
-        }
+        //builder.HasData(FakeDataFactory.Projects);
     }
 }

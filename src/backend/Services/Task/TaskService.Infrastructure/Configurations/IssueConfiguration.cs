@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
 using TaskService.Domain.ValueObjects;
-using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations;
 
@@ -15,16 +14,16 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
         builder.Property(t => t.Id).ValueGeneratedNever();
 
         builder.Property(t => t.Name).HasConversion(
-            name => name.Value,
-            value => new BaseEntityName(value))
+                name => name.Value,
+                value => new BaseEntityName(value))
             .IsRequired().HasMaxLength(225);
 
         builder.Property(t => t.Description).HasMaxLength(2000);
 
         builder.Property(t => t.Key)
             .HasConversion(
-            key => key.Value,
-            value => new IssueKey(value))
+                key => key.Value,
+                value => new IssueKey(value))
             .IsRequired()
             .HasMaxLength(10);
 
@@ -39,10 +38,10 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
         builder.Property(t => t.IssueType).IsRequired();
 
         builder.HasOne<Project>()
-              .WithMany(x => x.Issues)
-              .HasForeignKey(t => t.ProjectId)
-              .IsRequired()
-              .OnDelete(DeleteBehavior.Restrict);
+            .WithMany(x => x.Issues)
+            .HasForeignKey(t => t.ProjectId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Tags)
             .WithMany(x => x.Issues);
@@ -54,6 +53,5 @@ internal class IssueConfiguration : IEntityTypeConfiguration<Issue>
         builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
 
         //builder.HasData(FakeDataFactory.Issues);
-
     }
 }
