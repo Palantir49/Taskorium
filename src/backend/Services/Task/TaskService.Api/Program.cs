@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi;
+﻿using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Taskorium.ServiceDefaults;
 using TaskService.Api.Extensions;
@@ -42,8 +43,7 @@ builder.Services.AddOpenApi(options =>
 
         document.Info.License = new OpenApiLicense
         {
-            Name = "MIT License",
-            Url = new Uri("https://opensource.org/licenses/MIT")
+            Name = "MIT License", Url = new Uri("https://opensource.org/licenses/MIT")
         };
         return Task.CompletedTask;
     });
@@ -68,12 +68,17 @@ builder.Services.AddCors(options =>
 
 builder.Services.ConfigureJwtAuthentication(builder.Configuration);
 builder.Services.ConfigureAuthorization();
-
 builder.Services.AddControllers();
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedHost |
+                               ForwardedHeaders.XForwardedProto;
+});
 //configure infrastructure layer
 builder.Services.ConfigureInfrastructureLayer(builder.Configuration);
 builder.Services.ConfigureApplicationLayer();
 var app = builder.Build();
+app.UseForwardedHeaders();
 app.UseExceptionHandler();
 // Включение CORS
 app.UseCors("AllowReactApp");
