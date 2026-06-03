@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Issues.Query;
+using TaskService.Application.Features.Attachments.Dto;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Mediator;
+using TaskService.Contracts.Attachment;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
 
@@ -156,5 +158,41 @@ public class IssuesController(IDispatcher dispatcher) : Controller
         //AddTagToIssueCommand command = new(id, request.TagId);
         //await dispatcher.SendAsync(command);
         return NoContent();
+    }
+
+    /// <summary>
+    ///     Добавить файлы к задаче
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     POST /api/v1/Issues/guid
+    ///     {
+    ///     }
+    /// </remarks>
+    /// <param name="issueId">Идентификатор задачи</param>
+    /// <param name="addFilesRequest">Файлы для добавления к задаче</param>
+    /// <returns></returns>
+    /// <response code="200">Файлы успешно добалвены</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найдена задача для обновления</response>
+    [Authorize(Policy = "CanUpdateTask")]
+    [HttpPost("{issueId:guid}")]
+    [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<IEnumerable<AttachmentResponce>>> AddedFilesAsync([FromRoute] Guid issueId,
+        [FromBody] AddFilesRequest addFilesRequest)
+    {
+        var command = new AddFilesCommand(IssueId: issueId,
+            Attachments: addFilesRequest.Attachments.Select(file => new AttachmentDto
+            {
+                Content = file.OpenReadStream(),
+                ContentType = file.ContentType,
+                ContentLength = file.Length,
+                Name = file.FileName
+            }).ToList());
+        var response = await dispatcher.SendAsync(command);
+        return Ok(response);
     }
 }

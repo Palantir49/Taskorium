@@ -26,7 +26,8 @@ public class IssueStatusCreateHandler(TaskServiceDbContext context) : IRequestHa
             name: request.name,
             numberType: request.numberType,
             position: request.position,
-            projectId: request.projectId);
+            projectId: request.projectId,
+            color: request.color);
 
         await context.IssueStatus.AddAsync(status, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);

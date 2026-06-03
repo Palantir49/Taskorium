@@ -5,5 +5,5 @@ public record class IssueStatusCreateRequest(
     Guid projectId,
     int numberType,
     int position,
-    string? color);
+    string color);
 

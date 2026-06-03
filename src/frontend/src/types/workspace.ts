@@ -17,7 +17,7 @@ export interface UpdateWorkspaceRequest {
 
 export interface AddUserToWorkspaceRequest {
     userId: string;
-    role: RoleDto;
+    role: number;
 }
 
 export interface WorkspaceResponse {
@@ -25,4 +25,25 @@ export interface WorkspaceResponse {
     name: string;
     createdDate: string;
     ownerId?: string;
+}
+
+export interface WorkspaceRolesDto {
+    number: number;
+    name: string;
+    displayName: string;
+}
+
+export interface WorkspaceUserDto {
+    id: string;
+    keycloakId: string;
+    role: number;
+    joinedAt: string;
+    email?: string | null;
+    userName?: string | null;
+}
+
+export interface WorkspaceMembersResponse {
+    workspaceId: string;
+    workspaceName: string;
+    members: WorkspaceUserDto[];
 }

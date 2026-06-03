@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TaskService.Domain.Entities;
 using TaskService.Domain.ValueObjects;
-using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Infrastructure.Configurations;
 
@@ -26,6 +25,12 @@ internal class IssueStatusConfiguration : IEntityTypeConfiguration<IssueStatus>
         builder.Property(t => t.Position).IsRequired();
 
         builder.Property(t => t.CreatedDate).IsRequired();
+
+        builder.Property(p => p.Color)
+            .HasConversion(
+            v => v.ToHex(),
+            v => DomainColor.FromHex(v))
+            .IsRequired();
 
         builder.HasOne<Project>()
               .WithMany(x => x.Statuses)

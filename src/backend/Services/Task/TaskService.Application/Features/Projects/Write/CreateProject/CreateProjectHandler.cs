@@ -1,14 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
+﻿using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Commands.Projects;
-using TaskService.Application.Exceptions;
 using TaskService.Application.Mediator;
-using TaskService.Contracts.Enum;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
 using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Persistence;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TaskService.Application.Features.Projects.Write.CreateProject;
 
@@ -31,28 +27,32 @@ public class CreateProjectHandler(TaskServiceDbContext context, HybridCache cach
             name: "Новая",
             numberType: (int)IssueStatusType.Initial,
             position: 0,
-            projectId: project.Id
+            projectId: project.Id,
+            color: "#6B7280"
             );
 
         IssueStatus processStatus = IssueStatus.Create(
             name: "В работе",
             numberType: (int)IssueStatusType.Process,
             position: 1,
-            projectId: project.Id
+            projectId: project.Id,
+            color: "#3B82F6"
             );
 
         IssueStatus successStatus = IssueStatus.Create(
             name: "Выполнено",
             numberType: (int)IssueStatusType.Success,
             position: 2,
-            projectId: project.Id
+            projectId: project.Id,
+            color: "#10B981"
             );
 
         IssueStatus rejectedStatus = IssueStatus.Create(
             name: "Отменено",
             numberType: (int)IssueStatusType.Rejected,
             position: 3,
-            projectId: project.Id
+            projectId: project.Id,
+            color: "#DC2626"
             );
 
         var existUser = await context.Users.FindAsync([command.UserId], cancellationToken);

@@ -188,7 +188,8 @@ public class FakeDataFactory
                 name: "Новая",
                 numberType: 0,
                 position: 0,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000001"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000001"),
+                color: "#6B7280")
             );
 
         yield return (
@@ -197,7 +198,8 @@ public class FakeDataFactory
                 name: "В работе",
                 numberType: 1,
                 position: 1,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000001"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000001"),
+                color: "#3B82F6")
             );
 
         yield return (
@@ -206,7 +208,8 @@ public class FakeDataFactory
                 name: "Завершена",
                 numberType: 2,
                 position: 2,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000001"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000001"),
+                color: "##10B981")
             );
 
         //2
@@ -216,7 +219,8 @@ public class FakeDataFactory
                 name: "New",
                 numberType: 0,
                 position: 0,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000002"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                color: "#6B7280")
             );
 
         yield return (
@@ -225,7 +229,8 @@ public class FakeDataFactory
                 name: "In process",
                 numberType: 1,
                 position: 1,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000002"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                color: "#3B82F6")
             );
 
         yield return (
@@ -234,7 +239,8 @@ public class FakeDataFactory
                 name: "Success",
                 numberType: 2,
                 position: 2,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000002"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                color: "##10B981")
             );
 
         //3
@@ -244,7 +250,8 @@ public class FakeDataFactory
                 name: "Новая",
                 numberType: 0,
                 position: 0,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000003"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                color: "#6B7280")
             );
 
         yield return (
@@ -253,7 +260,8 @@ public class FakeDataFactory
                 name: "В панике",
                 numberType: 1,
                 position: 1,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000003"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                color: "#3B82F6")
             );
 
         yield return (
@@ -262,7 +270,8 @@ public class FakeDataFactory
                 name: "В психушке",
                 numberType: 2,
                 position: 2,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000003"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                color: "##10B981")
             );
 
         //4
@@ -272,7 +281,8 @@ public class FakeDataFactory
                 name: "Новая",
                 numberType: 0,
                 position: 0,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000004"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000004"),
+                color: "#6B7280")
             );
 
         yield return (
@@ -281,7 +291,8 @@ public class FakeDataFactory
                 name: "В работе",
                 numberType: 1,
                 position: 1,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000004"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000004"),
+                color: "#3B82F6")
             );
 
         yield return (
@@ -290,7 +301,8 @@ public class FakeDataFactory
                 name: "Выполнено",
                 numberType: 1,
                 position: 1,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000004"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000004"),
+                color: "##10B981")
             );
 
         //BEST
@@ -300,7 +312,8 @@ public class FakeDataFactory
                 name: "Новое важное",
                 numberType: 0,
                 position: 0,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000777"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000777"),
+                color: "#6B7280")
             );
 
         yield return (
@@ -309,7 +322,8 @@ public class FakeDataFactory
                 name: "Важное в работе",
                 numberType: 1,
                 position: 1,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000777"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000777"),
+                color: "#3B82F6")
             );
 
         yield return (
@@ -318,7 +332,8 @@ public class FakeDataFactory
                 name: "Выполненное важное",
                 numberType: 2,
                 position: 2,
-                projectId: Guid.Parse("00000000-0000-0000-0000-000000000777"))
+                projectId: Guid.Parse("00000000-0000-0000-0000-000000000777"),
+                color: "##10B981")
             );
     }
 
