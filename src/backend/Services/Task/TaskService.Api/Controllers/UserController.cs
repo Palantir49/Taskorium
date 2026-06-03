@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Features.Users;
 using TaskService.Application.Features.Users.Read.GetUserById;
 using TaskService.Application.Features.Users.Read.GetUserByKeycloakId;
+using TaskService.Application.Features.Users.Read.GetUserProjectsById;
 using TaskService.Application.Features.Users.Read.GetUserWorkspacesById;
 using TaskService.Application.Features.Users.Read.GetUsesrPage;
 using TaskService.Application.Features.Users.Write.CreateUser;
@@ -43,24 +44,44 @@ public class UserController(IDispatcher dispatcher) : Controller
         return Ok(userResponse);
     }
     /// <summary>
-    ///     Получить рабочие области пользователя по keycloak id
+    ///     Получить рабочие области пользователя по  id
     /// </summary>
     /// ///
-    /// <param name="keycloakId">KeycloakId пользователя</param>
-    [HttpGet("{keycloakId:guid}/workspaces")]
+    /// <param name="id">id пользователя</param>
+    [HttpGet("{id:guid}/workspaces")]
     [ActionName("GetUserWorkspacesByIdAsync")]
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<UsersWorkspaceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<GetUserByIdResult>> GetUserWorkspacesByIdAsync(Guid keycloakId)
+    public async Task<ActionResult<List<UsersWorkspaceResponse>>> GetUserWorkspacesByIdAsync([FromRoute] Guid id)
     {
-        var userResponse = await dispatcher.SendAsync(new GetUserWorkspacesByIdQuery(keycloakId));
-        if (userResponse == null)
+        var result = await dispatcher.SendAsync(new GetUserWorkspacesByIdQuery(id));
+        if (result == null)
         {
             return NotFound();
         }
-
-        return Ok(userResponse);
+        return Ok(result.UsersWorkspaces);
+    }
+    /// <summary>
+    ///     Получить проекты пользователя в рабочей области
+    /// </summary>
+    /// ///
+    /// <param name="id">id пользователя</param>
+    /// <param name="workspaceId">id рабочей области, для которой запрашиваются проекты пользователя</param>
+    /// 
+    [HttpGet("{id:guid}/workspace/{workspaceId:guid}/projects")]
+    [ActionName("GetUserProjectsInWorkspaceByIdAsync")]
+    [ProducesResponseType(typeof(List<UserProjectsResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<List<UserProjectsResponse>>> GetUserProjectsInWorkspaceByIdAsync(Guid id, Guid workspaceId)
+    {
+        var result = await dispatcher.SendAsync(new GetUserProjectsByIdQuery(id, workspaceId));
+        if (result == null)
+        {
+            return NotFound();
+        }
+        return Ok(result.Projects);
     }
     /// <summary>
     ///     Получить пользователя по keycloak id
