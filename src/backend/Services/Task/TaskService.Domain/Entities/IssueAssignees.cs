@@ -43,4 +43,5 @@ public class IssueAssignees : ISoftDeletable
 
 
     public void UpdateRole(AssigneesRoles role) => Role = role;
+    public void UpdateRole(int role) => Role = (AssigneesRoles)role;
 }
