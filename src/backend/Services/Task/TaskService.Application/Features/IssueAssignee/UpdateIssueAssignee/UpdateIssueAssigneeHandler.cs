@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TaskService.Application.Features.IssueAssignee.UpdateIssueAssignee
 {
-    public class UpdateIssueAssigneesHandler(TaskServiceDbContext context) : IRequestHandler<UpdateIssueAssigneesCommand, IssueAssigneesResponce>
+    public class UpdateIssueAssigneeHandler(TaskServiceDbContext context) : IRequestHandler<UpdateIssueAssigneeCommand, IssueAssigneesResponce>
     {
-        public async Task<IssueAssigneesResponce> Handle(UpdateIssueAssigneesCommand request, CancellationToken cancellationToken = default)
+        public async Task<IssueAssigneesResponce> Handle(UpdateIssueAssigneeCommand request, CancellationToken cancellationToken = default)
         {
             IssueAssignees assignees = await context.IssueAssignees.FirstOrDefaultAsync(x => x.IssueId == request.IssueId && x.UserId == request.UserId, cancellationToken)
                 ?? throw new KeyNotFoundException($"Ответственный не найден");

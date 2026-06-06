@@ -5,9 +5,9 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.IssueAssignee.CreateIssueAssigee;
 
-public class CreateIssueAssigneesHandler(TaskServiceDbContext context) : IRequestHandler<CreateIssueAssigneesCommand, IssueAssigneesResponce>
+public class CreateIssueAssigneeHandler(TaskServiceDbContext context) : IRequestHandler<CreateIssueAssigneeCommand, IssueAssigneesResponce>
 {
-    public async Task<IssueAssigneesResponce> Handle(CreateIssueAssigneesCommand request, CancellationToken cancellationToken = default)
+    public async Task<IssueAssigneesResponce> Handle(CreateIssueAssigneeCommand request, CancellationToken cancellationToken = default)
     {
         User user = await context.Users.FindAsync([request.UserId], cancellationToken) 
             ?? throw new KeyNotFoundException($"Пользователь не найден");
