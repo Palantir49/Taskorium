@@ -4,6 +4,7 @@ using TaskService.Application.Commands.Workspaces;
 using TaskService.Application.Features.Issues.Mapping;
 using TaskService.Application.Features.Projects.Write.CreateProject;
 using TaskService.Application.Features.WorkspaceMembers.Write.Command;
+using TaskService.Application.Features.WorkspaceMembers.Write.DeleteWorkspaceMember;
 using TaskService.Application.Features.Workspaces.Read.GetDeletedWorkspace;
 using TaskService.Application.Features.Workspaces.Read.GetWorkspaceById;
 using TaskService.Application.Features.Workspaces.Read.GetWorkspaceMembers;
@@ -92,6 +93,30 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
             return NotFound();
         }
 
+        return Ok(response);
+    }
+
+    /// <summary>
+    ///     Удаление участника из рабочей области
+    /// </summary>
+    /// ///
+    /// <remarks>
+    ///     Пример запроса:
+    ///     DELETE /api/v1/Workspaces/workspaceId/members/userId
+    /// </remarks>
+    /// <param name="workspaceId">Идентификатор рабочей области</param>
+    /// <param name="userId">Идентификатор пользователя</param>
+    /// <response code="200">Участник рабочей области удален успешно</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найдена рабочая область или пользователь по заданным id</response>
+    [HttpDelete("{workspaceId:guid}/members/{userId:guid}")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<int>> DeleteWorkspaceMembersAsync([FromRoute] Guid workspaceId, [FromRoute] Guid userId)
+    {
+        var query = new DeleteWorkspaceMemberCommand(workspaceId, userId);
+        int response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
 
