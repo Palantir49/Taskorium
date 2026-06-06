@@ -1,3 +1,5 @@
-﻿namespace TaskService.Contracts.IssueAssignees;
+﻿using TaskService.Contracts.Enum;
 
-public record IssueAssigneesResponce(Guid IssueId, Guid UserId, int Role);
+namespace TaskService.Contracts.IssueAssignees;
+
+public record IssueAssigneesResponce(Guid IssueId, Guid UserId, AssigneesRolesDto Role);

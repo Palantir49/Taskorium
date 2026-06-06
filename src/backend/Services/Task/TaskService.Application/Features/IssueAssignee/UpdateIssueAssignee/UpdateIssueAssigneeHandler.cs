@@ -4,6 +4,7 @@ using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 using TaskService.Domain.Entities.Enums;
 using Microsoft.EntityFrameworkCore;
+using TaskService.Application.Mapping;
 
 namespace TaskService.Application.Features.IssueAssignee.UpdateIssueAssignee
 {
@@ -11,7 +12,7 @@ namespace TaskService.Application.Features.IssueAssignee.UpdateIssueAssignee
     {
         public async Task<IssueAssigneesResponce> Handle(UpdateIssueAssigneeCommand request, CancellationToken cancellationToken = default)
         {
-            if (request.Role == (int)AssigneesRoles.Creator)
+            if (request.Role == AssigneesRoles.Creator)
                 throw new InvalidOperationException("Нельзя назначить создателя");
 
             IssueAssignees assignees = await context.IssueAssignees.FirstOrDefaultAsync(x => x.IssueId == request.IssueId && x.UserId == request.UserId, cancellationToken)
@@ -26,7 +27,7 @@ namespace TaskService.Application.Features.IssueAssignee.UpdateIssueAssignee
             return new IssueAssigneesResponce(
                 IssueId: assignees.IssueId,
                 UserId: assignees.UserId,
-                Role: (int)assignees.Role);
+                Role: assignees.Role.ToDto());
         }
     }
 }

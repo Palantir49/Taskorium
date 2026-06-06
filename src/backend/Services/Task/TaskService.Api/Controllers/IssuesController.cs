@@ -8,6 +8,7 @@ using TaskService.Application.Features.IssueAssignee.GetIssueAssigneesByIssueId;
 using TaskService.Application.Features.IssueAssignee.UpdateIssueAssignee;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Attachment;
 using TaskService.Contracts.Issue.Requests;
@@ -253,7 +254,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
         var command = new CreateIssueAssigneeCommand(
             IssueId: issueId,
             UserId: issueAssigneesRequest.UserId,
-            Role: issueAssigneesRequest.Role);
+            Role: issueAssigneesRequest.Role.ToEntity());
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }
@@ -286,7 +287,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
         var command = new UpdateIssueAssigneeCommand(
             IssueId: issueId,
             UserId: issueAssigneesRequest.UserId,
-            Role: issueAssigneesRequest.Role);
+            Role: issueAssigneesRequest.Role.ToEntity());
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }

@@ -274,7 +274,7 @@ public sealed class IssueCreateHandler(
         foreach (var assignee in request.AssigneeDtos.Select(dto => IssueAssignees.Create(
                      dto.UserId,
                      issue.Id,
-                     dto.ProjectRolesDto.ToEntity())))
+                     dto.AssigneesRolesDto.ToEntity())))
         {
             context.IssueAssignees.Add(assignee);
         }

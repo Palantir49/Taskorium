@@ -1,4 +1,5 @@
-﻿using TaskService.Application.Mediator;
+﻿using TaskService.Application.Mapping;
+using TaskService.Application.Mediator;
 using TaskService.Contracts.IssueAssignees;
 using TaskService.Domain.Entities;
 using TaskService.Domain.Entities.Enums;
@@ -10,7 +11,7 @@ public class CreateIssueAssigneeHandler(TaskServiceDbContext context) : IRequest
 {
     public async Task<IssueAssigneesResponce> Handle(CreateIssueAssigneeCommand request, CancellationToken cancellationToken = default)
     {
-        if (request.Role == (int)AssigneesRoles.Creator)
+        if (request.Role == AssigneesRoles.Creator)
             throw new InvalidOperationException("Нельзя назначить создателя");
 
         User user = await context.Users.FindAsync([request.UserId], cancellationToken) 
@@ -30,6 +31,6 @@ public class CreateIssueAssigneeHandler(TaskServiceDbContext context) : IRequest
         return new IssueAssigneesResponce(
             IssueId: issue.Id,
             UserId: user.Id,
-            Role: (int)assignees.Role);
+            Role: (int)assignees.Role.ToDto());
     }
 }

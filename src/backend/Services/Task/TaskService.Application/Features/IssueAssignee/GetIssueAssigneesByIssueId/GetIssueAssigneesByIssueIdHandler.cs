@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.IssueAssignees;
 using TaskService.Domain.Entities;
@@ -17,7 +18,7 @@ namespace TaskService.Application.Features.IssueAssignee.GetIssueAssigneesByIssu
             return issue.IssueAssignees.Select(x => new IssueAssigneesResponce(
                 IssueId: x.IssueId,
                 UserId: x.UserId,
-                Role: (int)x.Role));
+                Role: x.Role.ToDto()));
         }
     }
 }
