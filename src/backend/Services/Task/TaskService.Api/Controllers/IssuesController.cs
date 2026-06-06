@@ -2,12 +2,18 @@
 using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Issues.Query;
 using TaskService.Application.Features.Attachments.Dto;
+using TaskService.Application.Features.IssueAssignee.CreateIssueAssigee;
+using TaskService.Application.Features.IssueAssignee.DeleteIssueAssignee;
+using TaskService.Application.Features.IssueAssignee.GetIssueAssigneesByIssueId;
+using TaskService.Application.Features.IssueAssignee.UpdateIssueAssignee;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Attachment;
 using TaskService.Contracts.Issue.Requests;
 using TaskService.Contracts.Issue.Responses;
+using TaskService.Contracts.IssueAssignees;
 
 namespace TaskService.Api.Controllers;
 
@@ -177,7 +183,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     /// <response code="404">Не найдена задача для обновления</response>
     [Authorize(Policy = "CanUpdateTask")]
     [HttpPost("{issueId:guid}")]
-    [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<AttachmentResponce>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -194,5 +200,125 @@ public class IssuesController(IDispatcher dispatcher) : Controller
             }).ToList());
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
+    }
+
+    /// <summary>
+    ///     Получить всех ответственных
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     GET /api/v1/Issues/guid/Assignees
+    ///     {
+    ///     }
+    /// </remarks>
+    /// <param name="issueId">Идентификатор задачи</param>
+    /// <returns></returns>
+    /// <response code="200">Список ответственных успешно получен</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найдена задача</response>
+    [HttpGet("{issueId:guid}/Assignees")]
+    [ProducesResponseType(typeof(IEnumerable<IssueAssigneesResponce>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<IEnumerable<IssueAssigneesResponce>>> GetIssueAssigneesByIssueIdAsync([FromRoute] Guid issueId)
+    {
+        var command = new GetIssueAssigneesByIssueIdQuery(IssueId: issueId);
+        var response = await dispatcher.SendAsync(command);
+        return Ok(response);
+    }
+
+    /// <summary>
+    ///     Добавить ответственного задачи
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     POST /api/v1/Issues/guid/Assignees
+    ///     {
+    ///     }
+    /// </remarks>
+    /// <param name="issueId">Идентификатор задачи</param>
+    /// <param name="issueAssigneesRequest">Данные о назначемом ответственном</param>
+    /// <returns></returns>
+    /// <response code="200">Ответственный успешно назначен</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найдена задача или пользователь для назначения</response>
+    [HttpPost("{issueId:guid}/Assignees")]
+    [ProducesResponseType(typeof(IssueAssigneesResponce), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<IssueAssigneesResponce>> CreateIssueAssigneesAsync([FromRoute] Guid issueId,
+        [FromBody] IssueAssigneesRequest issueAssigneesRequest)
+    {
+        var command = new CreateIssueAssigneeCommand(
+            IssueId: issueId,
+            UserId: issueAssigneesRequest.UserId,
+            Role: issueAssigneesRequest.Role.ToEntity());
+        var response = await dispatcher.SendAsync(command);
+        return Ok(response);
+    }
+
+
+
+    /// <summary>
+    ///     Изменить роль ответственного задачи
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     PUT /api/v1/Issues/guid/Assignees
+    ///     {
+    ///     }
+    /// </remarks>
+    /// <param name="issueId">Идентификатор задачи</param>
+    /// <param name="issueAssigneesRequest">Данные оответственного</param>
+    /// <returns></returns>
+    /// <response code="200">Роль ответственного успешно изменена</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найдена задача или пользователь для смены роли</response>
+    [HttpPut("{issueId:guid}/Assignees")]
+    [ProducesResponseType(typeof(IssueAssigneesResponce), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<IssueAssigneesResponce>> UpdateIssueAssigneesAsync([FromRoute] Guid issueId,
+        [FromBody] IssueAssigneesRequest issueAssigneesRequest)
+    {
+        var command = new UpdateIssueAssigneeCommand(
+            IssueId: issueId,
+            UserId: issueAssigneesRequest.UserId,
+            Role: issueAssigneesRequest.Role.ToEntity());
+        var response = await dispatcher.SendAsync(command);
+        return Ok(response);
+    }
+
+    /// <summary>
+    ///    Удалить ответственного задачи
+    /// </summary>
+    /// <remarks>
+    ///     Пример запроса:
+    ///     DELETE /api/v1/Issues/issueId/Assignees/userId
+    ///     {
+    ///     }
+    /// </remarks>
+    /// <param name="issueId">Идентификатор задачи</param>
+    /// <param name="userId">Идентификатор оответственного</param>
+    /// <returns></returns>
+    /// <response code="200">Роль ответственного успешно изменена</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найдена задача или пользователь для смены роли</response>
+    [HttpDelete("{issueId:guid}/Assignees/{userId:guid}")]
+    [ProducesResponseType(typeof(IssueAssigneesResponce), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<IssueAssigneesResponce>> DeleteIssueAssigneesAsync([FromRoute] Guid issueId,
+        [FromRoute] Guid userId)
+    {
+        var command = new DeleteIssueAssigneeCommand(
+            IssueId: issueId,
+            UserId: userId);
+        var response = await dispatcher.SendAsync(command);
+        return NoContent();
     }
 }
