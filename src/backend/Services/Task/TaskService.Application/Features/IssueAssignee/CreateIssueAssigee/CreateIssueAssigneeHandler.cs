@@ -1,4 +1,5 @@
-﻿using TaskService.Application.Mapping;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.IssueAssignees;
 using TaskService.Domain.Entities;
@@ -14,11 +15,22 @@ public class CreateIssueAssigneeHandler(TaskServiceDbContext context) : IRequest
         if (request.Role == AssigneesRoles.Creator)
             throw new InvalidOperationException("Нельзя назначить создателя");
 
-        User user = await context.Users.FindAsync([request.UserId], cancellationToken)
-            ?? throw new KeyNotFoundException($"Пользователь не найден");
+        bool isAlreadyAssigned = await context.IssueAssignees.AnyAsync(x => x.IssueId == request.IssueId && x.UserId == request.UserId, cancellationToken);
 
-        Issue issue = await context.Issues.FindAsync([request.IssueId], cancellationToken)
-            ?? throw new KeyNotFoundException($"Задача не найдена");
+        if (isAlreadyAssigned)
+        {
+            throw new InvalidOperationException($"Пользователь {request.UserId} уже является ответственным за задачу {request.IssueId}");
+        }
+
+        bool userExists = await context.Users.AnyAsync(x => x.Id == request.UserId, cancellationToken);
+            
+        if(!userExists)
+            throw new KeyNotFoundException($"Пользователь не найден");
+
+        bool issueExists = await context.Issues.AnyAsync(x => x.Id == request.IssueId, cancellationToken);
+
+        if (!issueExists) 
+            throw new KeyNotFoundException($"Задача не найдена");
 
         IssueAssignees assignees = IssueAssignees.Create(
             userId: request.UserId,
@@ -29,8 +41,8 @@ public class CreateIssueAssigneeHandler(TaskServiceDbContext context) : IRequest
         await context.SaveChangesAsync();
 
         return new IssueAssigneesResponce(
-            IssueId: issue.Id,
-            UserId: user.Id,
+            UserId: request.UserId,
+            IssueId: request.IssueId,
             Role: assignees.Role.ToDto());
     }
 }
