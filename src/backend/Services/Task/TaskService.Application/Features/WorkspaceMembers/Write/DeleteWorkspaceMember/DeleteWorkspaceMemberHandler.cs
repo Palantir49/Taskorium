@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Mediator;
 using TaskService.Infrastructure.Persistence;
+using TaskService.Domain.Entities.Enums;
 
 namespace TaskService.Application.Features.WorkspaceMembers.Write.DeleteWorkspaceMember
 {
@@ -13,6 +14,9 @@ namespace TaskService.Application.Features.WorkspaceMembers.Write.DeleteWorkspac
                 .Include(m => m.User)
                 .FirstOrDefaultAsync(x => x.UserId == request.UserId && x.WorkspaceId == request.WorkspaceId, cancellationToken)
                 ?? throw new KeyNotFoundException($"Участник рабочей области не найден");
+
+            if(member.Role == WorkspaceRoles.Creator)
+                throw new InvalidOperationException($"Нельзя удалить создателя рабочей облести");
 
             context.Remove(member);
             int deleteCount = await context.SaveChangesAsync();

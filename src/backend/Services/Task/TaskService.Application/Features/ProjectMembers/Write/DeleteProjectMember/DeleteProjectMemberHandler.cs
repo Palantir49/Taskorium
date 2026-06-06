@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Mediator;
-using TaskService.Domain.Entities;
+using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.ProjectMembers.Write.DeleteProjectMember
@@ -14,6 +14,9 @@ namespace TaskService.Application.Features.ProjectMembers.Write.DeleteProjectMem
                 .Include(m => m.User)
                 .FirstOrDefaultAsync(x => x.UserId == request.UserId && x.ProjectId == request.ProjectId, cancellationToken)
                 ?? throw new KeyNotFoundException($"Участник рабочей области не найден");
+
+            if (member.Role == ProjectRoles.Creator)
+                throw new InvalidOperationException($"Нельзя удалить создателя проекта");
 
             context.Remove(member);
             int deleteCount = await context.SaveChangesAsync(cancellationToken);
