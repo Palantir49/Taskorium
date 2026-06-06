@@ -307,7 +307,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     /// <response code="200">Роль ответственного успешно изменена</response>
     /// <response code="400">Некорректный запрос</response>
     /// <response code="404">Не найдена задача или пользователь для смены роли</response>
-    [HttpDelete("{issueId:guid}/Assignees/{userId: guid}")]
+    [HttpDelete("{issueId:guid}/Assignees/{userId:guid}")]
     [ProducesResponseType(typeof(IssueAssigneesResponce), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -319,6 +319,6 @@ public class IssuesController(IDispatcher dispatcher) : Controller
             IssueId: issueId,
             UserId: userId);
         var response = await dispatcher.SendAsync(command);
-        return NotFound();
+        return NoContent();
     }
 }

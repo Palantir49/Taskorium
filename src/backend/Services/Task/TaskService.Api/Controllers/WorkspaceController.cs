@@ -117,7 +117,7 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
     {
         var query = new DeleteWorkspaceMemberCommand(workspaceId, userId);
         int response = await dispatcher.SendAsync(query);
-        return NotFound();
+        return NoContent();
     }
 
     /// <summary>

@@ -139,7 +139,7 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
     {
         var query = new DeleteProjectMemberCommand(projectId, userId);
         int response = await dispatcher.SendAsync(query);
-        return NotFound();
+        return NoContent();
     }
 
     /// <summary>
