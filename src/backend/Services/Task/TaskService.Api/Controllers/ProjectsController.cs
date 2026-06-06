@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Commands.Projects;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.IssueStatuses.Command;
+using TaskService.Application.Features.ProjectMembers.Write.DeleteProjectMember;
 using TaskService.Application.Features.Projects.Read.GetProjectById;
 using TaskService.Application.Features.Projects.Read.GetProjectByWorkspaceId;
 using TaskService.Application.Features.Projects.Read.GetProjectMembers;
 using TaskService.Application.Features.Projects.Write.AddProjectMember;
 using TaskService.Application.Features.Projects.Write.DeleteProjectById;
 using TaskService.Application.Features.Tags.Command;
+using TaskService.Application.Features.WorkspaceMembers.Write.DeleteWorkspaceMember;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.IssueStatus;
@@ -115,6 +117,31 @@ public class ProjectsController(IDispatcher dispatcher) : Controller
         var response = await dispatcher.SendAsync(query);
         return Ok(response);
     }
+
+    /// <summary>
+    ///     Удаление участника из рабочей области
+    /// </summary>
+    /// ///
+    /// <remarks>
+    ///     Пример запроса:
+    ///     DELETE /api/v1/Projects/projectId/members/userId
+    /// </remarks>
+    /// <param name="projectId">Идентификатор рабочей области</param>
+    /// <param name="userId">Идентификатор пользователя</param>
+    /// <response code="200">Участник рабочей области удален успешно</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найдена рабочая область или пользователь по заданным id</response>
+    [HttpDelete("{projectId:guid}/members/{userId:guid}")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<int>> DeleteWorkspaceMembersAsync([FromRoute] Guid projectId, [FromRoute] Guid userId)
+    {
+        var query = new DeleteProjectMemberCommand(projectId, userId);
+        int response = await dispatcher.SendAsync(query);
+        return NotFound();
+    }
+
     /// <summary>
     ///     Обновить данные проекта по Id
     /// </summary>

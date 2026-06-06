@@ -33,7 +33,7 @@ namespace TaskService.Application.Features.ProjectMembers.Write.UpdateProjectMem
             existProjectMember.SetRole(request.NewRole.ToEntity());
             await context.SaveChangesAsync();
             //инвалидируем кэш
-            var membersCacheKey = $"projectMembers_{existProjectMember.Project.Id}";
+            var membersCacheKey = $"projectMembers_{existProjectMember.ProjectId}";
             await cache.RemoveAsync(membersCacheKey, cancellationToken);
 
             var cacheKey = $"user_by_keycloak_id_{user.KeycloakId}";
