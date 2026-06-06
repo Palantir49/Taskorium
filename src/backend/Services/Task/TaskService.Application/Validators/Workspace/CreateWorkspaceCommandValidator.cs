@@ -10,10 +10,6 @@ namespace TaskService.Application.Validators.Workspace
     {
         public CreateWorkspaceCommandValidator()
         {
-            RuleFor(x => x.OwnerId)
-                .NotEmpty()
-                .WithMessage("Ошибка создания рабочей области. Идентификатор создателя не может быть пустым");
-
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .Matches(@"^[a-zA-Zа-яА-ЯёЁ0-9 _\-.]+$")

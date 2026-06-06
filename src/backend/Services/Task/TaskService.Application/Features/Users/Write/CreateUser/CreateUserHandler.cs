@@ -2,6 +2,7 @@
 using TaskService.Application.Exceptions;
 using TaskService.Application.Mediator;
 using TaskService.Domain.Entities;
+using TaskService.Domain.ValueObjects;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Users.Write.CreateUser;
@@ -20,7 +21,7 @@ public class CreateUserHandler(TaskServiceDbContext context)
             throw new ConflictException("Пользователь уже существует");
         }
 
-        var newUser = User.Create(command.KeycloakId, command.Username, command.Email, command.Name);
+        var newUser = User.Create(command.KeycloakId, new UserName(command.Username), new EmailAdress(command.Email), command.Name);
 
         await context.Users.AddAsync(newUser, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
