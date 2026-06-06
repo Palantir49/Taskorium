@@ -1,10 +1,10 @@
-﻿using TaskService.Application.Mediator;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskService.Application.Mapping;
+using TaskService.Application.Mediator;
 using TaskService.Contracts.IssueAssignees;
 using TaskService.Domain.Entities;
-using TaskService.Infrastructure.Persistence;
 using TaskService.Domain.Entities.Enums;
-using Microsoft.EntityFrameworkCore;
-using TaskService.Application.Mapping;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.IssueAssignee.UpdateIssueAssignee
 {

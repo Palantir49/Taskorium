@@ -14,7 +14,7 @@ public class CreateIssueAssigneeHandler(TaskServiceDbContext context) : IRequest
         if (request.Role == AssigneesRoles.Creator)
             throw new InvalidOperationException("Нельзя назначить создателя");
 
-        User user = await context.Users.FindAsync([request.UserId], cancellationToken) 
+        User user = await context.Users.FindAsync([request.UserId], cancellationToken)
             ?? throw new KeyNotFoundException($"Пользователь не найден");
 
         Issue issue = await context.Issues.FindAsync([request.IssueId], cancellationToken)
