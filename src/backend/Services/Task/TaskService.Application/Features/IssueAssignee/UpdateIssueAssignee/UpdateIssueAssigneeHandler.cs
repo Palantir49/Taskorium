@@ -11,6 +11,9 @@ namespace TaskService.Application.Features.IssueAssignee.UpdateIssueAssignee
     {
         public async Task<IssueAssigneesResponce> Handle(UpdateIssueAssigneeCommand request, CancellationToken cancellationToken = default)
         {
+            if (request.Role == (int)AssigneesRoles.Creator)
+                throw new InvalidOperationException("Нельзя назначить создателя");
+
             IssueAssignees assignees = await context.IssueAssignees.FirstOrDefaultAsync(x => x.IssueId == request.IssueId && x.UserId == request.UserId, cancellationToken)
                 ?? throw new KeyNotFoundException($"Ответственный не найден");
 
