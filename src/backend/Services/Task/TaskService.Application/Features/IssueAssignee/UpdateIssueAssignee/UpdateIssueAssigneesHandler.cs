@@ -5,7 +5,7 @@ using TaskService.Infrastructure.Persistence;
 using TaskService.Domain.Entities.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace TaskService.Application.Features.IssueAssignee.UpdateIssueAssignees
+namespace TaskService.Application.Features.IssueAssignee.UpdateIssueAssignee
 {
     public class UpdateIssueAssigneesHandler(TaskServiceDbContext context) : IRequestHandler<UpdateIssueAssigneesCommand, IssueAssigneesResponce>
     {
