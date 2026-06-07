@@ -43,6 +43,6 @@ public class CreateIssueAssigneeHandler(TaskServiceDbContext context) : IRequest
         return new IssueAssigneesResponce(
             UserId: request.UserId,
             IssueId: request.IssueId,
-            Role: assignees.Role.ToDto());
+            Role: assignees.AssigneesRoles.ToDto());
     }
 }

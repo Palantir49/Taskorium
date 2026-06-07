@@ -1,87 +1,76 @@
 import React from 'react';
-import {
-  FaBug,
-  FaRocket,
-  FaLightbulb,
-  FaFire,
-  FaExclamationTriangle,
-  FaInfoCircle,
-  FaCircle
-} from 'react-icons/fa';
-import { TaskCardProps } from '../types';
+import {FaBug, FaCircle, FaLightbulb, FaRocket} from 'react-icons/fa';
+import {TaskCardProps} from '../types';
 import './TaskCard.css';
 
-function TaskCard({ task, onClick }: TaskCardProps) {
-  // Иконки для типов задач
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'bug':
-        return <FaBug className="task-type-icon bug" />;
-      case 'feature':
-        return <FaRocket className="task-type-icon feature" />;
-      case 'improvement':
-        return <FaLightbulb className="task-type-icon improvement" />;
-      default:
-        return <FaCircle className="task-type-icon" />;
+function TaskCard({task, onClick}: TaskCardProps) {
+    // Иконки для типов задач
+    const getTypeIcon = (type: string) => {
+        switch (type) {
+            case 'bug':
+                return <FaBug className="task-type-icon bug"/>;
+            case 'feature':
+                return <FaRocket className="task-type-icon feature"/>;
+            case 'improvement':
+                return <FaLightbulb className="task-type-icon improvement"/>;
+            default:
+                return <FaCircle className="task-type-icon"/>;
+        }
+    };
+
+    // Форматирование даты
+    const formatDate = (date: string | null | undefined): string | null => {
+        if (!date) return null;
+        const d = new Date(date);
+        return d.toLocaleDateString('ru-RU', {day: 'numeric', month: 'short'});
+    };
+
+    // Проверка просроченности дедлайна
+    const isOverdue = task.dueDate && new Date(task.dueDate) < new Date();
+
+    // Определяем класс рамки по приоритету
+    let priorityBorderClass = '';
+    switch (task.issuePriority.name) {
+        case 'critical':
+            priorityBorderClass = 'priority-critical';
+            break;
+        case 'high':
+            priorityBorderClass = 'priority-high';
+            break;
+        case 'medium':
+            priorityBorderClass = 'priority-medium';
+            break;
+        case 'low':
+            priorityBorderClass = 'priority-low';
+            break;
+        default:
+            break;
     }
-  };
 
-  // Форматирование даты
-  const formatDate = (date: string | null | undefined): string | null => {
-    if (!date) return null;
-    const d = new Date(date);
-    return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-  };
+    return (
+        <div className={`task-card ${priorityBorderClass}`} onClick={() => onClick && onClick(task)}>
+            <div className="task-card-header">
+                <div className="task-title-row">
+                    {getTypeIcon(task.issueType.name)}
+                    <h3 className="task-title">{task.name}</h3>
+                </div>
+                <div className="task-priority">
+                </div>
+            </div>
 
-  // Проверка просроченности дедлайна
-  const isOverdue = task.dueDate && new Date(task.dueDate) < new Date();
+            {task.description && (
+                <p className="task-description">{task.description}</p>
+            )}
 
-  // Определяем класс рамки по приоритету
-  let priorityBorderClass = '';
-  switch (task.issuePriority.name) {
-    case 'critical':
-      priorityBorderClass = 'priority-critical';
-      break;
-    case 'high':
-      priorityBorderClass = 'priority-high';
-      break;
-    case 'medium':
-      priorityBorderClass = 'priority-medium';
-      break;
-    case 'low':
-      priorityBorderClass = 'priority-low';
-      break;
-    default:
-      break;
-  }
-
-  return (
-    <div className={`task-card ${priorityBorderClass}`} onClick={() => onClick && onClick(task)}>
-      <div className="task-card-header">
-        <div className="task-title-row">
-          {getTypeIcon(task.issueType.name)}
-          <h3 className="task-title">{task.name}</h3>
+            <div className="task-footer">
+                {task.dueDate && (
+                    <div className={`task-deadline ${isOverdue ? 'overdue' : ''}`}>
+                        {formatDate(task.dueDate)}
+                    </div>
+                )}
+            </div>
         </div>
-        <div className="task-priority">
-        </div>
-      </div>
-
-      {task.description && (
-        <p className="task-description">{task.description}</p>
-      )}
-
-      <div className="task-footer">
-        <div className="task-assignee">
-          {/* В DTO не указан пользователь, поэтому пока оставим пустым */}
-        </div>
-        {task.dueDate && (
-          <div className={`task-deadline ${isOverdue ? 'overdue' : ''}`}>
-            {formatDate(task.dueDate)}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+    );
 }
 
 export default TaskCard;

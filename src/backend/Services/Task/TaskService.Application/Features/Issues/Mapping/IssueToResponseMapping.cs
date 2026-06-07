@@ -1,5 +1,7 @@
 ﻿using TaskService.Application.Features.Collections.Mapping;
+using TaskService.Application.Mapping;
 using TaskService.Contracts.Attachment;
+using TaskService.Contracts.Common.DTO;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Domain.Entities;
 
@@ -10,8 +12,8 @@ public static class IssueToResponseMapping
     public static IssueResponse ToResponse(this Issue issue)
     {
         return new IssueResponse(
-            Id: issue.Id,
-            Name: issue.Name.ToString(),
+            issue.Id,
+            issue.Name.ToString(),
             ProjectId: issue.ProjectId,
             TaskStatusId: issue.IssueStatusId,
             CreatedDate: issue.CreatedDate,
@@ -21,8 +23,10 @@ public static class IssueToResponseMapping
             UpdatedDate: issue.UpdatedDate,
             DueDate: issue.DueDate,
             ResolvedDate: issue.ResolvedDate,
-            attachment: issue.Attachments.Select(x => new AttachmentResponce(Id: x.Id, Name: x.FileName))
-            );
+            Attachments: issue.Attachments.Select(x => new AttachmentResponce(x.Id, x.FileName)),
+            Assignees: issue.IssueAssignees.Select(x =>
+                new IssueAssigneesDto(x.UserId, x.Role.ToDto(), x.User.Username.ToString()))
+        );
     }
 
     //FAQ: Будет ли у нас частичное получение данных?

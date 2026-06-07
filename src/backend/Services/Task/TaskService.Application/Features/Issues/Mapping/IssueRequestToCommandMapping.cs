@@ -39,8 +39,9 @@ public static class IssueRequestToCommandMapping
             request.Name,
             request.IssueStatusId,
             Description: request.Description,
-            numberIssueType: request.NumberIssueType,
-            DueDate: request.DueDate?.ToUniversalTime()
+            NumberIssueType: request.NumberIssueType,
+            DueDate: request.DueDate?.ToUniversalTime(),
+            Assignees: request.Assignees
         );
     }
 

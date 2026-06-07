@@ -2,90 +2,119 @@
 using TaskService.Domain.Entities.Enums;
 using TaskService.Domain.ValueObjects;
 
-namespace TaskService.Domain.Entities
+namespace TaskService.Domain.Entities;
+
+public class Issue : BaseEntities, ISoftDeletable
 {
-    public class Issue : BaseEntities, ISoftDeletable
+    protected Issue() { }
+
+    private Issue(Guid id, string name, string? description, string key, Guid projectId, Guid taskStatusId,
+        int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate) : base(id, name)
     {
-        public Guid ProjectId { get; }
-        public Guid IssueStatusId { get; private set; }
-        public string? Description { get; private set; }
-        public IssueKey Key { get; private set; } = null!;
-        public IssueType IssueType { get; private set; }
-        public IssuePriority IssuePriority { get; private set; }
-        public DateTimeOffset? StartDate { get; private set; }
-        public DateTimeOffset? ResolvedDate { get; private set; }
-        public DateTimeOffset? UpdatedDate { get; private set; }
-        public DateTimeOffset? DueDate { get; private set; }
+        ProjectId = projectId;
+        Key = new IssueKey(key);
+        IssueStatusId = taskStatusId;
+        Description = description?.Trim();
+        DueDate = dueDate;
+        IssueType = (IssueType)numberIssueType;
+        IssuePriority = (IssuePriority)numberIssuePriority;
+    }
 
-        public ICollection<Tag> Tags { get; private set; } = [];
-        public ICollection<IssueAssignees> IssueAssignees { get; private set; } = [];
-        public ICollection<Attachment> Attachments { get; private set; } = [];
-        public bool IsDeleted { get; set; }
-        public DateTimeOffset? DeletedAt { get; set; }
+    public Guid ProjectId { get; }
+    public Guid IssueStatusId { get; private set; }
+    public string? Description { get; private set; }
+    public IssueKey Key { get; private set; } = null!;
+    public IssueType IssueType { get; private set; }
+    public IssuePriority IssuePriority { get; private set; }
+    public DateTimeOffset? StartDate { get; private set; }
+    public DateTimeOffset? ResolvedDate { get; private set; }
+    public DateTimeOffset? UpdatedDate { get; private set; }
+    public DateTimeOffset? DueDate { get; private set; }
 
-        protected Issue() { }
+    public ICollection<Tag> Tags { get; private set; } = [];
+    public ICollection<IssueAssignees> IssueAssignees { get; private set; } = [];
+    public ICollection<Attachment> Attachments { get; private set; } = [];
+    public bool IsDeleted { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
 
-        private Issue(Guid id, string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate) : base(id, name)
+    public static Issue Create(string name, string? description, string key, Guid projectId, Guid taskStatusId,
+        int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate)
+    {
+        return new Issue(
+            Guid.CreateVersion7(),
+            name,
+            description,
+            key,
+            projectId,
+            taskStatusId,
+            numberIssueType,
+            numberIssuePriority,
+            dueDate);
+    }
+
+    public override void UpdateName(string newName)
+    {
+        base.UpdateName(newName);
+        UpdatedDate = DateTimeOffset.UtcNow;
+    }
+
+    public void UpdateDescription(string? newDescription)
+    {
+        Description = newDescription;
+        UpdatedDate = DateTimeOffset.UtcNow;
+    }
+
+    public void UpdateDueDate(DateTimeOffset? newDueDate)
+    {
+        DueDate = newDueDate;
+        UpdatedDate = DateTimeOffset.UtcNow;
+    }
+
+    public void UpdateStatus(IssueStatus status)
+    {
+        IssueStatusId = status.Id;
+        UpdatedDate = DateTimeOffset.UtcNow;
+
+        if (status.Type == IssueStatusType.Process && StartDate == default(DateTimeOffset))
         {
-            ProjectId = projectId;
-            Key = new IssueKey(key);
-            IssueStatusId = taskStatusId;
-            Description = description?.Trim();
-            DueDate = dueDate;
-            IssueType = (IssueType)numberIssueType;
-            IssuePriority = (IssuePriority)numberIssuePriority;
+            StartDate = DateTimeOffset.UtcNow;
         }
 
-        public static Issue Create(string name, string? description, string key, Guid projectId, Guid taskStatusId, int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate)
+        if (status.Type == IssueStatusType.Success || status.Type == IssueStatusType.Rejected)
         {
-            return new Issue(
-                id: Guid.CreateVersion7(),
-                name: name,
-                description: description,
-                key: key,
-                projectId: projectId,
-                taskStatusId: taskStatusId,
-                numberIssueType: numberIssueType,
-                numberIssuePriority: numberIssuePriority,
-                dueDate: dueDate);
+            ResolvedDate = DateTimeOffset.UtcNow;
         }
-
-        public override void UpdateName(string newName)
+        else
         {
-            base.UpdateName(newName);
-            UpdatedDate = DateTimeOffset.UtcNow;
+            ResolvedDate = null;
         }
+    }
 
-        public void UpdateDescription(string? newDescription)
+    public void UpdateType(int numberType)
+    {
+        IssueType = (IssueType)numberType;
+        UpdatedDate = DateTimeOffset.UtcNow;
+    }
+
+    public void UpdateAssignees(IReadOnlyCollection<IssueAssignees> issueAssignees)
+    {
+        IssueAssignees = [.. issueAssignees];
+        UpdatedDate = DateTimeOffset.UtcNow;
+    }
+
+    public void AddAssignees(IReadOnlyCollection<IssueAssignees> issueAssignees)
+    {
+        foreach (var issueAssignee in issueAssignees)
         {
-            Description = newDescription;
-            UpdatedDate = DateTimeOffset.UtcNow;
+            IssueAssignees.Add(issueAssignee);
         }
+    }
 
-        public void UpdateDueDate(DateTimeOffset? newDueDate)
+    public void DeleteAssignees(IReadOnlyCollection<IssueAssignees> issueAssignees)
+    {
+        foreach (var issueAssignee in issueAssignees)
         {
-            DueDate = newDueDate;
-            UpdatedDate = DateTimeOffset.UtcNow;
-        }
-
-        public void UpdateStatus(IssueStatus status)
-        {
-            IssueStatusId = status.Id;
-            UpdatedDate = DateTimeOffset.UtcNow;
-
-            if (status.Type == IssueStatusType.Process && StartDate == default(DateTimeOffset))
-                StartDate = DateTimeOffset.UtcNow;
-
-            if (status.Type == IssueStatusType.Success || status.Type == IssueStatusType.Rejected)
-                ResolvedDate = DateTimeOffset.UtcNow;
-            else
-                ResolvedDate = null;
-        }
-
-        public void UpdateType(int numberType)
-        {
-            IssueType = (IssueType)numberType;
-            UpdatedDate = DateTimeOffset.UtcNow;
+            IssueAssignees.Remove(issueAssignee);
         }
     }
 }
