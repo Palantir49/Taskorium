@@ -14,7 +14,7 @@ public class DeleteIssueAssigneeHandler(TaskServiceDbContext context) : IRequest
                 x.IssueId == request.IssueId && x.UserId == request.UserId)
             ?? throw new KeyNotFoundException("Ответственный не найден");
 
-        if (assignee.AssigneesRoles == AssigneesRoles.Creator)
+        if (assignee.Role == AssigneesRoles.Creator)
         {
             throw new InvalidOperationException("Нельзя удалить создателя задачи");
         }
