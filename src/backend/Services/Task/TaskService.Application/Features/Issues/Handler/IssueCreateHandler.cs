@@ -318,7 +318,9 @@ public sealed class IssueCreateHandler(
         var notificationRecipients = recipients
             .Select(r => new NotificationRecipient
             {
-                UserId = r.KeycloakId.ToString(), FullName = r.UserName, Email = r.Email
+                UserId = r.KeycloakId.ToString(),
+                FullName = r.UserName,
+                Email = r.Email
             })
             .ToList();
 
