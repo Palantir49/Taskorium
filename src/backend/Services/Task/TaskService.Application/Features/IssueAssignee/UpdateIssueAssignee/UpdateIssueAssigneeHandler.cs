@@ -23,7 +23,7 @@ public class UpdateIssueAssigneeHandler(TaskServiceDbContext context)
                 x => x.IssueId == request.IssueId && x.UserId == request.UserId, cancellationToken)
             ?? throw new KeyNotFoundException("Ответственный не найден");
 
-        if (assignees.AssigneesRoles == AssigneesRoles.Creator)
+        if (assignees.Role == AssigneesRoles.Creator)
         {
             throw new InvalidOperationException("Нельзя изменить создателя задачи");
         }
@@ -34,6 +34,6 @@ public class UpdateIssueAssigneeHandler(TaskServiceDbContext context)
         return new IssueAssigneesResponce(
             assignees.IssueId,
             assignees.UserId,
-            assignees.AssigneesRoles.ToDto());
+            assignees.Role.ToDto());
     }
 }

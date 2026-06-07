@@ -2,4 +2,4 @@
 
 namespace TaskService.Contracts.Common.DTO;
 
-public record IssueAssigneesDto(Guid UserId, ProjectRolesDto ProjectRolesDto, string? UserName = null);
+public record IssueAssigneesDto(Guid UserId, AssigneesRolesDto ProjectRolesDto, string? UserName = null);

@@ -10,15 +10,9 @@ public class IssueAssignees
     {
         UserId = userId;
         IssueId = issueId;
-        AssigneesRoles = role;
-    }
-
-    private IssueAssignees(Guid userId, Guid issueId, ProjectRoles role)
-    {
-        UserId = userId;
-        IssueId = issueId;
         Role = role;
     }
+
 
     public Guid UserId { get; private set; }
     public User User { get; private set; } = null!;
@@ -26,20 +20,12 @@ public class IssueAssignees
     public Guid IssueId { get; private set; }
     public Issue Issue { get; private set; } = null!;
 
-    public ProjectRoles Role { get; private set; }
 
-    public AssigneesRoles AssigneesRoles { get; private set; }
+    public AssigneesRoles Role { get; private set; }
 
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
 
-    public static IssueAssignees Create(Guid userId, Guid issueId, ProjectRoles role)
-    {
-        return new IssueAssignees(
-            userId,
-            issueId,
-            role);
-    }
 
     public static IssueAssignees Create(Guid userId, Guid issueId, AssigneesRoles role)
     {
@@ -63,18 +49,14 @@ public class IssueAssignees
         User = user;
     }
 
-    public void UpdateRole(ProjectRoles role)
+
+    public void UpdateRole(AssigneesRoles role)
     {
         Role = role;
     }
 
-    public void UpdateRole(AssigneesRoles role)
-    {
-        AssigneesRoles = role;
-    }
-
     public void UpdateRole(int role)
     {
-        AssigneesRoles = (AssigneesRoles)role;
+        Role = (AssigneesRoles)role;
     }
 }

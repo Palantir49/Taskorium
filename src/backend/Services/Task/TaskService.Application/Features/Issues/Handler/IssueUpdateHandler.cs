@@ -15,7 +15,7 @@ public class IssueUpdateHandler(TaskServiceDbContext context, HybridCache cache)
 {
     public async Task<IssueResponse> Handle(IssueUpdateCommand request, CancellationToken cancellationToken = default)
     {
-        var issue = await context.Issues.Include(element => element.IssueAssignees)
+        var issue = await context.Issues.Include(element => element.IssueAssignees).ThenInclude(element => element.User)
                         .FirstOrDefaultAsync(element => element.Id == request.Id, cancellationToken) ??
                     throw new NullReferenceException($"Задача с id: {request.Id} не найдена");
 
