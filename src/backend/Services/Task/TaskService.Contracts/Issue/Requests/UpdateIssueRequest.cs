@@ -1,4 +1,6 @@
-﻿namespace TaskService.Contracts.Issue.Requests;
+﻿using TaskService.Contracts.Common.DTO;
+
+namespace TaskService.Contracts.Issue.Requests;
 
 //уточнить - ведь логично тогда разбивать на несколько DTO?
 //Смена статуса, типа и т.д. скорее всего будет происходить отдельно
@@ -11,5 +13,6 @@ public record class UpdateIssueRequest(
     Guid IssueStatusId,
     int NumberIssueType,
     int NumberIssuePriority,
+    IReadOnlyCollection<IssueAssigneesDto> Assignees,
     string? Description = null,
     DateTimeOffset? DueDate = null);

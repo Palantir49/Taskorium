@@ -271,13 +271,23 @@ public sealed class IssueCreateHandler(
             return;
         }
 
-        foreach (var assignee in request.AssigneeDtos.Select(dto => IssueAssignees.Create(
-                     dto.UserId,
-                     issue.Id,
-                     dto.ProjectRolesDto.ToEntity())))
+        var userIds = request.AssigneeDtos.Select(d => d.UserId).ToList();
+        var users = context.Users
+            .Where(u => userIds.Contains(u.Id))
+            .ToDictionary(u => u.Id);
+
+        var assignees = request.AssigneeDtos.Select(dto =>
         {
-            context.IssueAssignees.Add(assignee);
-        }
+            var assignee = IssueAssignees.Create(dto.UserId, issue.Id, dto.ProjectRolesDto.ToEntity());
+            if (users.TryGetValue(dto.UserId, out var user))
+            {
+                assignee.SetUser(user);
+            }
+
+            return assignee;
+        }).ToList().AsReadOnly();
+
+        issue.UpdateAssignees(assignees);
     }
 
     // -------------------------------------------------------------------------

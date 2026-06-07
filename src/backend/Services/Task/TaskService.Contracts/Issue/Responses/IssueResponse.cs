@@ -1,5 +1,6 @@
 ﻿using TaskService.Contracts.Attachment;
 using TaskService.Contracts.Collections;
+using TaskService.Contracts.Common.DTO;
 
 namespace TaskService.Contracts.Issue.Responses;
 
@@ -15,4 +16,5 @@ public record IssueResponse(
     DateTimeOffset? UpdatedDate,
     DateTimeOffset? DueDate,
     DateTimeOffset? ResolvedDate,
-    IEnumerable<AttachmentResponce>? attachment);
+    IEnumerable<IssueAssigneesDto>? Assignees,
+    IEnumerable<AttachmentResponce>? Attachments);

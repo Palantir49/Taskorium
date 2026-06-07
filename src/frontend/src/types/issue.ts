@@ -1,5 +1,4 @@
 // Auto-generated DTO types for TaskService API
-import {ProjectUserDto} from "./project.ts";
 
 export interface IssuePriorityResponse {
     number: number;
@@ -39,7 +38,7 @@ export interface UpdateIssueRequest {
     numberIssuePriority: number;
     description?: string;
     dueDate?: string | null;
-    assigneeIds?: string[] | null;
+    assignees?: IssueAssigneesDto[] | null;
 }
 
 export interface IssueResponse {
@@ -54,7 +53,7 @@ export interface IssueResponse {
     updatedDate?: string | null;
     dueDate?: string | null;
     resolvedDate?: string | null;
-    assignees?: ProjectUserDto[] | null;
+    assignees?: IssueAssigneesDto[] | null;
 }
 
 export interface IssuesResponse {
@@ -64,4 +63,5 @@ export interface IssuesResponse {
 export interface IssueAssigneesDto {
     userId: string;
     role: number;
+    userName: string;
 }
