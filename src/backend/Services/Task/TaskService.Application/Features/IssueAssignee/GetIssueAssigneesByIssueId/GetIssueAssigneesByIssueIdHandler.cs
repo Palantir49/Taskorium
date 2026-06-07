@@ -18,7 +18,7 @@ namespace TaskService.Application.Features.IssueAssignee.GetIssueAssigneesByIssu
             return issue.IssueAssignees.Select(x => new IssueAssigneesResponce(
                 IssueId: x.IssueId,
                 UserId: x.UserId,
-                Role: x.Role.ToDto()));
+                Role: x.AssigneesRoles.ToDto()));
         }
     }
 }

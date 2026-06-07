@@ -20,6 +20,8 @@ public class IssueGetByProjectIdHandler(TaskServiceDbContext context, HybridCach
         {
             var issues = await context.Issues
                 .Where(x => x.ProjectId == request.projectId)
+                .Include(x => x.IssueAssignees)
+                .ThenInclude(x => x.User)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
