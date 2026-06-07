@@ -23,13 +23,13 @@ public class CreateIssueAssigneeHandler(TaskServiceDbContext context) : IRequest
         }
 
         bool userExists = await context.Users.AnyAsync(x => x.Id == request.UserId, cancellationToken);
-            
-        if(!userExists)
+
+        if (!userExists)
             throw new KeyNotFoundException($"Пользователь не найден");
 
         bool issueExists = await context.Issues.AnyAsync(x => x.Id == request.IssueId, cancellationToken);
 
-        if (!issueExists) 
+        if (!issueExists)
             throw new KeyNotFoundException($"Задача не найдена");
 
         IssueAssignees assignees = IssueAssignees.Create(
