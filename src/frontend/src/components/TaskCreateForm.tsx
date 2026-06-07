@@ -134,9 +134,10 @@ function TaskCreateForm({
                             dueDate: task.dueDate ? task.dueDate.split('T')[0] : '',
                             // task.assignees — ProjectUserDto[], собираем IssueAssigneesDto[]
                             // role берём из самого assignee (его роль в проекте)
-                            assignees: task.assignees?.map((a: ProjectUserDto) => ({
-                                userId: a.id,
+                            assignees: task.assignees?.map((a: IssueAssigneesDto) => ({
+                                userId: a.userId,
                                 role: a.role as number,
+                                userName: a.userName
                             })) ?? [],
                         }
                         : {
@@ -227,7 +228,7 @@ function TaskCreateForm({
                 ...prev,
                 assignees: [
                     ...prev.assignees,
-                    {userId: member.id, role: member.role as number},
+                    {userId: member.id, role: member.role as number, userName: member.userName},
                 ],
             };
         });
@@ -284,8 +285,8 @@ function TaskCreateForm({
                     numberIssuePriority: formData.numberIssuePriority,
                     dueDate: formData.dueDate || null,
                     // UpdateIssueRequest.assigneeIds — string[] | null
-                    assigneeIds: formData.assignees.length > 0
-                        ? formData.assignees.map(a => a.userId)
+                    assignees: formData.assignees.length > 0
+                        ? formData.assignees
                         : null,
                 });
             } else {
@@ -309,6 +310,7 @@ function TaskCreateForm({
                 formData.assignees.forEach((assignee, i) => {
                     taskFormData.append(`Assignees[${i}].UserId`, assignee.userId);
                     taskFormData.append(`Assignees[${i}].ProjectRolesDto`, assignee.role.toString());
+                    taskFormData.append(`Assignees[${i}].UserName`, assignee.userName);
                 });
 
                 attachments.forEach(file => {

@@ -1,9 +1,8 @@
-﻿using TaskService.Domain.Entities.BaseEntity;
-using TaskService.Domain.ValueObjects;
+﻿using TaskService.Domain.ValueObjects;
 
 namespace TaskService.Domain.Entities;
 
-public class User : ISoftDeletable
+public class User //: ISoftDeletable
 {
     private User()
     {
