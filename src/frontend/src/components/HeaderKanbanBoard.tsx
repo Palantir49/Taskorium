@@ -1,7 +1,7 @@
 import {HeaderProps} from '../types';
 import {FaChartLine, FaFileAlt} from 'react-icons/fa';
-import { AuthenticatedComponent } from './AuthenticatedComponent';
-import { NotificationBell } from './NotificationBell';
+import {AuthenticatedComponent} from './AuthenticatedComponent';
+import {NotificationBell} from './NotificationBell';
 import './HeaderKanbanBoard.css';
 
 function Header({activeTab, onTabChange, authInfo}: HeaderProps) {
@@ -11,7 +11,7 @@ function Header({activeTab, onTabChange, authInfo}: HeaderProps) {
             <div className="header-content">
                 <div className="header-left">
                     <div className="logo">
-                        <span className="logo-text">TaskFlow</span>
+                        <span className="logo-text">Taskorium</span>
                     </div>
                     <nav className="header-nav">
                         <button
@@ -38,8 +38,8 @@ function Header({activeTab, onTabChange, authInfo}: HeaderProps) {
                 </div>
 
                 <div className="header-content-right">
-                    <NotificationBell />
-                    <AuthenticatedComponent authInfo={authInfo} />
+                    <NotificationBell/>
+                    <AuthenticatedComponent authInfo={authInfo}/>
                 </div>
             </div>
         </header>
