@@ -6,7 +6,7 @@ const LoginGate: React.FC = () => {
     const auth = useAuth();
     const lang = navigator.language.toLowerCase();
     const isRu = lang.startsWith('ru');
-    const loginText = isRu ? 'Продолжить с SSO' : 'Continue with SSO';
+    const loginText = 'Войти с помощью Keycloak';
 
     const handleLogin = () => {
         auth.signinRedirect();
@@ -18,8 +18,8 @@ const LoginGate: React.FC = () => {
     return (
         <div className="login-container">
             <div className="login-content">
-                <h2>{isRu ? 'Добро пожаловать в систему управления задачами и проектами Taskorium!' : 'Welcome to the Taskorium task and project management system!'}</h2>
-                <p>{isRu ? 'Для работы необходимо войти' : 'Please sign in to continue'}</p>
+                <h2>Добро пожаловать в сервис управления задачами и проектами Taskorium!</h2>
+                <p>Для работы необходимо войти</p>
                 <button onClick={handleLogin} className="login-button">
                     {loginText}
                 </button>
