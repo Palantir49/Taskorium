@@ -1,12 +1,15 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Commands.Projects;
+using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Projects.Write.UpdateProject;
 
-public class UpdateProjectHandler(TaskServiceDbContext context, HybridCache cache)
+public class UpdateProjectHandler(
+    TaskServiceDbContext context,
+    HybridCache cache,
+    ICurrentUserContext currentUserContext)
     : IRequestHandler<UpdateProjectCommand, ProjectResponse>
 {
     public async Task<ProjectResponse> Handle(UpdateProjectCommand request,
@@ -30,6 +33,6 @@ public class UpdateProjectHandler(TaskServiceDbContext context, HybridCache cach
         await cache.RemoveAsync(workspaceProjectsCacheKey, cancellationToken);
 
 
-        return project.ToResponse();
+        return project.ToResponse(currentUserContext.User.Id);
     }
 }

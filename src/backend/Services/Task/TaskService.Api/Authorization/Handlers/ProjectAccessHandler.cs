@@ -26,7 +26,6 @@ public class ProjectAccessHandler(
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
         ProjectAccessRequirement requirement)
     {
-
         logger.LogInformation("Начало процесса авторизация для совершения действия: {Action} над проектом",
             requirement.Action);
 
@@ -65,13 +64,13 @@ public class ProjectAccessHandler(
 
             case WorkspaceRolesDto.Admin:
                 context.Succeed(requirement);
-                break;
+                return;
 
             case WorkspaceRolesDto.Viewer:
                 if (requirement.Action == ProjectAction.View)
                 {
                     context.Succeed(requirement);
-                    break;
+                    return;
                 }
 
                 break;
@@ -90,6 +89,7 @@ public class ProjectAccessHandler(
                 if (requirement.Action is ProjectAction.View or ProjectAction.Update)
                 {
                     context.Succeed(requirement);
+                    return;
                 }
 
                 break;
@@ -97,6 +97,7 @@ public class ProjectAccessHandler(
                 if (requirement.Action == ProjectAction.View)
                 {
                     context.Succeed(requirement);
+                    return;
                 }
 
                 break;

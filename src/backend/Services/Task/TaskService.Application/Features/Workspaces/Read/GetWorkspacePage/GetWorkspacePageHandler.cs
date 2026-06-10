@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
-using TaskService.Contracts.User.Responses;
 using TaskService.Contracts.Workspace.Response;
 using TaskService.Infrastructure.Persistence;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TaskService.Application.Features.Workspaces.Read.GetWorkspacePage;
 
-public class GetWorkspacePageHandler(TaskServiceDbContext context) : IRequestHandler<GetWorkspacePageQuery, GetWorkspacePageResult>
+public class GetWorkspacePageHandler(TaskServiceDbContext context)
+    : IRequestHandler<GetWorkspacePageQuery, GetWorkspacePageResult>
 {
     public async Task<GetWorkspacePageResult> Handle(GetWorkspacePageQuery request, CancellationToken cancellationToken)
     {
         if (request.UserId is null)
         {
-            return new GetWorkspacePageResult(workspaces: []);
+            return new GetWorkspacePageResult([]);
         }
 
         var result = await context.Workspaces
@@ -25,11 +22,12 @@ public class GetWorkspacePageHandler(TaskServiceDbContext context) : IRequestHan
             .OrderByDescending(workspace => workspace.CreatedDate)
             .Skip(request.Skip)
             .Take(request.Take)
-            .Select(x => new WorkspaceResponse(id: x.Id,
-                                               name: x.Name.Value,
-                                               createdDate: x.CreatedDate))
+            .Select(x => new WorkspaceResponse(Id: x.Id,
+                Name: x.Name.Value,
+                CreatedDate: x.CreatedDate,
+                Role: x.WorkspaceMembers.First(member => member.UserId == request.UserId).Role.ToDto()))
             .ToListAsync(cancellationToken);
 
-        return new GetWorkspacePageResult(workspaces: result);
+        return new GetWorkspacePageResult(result);
     }
 }

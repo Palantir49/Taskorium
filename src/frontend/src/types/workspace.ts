@@ -25,6 +25,7 @@ export interface WorkspaceResponse {
     name: string;
     createdDate: string;
     ownerId?: string;
+    role: number;
 }
 
 export interface WorkspaceRolesDto {

@@ -2,15 +2,20 @@ import {HeaderProps} from '../types';
 import {FaChartLine, FaFileAlt} from 'react-icons/fa';
 import {AuthenticatedComponent} from './AuthenticatedComponent';
 import {NotificationBell} from './NotificationBell';
+import {useNavigate} from 'react-router-dom';
 import './HeaderKanbanBoard.css';
 
 function Header({activeTab, onTabChange, authInfo}: HeaderProps) {
+    const navigate = useNavigate();
+    const handleLogoClick = () => {
+        navigate('/');
+    }
 
     return (
         <header className="header">
             <div className="header-content">
                 <div className="header-left">
-                    <div className="logo">
+                    <div className="logo" onClick={handleLogoClick} style={{cursor: 'pointer'}}>
                         <span className="logo-text">Taskorium</span>
                     </div>
                     <nav className="header-nav">

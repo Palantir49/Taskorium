@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Commands.Projects;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Common.DTO;
-using TaskService.Contracts.Project.Responses;
-using TaskService.Contracts.User.Responses;
 using TaskService.Contracts.Workspace.Response;
-using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Workspaces.Read.GetWorkspaceMembers
