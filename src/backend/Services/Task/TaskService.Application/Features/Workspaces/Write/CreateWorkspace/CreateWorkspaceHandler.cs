@@ -37,6 +37,7 @@ public class CreateWorkspaceHandler(TaskServiceDbContext context, HybridCache ca
 
         return new CreateWorkspaceResult(
             workspace.Id,
-            workspace.Name.ToString());
+            workspace.Name.ToString(),
+            WorkspaceRolesDto.Creator);
     }
 }
