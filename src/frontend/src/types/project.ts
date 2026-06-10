@@ -26,6 +26,7 @@ export interface ProjectResponse {
     abbreviation: string;
     workspaceId: string;
     createdDate: string;
+    role: number;
 }
 
 export interface ProjectUserDto {

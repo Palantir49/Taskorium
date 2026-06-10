@@ -1,4 +1,5 @@
-﻿using TaskService.Application.Exceptions;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskService.Application.Exceptions;
 using TaskService.Application.Mediator;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
@@ -11,7 +12,8 @@ public class CreateUserHandler(TaskServiceDbContext context)
     public async Task<CreateUserResult> Handle(CreateUserCommand command, CancellationToken cancellationToken = default)
     {
         //проверим существует ли пользователь
-        var user = await context.Users.FindAsync([command.KeycloakId], cancellationToken);
+        var user = await context.Users.FirstOrDefaultAsync(element => element.KeycloakId == command.KeycloakId,
+            cancellationToken);
 
         if (user is not null)
         {

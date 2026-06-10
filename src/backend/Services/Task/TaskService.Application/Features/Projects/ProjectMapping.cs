@@ -1,9 +1,10 @@
 ﻿using TaskService.Application.Features.Projects.Write.UpdateProject;
+using TaskService.Application.Mapping;
 using TaskService.Contracts.Project.Requests;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
 
-namespace TaskService.Application.Commands.Projects;
+namespace TaskService.Application.Features.Projects;
 
 public static class ProjectMapping
 {
@@ -17,22 +18,23 @@ public static class ProjectMapping
     //        );
     //}
 
-    public static ProjectResponse ToResponse(this Project project)
+    public static ProjectResponse ToResponse(this Project project, Guid userId)
     {
         return new ProjectResponse(
-            Id: project.Id,
-            Name: project.Name.ToString(),
-            Description: project.Description,
-            Abbreviation: project.Abbreviation,
-            WorkspaceId: project.WorkspaceId,
-            CreatedDate: project.CreatedDate);
+            project.Id,
+            project.Name.ToString(),
+            project.Description,
+            project.Abbreviation,
+            project.WorkspaceId,
+            project.CreatedDate,
+            project.ProjectMembers.First(element => element.UserId == userId).Role.ToDto());
     }
 
     public static UpdateProjectCommand ProjectUpdateCommand(Guid id, UpdateProjectRequest request)
     {
         return new UpdateProjectCommand(
-            id: id,
-            Name: request.Name,
-            Description: request.Description);
+            id,
+            request.Name,
+            request.Description);
     }
 }

@@ -1,16 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskService.Application.Commands.Projects;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.IssueStatuses.Command;
 using TaskService.Application.Features.ProjectMembers.Write.DeleteProjectMember;
+using TaskService.Application.Features.Projects;
 using TaskService.Application.Features.Projects.Read.GetProjectById;
 using TaskService.Application.Features.Projects.Read.GetProjectByWorkspaceId;
 using TaskService.Application.Features.Projects.Read.GetProjectMembers;
 using TaskService.Application.Features.Projects.Write.AddProjectMember;
 using TaskService.Application.Features.Projects.Write.DeleteProjectById;
 using TaskService.Application.Features.Tags.Command;
-using TaskService.Application.Features.WorkspaceMembers.Write.DeleteWorkspaceMember;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Issue.Responses;
 using TaskService.Contracts.IssueStatus;

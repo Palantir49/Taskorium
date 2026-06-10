@@ -3,7 +3,6 @@ using TaskService.Api.Authorization.Actions;
 using TaskService.Api.Authorization.Requirements;
 using TaskService.Api.Authorization.Utils;
 using TaskService.Application.Interfaces;
-using TaskService.Application.Mediator;
 using TaskService.Contracts.Enum;
 
 namespace TaskService.Api.Authorization.Handlers;
@@ -33,6 +32,7 @@ public class WorkSpaceAccessHandler(
             context.Succeed(requirement);
             return;
         }
+
         var workspaceId = AuthorizationUtils.GetIdFromRoute(httpContextAccessor, "workspaceId");
         if (workspaceId is null)
         {
@@ -52,6 +52,7 @@ public class WorkSpaceAccessHandler(
             context.Fail();
             return;
         }
+
         var user = userContext.User;
 
 
@@ -70,6 +71,7 @@ public class WorkSpaceAccessHandler(
                 if (requirement.Action == WorkSpaceAction.View)
                 {
                     context.Succeed(requirement);
+                    return;
                 }
 
                 break;

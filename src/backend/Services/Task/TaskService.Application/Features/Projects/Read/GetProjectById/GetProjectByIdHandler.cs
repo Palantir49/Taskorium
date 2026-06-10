@@ -1,12 +1,15 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Commands.Projects;
+using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Projects.Read.GetProjectById;
 
-public class ProjectGetByIdHandler(TaskServiceDbContext context, HybridCache cache)
+public class ProjectGetByIdHandler(
+    TaskServiceDbContext context,
+    HybridCache cache,
+    ICurrentUserContext currentUserContext)
     : IRequestHandler<GetProjectByIdQuery, ProjectResponse>
 {
     public async Task<ProjectResponse> Handle(GetProjectByIdQuery request,
@@ -19,7 +22,7 @@ public class ProjectGetByIdHandler(TaskServiceDbContext context, HybridCache cac
             var project = await context.Projects.FindAsync([request.Id], cancellationToken) ??
                           throw new KeyNotFoundException($"Проект с id: {request.Id} не найден");
 
-            return project.ToResponse();
+            return project.ToResponse(currentUserContext.User.Id);
         }, cancellationToken: cancellationToken);
     }
 }

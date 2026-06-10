@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using TaskService.Contracts.Enum;
 
-namespace TaskService.Contracts.Workspace.Response
-{
-    public record class WorkspaceResponse(Guid id,
-                                          string name,
-                                          DateTimeOffset createdDate);
-}
+namespace TaskService.Contracts.Workspace.Response;
+
+public record WorkspaceResponse(
+    Guid Id,
+    string Name,
+    DateTimeOffset CreatedDate,
+    WorkspaceRolesDto Role);

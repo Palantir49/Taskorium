@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Commands.Projects;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
@@ -11,49 +10,50 @@ namespace TaskService.Application.Features.Projects.Write.CreateProject;
 public class CreateProjectHandler(TaskServiceDbContext context, HybridCache cache)
     : IRequestHandler<CreateProjectCommand, ProjectResponse>
 {
-    public async Task<ProjectResponse> Handle(CreateProjectCommand command, CancellationToken cancellationToken = default)
+    public async Task<ProjectResponse> Handle(CreateProjectCommand command,
+        CancellationToken cancellationToken = default)
     {
         _ = await context.Workspaces.FindAsync([command.WorkspaceId], cancellationToken) ??
             throw new KeyNotFoundException($"Рабочая область с id: {command.WorkspaceId} не найдена");
 
         var project = Project.Create(
-            name: command.Name,
-            description: command.Description,
-            abbreviation: command.Abbreviation,
-            workspaceId: command.WorkspaceId
+            command.Name,
+            command.Description,
+            command.Abbreviation,
+            command.WorkspaceId
         );
 
-        IssueStatus initStatus = IssueStatus.Create(
-            name: "Новая",
-            numberType: (int)IssueStatusType.Initial,
-            position: 0,
+        var initStatus = IssueStatus.Create(
+            "Новая",
+            (int)IssueStatusType.Initial,
+            0,
             projectId: project.Id,
             color: "#6B7280"
-            );
+        );
 
-        IssueStatus processStatus = IssueStatus.Create(
-            name: "В работе",
-            numberType: (int)IssueStatusType.Process,
-            position: 1,
+        var processStatus = IssueStatus.Create(
+            "В работе",
+            (int)IssueStatusType.Process,
+            1,
             projectId: project.Id,
             color: "#3B82F6"
-            );
+        );
 
-        IssueStatus successStatus = IssueStatus.Create(
-            name: "Выполнено",
-            numberType: (int)IssueStatusType.Success,
-            position: 2,
+        var successStatus = IssueStatus.Create(
+            "Выполнено",
+            (int)IssueStatusType.Success,
+            2,
             projectId: project.Id,
             color: "#10B981"
-            );
+        );
 
-        IssueStatus rejectedStatus = IssueStatus.Create(
-            name: "Отменено",
-            numberType: (int)IssueStatusType.Rejected,
-            position: 3,
+        var rejectedStatus = IssueStatus.Create(
+            "Отменено",
+            (int)IssueStatusType.Rejected,
+            3,
             projectId: project.Id,
             color: "#DC2626"
-            );
+        );
 
         var existUser = await context.Users.FindAsync([command.UserId], cancellationToken);
         if (existUser is null)
@@ -79,7 +79,6 @@ public class CreateProjectHandler(TaskServiceDbContext context, HybridCache cach
         var userCacheKey = $"user_by_keycloak_id_{existUser.KeycloakId}";
         await cache.RemoveAsync(userCacheKey, cancellationToken);
 
-        return project.ToResponse();
+        return project.ToResponse(command.UserId);
     }
 }
-
