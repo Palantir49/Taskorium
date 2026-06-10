@@ -93,6 +93,7 @@ public class IssueAccessHandler(
                 if (requirement.Action is IssueAction.View or IssueAction.Update)
                 {
                     context.Succeed(requirement);
+                    return;
                 }
 
                 break;
@@ -100,6 +101,7 @@ public class IssueAccessHandler(
                 if (requirement.Action == IssueAction.View)
                 {
                     context.Succeed(requirement);
+                    return;
                 }
 
                 break;
