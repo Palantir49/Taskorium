@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using TaskService.Application.Features.IssueStatuses.Command;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
@@ -9,10 +10,11 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.IssueStatuses.Handler;
 
-public class IssueStatusCreateHandler(TaskServiceDbContext context) : IRequestHandler<IssueStatusCreateCommand, IssueStatusResponse>
+public class IssueStatusCreateHandler(TaskServiceDbContext context, IValidator<IssueStatusCreateCommand> validator) : IRequestHandler<IssueStatusCreateCommand, IssueStatusResponse>
 {
     public async Task<IssueStatusResponse> Handle(IssueStatusCreateCommand request, CancellationToken cancellationToken = default)
     {
+        await validator.ValidateAndThrowAsync(request, cancellationToken);
         if ((IssueStatusType)request.Type == IssueStatusType.Initial)
         {
             throw new Exception("В проекте не может существовать больше одного статуса инициализации задачи");

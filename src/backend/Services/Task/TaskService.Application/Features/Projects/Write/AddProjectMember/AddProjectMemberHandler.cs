@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Exceptions;
 using TaskService.Application.Features.WorkspaceMembers;
@@ -11,12 +13,14 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TaskService.Application.Features.Projects.Write.AddProjectMember;
 
-public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache cache)
+public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache cache, IValidator<AddProjectMemberCommand> validator)
     : IRequestHandler<AddProjectMemberCommand, AddProjectMemberResult>
 {
     public async Task<AddProjectMemberResult> Handle(AddProjectMemberCommand command,
         CancellationToken cancellationToken = default)
     {
+        await validator.ValidateAndThrowAsync(command, cancellationToken);
+
         var existProject = await context.Projects.Include(project => project.ProjectMembers)
             .FirstOrDefaultAsync(element => element.Id == command.ProjectId, cancellationToken);
         if (existProject is null)

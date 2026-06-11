@@ -6,27 +6,27 @@ using TaskService.Application.Features.Users.Write.CreateUser;
 
 namespace TaskService.Application.Validators.User
 {
-    internal class CreateUserValidator : AbstractValidator<CreateUserCommand>
+    public class CreateUserValidator : AbstractValidator<CreateUserCommand>
     {
         public CreateUserValidator()
         {
             RuleFor(x => x.Email)
                 .EmailAddress()
-                .WithMessage((context) => $"Email '{context.Email}' имеет неверный формат");
+                    .WithMessage((context) => $"Email '{context.Email}' имеет неверный формат");
 
             RuleFor(x => x.Username)
                 .NotEmpty()
-                .WithMessage("Имя пользователя обязательно")
+                    .WithMessage("Имя пользователя обязательно")
                 .MinimumLength(3)
-                .WithMessage("Минимальная длина - 3 символа")
+                    .WithMessage("Минимальная длина - 3 символа")
                 .MaximumLength(50)
-                .WithMessage("Максимальная длина - 50 символов")
+                    .WithMessage("Максимальная длина - 50 символов")
                 .Matches(@"^[a-zA-Zа-яА-Я0-9_]+$")
-                .WithMessage("Только буквы, цифры и подчеркивание");
+                    .WithMessage("Только буквы, цифры и подчеркивание");
 
             RuleFor(x => x.Name)
                 .Matches(@"^[a-zA-Zа-яА-ЯёЁ\s-]*$")
-                .WithMessage("Имя содержит недопустимые символы");
+                    .WithMessage("Имя содержит недопустимые символы");
         }
     }
 }

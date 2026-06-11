@@ -30,10 +30,10 @@ public static class IssueStatusMapping
     public static IssueStatusUpdateCommand IssueStatusUpdateCommand(Guid id, IssueStatusUpdateRequest request)
     {
         return new IssueStatusUpdateCommand(
-            id: id,
-            name: request.name,
-            type: request.type,
-            position: request.position,
-            color: request.color);
+            Id: id,
+            Name: request.Name,
+            Type: request.Type,
+            Position: request.Position,
+            Color: request.Color);
     }
 }

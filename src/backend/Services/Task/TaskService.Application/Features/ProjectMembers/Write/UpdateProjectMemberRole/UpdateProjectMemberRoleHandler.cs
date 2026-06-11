@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Features.Projects.Write.AddProjectMember;
@@ -12,11 +13,12 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.ProjectMembers.Write.UpdateProjectMemberRole
 {
-    public class UpdateProjectMemberRoleHandler(TaskServiceDbContext context, HybridCache cache)
+    public class UpdateProjectMemberRoleHandler(TaskServiceDbContext context, HybridCache cache, IValidator<UpdateProjectMemberRoleCommand> validator)
         : IRequestHandler<UpdateProjectMemberRoleCommand, AddProjectMemberResult>
     {
         public async Task<AddProjectMemberResult> Handle(UpdateProjectMemberRoleCommand request, CancellationToken cancellationToken = default)
         {
+            await validator.ValidateAndThrowAsync(request, cancellationToken);
             var user = await context.Users.Include(x => x.ProjectMembers)
                                           .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
             if (user == null)

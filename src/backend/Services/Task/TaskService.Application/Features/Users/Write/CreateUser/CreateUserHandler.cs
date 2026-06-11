@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+using FluentValidation;
 using TaskService.Application.Exceptions;
+using TaskService.Application.Features.Workspaces.Write.CreateWorkspace;
 using TaskService.Application.Mediator;
 using TaskService.Domain.Entities;
 using TaskService.Domain.ValueObjects;
@@ -7,11 +9,12 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Users.Write.CreateUser;
 
-public class CreateUserHandler(TaskServiceDbContext context)
+public class CreateUserHandler(TaskServiceDbContext context, IValidator<CreateUserCommand> validator)
     : IRequestHandler<CreateUserCommand, CreateUserResult>
 {
     public async Task<CreateUserResult> Handle(CreateUserCommand command, CancellationToken cancellationToken = default)
     {
+        await validator.ValidateAndThrowAsync(command, cancellationToken);
         //проверим существует ли пользователь
         var user = await context.Users.FirstOrDefaultAsync(element => element.KeycloakId == command.KeycloakId,
             cancellationToken);

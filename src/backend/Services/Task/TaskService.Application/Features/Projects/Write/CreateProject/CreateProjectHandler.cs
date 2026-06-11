@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
+﻿using System.ComponentModel.DataAnnotations;
+using FluentValidation;
+using Microsoft.Extensions.Caching.Hybrid;
+using TaskService.Application.Commands.Projects;
+using TaskService.Application.Features.Users.Write.CreateUser;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
@@ -7,12 +11,14 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Projects.Write.CreateProject;
 
-public class CreateProjectHandler(TaskServiceDbContext context, HybridCache cache)
+public class CreateProjectHandler(TaskServiceDbContext context, HybridCache cache, IValidator<CreateProjectCommand> validator)
     : IRequestHandler<CreateProjectCommand, ProjectResponse>
 {
     public async Task<ProjectResponse> Handle(CreateProjectCommand command,
         CancellationToken cancellationToken = default)
     {
+        await validator.ValidateAndThrowAsync(command, cancellationToken);
+
         _ = await context.Workspaces.FindAsync([command.WorkspaceId], cancellationToken) ??
             throw new KeyNotFoundException($"Рабочая область с id: {command.WorkspaceId} не найдена");
 
@@ -23,34 +29,34 @@ public class CreateProjectHandler(TaskServiceDbContext context, HybridCache cach
             command.WorkspaceId
         );
 
-        var initStatus = IssueStatus.Create(
-            "Новая",
-            (int)IssueStatusType.Initial,
-            0,
+        IssueStatus initStatus = IssueStatus.Create(
+            name: "Новая",
+            type: IssueStatusType.Initial,
+            position: 0,
             projectId: project.Id,
             color: "#6B7280"
         );
 
-        var processStatus = IssueStatus.Create(
-            "В работе",
-            (int)IssueStatusType.Process,
-            1,
+        IssueStatus processStatus = IssueStatus.Create(
+            name: "В работе",
+            type: IssueStatusType.Process,
+            position: 1,
             projectId: project.Id,
             color: "#3B82F6"
         );
 
-        var successStatus = IssueStatus.Create(
-            "Выполнено",
-            (int)IssueStatusType.Success,
-            2,
+        IssueStatus successStatus = IssueStatus.Create(
+            name: "Выполнено",
+            type: IssueStatusType.Success,
+            position: 2,
             projectId: project.Id,
             color: "#10B981"
         );
 
-        var rejectedStatus = IssueStatus.Create(
-            "Отменено",
-            (int)IssueStatusType.Rejected,
-            3,
+        IssueStatus rejectedStatus = IssueStatus.Create(
+            name: "Отменено",
+            type: IssueStatusType.Rejected,
+            position: 3,
             projectId: project.Id,
             color: "#DC2626"
         );
