@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TaskService.Application.Cache
 {
-    internal class CollectionsCache
+    public class CollectionsCache
     {
         //TODO: сделать!
     }

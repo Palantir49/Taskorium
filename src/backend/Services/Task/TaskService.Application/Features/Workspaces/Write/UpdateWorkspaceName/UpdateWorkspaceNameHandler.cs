@@ -1,15 +1,17 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
+﻿using FluentValidation;
+using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Mediator;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Workspaces.Write.UpdateWorkspaceName;
 
-public class UpdateWorkspaceNameHandler(TaskServiceDbContext context, HybridCache cache)
+public class UpdateWorkspaceNameHandler(TaskServiceDbContext context, HybridCache cache, IValidator<UpdateWorkspaceNameCommand> validator)
     : IRequestHandler<UpdateWorkspaceNameCommand, UpdateWorkspaceNameResult>
 {
     public async Task<UpdateWorkspaceNameResult> Handle(UpdateWorkspaceNameCommand request,
         CancellationToken cancellationToken = default)
     {
+        await validator.ValidateAndThrowAsync(request, cancellationToken);
         var workspace = await context.Workspaces.FindAsync([request.Id], cancellationToken);
         if (workspace == null)
         {

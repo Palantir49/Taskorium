@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
+﻿using FluentValidation;
+using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
@@ -9,12 +10,14 @@ namespace TaskService.Application.Features.Projects.Write.UpdateProject;
 public class UpdateProjectHandler(
     TaskServiceDbContext context,
     HybridCache cache,
-    ICurrentUserContext currentUserContext)
+    ICurrentUserContext currentUserContext,
+    IValidator<UpdateProjectCommand> validator)
     : IRequestHandler<UpdateProjectCommand, ProjectResponse>
 {
     public async Task<ProjectResponse> Handle(UpdateProjectCommand request,
         CancellationToken cancellationToken = default)
     {
+        await validator.ValidateAndThrowAsync(request, cancellationToken);
         var project = await context.Projects.FindAsync([request.id], cancellationToken) ??
                       throw new KeyNotFoundException($"Проект с id: {request.id} не найден");
 

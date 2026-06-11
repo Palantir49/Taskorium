@@ -18,14 +18,14 @@ public static class TagMapping
     public static TagCreateCommand ToCommand(this TagCreateRequest request)
     {
         return new TagCreateCommand(
-            name: request.name,
-            projectId: request.projectId);
+            Name: request.name,
+            ProjectId: request.projectId);
     }
 
     public static TagUpdateCommand TagUpdateCommand(Guid id, TagUpdateRequest request)
     {
         return new TagUpdateCommand(
-            id: id,
-            name: request.name);
+            Id: id,
+            Name: request.name);
     }
 }
