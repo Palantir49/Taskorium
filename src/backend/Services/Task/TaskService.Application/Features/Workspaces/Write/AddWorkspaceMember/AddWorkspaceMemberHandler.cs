@@ -11,7 +11,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TaskService.Application.Features.Workspaces.Write.AddWorkspaceMember;
 
-public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache cache,IValidator<AddWorkspaceMemberCommand> validator)
+public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache cache, IValidator<AddWorkspaceMemberCommand> validator)
     : IRequestHandler<AddWorkspaceMemberCommand, AddWorkspaceMemberResult>
 {
     public async Task<AddWorkspaceMemberResult> Handle(AddWorkspaceMemberCommand command,

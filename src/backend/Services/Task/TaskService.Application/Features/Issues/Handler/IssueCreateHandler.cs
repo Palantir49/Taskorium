@@ -43,7 +43,7 @@ public sealed class IssueCreateHandler(
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Начало создания задачи для проекта {ProjectId}", request.ProjectId);
-        
+
         await validator.ValidateAndThrowAsync(request, cancellationToken);
 
         var (project, initialStatus) = await LoadProjectDataAsync(request.ProjectId, cancellationToken);

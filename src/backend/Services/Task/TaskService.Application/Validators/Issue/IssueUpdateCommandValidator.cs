@@ -22,7 +22,7 @@ namespace TaskService.Application.Validators.Issue
            .Matches(@"^[a-zA-Zа-яА-ЯёЁ0-9\s\-_.,!?()]+$")
                .WithMessage("Название содержит недопустимые символы");
 
-           
+
             // Описание
             RuleFor(x => x.Description)
                 .MaximumLength(5000)

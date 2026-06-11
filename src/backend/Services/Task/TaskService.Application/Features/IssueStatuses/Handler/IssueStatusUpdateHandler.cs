@@ -8,13 +8,13 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.IssueStatuses.Handler;
 
-public class IssueStatusUpdateHandler(TaskServiceDbContext context,IValidator<IssueStatusUpdateCommand> validator) 
+public class IssueStatusUpdateHandler(TaskServiceDbContext context, IValidator<IssueStatusUpdateCommand> validator)
     : IRequestHandler<IssueStatusUpdateCommand, IssueStatusResponse>
 {
     public async Task<IssueStatusResponse> Handle(IssueStatusUpdateCommand request,
         CancellationToken cancellationToken = default)
     {
-        await validator.ValidateAsync(request, cancellationToken);  
+        await validator.ValidateAsync(request, cancellationToken);
         var status = await context.IssueStatus.FindAsync([request.Id], cancellationToken) ??
                      throw new NullReferenceException($"Статус с id: {request.Id} не найден");
 

@@ -6,7 +6,7 @@ using TaskService.Application.Features.WorkspaceMembers.Write.Command;
 
 namespace TaskService.Application.Validators.WorkspaceMember
 {
-    public class UpdateWorkspaceMemberRoleCommandValidator:AbstractValidator<UpdateWorkspaceMemberRoleCommand>
+    public class UpdateWorkspaceMemberRoleCommandValidator : AbstractValidator<UpdateWorkspaceMemberRoleCommand>
     {
     }
 }
