@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Commands.Projects;
 using TaskService.Application.Features.Users.Write.CreateUser;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;

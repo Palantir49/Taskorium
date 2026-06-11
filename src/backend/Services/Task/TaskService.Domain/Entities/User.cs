@@ -31,9 +31,9 @@ public class User //: ISoftDeletable
     public bool IsDeleted { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
 
-    public static User Create(Guid keycloakId, UserName userName, EmailAdress email, string fullName)
+    public static User Create(Guid keycloakId, string userName, string email, string fullName)
     {
-        return new User(Guid.CreateVersion7(), keycloakId, userName, email, DateTimeOffset.UtcNow, fullName);
+        return new User(Guid.CreateVersion7(), keycloakId, new UserName(userName), new EmailAdress(email), DateTimeOffset.UtcNow, fullName);
     }
 
     public void UpdateEmail(EmailAdress newEmail)

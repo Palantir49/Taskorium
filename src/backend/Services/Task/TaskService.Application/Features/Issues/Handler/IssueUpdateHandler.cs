@@ -15,8 +15,9 @@ public class IssueUpdateHandler(TaskServiceDbContext context, HybridCache cache,
 {
     public async Task<IssueResponse> Handle(IssueUpdateCommand request, CancellationToken cancellationToken = default)
     {
-        var issue = await context.Issues.FindAsync([request.id], cancellationToken) ??
-                    throw new NullReferenceException($"Задача с id: {request.id} не найдена");
+        await validator.ValidateAndThrowAsync(request, cancellationToken);
+        var issue = await context.Issues.FindAsync([request.Id], cancellationToken) ??
+                    throw new NullReferenceException($"Задача с id: {request.Id} не найдена");
 
         _ = await context.Projects.FindAsync([issue.ProjectId], cancellationToken) ??
             throw new InvalidOperationException($"Проект с id: {issue.ProjectId}, связанный с задачей, не существует");

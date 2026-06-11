@@ -10,7 +10,8 @@ namespace TaskService.Application.Features.Projects.Write.UpdateProject;
 public class UpdateProjectHandler(
     TaskServiceDbContext context,
     HybridCache cache,
-    ICurrentUserContext currentUserContext)
+    ICurrentUserContext currentUserContext,
+    IValidator<UpdateProjectCommand> validator)
     : IRequestHandler<UpdateProjectCommand, ProjectResponse>
 {
     public async Task<ProjectResponse> Handle(UpdateProjectCommand request,

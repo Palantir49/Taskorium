@@ -13,47 +13,47 @@ public class FakeDataFactory
             id: Guid.Parse("019d58e9-98f4-7638-8fc0-f5e0a6809ec9"),
             user: User.Create(
                 keycloakId: Guid.Parse("e24e7bca-2ec4-4ba9-9106-18ba02272c93"),
-                userName: new UserName("test"),
-                email: new EmailAdress("test@test.ru"),
+                userName: "test",
+                email: "test@test.ru",
                 fullName: "Test Testov"));
         yield return (
             id: Guid.Parse("00000000-0000-0000-0000-000000000001"),
             user: User.Create(
                 keycloakId: Guid.Parse("a0000000-0000-0000-0000-000000000001"),
-                userName: new UserName("alice"),
-                email: new EmailAdress("alice@example.com"),
+                userName: "alice",
+                email: "alice@example.com",
                 fullName: "Alice Anderson"));
 
         yield return (
             id: Guid.Parse("00000000-0000-0000-0000-000000000002"),
             user: User.Create(
                 keycloakId: Guid.Parse("a0000000-0000-0000-0000-000000000002"),
-                userName: new UserName("bob"),
-                email: new EmailAdress("bob@example.com"),
+                userName: "bob",
+                email: "bob@example.com",
                 fullName: "Bob Brown"));
 
         yield return (
             id: Guid.Parse("00000000-0000-0000-0000-000000000003"),
             user: User.Create(
                 keycloakId: Guid.Parse("a0000000-0000-0000-0000-000000000003"),
-                userName: new UserName("carol"),
-                email: new EmailAdress("carol@example.com"),
+                userName: "carol",
+                email: "carol@example.com",
                 fullName: "Carol Chen"));
 
         yield return (
             id: Guid.Parse("00000000-0000-0000-0000-000000000004"),
             user: User.Create(
                 keycloakId: Guid.Parse("a0000000-0000-0000-0000-000000000004"),
-                userName: new UserName("badboy"),
-                email: new EmailAdress("badboy@superbadboy.com"),
+                userName: "badboy",
+                email: "badboy@superbadboy.com",
                 fullName: "Сын маминой подруги"));
 
         yield return (
             id: Guid.Parse("00000000-0000-0000-0000-000000000777"),
             user: User.Create(
                 keycloakId: Guid.Parse("a0000000-0000-0000-0000-000000000777"),
-                userName: new UserName("BEST"),
-                email: new EmailAdress("Best@TheBest.com"),
+                userName: "BEST",
+                email: "Best@TheBest.com",
                 fullName: "BEST THE BEST"));
     }
 

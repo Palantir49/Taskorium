@@ -9,15 +9,15 @@ public class Issue : BaseEntities, ISoftDeletable
     protected Issue() { }
 
     private Issue(Guid id, string name, string? description, string key, Guid projectId, Guid taskStatusId,
-        int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate) : base(id, name)
+        IssueType issueType, IssuePriority issuePriority, DateTimeOffset? dueDate) : base(id, name)
     {
         ProjectId = projectId;
         Key = new IssueKey(key);
         IssueStatusId = taskStatusId;
         Description = description?.Trim();
         DueDate = dueDate;
-        IssueType = (IssueType)numberIssueType;
-        IssuePriority = (IssuePriority)numberIssuePriority;
+        IssueType = issueType;
+        IssuePriority = issuePriority;
     }
 
     public Guid ProjectId { get; }
@@ -38,7 +38,7 @@ public class Issue : BaseEntities, ISoftDeletable
     public DateTimeOffset? DeletedAt { get; set; }
 
     public static Issue Create(string name, string? description, string key, Guid projectId, Guid taskStatusId,
-        int numberIssueType, int numberIssuePriority, DateTimeOffset? dueDate)
+        IssueType issueType, IssuePriority issuePriority, DateTimeOffset? dueDate)
     {
         return new Issue(
             Guid.CreateVersion7(),
@@ -47,8 +47,8 @@ public class Issue : BaseEntities, ISoftDeletable
             key,
             projectId,
             taskStatusId,
-            numberIssueType,
-            numberIssuePriority,
+            issueType,
+            issuePriority,
             dueDate);
     }
 
