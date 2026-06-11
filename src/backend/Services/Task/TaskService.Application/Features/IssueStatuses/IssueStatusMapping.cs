@@ -20,11 +20,11 @@ public static class IssueStatusMapping
     public static IssueStatusCreateCommand ToCommand(this IssueStatusCreateRequest request)
     {
         return new IssueStatusCreateCommand(
-            name: request.name,
-            projectId: request.projectId,
-            numberType: request.numberType,
-            position: request.position,
-            color: request.color);
+            Name: request.Name,
+            ProjectId: request.ProjectId,
+            Type: request.Type,
+            Position: request.Position,
+            Color: request.Color);
     }
 
     public static IssueStatusUpdateCommand IssueStatusUpdateCommand(Guid id, IssueStatusUpdateRequest request)

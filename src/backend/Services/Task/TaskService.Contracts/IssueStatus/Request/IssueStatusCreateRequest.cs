@@ -1,9 +1,11 @@
-﻿namespace TaskService.Contracts.IssueStatus.Request;
+﻿using TaskService.Contracts.Enum;
+
+namespace TaskService.Contracts.IssueStatus.Request;
 
 public record class IssueStatusCreateRequest(
-    string name,
-    Guid projectId,
-    int numberType,
-    int position,
-    string color);
+    string Name,
+    Guid ProjectId,
+    IssueStatusTypeDto Type,
+    int Position,
+    string Color);
 

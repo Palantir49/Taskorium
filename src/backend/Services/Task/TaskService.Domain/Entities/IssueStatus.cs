@@ -24,12 +24,12 @@ public class IssueStatus : BaseEntities, ISoftDeletable
         Color = color;
     }
 
-    public static IssueStatus Create(string name, int numberType, int position, string color, Guid projectId)
+    public static IssueStatus Create(string name, IssueStatusType type, int position, string color, Guid projectId)
     {
         return new IssueStatus(
             id: Guid.CreateVersion7(),
             name: name,
-            type: (IssueStatusType)numberType,
+            type: type,
             position: position,
             color: DomainColor.FromHex(color),
             projectId: projectId);

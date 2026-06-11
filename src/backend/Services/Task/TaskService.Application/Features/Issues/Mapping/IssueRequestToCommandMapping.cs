@@ -23,8 +23,8 @@ public static class IssueRequestToCommandMapping
         return new IssueCreateCommand(
             request.Name,
             request.ProjectId,
-            request.NumberIssueType,
-            request.NumberIssuePriority,
+            request.IssueType,
+            request.IssuePriority,
             request.Description,
             request.DueDate?.ToUniversalTime(),
             attachments,

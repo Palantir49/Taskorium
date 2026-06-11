@@ -107,8 +107,8 @@ public sealed class IssueCreateHandler(
             issueKey,
             request.ProjectId,
             statusId,
-            request.NumberIssueType,
-            request.NumberIssuePriority,
+            request.IssueType.ToEntity(),
+            request.IssuePriority.ToEntity(),
             request.DueDate);
     }
 
@@ -398,8 +398,8 @@ public sealed class IssueCreateHandler(
 
     private record IssueRecipient
     {
-        internal Guid KeycloakId { get; init; }
-        internal required string UserName { get; init; }
-        internal string? Email { get; init; }
+        public Guid KeycloakId { get; init; }
+        public required string UserName { get; init; }
+        public string? Email { get; init; }
     }
 }
