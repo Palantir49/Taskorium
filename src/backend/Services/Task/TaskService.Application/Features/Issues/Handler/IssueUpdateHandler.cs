@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Features.Issues.Mapping;
@@ -10,13 +11,17 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Issues.Handler;
 
-public class IssueUpdateHandler(TaskServiceDbContext context, HybridCache cache, IValidator<IssueUpdateCommand> validator)
+public class IssueUpdateHandler(
+    TaskServiceDbContext context,
+    HybridCache cache,
+    IValidator<IssueUpdateCommand> validator)
     : IRequestHandler<IssueUpdateCommand, IssueResponse>
 {
     public async Task<IssueResponse> Handle(IssueUpdateCommand request, CancellationToken cancellationToken = default)
     {
         await validator.ValidateAndThrowAsync(request, cancellationToken);
-        var issue = await context.Issues.FindAsync([request.Id], cancellationToken) ??
+        var issue = await context.Issues.Where(element => element.Id == request.Id)
+                        .Include(element => element.IssueAssignees).FirstOrDefaultAsync(cancellationToken) ??
                     throw new NullReferenceException($"Задача с id: {request.Id} не найдена");
 
         _ = await context.Projects.FindAsync([issue.ProjectId], cancellationToken) ??
