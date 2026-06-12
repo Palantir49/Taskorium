@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using FluentValidation;
+using TaskService.Application.Features.Projects.Write.CreateProject;
+
+namespace TaskService.Application.Validators.Project
+{
+    public class CreateProjectCommandValidator : AbstractValidator<CreateProjectCommand>
+    {
+        public CreateProjectCommandValidator()
+        {
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .Matches(@"^[a-zA-Zа-яА-Я0-9_]+$")
+                    .WithMessage("Только буквы, цифры и подчеркивание");
+            RuleFor(x => x.Description)
+                .MaximumLength(2000)
+                    .WithMessage("Описание не может быть длиннее 2000 символов");
+            RuleFor(x => x.Abbreviation)
+                .MaximumLength(5)
+                    .WithMessage("Аббревиатура не может быть длиннее 5 символов");
+            RuleFor(x => x.UserId)
+                .NotEqual(Guid.Empty)
+                    .WithMessage("Id пользователя создателя не может быть пустым");
+            RuleFor(x => x.WorkspaceId)
+                .NotEqual(Guid.Empty)
+                    .WithMessage("Id рабочей области не может быть пустым");
+
+        }
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -33,7 +34,8 @@ public sealed class IssueCreateHandler(
     IOutboxMessageFactory outboxMessageFactory,
     IssueNotificationService notificationService,
     ILogger<IssueCreateHandler> logger,
-    IHttpContextAccessor httpContextAccessor)
+    IHttpContextAccessor httpContextAccessor,
+    IValidator<IssueCreateCommand> validator)
     : IRequestHandler<IssueCreateCommand, IssueResponse>
 {
     public async Task<IssueResponse> Handle(
@@ -41,6 +43,8 @@ public sealed class IssueCreateHandler(
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Начало создания задачи для проекта {ProjectId}", request.ProjectId);
+
+        await validator.ValidateAndThrowAsync(request, cancellationToken);
 
         var (project, initialStatus) = await LoadProjectDataAsync(request.ProjectId, cancellationToken);
         var issueKey = await GenerateIssueKeyAsync(project, cancellationToken);
@@ -107,8 +111,8 @@ public sealed class IssueCreateHandler(
             issueKey,
             request.ProjectId,
             statusId,
-            request.NumberIssueType,
-            request.NumberIssuePriority,
+            request.IssueType.ToEntity(),
+            request.IssuePriority.ToEntity(),
             request.DueDate);
     }
 
@@ -120,7 +124,7 @@ public sealed class IssueCreateHandler(
     {
         if (issue.DueDate.HasValue && issue.DueDate < issue.CreatedDate)
         {
-            throw new ValidationException("Дата выполнения не может быть раньше даты создания");
+            throw new System.ComponentModel.DataAnnotations.ValidationException("Дата выполнения не может быть раньше даты создания");
         }
     }
 
@@ -398,8 +402,8 @@ public sealed class IssueCreateHandler(
 
     private record IssueRecipient
     {
-        internal Guid KeycloakId { get; init; }
-        internal required string UserName { get; init; }
-        internal string? Email { get; init; }
+        public Guid KeycloakId { get; init; }
+        public required string UserName { get; init; }
+        public string? Email { get; init; }
     }
 }

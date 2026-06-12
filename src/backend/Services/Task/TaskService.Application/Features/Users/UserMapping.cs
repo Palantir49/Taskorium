@@ -9,8 +9,7 @@ public static class UserMapping
 {
     public static CreateUserCommand ToCommand(this CreateUserRequest request)
     {
-        return new CreateUserCommand(request.Name, request.KeycloakId, new EmailAdress(request.Email),
-            new UserName(request.Username));
+        return new CreateUserCommand(request.Name, request.KeycloakId, request.Email, request.Username);
     }
 
     public static GetUserByIdQuery ToCommand(this GetUserRequest request)

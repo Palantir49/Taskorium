@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Features.WorkspaceMembers.Write.Command;
@@ -12,11 +13,12 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TaskService.Application.Features.WorkspaceMembers.Write.UpdateWorkspaceMemberRole
 {
-    public class UpdateWorkspaceMemberRoleHandler(TaskServiceDbContext context, HybridCache cache)
+    public class UpdateWorkspaceMemberRoleHandler(TaskServiceDbContext context, HybridCache cache, IValidator<UpdateWorkspaceMemberRoleCommand> validator)
     : IRequestHandler<UpdateWorkspaceMemberRoleCommand, AddWorkspaceMemberResult>
     {
         public async Task<AddWorkspaceMemberResult> Handle(UpdateWorkspaceMemberRoleCommand request, CancellationToken cancellationToken = default)
         {
+            await validator.ValidateAndThrowAsync(request, cancellationToken);
             var user = await context.Users.Include(x => x.WorkspaceMembers)
                                           .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
             if (user == null)

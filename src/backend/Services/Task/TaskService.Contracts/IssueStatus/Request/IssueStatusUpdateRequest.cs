@@ -1,8 +1,10 @@
-﻿namespace TaskService.Contracts.IssueStatus.Request;
+﻿using TaskService.Contracts.Enum;
+
+namespace TaskService.Contracts.IssueStatus.Request;
 
 public record class IssueStatusUpdateRequest(
-    string name,
-    string type,
-    int position,
-    string? color);
+    string Name,
+    IssueStatusTypeDto Type,
+    int Position,
+    string? Color);
 

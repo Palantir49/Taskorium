@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Exceptions;
 using TaskService.Application.Mapping;
@@ -10,12 +11,13 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TaskService.Application.Features.Workspaces.Write.AddWorkspaceMember;
 
-public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache cache)
+public class AddWorkspaceMemberHandler(TaskServiceDbContext context, HybridCache cache, IValidator<AddWorkspaceMemberCommand> validator)
     : IRequestHandler<AddWorkspaceMemberCommand, AddWorkspaceMemberResult>
 {
     public async Task<AddWorkspaceMemberResult> Handle(AddWorkspaceMemberCommand command,
         CancellationToken cancellationToken = default)
     {
+        await validator.ValidateAndThrowAsync(command, cancellationToken);
         var existWorkspace = await context.Workspaces.Include(workspace => workspace.WorkspaceMembers)
             .FirstOrDefaultAsync(workspace => workspace.Id == command.WorkspaceId, cancellationToken);
         if (existWorkspace is null)

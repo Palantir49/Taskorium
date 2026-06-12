@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
+﻿using System.ComponentModel.DataAnnotations;
+using FluentValidation;
+using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
@@ -8,12 +10,13 @@ using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Application.Features.Workspaces.Write.CreateWorkspace;
 
-public class CreateWorkspaceHandler(TaskServiceDbContext context, HybridCache cache, ICurrentUserContext userContext)
+public class CreateWorkspaceHandler(TaskServiceDbContext context, HybridCache cache, ICurrentUserContext userContext, IValidator<CreateWorkspaceCommand> validator)
     : IRequestHandler<CreateWorkspaceCommand, CreateWorkspaceResult>
 {
     public async Task<CreateWorkspaceResult> Handle(CreateWorkspaceCommand command,
         CancellationToken cancellationToken = default)
     {
+        await validator.ValidateAndThrowAsync(command, cancellationToken);
         var workspace = Workspace.Create(
             command.Name
         );
