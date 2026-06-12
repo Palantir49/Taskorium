@@ -7,7 +7,7 @@ namespace TaskService.Application.Features.Attachments
 {
     internal class AttachmentDeleteHandler(TaskServiceDbContext context,
         FileStorageService fileStorageService) : IRequestHandler<AttachmentDeleteQuery, bool>
-    {        
+    {
         public async Task<bool> Handle(AttachmentDeleteQuery request, CancellationToken cancellationToken = default)
         {
             Attachment attachment = await context.Attachments.FindAsync([request.Id], cancellationToken)
