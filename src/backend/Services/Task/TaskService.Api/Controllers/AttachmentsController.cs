@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskService.Application.Features.Attachments;
+using TaskService.Application.Features.Attachments.AttachmentDelete;
+using TaskService.Application.Features.Attachments.AttachmentDownload;
 using TaskService.Application.Features.Attachments.Dto;
 using TaskService.Application.Mediator;
 
