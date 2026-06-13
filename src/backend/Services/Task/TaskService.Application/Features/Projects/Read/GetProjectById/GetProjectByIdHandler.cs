@@ -18,14 +18,18 @@ public class ProjectGetByIdHandler(
     {
         var cacheKey = $"project_{request.Id}";
 
-        return await cache.GetOrCreateAsync(cacheKey, async _ =>
-        {
-            var project =
-                await context.Projects.Include(element => element.ProjectMembers)
-                    .FirstAsync(element => element.Id == request.Id, cancellationToken) ??
-                throw new KeyNotFoundException($"Проект с id: {request.Id} не найден");
+        return await cache.GetOrCreateAsync(cacheKey,
+            async ct => await GetProjectByIdFromDbAsync(request.Id, ct),
+            cancellationToken: cancellationToken);
+    }
 
-            return project.ToResponse(currentUserContext.User.Id);
-        }, cancellationToken: cancellationToken);
+    public async Task<ProjectResponse> GetProjectByIdFromDbAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var project =
+                await context.Projects.Include(element => element.ProjectMembers)
+                    .FirstAsync(element => element.Id == id, cancellationToken) ??
+                throw new KeyNotFoundException($"Проект с id: {id} не найден");
+
+        return project.ToResponse(currentUserContext.User.Id);
     }
 }
