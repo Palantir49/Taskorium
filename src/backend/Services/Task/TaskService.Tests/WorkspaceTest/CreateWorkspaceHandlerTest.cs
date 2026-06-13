@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentValidation;
-using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using TaskService.Application.Features.Users.Read.GetUserByKeycloakId;
@@ -10,7 +9,6 @@ using TaskService.Application.Interfaces;
 using TaskService.Application.Validators.Workspace;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TaskService.Tests.WorkspaceTest
 {
@@ -21,6 +19,7 @@ namespace TaskService.Tests.WorkspaceTest
         private readonly FakeHybridCache _fakeCache;
         private readonly CreateWorkspaceCommandValidator _validator;
         private readonly CreateWorkspaceHandler _handler;
+        private readonly User _user;
         private readonly Mock<ICurrentUserContext> _userContext;
         private bool _disposed;
 
@@ -49,12 +48,15 @@ namespace TaskService.Tests.WorkspaceTest
                 .Setup(x => x.IsInitialized)
                 .Returns(true);
 
+            _user = User.Create(
+                keycloakId: Guid.CreateVersion7(), 
+                userName: "nenene", 
+                email: "memememe", 
+                fullName: "neneneMEMEME");
+
             _userContext
                 .Setup(x => x.User)
-                .Returns(_fixture.Build<GetUserByKeycloakIdResult>()
-                    .Without(x => x.ProjectMembers)
-                    .Without(x => x.WorkSpaceMembers)
-                    .Create());
+                .Returns(new GetUserByKeycloakIdResult(Id: _user.Id, KeycloakId: _user.KeycloakId, ProjectMembers: null, WorkSpaceMembers: null));
 
             _handler = new CreateWorkspaceHandler(_dbContext, _fakeCache, _userContext.Object, _validator);
         }
@@ -118,17 +120,23 @@ namespace TaskService.Tests.WorkspaceTest
         public async Task CreateWorkspaceHandler_WhenUserAndWorkspaceValid_AddsWorkspaceAndMembersAndReturnsResult()
         {
             // ARRANGE
-            var user = User.Create(_userContext.Object.User.KeycloakId, _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<string>());
-            _dbContext.Users.Add(user);
+            _dbContext.Users.Add(_user);
             await _dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var command = new CreateWorkspaceCommand("тест из теста");
+            var command = new CreateWorkspaceCommand("тест из теста ");
 
             // ACT
-            Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
+            var result = await _handler.Handle(command, CancellationToken.None);
 
             // ASSERT
-            await act.Should().ThrowAsync<KeyNotFoundException>();
+            result.Should().NotBeNull();
+            result.Name.Should().Be(command.Name.Trim());
+            result.Role.Should().Be(Contracts.Enum.WorkspaceRolesDto.Creator);
+
+            var workspace = await _dbContext.Workspaces.Include(x => x.WorkspaceMembers).FirstAsync(x => x.Id == result.Id, CancellationToken.None);
+            workspace.Name.Should().Be(command.Name.Trim());
+            workspace.WorkspaceMembers.Should().HaveCount(1);
+            workspace.WorkspaceMembers.First(x => x.WorkspaceId == result.Id).UserId.Should().Be(_user.Id);
         }
     }
 }
