@@ -5,7 +5,7 @@ using TaskService.Application.Features.Workspaces.Read.GetWorkspaceById;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Tests.WorkspaceTest;
+namespace TaskService.Tests.WorkspaceTest.Read;
 
 public class WorkspaceGetByIdTests : IDisposable
 {

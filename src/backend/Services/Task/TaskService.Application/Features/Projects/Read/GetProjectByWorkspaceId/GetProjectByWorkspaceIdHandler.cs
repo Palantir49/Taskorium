@@ -16,20 +16,26 @@ public class GetProjectByWorkspaceIdHandler(
     public async Task<IEnumerable<ProjectResponse>> Handle(GetProjectByWorkspaceIdQuery request,
         CancellationToken cancellationToken = default)
     {
-        var cacheKey = $"projects_by_workspace_{request.id}_{currentUserContext.User.Id}";
+        var cacheKey = $"projects_by_workspace_{request.Id}_{currentUserContext.User.Id}";
 
         return await cache.GetOrCreateAsync(
             cacheKey,
-            async token =>
-            {
-                var projects = await context.Projects
+            async token => await GetProjectByWorkspaceIdFromDb(request.Id, token),
+            cancellationToken: cancellationToken);
+    }
+
+    public async Task<IEnumerable<ProjectResponse>> GetProjectByWorkspaceIdFromDb(Guid id, CancellationToken cancellationToken)
+    {
+        var projects = await context.Projects
                     .AsNoTracking()
                     .Include(x => x.ProjectMembers)
-                    .Where(x => x.WorkspaceId == request.id)
-                    .ToListAsync(token);
+                    .Where(x => x.WorkspaceId == id)
+                    .ToListAsync(cancellationToken);
 
-                return projects.Select(x => x.ToResponse(currentUserContext.User.Id)).ToList();
-            },
-            cancellationToken: cancellationToken);
+        projects = projects.Where(
+            x => x.ProjectMembers.Any(x => x.UserId == currentUserContext.User.Id))
+            .ToList();
+
+        return projects.Select(x => x.ToResponse(currentUserContext.User.Id)).ToList();
     }
 }

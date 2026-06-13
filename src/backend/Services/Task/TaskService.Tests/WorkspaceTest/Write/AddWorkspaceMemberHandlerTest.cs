@@ -1,9 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using TaskService.Application.Exceptions;
 using TaskService.Application.Features.Workspaces.Write.AddWorkspaceMember;
 using TaskService.Application.Mapping;
@@ -12,7 +10,7 @@ using TaskService.Domain.Entities;
 using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Tests.WorkspaceTest;
+namespace TaskService.Tests.WorkspaceTest.Write;
 
 public class AddWorkspaceMemberHandlerTest : IDisposable
 {
