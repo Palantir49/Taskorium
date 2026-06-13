@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using TaskService.Application.Features.Projects.Read.GetProjectById;
 using TaskService.Application.Features.Projects.Read.GetProjectByWorkspaceId;
 using TaskService.Application.Features.Users.Read.GetUserByKeycloakId;
 using TaskService.Application.Interfaces;
