@@ -4,7 +4,7 @@ namespace TaskService.Contracts.IssueStatus.Request;
 
 public record class IssueStatusUpdateRequest(
     string Name,
-    IssueStatusTypeDto Type,
+    int NumberType,
     int Position,
     string? Color);
 

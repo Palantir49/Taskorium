@@ -12,8 +12,8 @@ namespace TaskService.Application.Validators.Project
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .Matches(@"^[a-zA-Zа-яА-Я0-9_]+$")
-                    .WithMessage("Только буквы, цифры и подчеркивание");
+                .Matches(@"^[a-zA-Zа-яА-Я0-9_ ]+$")
+                    .WithMessage("Только буквы, цифры, пробел и подчёркивание");
             RuleFor(x => x.Description)
                 .MaximumLength(2000)
                     .WithMessage("Описание не может быть длиннее 2000 символов");

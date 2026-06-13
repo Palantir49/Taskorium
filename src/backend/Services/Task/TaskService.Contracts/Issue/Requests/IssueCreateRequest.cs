@@ -7,8 +7,8 @@ namespace TaskService.Contracts.Issue.Requests;
 public record IssueCreateRequest(
     string Name,
     Guid ProjectId,
-    IssueTypeDto IssueType,
-    IssuePriorityDto IssuePriority,
+    int NumberIssueType,
+    int NumberIssuePriority,
     string? Description = null,
     DateTimeOffset? DueDate = null,
     List<IFormFile>? Attachments = null,

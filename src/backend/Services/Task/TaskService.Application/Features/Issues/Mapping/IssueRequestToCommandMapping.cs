@@ -1,6 +1,7 @@
 ﻿using TaskService.Application.Commands.Issues.Query;
 using TaskService.Application.Features.Attachments.Dto;
 using TaskService.Application.Features.Issues.Command;
+using TaskService.Contracts.Enum;
 using TaskService.Contracts.Issue.Requests;
 
 namespace TaskService.Application.Features.Issues.Mapping;
@@ -23,8 +24,8 @@ public static class IssueRequestToCommandMapping
         return new IssueCreateCommand(
             request.Name,
             request.ProjectId,
-            request.IssueType,
-            request.IssuePriority,
+            (IssueTypeDto)request.NumberIssueType,
+            (IssuePriorityDto)request.NumberIssuePriority,
             request.Description,
             request.DueDate?.ToUniversalTime(),
             attachments,

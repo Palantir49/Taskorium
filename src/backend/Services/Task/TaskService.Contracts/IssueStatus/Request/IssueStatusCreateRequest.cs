@@ -5,7 +5,7 @@ namespace TaskService.Contracts.IssueStatus.Request;
 public record class IssueStatusCreateRequest(
     string Name,
     Guid ProjectId,
-    IssueStatusTypeDto Type,
+    int NumberType,
     int Position,
     string Color);
 

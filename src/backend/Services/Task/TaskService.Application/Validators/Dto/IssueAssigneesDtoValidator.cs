@@ -17,7 +17,7 @@ namespace TaskService.Application.Validators.Dto
 
             // Валидация вложенного ProjectRolesDto
             RuleFor(x => x.ProjectRolesDto)
-                .Must(x => Enum.IsDefined(typeof(ProjectRolesDto), x))
+                .Must(x => Enum.IsDefined(x))
                     .WithMessage("Недопустимая роль");
         }
     }

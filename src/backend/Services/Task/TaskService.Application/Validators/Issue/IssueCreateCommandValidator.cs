@@ -18,19 +18,19 @@ namespace TaskService.Application.Features.Issues.Command
                     .WithMessage("Название должно содержать минимум 3 символа")
                 .MaximumLength(255)
                     .WithMessage("Название не может быть длиннее 255 символов")
-                .Matches(@"^[a-zA-Zа-яА-ЯёЁ0-9\s\-_.,!?()]+$")
+                .Matches(@"^[a-zA-Zа-яА-ЯёЁ0-9\s\-_.,!?() ]+$")
                     .WithMessage("Название содержит недопустимые символы");
 
             RuleFor(x => x.ProjectId)
                 .NotEqual(Guid.Empty)
                     .WithMessage("ID проекта не может быть пустым");
             RuleFor(x => x.IssueType)
-                .Must(x => Enum.IsDefined(typeof(IssueType), x))
+                .Must(x => Enum.IsDefined(x))
                     .WithMessage("Недопустимый тип задачи");
 
             // Приоритет задачи
             RuleFor(x => x.IssuePriority)
-                .Must(x => Enum.IsDefined(typeof(IssuePriority), x))
+                .Must(x => Enum.IsDefined(x))
                     .WithMessage("Недопустимый приоритет задачи");
 
             // Описание
