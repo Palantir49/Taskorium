@@ -1,4 +1,4 @@
 ﻿namespace TaskService.Application.Features.Workspaces.Read.GetWorkspaceById;
 
-public record GetWorkspacebyIdResult(Guid id, string name);
+public record GetWorkspacebyIdResult(Guid Id, string Name);
 
