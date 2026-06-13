@@ -35,13 +35,10 @@ public class GetProjectMembersHandler(TaskServiceDbContext context, HybridCache 
             throw new KeyNotFoundException($"Проект с id: {id} не найден");
         }
 
-        var members = new List<ProjectUserDto>();
-
-        foreach (var x in existProject.ProjectMembers)
-        {
-            members.Add(new ProjectUserDto(x.User.Id, x.User.KeycloakId, x.Role.ToDto(),
+        var members = existProject.ProjectMembers
+            .Select(x => 
+            new ProjectUserDto(x.User.Id, x.User.KeycloakId, x.Role.ToDto(),
                 x.JoinedAt, x.User.Email.Value, x.User.Username.Value));
-        }
 
         return new ProjectMembersResponse(existProject.Id, existProject.Name.Value,
             members);
