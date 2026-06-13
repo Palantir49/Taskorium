@@ -4,10 +4,8 @@ using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Exceptions;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
-using TaskService.Contracts.Common.DTO;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TaskService.Application.Features.Workspaces.Write.AddWorkspaceMember;
 
