@@ -37,7 +37,7 @@ function Header({activeTab, onTabChange, authInfo}: HeaderProps) {
                             onClick={() => onTabChange('docs')}
                         >
                             <FaFileAlt className="nav-icon"/>
-                            <span>Документация</span>
+                            <span>Сроки</span>
                         </button>
                     </nav>
                 </div>

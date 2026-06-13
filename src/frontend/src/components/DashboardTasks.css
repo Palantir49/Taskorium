@@ -14,3 +14,12 @@
     border: none;
     display: block;
 }
+
+.timeline-page {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 24px;
+}
