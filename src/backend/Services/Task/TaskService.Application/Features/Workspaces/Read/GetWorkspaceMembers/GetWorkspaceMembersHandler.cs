@@ -28,7 +28,7 @@ namespace TaskService.Application.Features.Workspaces.Read.GetWorkspaceMembers
                                                          .AsNoTracking()
                                                          .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             if (existProject is null)
-                throw new ArgumentNullException($"Рабочая область с id: {id} не найден");
+                throw new KeyNotFoundException($"Рабочая область с id: {id} не найден");
 
             var members = new List<WorkspaceUserDto>();
 
