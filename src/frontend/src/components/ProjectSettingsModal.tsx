@@ -15,6 +15,7 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
   const [statuses, setStatuses] = React.useState<IssueStatusResponse[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [newStatusName, setNewStatusName] = React.useState('');
+  const [newStatusColor, setNewStatusColor] = React.useState('#3b82f6');
   const [createError, setCreateError] = React.useState<string | null>(null);
   const [deleteError, setDeleteError] = React.useState<string | null>(null);
   const [isCreating, setIsCreating] = React.useState(false);
@@ -39,10 +40,12 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
         projectId,
         numberType: 1,
         position: nextPosition,
+        color: newStatusColor,
       });
 
       setStatuses((prev) => [...prev, created]);
       setNewStatusName('');
+      setNewStatusColor('#3b82f6');
     } catch (error) {
       console.error('Ошибка создания статуса:', error);
       setCreateError('Не удалось создать статус');
@@ -106,7 +109,14 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
                     .sort((a, b) => a.position - b.position)
                     .map((status) => (
                       <div key={status.id} className="border border-gray-200 rounded-lg px-3 py-2 flex items-center justify-between">
-                        <span className="font-medium text-sm">{status.name}</span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span
+                            className="h-5 w-5 rounded border border-gray-300 shrink-0"
+                            style={{ backgroundColor: status.color ?? '#e5e7eb' }}
+                            title={status.color ?? 'Цвет не задан'}
+                          />
+                          <span className="font-medium text-sm truncate">{status.name}</span>
+                        </div>
                         <div className="flex items-center gap-2">
                           <span className="text-gray-500 text-sm">Позиция: {status.position}</span>
                           {statusToDeleteId === status.id ? (
@@ -144,6 +154,13 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
 
               <div className="mt-2.5">
                 <div className="flex gap-2">
+                  <input
+                    type="color"
+                    value={newStatusColor}
+                    onChange={(e) => setNewStatusColor(e.target.value)}
+                    className="h-10 w-10 cursor-pointer rounded-md border border-gray-300 bg-white p-1"
+                    title="Выбрать цвет статуса"
+                  />
                   <input
                     type="text"
                     value={newStatusName}
