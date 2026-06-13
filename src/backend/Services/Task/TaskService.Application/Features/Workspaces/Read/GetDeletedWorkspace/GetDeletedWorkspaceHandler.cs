@@ -20,6 +20,6 @@ public class GetDeletedWorkspaceHandler(TaskServiceDbContext context) : IRequest
                                                                                         Name: x.Name.Value,
                                                                                         DeletedAt: x.DeletedAt!.Value))
                                               .ToListAsync();
-        return new GetDeletedWorkspacePageResult(workspaces: response);
+        return new GetDeletedWorkspacePageResult(Workspaces: response);
     }
 }
