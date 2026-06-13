@@ -49,9 +49,9 @@ namespace TaskService.Tests.WorkspaceTest
                 .Returns(true);
 
             _user = User.Create(
-                keycloakId: Guid.CreateVersion7(), 
-                userName: "nenene", 
-                email: "memememe", 
+                keycloakId: Guid.CreateVersion7(),
+                userName: "nenene",
+                email: "memememe",
                 fullName: "neneneMEMEME");
 
             _userContext
