@@ -17,19 +17,12 @@ import TaskCard from './TaskCard';
 import {Task} from '../types';
 import {IssueStatusResponse} from '../types/issueStatus';
 import './KanbanBoard.css';
+import {getStableColorById} from "../utils/statusColor";
 
 interface KanbanBoardProps {
     projectId: string;
 }
 
-const COLOR_STATUS = [
-    'gray', 'lightblue', 'yellow', 'palegreen', 'pink',
-    'lavander', 'green'
-];
-
-const getStableColorById = (position: number): string => {
-    return COLOR_STATUS[position];
-};
 
 function KanbanBoard({projectId}: KanbanBoardProps) {
     const {tasks, filters, updateTask, setSelectedTask, selectedTask} = useTasks();
