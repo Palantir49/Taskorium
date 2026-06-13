@@ -6,7 +6,7 @@ using TaskService.Application.Validators.WorkspaceMember;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Tests.WorkspaceTest;
+namespace TaskService.Tests.WorkspaceTest.Write;
 
 public class DeleteWorkspaceByIdHandlerTest : IDisposable
 {

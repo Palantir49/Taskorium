@@ -10,7 +10,7 @@ using TaskService.Domain.Entities;
 using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Tests.WorkspaceTest;
+namespace TaskService.Tests.WorkspaceTest.Write;
 
 public class AddWorkspaceMemberHandlerTest : IDisposable
 {
