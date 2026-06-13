@@ -173,35 +173,27 @@ public class AddWorkspaceMemberHandlerTest : IDisposable
         memberInDb.Role.Should().Be(role);
     }
 
-    [Fact]
-    public async Task AddWorkspaceMember_WhenValidationWorkspaceIdFails_ThrowsValidationException()
+
+    public static IEnumerable<object[]> InvalidCommandData()
     {
-        // ARRANGE
-        var command = new AddWorkspaceMemberCommand(
-            Guid.Empty,
-            _fixture.Create<Guid>(),
-            WorkspaceRoles.Admin.ToDto());
-
-        // ACT
-        Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
-
-        // ASSERT
-        await act.Should().ThrowAsync<ValidationException>();
+        yield return new object[] {
+            new AddWorkspaceMemberCommand(Guid.Empty, Guid.NewGuid(), WorkspaceRoles.Admin.ToDto())
+        };
+        yield return new object[] {
+            new AddWorkspaceMemberCommand(Guid.NewGuid(), Guid.Empty, WorkspaceRoles.Admin.ToDto())
+        };
     }
 
-    [Fact]
-    public async Task AddWorkspaceMember_WhenValidationUserIdFails_ThrowsValidationException()
+    [Theory]
+    [MemberData(nameof(InvalidCommandData))]
+    public async Task AddWorkspaceMember_WhenValidationFails_ThrowsValidationException(AddWorkspaceMemberCommand command)
     {
         // ARRANGE
-        var command = new AddWorkspaceMemberCommand(
-            _fixture.Create<Guid>(), 
-            Guid.Empty,
-            WorkspaceRoles.Admin.ToDto());
 
         // ACT
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
 
         // ASSERT
-        await act.Should().ThrowAsync<ValidationException>();
+        var exception = await act.Should().ThrowAsync<ValidationException>();
     }
 }
