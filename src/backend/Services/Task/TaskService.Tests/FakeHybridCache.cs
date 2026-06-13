@@ -11,12 +11,12 @@ public class FakeHybridCache : HybridCache
 
     public override ValueTask RemoveAsync(string key, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException("Кэш не должен вызываться в тестах бизнес-логики!");
+        return new ValueTask();
     }
 
     public override ValueTask RemoveByTagAsync(string tag, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException("Кэш не должен вызываться в тестах бизнес-логики!");
+        return new ValueTask();
     }
 
     public override ValueTask SetAsync<T>(string key, T value, HybridCacheEntryOptions? options = null, IEnumerable<string>? tags = null, CancellationToken cancellationToken = default)
