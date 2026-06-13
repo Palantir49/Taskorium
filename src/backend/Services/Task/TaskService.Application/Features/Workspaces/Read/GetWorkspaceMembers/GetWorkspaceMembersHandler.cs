@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
@@ -29,6 +30,9 @@ namespace TaskService.Application.Features.Workspaces.Read.GetWorkspaceMembers
                                                          .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             if (existProject is null)
                 throw new KeyNotFoundException($"Рабочая область с id: {id} не найден");
+
+            if (existProject.WorkspaceMembers.Count == 0)
+                throw new ValidationException("Рабочая область не содержит пользователей");
 
             var members = new List<WorkspaceUserDto>();
 
