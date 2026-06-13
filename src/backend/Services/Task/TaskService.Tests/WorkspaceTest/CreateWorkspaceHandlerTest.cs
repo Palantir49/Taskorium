@@ -134,7 +134,7 @@ namespace TaskService.Tests.WorkspaceTest
             result.Role.Should().Be(Contracts.Enum.WorkspaceRolesDto.Creator);
 
             var workspace = await _dbContext.Workspaces.Include(x => x.WorkspaceMembers).FirstAsync(x => x.Id == result.Id, CancellationToken.None);
-            workspace.Name.Should().Be(command.Name.Trim());
+            workspace.Name.ToString().Should().Be(command.Name.Trim());
             workspace.WorkspaceMembers.Should().HaveCount(1);
             workspace.WorkspaceMembers.First(x => x.WorkspaceId == result.Id).UserId.Should().Be(_user.Id);
         }
