@@ -309,7 +309,7 @@ public class WorkspaceController(IDispatcher dispatcher, ICurrentUserContext cur
         [FromBody] UpdateWorkspaceNameCommand command)
     {
         var response = await dispatcher.SendAsync(command);
-        return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { response.id }, response);
+        return CreatedAtAction(nameof(GetWorkspaceByIdAsync), new { response.Id }, response);
     }
 
     /// <summary>

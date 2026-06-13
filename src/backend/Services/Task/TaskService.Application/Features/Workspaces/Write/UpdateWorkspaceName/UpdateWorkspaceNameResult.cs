@@ -4,4 +4,4 @@ using System.Text;
 
 namespace TaskService.Application.Features.Workspaces.Write.UpdateWorkspaceName;
 
-public record UpdateWorkspaceNameResult(Guid id, string name);
+public record UpdateWorkspaceNameResult(Guid Id, string Name);

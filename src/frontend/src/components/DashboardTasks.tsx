@@ -9,6 +9,7 @@ import HeaderKanbanBoard from './HeaderKanbanBoard';
 import {TaskStatus} from '../types';
 import {useParams, useSearchParams} from 'react-router-dom';
 import './DashboardTasks.css';
+import GantTimelineView from "./GantTimelineView.tsx";
 
 interface DashboardTasksProps {
     showHeader?: boolean;
@@ -57,9 +58,8 @@ function DashboardTasks({showHeader = true}: DashboardTasksProps) {
                 </div>
             )}
             {activeTab === 'docs' && (
-                <div className="coming-soon">
-                    <h2>Документация</h2>
-                    <p>Раздел находится в разработке</p>
+                <div className="timeline-page">
+                    <GantTimelineView projectId={projectId}/>
                 </div>
             )}
             <TaskDetailSidebar/>

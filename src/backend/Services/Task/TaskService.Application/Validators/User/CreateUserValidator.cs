@@ -18,8 +18,8 @@ public class CreateUserValidator : AbstractValidator<CreateUserCommand>
             .WithMessage("Минимальная длина - 3 символа")
             .MaximumLength(50)
             .WithMessage("Максимальная длина - 50 символов")
-            .Matches(@"^[a-zA-Zа-яА-Я0-9_\.]+$")
-            .WithMessage("Только буквы, цифры и подчеркивание");
+            .Matches(@"^[a-zA-Zа-яА-Я0-9_\. ]+$")
+            .WithMessage("Только буквы, цифры, пробелы и подчеркивание");
 
         RuleFor(x => x.Name)
             .Matches(@"^[a-zA-Zа-яА-ЯёЁ\s-]*$")

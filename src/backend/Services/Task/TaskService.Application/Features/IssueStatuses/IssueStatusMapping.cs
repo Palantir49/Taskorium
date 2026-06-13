@@ -1,4 +1,5 @@
 ﻿using TaskService.Application.Features.IssueStatuses.Command;
+using TaskService.Contracts.Enum;
 using TaskService.Contracts.IssueStatus;
 using TaskService.Contracts.IssueStatus.Request;
 using TaskService.Domain.Entities;
@@ -22,7 +23,7 @@ public static class IssueStatusMapping
         return new IssueStatusCreateCommand(
             Name: request.Name,
             ProjectId: request.ProjectId,
-            Type: request.Type,
+            Type: (IssueStatusTypeDto)request.NumberType,
             Position: request.Position,
             Color: request.Color);
     }
@@ -32,7 +33,7 @@ public static class IssueStatusMapping
         return new IssueStatusUpdateCommand(
             Id: id,
             Name: request.Name,
-            Type: request.Type,
+            Type: (IssueStatusTypeDto)request.NumberType,
             Position: request.Position,
             Color: request.Color);
     }
