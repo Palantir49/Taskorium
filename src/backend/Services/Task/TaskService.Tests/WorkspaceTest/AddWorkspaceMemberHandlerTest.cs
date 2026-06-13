@@ -9,8 +9,8 @@ using TaskService.Application.Features.Workspaces.Write.AddWorkspaceMember;
 using TaskService.Application.Mapping;
 using TaskService.Application.Validators.WorkspaceMember;
 using TaskService.Domain.Entities;
-using TaskService.Infrastructure.Persistence;
 using TaskService.Domain.Entities.Enums;
+using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Tests.WorkspaceTest;
 
