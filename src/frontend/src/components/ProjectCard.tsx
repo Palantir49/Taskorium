@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Card, CardContent, CardHeader, CardTitle} from "./ui/card";
 import {Button} from "./ui/button";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,} from "./ui/dialog";
@@ -50,6 +50,7 @@ export default function ProjectCard({workspaceId, onSelect}: ProjectCardProps) {
         }
     };
 
+
     useEffect(() => {
         if (!workspaceId) {
             setProjects([]);
@@ -62,6 +63,32 @@ export default function ProjectCard({workspaceId, onSelect}: ProjectCardProps) {
             data.forEach(p => loadMembers(p.id));
         };
         loadProjects();
+    }, [workspaceId]);
+
+
+    const membersMapRef = useRef(membersMap)
+
+    useEffect(() => {
+        membersMapRef.current = membersMap;
+
+    }, [membersMap]);
+
+    useEffect(() => {
+        if (!workspaceId) {
+            setProjects([]);
+            setMembersMap({});
+            return;
+        }
+
+        const interval = setInterval(() => {
+            fetchProjectsByWorkspaceId(workspaceId).then((data) => {
+                setProjects(data);
+                data.forEach(project => loadMembers(project.id));
+            });
+        }, 10000);
+
+        // Правильный cleanup - один раз вызываем clearInterval
+        return () => clearInterval(interval);
     }, [workspaceId]);
 
     const handleProjectCreated = (newProject: ProjectResponse) => {
@@ -109,7 +136,7 @@ export default function ProjectCard({workspaceId, onSelect}: ProjectCardProps) {
         <>
             {projects.map(project => {
                 const members = membersMap[project.id] ?? [];
-                const isLoadingMembers = membersLoading[project.id] ?? true;
+                const isLoadingMembers = membersLoading[project.id] && !membersMap[project.id];
 
                 return (
                     <Card

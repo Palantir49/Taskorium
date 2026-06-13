@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "./ui/card";
 import {Button} from "./ui/button";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,} from "./ui/dialog";
@@ -63,6 +63,26 @@ export default function WorkspaceCard({selectedWorkspaceId, onSelect}: Workspace
         loadWorkspaces();
     }, []);
 
+    const membersMapRef = useRef(membersMap);
+
+    useEffect(() => {
+        membersMapRef.current = membersMap;
+    }, [membersMap]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetchUserWorkspaces().then(data => {
+                setWorkspaces(data);
+                data.forEach(ws => {
+                    loadMembers(ws.id);
+
+                });
+            });
+        }, 10000);
+        return () => clearInterval(interval);
+    }, []);
+
+
     const handleWorkspaceCreated = (newWorkspace: WorkspaceResponse) => {
         setWorkspaces(prev => [...prev, newWorkspace]);
         loadMembers(newWorkspace.id);
@@ -111,7 +131,7 @@ export default function WorkspaceCard({selectedWorkspaceId, onSelect}: Workspace
                 : workspaces.map(workspace => {
                     const isSelected = selectedWorkspaceId === workspace.id;
                     const members = membersMap[workspace.id] ?? [];
-                    const isLoadingMembers = membersLoading[workspace.id] ?? true;
+                    const isLoadingMembers = membersLoading[workspace.id] && !membersMap[workspace.id];
 
                     return (
                         <Card
