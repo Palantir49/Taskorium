@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
@@ -96,7 +97,7 @@ public class GetWorkspaceMembersTests : IDisposable
     }
 
     [Fact]
-    public async Task GetWorkspaceMembersFromDbAsync_WhenWorkspaceDoesNotExist_ThrowsArgumentNullException()
+    public async Task GetWorkspaceMembersFromDbAsync_WhenWorkspaceDoesNotExist_ThrowsKeyNotFoundException()
     {
         // ARRANGE
         var nonExistingId = _fixture.Create<Guid>();
@@ -107,5 +108,22 @@ public class GetWorkspaceMembersTests : IDisposable
         // ASSERT
         await act.Should().ThrowAsync<KeyNotFoundException>()
             .WithMessage($"Рабочая область с id: {nonExistingId} не найден");
+    }
+
+    [Fact]
+    public async Task GetWorkspaceMembersFromDbAsync_WhenWorkspaceMembersDoesNotExist_ThrowsKeyNotFoundException()
+    {
+        // ARRANGE
+        var targetWorkspace = _fixture.Create<Workspace>();
+
+        _context.Workspaces.Add(targetWorkspace);
+        await _context.SaveChangesAsync(CancellationToken.None);
+
+        //ACT
+        Func<Task> act = async () => await _handler.GetWorkspaceMembersFromDbAsync(targetWorkspace.Id, CancellationToken.None);
+
+        // ASSERT
+        await act.Should().ThrowAsync<ValidationException>()
+            .WithMessage($"Рабочая область не содержит пользователей");
     }
 }
