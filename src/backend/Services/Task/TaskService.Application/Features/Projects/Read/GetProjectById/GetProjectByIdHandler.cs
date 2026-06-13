@@ -27,7 +27,7 @@ public class ProjectGetByIdHandler(
     {
         var project =
                 await context.Projects.Include(element => element.ProjectMembers)
-                    .FirstAsync(element => element.Id == id, cancellationToken) ??
+                    .FirstOrDefaultAsync(element => element.Id == id, cancellationToken) ??
                 throw new KeyNotFoundException($"Проект с id: {id} не найден");
 
         return project.ToResponse(currentUserContext.User.Id);
