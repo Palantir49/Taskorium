@@ -20,16 +20,7 @@ public class GetProjectByWorkspaceIdHandler(
 
         return await cache.GetOrCreateAsync(
             cacheKey,
-            async token =>
-            {
-                var projects = await context.Projects
-                    .AsNoTracking()
-                    .Include(x => x.ProjectMembers)
-                    .Where(x => x.WorkspaceId == request.Id)
-                    .ToListAsync(token);
-
-                return projects.Select(x => x.ToResponse(currentUserContext.User.Id)).ToList();
-            },
+            async token => await GetProjectByWorkspaceIdFromDb(request.Id, token),
             cancellationToken: cancellationToken);
     }
 
