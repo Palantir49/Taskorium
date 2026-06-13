@@ -4,9 +4,16 @@
     <PackageReference Include="AutoFixture.AutoMoq" />
     <PackageReference Include="coverlet.collector" />
     <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\TaskService.Application\TaskService.Application.csproj" />
+    <ProjectReference Include="..\TaskService.Domain\TaskService.Domain.csproj" />
+    <ProjectReference Include="..\TaskService.Infrastructure\TaskService.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
