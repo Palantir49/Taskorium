@@ -1,19 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Exceptions;
-using TaskService.Application.Features.WorkspaceMembers;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
-using TaskService.Contracts.Common.DTO;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TaskService.Application.Features.Projects.Write.AddProjectMember;
 
-public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache cache, IValidator<AddProjectMemberCommand> validator)
+public class AddProjectMemberHandler(
+    TaskServiceDbContext context,
+    HybridCache cache,
+    IValidator<AddProjectMemberCommand> validator)
     : IRequestHandler<AddProjectMemberCommand, AddProjectMemberResult>
 {
     public async Task<AddProjectMemberResult> Handle(AddProjectMemberCommand command,
@@ -22,21 +21,17 @@ public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache c
         await validator.ValidateAndThrowAsync(command, cancellationToken);
 
         var existProject = await context.Projects.Include(project => project.ProjectMembers)
-            .FirstOrDefaultAsync(element => element.Id == command.ProjectId, cancellationToken);
-        if (existProject is null)
-        {
-            throw new KeyNotFoundException($"Проект с id {command.UserId} не существует");
-        }
-
-        var existUser = await context.Users.FindAsync([command.UserId], cancellationToken);
-        if (existUser is null)
-        {
-            throw new KeyNotFoundException($"Пользователь с  id {command.UserId} не существует");
-        }
-        var projectWorkspace = await context.WorkspaceMembers.FindAsync([command.UserId, existProject.WorkspaceId], cancellationToken);
+                               .Include(project => project.Workspace)
+                               .FirstOrDefaultAsync(element => element.Id == command.ProjectId, cancellationToken) ??
+                           throw new KeyNotFoundException($"Проект с id {command.UserId} не существует");
+        var existUser = await context.Users.FindAsync([command.UserId], cancellationToken) ??
+                        throw new KeyNotFoundException($"Пользователь с  id {command.UserId} не существует");
+        var projectWorkspace =
+            await context.WorkspaceMembers.FindAsync([command.UserId, existProject.WorkspaceId], cancellationToken);
         if (projectWorkspace is null)
         {
-            throw new KeyNotFoundException($"Пользователь с  id {command.UserId} не состоит в рабочей области с id {existProject.Workspace}");
+            throw new KeyNotFoundException(
+                $"Пользователь с  id {command.UserId} не состоит в рабочей области с id {existProject.Workspace}");
         }
 
         if (existProject.ProjectMembers.Any(x => x.UserId == existUser.Id))
@@ -59,6 +54,7 @@ public class AddProjectMemberHandler(TaskServiceDbContext context, HybridCache c
 
         var userWorkspacescacheKey = $"user_workspace_projects_by_id_{existUser.Id}";
         await cache.RemoveAsync(userWorkspacescacheKey, cancellationToken);
+
 
         return new AddProjectMemberResult(existProject.Id,
             existUser.Id,

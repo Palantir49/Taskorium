@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
@@ -19,8 +20,10 @@ public class ProjectGetByIdHandler(
 
         return await cache.GetOrCreateAsync(cacheKey, async _ =>
         {
-            var project = await context.Projects.FindAsync([request.Id], cancellationToken) ??
-                          throw new KeyNotFoundException($"Проект с id: {request.Id} не найден");
+            var project =
+                await context.Projects.Include(element => element.ProjectMembers)
+                    .FirstAsync(element => element.Id == request.Id, cancellationToken) ??
+                throw new KeyNotFoundException($"Проект с id: {request.Id} не найден");
 
             return project.ToResponse(currentUserContext.User.Id);
         }, cancellationToken: cancellationToken);
