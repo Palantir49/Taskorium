@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Mapping;
 using TaskService.Application.Mediator;
@@ -15,26 +16,32 @@ namespace TaskService.Application.Features.Workspaces.Read.GetWorkspaceMembers
         {
             var cacheKey = $"workspaceMembers_{request.Id}";
 
-            return await cache.GetOrCreateAsync(cacheKey, async _ =>
-            {
-                var existProject = await context.Workspaces.Include(x => x.WorkspaceMembers)
+            return await cache.GetOrCreateAsync(cacheKey,
+                async ct => await GetWorkspaceMembersFromDbAsync(request.Id, ct),
+                cancellationToken: cancellationToken);
+        }
+
+        public async Task<WorkspaceMembersResponse> GetWorkspaceMembersFromDbAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var existProject = await context.Workspaces.Include(x => x.WorkspaceMembers)
                                                          .ThenInclude(x => x.User)
                                                          .AsSplitQuery()
                                                          .AsNoTracking()
-                                                         .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-                if (existProject is null)
-                    throw new ArgumentNullException($"Рабочая область с id: {request.Id} не найден");
+                                                         .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            if (existProject is null)
+                throw new KeyNotFoundException($"Рабочая область с id: {id} не найден");
 
-                var members = new List<WorkspaceUserDto>();
+            if (existProject.WorkspaceMembers.Count == 0)
+                throw new ValidationException("Рабочая область не содержит пользователей");
 
-                foreach (var x in existProject.WorkspaceMembers)
-                {
-                    members.Add(new WorkspaceUserDto(Id: x.User.Id, KeycloakId: x.User.KeycloakId, Role: x.Role.ToDto(), JoinedAt: x.JoinedAt, Email: x.User.Email.Value, UserName: x.User.Username.Value));
-                }
+            var members = new List<WorkspaceUserDto>();
 
-                return new WorkspaceMembersResponse(WorkspaceId: existProject.Id, WorkspaceName: existProject.Name.Value, Members: members);
+            foreach (var x in existProject.WorkspaceMembers)
+            {
+                members.Add(new WorkspaceUserDto(Id: x.User.Id, KeycloakId: x.User.KeycloakId, Role: x.Role.ToDto(), JoinedAt: x.JoinedAt, Email: x.User.Email.Value, UserName: x.User.Username.Value));
+            }
 
-            }, cancellationToken: cancellationToken);
+            return new WorkspaceMembersResponse(WorkspaceId: existProject.Id, WorkspaceName: existProject.Name.Value, Members: members);
         }
     }
 }

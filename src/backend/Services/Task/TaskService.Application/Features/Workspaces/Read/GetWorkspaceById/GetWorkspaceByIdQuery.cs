@@ -2,4 +2,4 @@
 
 namespace TaskService.Application.Features.Workspaces.Read.GetWorkspaceById;
 
-public record GetWorkspaceByIdQuery(Guid? Id) : IQuery<GetWorkspacebyIdResult>;
+public record GetWorkspaceByIdQuery(Guid Id) : IQuery<GetWorkspacebyIdResult>;
