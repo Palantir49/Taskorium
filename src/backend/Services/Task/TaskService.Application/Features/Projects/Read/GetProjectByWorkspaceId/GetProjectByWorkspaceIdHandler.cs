@@ -32,9 +32,9 @@ public class GetProjectByWorkspaceIdHandler(
                     .Where(x => x.WorkspaceId == id)
                     .ToListAsync(cancellationToken);
 
-        //projects = projects.Where(
-        //    x => x.ProjectMembers.Any(x => x.UserId == currentUserContext.User.Id))
-        //    .ToList();
+        projects = projects.Where(
+            x => x.ProjectMembers.Any(x => x.UserId == currentUserContext.User.Id))
+            .ToList();
 
         return projects.Select(x => x.ToResponse(currentUserContext.User.Id)).ToList();
     }
