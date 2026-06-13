@@ -55,7 +55,8 @@ public class AddProjectMemberHandler(
         var userWorkspacescacheKey = $"user_workspace_projects_by_id_{existUser.Id}";
         await cache.RemoveAsync(userWorkspacescacheKey, cancellationToken);
 
-
+        var userProjectsByWorkSpaceCacheKey = $"projects_by_workspace_{command.ProjectId}_{command.UserId}";
+        await cache.RemoveAsync(userProjectsByWorkSpaceCacheKey, cancellationToken);
         return new AddProjectMemberResult(existProject.Id,
             existUser.Id,
             projectMember.Role.ToDto());
