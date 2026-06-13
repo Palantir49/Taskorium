@@ -1,12 +1,10 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using TaskService.Application.Features.Workspaces.Write.AddWorkspaceMember;
 using TaskService.Application.Features.Workspaces.Write.DeleteWorkspaceById;
 using TaskService.Application.Validators.WorkspaceMember;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TaskService.Tests.WorkspaceTest;
 
