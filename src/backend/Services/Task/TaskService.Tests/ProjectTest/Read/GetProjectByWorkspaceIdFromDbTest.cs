@@ -156,7 +156,7 @@ public class GetProjectByWorkspaceIdFromDbTest : IDisposable
             description: _fixture.Create<string>(),
             abbreviation: "tttА",
             workspaceId: workspace.Id);
-        
+
         _context.Projects.AddRange(project1, project2);
 
         var member1 = ProjectMember.Create(
@@ -174,8 +174,8 @@ public class GetProjectByWorkspaceIdFromDbTest : IDisposable
 
         // ASSERT
         result.Should().HaveCount(1);
-        
-        foreach(var res in result)
+
+        foreach (var res in result)
         {
             res.Id.Should().Be(project1.Id);
             res.Name.Should().Be(project1.Name.ToString());

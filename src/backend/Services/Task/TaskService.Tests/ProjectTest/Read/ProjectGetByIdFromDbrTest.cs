@@ -118,9 +118,9 @@ namespace TaskService.Tests.ProjectTest.Read
             _dbContext.Projects.Add(project);
 
             var members = ProjectMember.Create(
-                projectId: project.Id, 
-                userId: Guid.NewGuid(), 
-                role: Domain.Entities.Enums.ProjectRoles.Admin, 
+                projectId: project.Id,
+                userId: Guid.NewGuid(),
+                role: Domain.Entities.Enums.ProjectRoles.Admin,
                 joinedAt: _fixture.Create<DateTimeOffset>());
 
             _dbContext.Projects.Add(project);

@@ -149,7 +149,7 @@ public class GetProjectMembersFromDbTest : IDisposable
             role: Domain.Entities.Enums.ProjectRoles.Admin,
             joinedAt: _fixture.Create<DateTimeOffset>());
 
-        _context.ProjectMembers.AddRange(member1,member2, member3, member4);
+        _context.ProjectMembers.AddRange(member1, member2, member3, member4);
 
         await _context.SaveChangesAsync(CancellationToken.None);
         //ACT

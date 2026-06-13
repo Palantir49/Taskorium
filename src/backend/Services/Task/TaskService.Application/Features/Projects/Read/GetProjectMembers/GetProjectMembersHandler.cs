@@ -16,7 +16,7 @@ public class GetProjectMembersHandler(TaskServiceDbContext context, HybridCache 
     {
         var cacheKey = $"projectMembers_{request.Id}";
 
-        return await cache.GetOrCreateAsync(cacheKey, 
+        return await cache.GetOrCreateAsync(cacheKey,
             async ct => await GetProjectMembersFromDbAsync(request.Id, ct),
             cancellationToken: cancellationToken);
     }
@@ -29,14 +29,14 @@ public class GetProjectMembersHandler(TaskServiceDbContext context, HybridCache 
                 .AsSplitQuery()
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-        
+
         if (existProject is null)
         {
             throw new KeyNotFoundException($"Проект с id: {id} не найден");
         }
 
         var members = existProject.ProjectMembers
-            .Select(x => 
+            .Select(x =>
             new ProjectUserDto(x.User.Id, x.User.KeycloakId, x.Role.ToDto(),
                 x.JoinedAt, x.User.Email.Value, x.User.Username.Value));
 

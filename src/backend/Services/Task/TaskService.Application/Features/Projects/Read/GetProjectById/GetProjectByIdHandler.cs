@@ -34,7 +34,7 @@ public class ProjectGetByIdHandler(
         if (project.ProjectMembers.Count == 0)
             throw new ValidationException("Проект не содержит пользователей");
 
-        if(!project.ProjectMembers.Any(x => x.UserId == currentUserContext.User.Id))
+        if (!project.ProjectMembers.Any(x => x.UserId == currentUserContext.User.Id))
             throw new ValidationException("Пользователь не имеет доступа к проекту");
 
         return project.ToResponse(currentUserContext.User.Id);
