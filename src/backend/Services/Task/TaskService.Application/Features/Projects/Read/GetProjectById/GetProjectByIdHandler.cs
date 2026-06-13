@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
@@ -29,6 +30,12 @@ public class ProjectGetByIdHandler(
                 await context.Projects.Include(element => element.ProjectMembers)
                     .FirstOrDefaultAsync(element => element.Id == id, cancellationToken) ??
                 throw new KeyNotFoundException($"Проект с id: {id} не найден");
+
+        if (project.ProjectMembers.Count == 0)
+            throw new ValidationException("Проект не содержит пользователей");
+
+        if(!project.ProjectMembers.Any(x => x.UserId == currentUserContext.User.Id))
+            throw new ValidationException("Пользователь не имеет доступа к проекту");
 
         return project.ToResponse(currentUserContext.User.Id);
     }
