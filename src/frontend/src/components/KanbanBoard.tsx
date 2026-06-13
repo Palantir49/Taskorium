@@ -169,7 +169,7 @@ function KanbanBoard({projectId}: KanbanBoardProps) {
                             key={status.id}
                             statusId={status.id}
                             title={status.name}
-                            color={getStableColorById(status.position)}
+                            color={status.color ?? getStableColorById(status.position)}
                             tasks={groupedTasks[status.id] || []}
                             onTaskClick={handleTaskClick}
                             isSidebarOpen={!!selectedTask}

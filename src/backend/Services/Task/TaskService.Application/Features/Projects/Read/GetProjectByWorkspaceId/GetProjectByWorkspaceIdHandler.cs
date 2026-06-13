@@ -16,7 +16,7 @@ public class GetProjectByWorkspaceIdHandler(
     public async Task<IEnumerable<ProjectResponse>> Handle(GetProjectByWorkspaceIdQuery request,
         CancellationToken cancellationToken = default)
     {
-        var cacheKey = $"projects_by_workspace_{request.id}";
+        var cacheKey = $"projects_by_workspace_{request.id}_{currentUserContext.User.Id}";
 
         return await cache.GetOrCreateAsync(
             cacheKey,

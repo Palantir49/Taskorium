@@ -11,6 +11,7 @@ export interface IssueStatusResponse {
   projectId: string;
   type: string;
   position: number;
+  color?: string;
 }
 
 export interface IssueStatusCreateRequest {

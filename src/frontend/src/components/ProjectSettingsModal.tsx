@@ -1,10 +1,9 @@
 import React from 'react';
 import axios from 'axios';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { fetchIssueStatusesByProjectId, fetchTagsByProjectId } from '../api/projectService';
+import { fetchIssueStatusesByProjectId } from '../api/projectService';
 import { createIssueStatus, deleteIssueStatus } from '../api/issueStatusService';
 import { IssueStatusResponse } from '../types/issueStatus';
-import { TagResponse } from '../types/tag';
 
 interface ProjectSettingsModalProps {
   open: boolean;
@@ -12,14 +11,11 @@ interface ProjectSettingsModalProps {
   projectId: string;
 }
 
-type SettingsTab = 'statuses' | 'types';
-
 export default function ProjectSettingsModal({ open, onOpenChange, projectId }: ProjectSettingsModalProps) {
-  const [activeTab, setActiveTab] = React.useState<SettingsTab>('statuses');
   const [statuses, setStatuses] = React.useState<IssueStatusResponse[]>([]);
-  const [tags, setTags] = React.useState<TagResponse[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [newStatusName, setNewStatusName] = React.useState('');
+  const [newStatusColor, setNewStatusColor] = React.useState('#3b82f6');
   const [createError, setCreateError] = React.useState<string | null>(null);
   const [deleteError, setDeleteError] = React.useState<string | null>(null);
   const [isCreating, setIsCreating] = React.useState(false);
@@ -44,10 +40,12 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
         projectId,
         numberType: 1,
         position: nextPosition,
+        color: newStatusColor,
       });
 
       setStatuses((prev) => [...prev, created]);
       setNewStatusName('');
+      setNewStatusColor('#3b82f6');
     } catch (error) {
       console.error('Ошибка создания статуса:', error);
       setCreateError('Не удалось создать статус');
@@ -74,7 +72,6 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
   React.useEffect(() => {
     if (!open) return;
 
-    setActiveTab('statuses');
     setStatusToDeleteId(null);
     setCreateError(null);
     setDeleteError(null);
@@ -91,22 +88,6 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
     loadStatuses();
   }, [open, projectId]);
 
-  React.useEffect(() => {
-    if (!open || activeTab !== 'types' || tags.length > 0) return;
-
-    const loadTags = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchTagsByProjectId(projectId);
-        setTags(data);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadTags();
-  }, [open, activeTab, projectId, tags.length]);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl bg-white text-black border-gray-300">
@@ -115,24 +96,9 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
         </DialogHeader>
 
         <div className="pt-1">
-          <div className="flex gap-2 pb-2 border-b border-gray-200">
-            <button
-              className={`px-3 py-1.5 text-sm rounded-md border ${activeTab === 'statuses' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300'}`}
-              onClick={() => setActiveTab('statuses')}
-            >
-              Статусы задач
-            </button>
-            <button
-              className={`px-3 py-1.5 text-sm rounded-md border ${activeTab === 'types' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300'}`}
-              onClick={() => setActiveTab('types')}
-            >
-              Типы задач
-            </button>
-          </div>
-
           {loading && <p className="text-gray-500 text-sm py-3">Загрузка...</p>}
 
-          {!loading && activeTab === 'statuses' && (
+          {!loading && (
             <div className="pt-3">
               {statuses.length === 0 ? (
                 <p className="text-gray-500 text-sm">Статусы не найдены</p>
@@ -143,7 +109,14 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
                     .sort((a, b) => a.position - b.position)
                     .map((status) => (
                       <div key={status.id} className="border border-gray-200 rounded-lg px-3 py-2 flex items-center justify-between">
-                        <span className="font-medium text-sm">{status.name}</span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span
+                            className="h-5 w-5 rounded border border-gray-300 shrink-0"
+                            style={{ backgroundColor: status.color ?? '#e5e7eb' }}
+                            title={status.color ?? 'Цвет не задан'}
+                          />
+                          <span className="font-medium text-sm truncate">{status.name}</span>
+                        </div>
                         <div className="flex items-center gap-2">
                           <span className="text-gray-500 text-sm">Позиция: {status.position}</span>
                           {statusToDeleteId === status.id ? (
@@ -182,6 +155,13 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
               <div className="mt-2.5">
                 <div className="flex gap-2">
                   <input
+                    type="color"
+                    value={newStatusColor}
+                    onChange={(e) => setNewStatusColor(e.target.value)}
+                    className="h-10 w-10 cursor-pointer rounded-md border border-gray-300 bg-white p-1"
+                    title="Выбрать цвет статуса"
+                  />
+                  <input
                     type="text"
                     value={newStatusName}
                     onChange={(e) => {
@@ -210,22 +190,6 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
                 {createError && <p className="text-red-500 text-xs mt-1">{createError}</p>}
                 {deleteError && (<p className="text-red-500 text-xs mt-2">{deleteError}</p>)}
               </div>
-            </div>
-          )}
-
-          {!loading && activeTab === 'types' && (
-            <div className="pt-3">
-              {tags.length === 0 ? (
-                <p className="text-gray-500 text-sm">Типы задач не найдены</p>
-              ) : (
-                <div className="space-y-1.5">
-                  {tags.map((tag) => (
-                    <div key={tag.id} className="border border-gray-200 rounded-lg px-3 py-2">
-                      <span className="font-medium text-sm">{tag.name}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           )}
         </div>
