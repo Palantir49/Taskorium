@@ -8,7 +8,7 @@ using TaskService.Application.Mapping;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Tests.WorkspaceTest;
+namespace TaskService.Tests.WorkspaceTest.Read;
 
 public class GetWorkspaceMembersTests : IDisposable
 {

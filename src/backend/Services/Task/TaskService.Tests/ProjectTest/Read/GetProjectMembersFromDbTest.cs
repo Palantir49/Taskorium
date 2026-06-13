@@ -6,7 +6,7 @@ using TaskService.Application.Mapping;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Tests.ProjectTest;
+namespace TaskService.Tests.ProjectTest.Read;
 
 public class GetProjectMembersFromDbTest : IDisposable
 {
