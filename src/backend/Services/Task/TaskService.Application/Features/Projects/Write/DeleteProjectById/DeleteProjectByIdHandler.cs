@@ -29,11 +29,11 @@ public class DeleteProjectByIdHandler(TaskServiceDbContext context, HybridCache 
 
         // Инвалидируем кэш:
         var projectCacheKey = $"project_{project.Id}";
-        var workspaceProjectsCacheKey = $"projects_by_workspace_{project.WorkspaceId}";
+        var workspaceProjectsCacheTag = $"projects_by_workspace_{project.WorkspaceId}";
 
 
         await cache.RemoveAsync(projectCacheKey, cancellationToken);
-        await cache.RemoveAsync(workspaceProjectsCacheKey, cancellationToken);
+        await cache.RemoveByTagAsync(workspaceProjectsCacheTag, cancellationToken);
 
         context.Projects.Remove(project);
         return await context.SaveChangesAsync(cancellationToken);
