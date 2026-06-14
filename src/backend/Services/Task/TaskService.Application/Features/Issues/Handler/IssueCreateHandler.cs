@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -18,6 +17,7 @@ using TaskService.Infrastructure.Outbox.Interfaces;
 using TaskService.Infrastructure.Outbox.Models;
 using TaskService.Infrastructure.Persistence;
 using TaskService.Infrastructure.Services;
+using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace TaskService.Application.Features.Issues.Handler;
 
@@ -124,7 +124,7 @@ public sealed class IssueCreateHandler(
     {
         if (issue.DueDate.HasValue && issue.DueDate < issue.CreatedDate)
         {
-            throw new System.ComponentModel.DataAnnotations.ValidationException("Дата выполнения не может быть раньше даты создания");
+            throw new ValidationException("Дата выполнения не может быть раньше даты создания");
         }
     }
 
@@ -156,7 +156,7 @@ public sealed class IssueCreateHandler(
                 pm => pm.UserId,
                 u => u.Id,
                 (pm, u) => new { u.KeycloakId, UserName = u.FullName, u.Email })
-            // .Where(x => x.KeycloakId != currentUser.User.KeycloakId)
+            .Where(x => x.KeycloakId != currentUser.User.KeycloakId)
             .ToListAsync(ct);
 
         return
