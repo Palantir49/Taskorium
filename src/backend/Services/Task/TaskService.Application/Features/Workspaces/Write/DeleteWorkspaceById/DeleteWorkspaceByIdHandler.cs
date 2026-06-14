@@ -16,6 +16,10 @@ public class DeleteWorkspaceByIdHandler(TaskServiceDbContext context, HybridCach
         var workspace = await context.Workspaces.Include(w => w.WorkspaceMembers)
                                                 .Include(w => w.Projects)
                                                 .ThenInclude(p => p.ProjectMembers)
+                                                .Include(w => w.Projects)
+                                                .ThenInclude(p => p.Issues)
+                                                .Include(w => w.Projects)
+                                                .ThenInclude(p => p.Statuses)
                                                 .AsSplitQuery()
                                                 .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (workspace == null)
@@ -26,6 +30,10 @@ public class DeleteWorkspaceByIdHandler(TaskServiceDbContext context, HybridCach
         await context.SaveChangesAsync(cancellationToken);
         var cacheKey = $"workspace_{request.Id}";
         await cache.RemoveAsync(cacheKey, cancellationToken);
+
+        var workspaceProjectsCacheTag = $"projects_by_workspace_{workspace.Id}";
+        await cache.RemoveByTagAsync(workspaceProjectsCacheTag, cancellationToken);
+
         return new DeleteWorkspaceByIdResult(workspace.Id, workspace.Name.Value);
     }
 }
