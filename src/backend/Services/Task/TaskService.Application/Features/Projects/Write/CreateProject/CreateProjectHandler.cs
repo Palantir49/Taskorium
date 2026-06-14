@@ -1,7 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Caching.Hybrid;
-using TaskService.Application.Features.Users.Write.CreateUser;
 using TaskService.Application.Mediator;
 using TaskService.Contracts.Project.Responses;
 using TaskService.Domain.Entities;
@@ -20,6 +18,12 @@ public class CreateProjectHandler(TaskServiceDbContext context, HybridCache cach
 
         _ = await context.Workspaces.FindAsync([command.WorkspaceId], cancellationToken) ??
             throw new KeyNotFoundException($"Рабочая область с id: {command.WorkspaceId} не найдена");
+
+        var existUser = await context.Users.FindAsync([command.UserId], cancellationToken);
+        if (existUser is null)
+        {
+            throw new KeyNotFoundException($"Пользователь с  id {command.UserId} не существует");
+        }
 
         var project = Project.Create(
             command.Name,
@@ -60,20 +64,11 @@ public class CreateProjectHandler(TaskServiceDbContext context, HybridCache cach
             color: "#DC2626"
         );
 
-        var existUser = await context.Users.FindAsync([command.UserId], cancellationToken);
-        if (existUser is null)
-        {
-            throw new KeyNotFoundException($"Пользователь с  id {command.UserId} не существует");
-        }
-
         var projectMember =
             ProjectMember.Create(project.Id, command.UserId, ProjectRoles.Creator, DateTimeOffset.UtcNow);
 
         await context.Projects.AddAsync(project, cancellationToken);
-        await context.IssueStatus.AddAsync(initStatus, cancellationToken);
-        await context.IssueStatus.AddAsync(processStatus, cancellationToken);
-        await context.IssueStatus.AddAsync(successStatus, cancellationToken);
-        await context.IssueStatus.AddAsync(rejectedStatus, cancellationToken);
+        await context.IssueStatus.AddRangeAsync([initStatus, processStatus, successStatus, rejectedStatus], cancellationToken);
         await context.ProjectMembers.AddAsync(projectMember, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 

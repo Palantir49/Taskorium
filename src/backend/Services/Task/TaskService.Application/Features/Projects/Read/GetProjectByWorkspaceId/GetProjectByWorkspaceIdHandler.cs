@@ -17,10 +17,12 @@ public class GetProjectByWorkspaceIdHandler(
         CancellationToken cancellationToken = default)
     {
         var cacheKey = $"projects_by_workspace_{request.Id}_{currentUserContext.User.Id}";
+        var cacheTag = $"projects_by_workspace_{request.Id}";
 
         return await cache.GetOrCreateAsync(
             cacheKey,
             async token => await GetProjectByWorkspaceIdFromDb(request.Id, token),
+            tags: [cacheTag],
             cancellationToken: cancellationToken);
     }
 
