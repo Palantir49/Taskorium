@@ -234,7 +234,7 @@ public class CreateProjectHandlerTest : IDisposable
 
         var project = await _context.Projects.Include(x => x.ProjectMembers).FirstOrDefaultAsync(p => p.Id == result.Id, CancellationToken.None);
         project.Should().NotBeNull();
-        project.Name.Should().Be(command.Name);
+        project.Name.ToString().Should().Be(command.Name);
         project.Description.Should().Be(command.Description);
         project.Abbreviation.Should().Be(command.Abbreviation);
         project.WorkspaceId.Should().Be(command.WorkspaceId);
