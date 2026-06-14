@@ -41,7 +41,7 @@ public class ProjectAccessHandler(
 
 
         //get project
-        var projectQuery = new GetProjectByIdQuery(projectId);
+        var projectQuery = new GetProjectByIdQuery((Guid)projectId);
         var project = await dispatcher.SendAsync(projectQuery);
 
 

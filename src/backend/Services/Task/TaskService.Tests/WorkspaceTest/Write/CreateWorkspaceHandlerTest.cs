@@ -10,7 +10,7 @@ using TaskService.Application.Validators.Workspace;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 
-namespace TaskService.Tests.WorkspaceTest
+namespace TaskService.Tests.WorkspaceTest.Write
 {
     public class CreateWorkspaceHandlerTest : IDisposable
     {
