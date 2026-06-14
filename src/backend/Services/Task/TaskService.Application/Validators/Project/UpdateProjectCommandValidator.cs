@@ -17,7 +17,9 @@ namespace TaskService.Application.Validators.Project
                .NotEmpty()
                    .WithMessage("Имя проекта не может быть пустым")
                .Matches(@"^[a-zA-Zа-яА-Я0-9_]+$")
-                   .WithMessage("Только буквы, цифры и подчеркивание");
+                   .WithMessage("Только буквы, цифры и подчеркивание")
+                .MaximumLength(225)
+                    .WithMessage("Наименование не может быть длиннее 225 символов");
             RuleFor(x => x.Description)
                 .NotEmpty()
                    .WithMessage("Описание проекта не может быть пустым")
