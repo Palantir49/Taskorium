@@ -23,7 +23,7 @@ public class AddProjectMemberHandler(
         var existProject = await context.Projects.Include(project => project.ProjectMembers)
                                .Include(project => project.Workspace)
                                .FirstOrDefaultAsync(element => element.Id == command.ProjectId, cancellationToken) ??
-                           throw new KeyNotFoundException($"Проект с id {command.UserId} не существует");
+                           throw new KeyNotFoundException($"Проект с id {command.ProjectId} не существует");
         var existUser = await context.Users.FindAsync([command.UserId], cancellationToken) ??
                         throw new KeyNotFoundException($"Пользователь с  id {command.UserId} не существует");
         var projectWorkspace =
@@ -31,7 +31,7 @@ public class AddProjectMemberHandler(
         if (projectWorkspace is null)
         {
             throw new KeyNotFoundException(
-                $"Пользователь с  id {command.UserId} не состоит в рабочей области с id {existProject.Workspace}");
+                $"Пользователь с  id {command.UserId} не состоит в рабочей области с id {existProject.Workspace.Id}");
         }
 
         if (existProject.ProjectMembers.Any(x => x.UserId == existUser.Id))
