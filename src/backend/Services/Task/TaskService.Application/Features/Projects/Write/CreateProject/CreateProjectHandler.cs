@@ -73,8 +73,8 @@ public class CreateProjectHandler(TaskServiceDbContext context, HybridCache cach
         await context.SaveChangesAsync(cancellationToken);
 
         //инвалидируем кэш
-        var projectCacheKey = $"projects_by_workspace_{project.WorkspaceId}";
-        await cache.RemoveAsync(projectCacheKey, cancellationToken);
+        var projectCacheTag = $"projects_by_workspace_{project.WorkspaceId}";
+        await cache.RemoveByTagAsync(projectCacheTag, cancellationToken);
 
         var userCacheKey = $"user_by_keycloak_id_{existUser.KeycloakId}";
         await cache.RemoveAsync(userCacheKey, cancellationToken);

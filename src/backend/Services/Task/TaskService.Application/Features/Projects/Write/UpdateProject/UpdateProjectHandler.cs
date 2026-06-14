@@ -29,11 +29,11 @@ public class UpdateProjectHandler(
 
         // Инвалидируем кэш:
         var projectCacheKey = $"project_{project.Id}";
-        var workspaceProjectsCacheKey = $"projects_by_workspace_{project.WorkspaceId}";
-
 
         await cache.RemoveAsync(projectCacheKey, cancellationToken);
-        await cache.RemoveAsync(workspaceProjectsCacheKey, cancellationToken);
+
+        var projectCacheTag = $"projects_by_workspace_{project.WorkspaceId}";
+        await cache.RemoveByTagAsync(projectCacheTag, cancellationToken);
 
 
         return project.ToResponse(currentUserContext.User.Id);
