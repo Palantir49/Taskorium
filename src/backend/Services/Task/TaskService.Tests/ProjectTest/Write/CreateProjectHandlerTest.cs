@@ -6,6 +6,7 @@ using TaskService.Application.Features.Projects.Write.CreateProject;
 using TaskService.Application.Validators.Project;
 using TaskService.Contracts.Enum;
 using TaskService.Domain.Entities;
+using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Tests.ProjectTest.Write;
@@ -230,6 +231,18 @@ public class CreateProjectHandlerTest : IDisposable
         result.WorkspaceId.Should().Be(command.WorkspaceId);
         result.Role.Should().Be(ProjectRolesDto.Creator);
         result.CreatedDate.Should().BeOnOrAfter(time).And.BeOnOrBefore(time.AddSeconds(5));
+
+        var project = await _context.Projects.Include(x => x.ProjectMembers).FirstOrDefaultAsync(p => p.Id == result.Id, CancellationToken.None);
+        project.Should().NotBeNull();
+        project.Name.Should().Be(command.Name);
+        project.Description.Should().Be(command.Description);
+        project.Abbreviation.Should().Be(command.Abbreviation);
+        project.WorkspaceId.Should().Be(command.WorkspaceId);
+        project.CreatedDate.Should().BeOnOrAfter(time).And.BeOnOrBefore(time.AddSeconds(5));
+
+        var memberDb = await _context.ProjectMembers.FirstOrDefaultAsync(m => m.ProjectId == result.Id && m.UserId == user.Id, CancellationToken.None);
+        memberDb.Should().NotBeNull();
+        memberDb.Role.Should().Be(ProjectRoles.Creator);
     }
 }
 
