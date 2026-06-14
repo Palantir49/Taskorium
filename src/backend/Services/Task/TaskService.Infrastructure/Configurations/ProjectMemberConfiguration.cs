@@ -29,7 +29,7 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
             .WithMany(x => x.ProjectMembers)
             .HasForeignKey(t => t.ProjectId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.User)
             .WithMany(x => x.ProjectMembers)
