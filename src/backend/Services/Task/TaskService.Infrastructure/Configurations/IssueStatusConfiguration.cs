@@ -36,7 +36,7 @@ internal class IssueStatusConfiguration : IEntityTypeConfiguration<IssueStatus>
               .WithMany(x => x.Statuses)
               .HasForeignKey(t => t.ProjectId)
               .IsRequired()
-              .OnDelete(DeleteBehavior.Restrict);
+              .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasQueryFilter("SoftDelete", p => !p.IsDeleted);
 
