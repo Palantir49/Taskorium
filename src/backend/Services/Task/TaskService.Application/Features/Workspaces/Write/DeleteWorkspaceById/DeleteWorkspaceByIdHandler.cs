@@ -26,6 +26,10 @@ public class DeleteWorkspaceByIdHandler(TaskServiceDbContext context, HybridCach
         await context.SaveChangesAsync(cancellationToken);
         var cacheKey = $"workspace_{request.Id}";
         await cache.RemoveAsync(cacheKey, cancellationToken);
+
+        var workspaceProjectsCacheTag = $"projects_by_workspace_{workspace.Id}";
+        await cache.RemoveByTagAsync(workspaceProjectsCacheTag, cancellationToken);
+
         return new DeleteWorkspaceByIdResult(workspace.Id, workspace.Name.Value);
     }
 }
