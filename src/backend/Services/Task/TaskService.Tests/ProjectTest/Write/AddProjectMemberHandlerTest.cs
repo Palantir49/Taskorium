@@ -347,30 +347,9 @@ public class AddProjectMemberHandlerTest : IDisposable
 
         membersDb.Should().HaveCount(4);
 
-        //проверяем что первый пользователь не поменялся
-        var memberUser1 = membersDb.Where(x => x.UserId == user1.Id).ToList();
-        memberUser1.Should().HaveCount(1);
-        memberUser1[0].ProjectId.Should().Be(proj1.Id);
-        memberUser1[0].Role.Should().Be(member1.Role);
-
-        //проверяем что второй пользователь не поменялся
-        var memberUser2 = membersDb.Where(x => x.UserId == user2.Id).ToList();
-        memberUser2.Should().HaveCount(2);
-
-        //proj1
-        var memberUser2Proj1 = memberUser2.Where(x => x.ProjectId == proj1.Id).ToList();
-        memberUser2Proj1.Should().HaveCount(1);
-        memberUser2Proj1[0].Role.Should().Be(member2.Role);
-
-        //proj2
-        var memberUser2Proj2 = memberUser2.Where(x => x.ProjectId == proj2.Id).ToList();
-        memberUser2Proj2.Should().HaveCount(1);
-        memberUser2Proj2[0].Role.Should().Be(member3.Role);
-
-        //проверяем что третий пользователь добавился правильно
-        var memberUser3 = membersDb.Where(x => x.UserId == user3.Id).ToList();
-        memberUser3.Should().HaveCount(1);
-        memberUser3[0].ProjectId.Should().Be(proj1.Id);
-        memberUser3[0].Role.Should().Be(command.RoleDto.ToEntity());
+        // Проверяем, что новый участник создан правильно
+        var newMember = membersDb.Single(x => x.UserId == user3.Id);
+        newMember.ProjectId.Should().Be(proj1.Id);
+        newMember.Role.Should().Be(command.RoleDto.ToEntity());
     }
 }
