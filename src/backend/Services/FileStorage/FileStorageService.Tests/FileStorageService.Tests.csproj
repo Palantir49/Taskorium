@@ -3,13 +3,20 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector"/>
+    <PackageReference Include="FluentAssertions"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="Minio"/>
+    <PackageReference Include="NSubstitute"/>
     <PackageReference Include="xunit"/>
     <PackageReference Include="xunit.runner.visualstudio"/>
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FileStorageService.Infrastructure\FileStorageService.Infrastructure.csproj"/>
   </ItemGroup>
 
 </Project>
