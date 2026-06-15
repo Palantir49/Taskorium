@@ -5,4 +5,5 @@ public record class IssueStatusResponse(
     string name,
     Guid projectId,
     string type,
-    int position);
+    int position,
+    string color);
