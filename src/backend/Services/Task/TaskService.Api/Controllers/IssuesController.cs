@@ -96,7 +96,28 @@ public class IssuesController(IDispatcher dispatcher) : Controller
         var response = await dispatcher.SendAsync(command);
         return Ok(response);
     }
-
+    /// <summary>
+    ///     Обновить статус задачи по Id
+    /// </summary>
+    /// <param name="issueId">Идентификатор задачи</param>
+    /// <param name="request">Идентификатор нового статуса задачи</param>
+    /// <returns></returns>
+    /// <response code="200">Статус задачи успешно обновлен</response>
+    /// <response code="400">Некорректный запрос</response>
+    /// <response code="404">Не найдена задача для обновления</response>
+    [Authorize(Policy = "CanUpdateTask")]
+    [HttpPatch("{issueId:guid}")]
+    [ProducesResponseType(typeof(IssueResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<IssueResponse>> UpdateIssueAsync([FromRoute] Guid issueId,
+        [FromBody] IssueUpdateStatusRequest request)
+    {
+        var command = new IssueUpdateStatusCommand(issueId, request.NewStatusId);
+        var response = await dispatcher.SendAsync(command);
+        return Ok(response);
+    }
 
     /// <summary>
     ///     Удалить задачу по Id
