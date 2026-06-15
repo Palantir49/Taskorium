@@ -70,6 +70,9 @@ function taskReducer(state: TaskState, action: Action): TaskState {
             };
 
         case ActionTypes.ADD_TASK:
+            if (state.tasks.some(t => t.id === (action.payload as Task).id)) {
+                return state;
+            }
             return {
                 ...state,
                 tasks: [...state.tasks, action.payload as Task]
