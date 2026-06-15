@@ -11,11 +11,13 @@ interface ProjectSettingsModalProps {
   projectId: string;
 }
 
+const DEFAULT_STATUS_COLOR = '#3b82f6';
+
 export default function ProjectSettingsModal({ open, onOpenChange, projectId }: ProjectSettingsModalProps) {
   const [statuses, setStatuses] = React.useState<IssueStatusResponse[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [newStatusName, setNewStatusName] = React.useState('');
-  const [newStatusColor, setNewStatusColor] = React.useState('#3b82f6');
+  const [newStatusColor, setNewStatusColor] = React.useState(DEFAULT_STATUS_COLOR);
   const [createError, setCreateError] = React.useState<string | null>(null);
   const [deleteError, setDeleteError] = React.useState<string | null>(null);
   const [isCreating, setIsCreating] = React.useState(false);
@@ -45,7 +47,6 @@ export default function ProjectSettingsModal({ open, onOpenChange, projectId }: 
 
       setStatuses((prev) => [...prev, created]);
       setNewStatusName('');
-      setNewStatusColor('#3b82f6');
     } catch (error) {
       console.error('Ошибка создания статуса:', error);
       setCreateError('Не удалось создать статус');
