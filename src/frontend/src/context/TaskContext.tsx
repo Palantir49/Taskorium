@@ -169,11 +169,26 @@ export function TaskProvider({children, projectId}: TaskProviderProps) {
     };
 
     const handleUpdateTaskStatus = async (id: string, newStatusId: string): Promise<Task> => {
+        const previousTask = state.tasks.find((task) => task.id === id);
+
+        if (previousTask) {
+            dispatch({
+                type: ActionTypes.UPDATE_TASK,
+                payload: {
+                    ...previousTask,
+                    taskStatusId: newStatusId,
+                },
+            });
+        }
+
         try {
             const updatedTask = await updateTaskStatus(id, {newStatusId});
             dispatch({type: ActionTypes.UPDATE_TASK, payload: updatedTask});
             return updatedTask;
         } catch (error) {
+            if (previousTask) {
+                dispatch({type: ActionTypes.UPDATE_TASK, payload: previousTask});
+            }
             dispatch({type: ActionTypes.SET_ERROR, payload: (error as Error).message});
             throw error;
         }
