@@ -1,5 +1,5 @@
 import React, {createContext, ReactNode, useContext, useEffect, useReducer, useRef} from 'react';
-import {createTask, deleteTask, fetchTaskById, updateTask} from '../api/taskService';
+import {createTask, deleteTask, fetchTaskById, updateTask, updateTaskStatus} from '../api/taskService';
 import {fetchIssuesByProjectId} from '../api/projectService';
 import {Action, ActionType, CreateTaskData, Task, TaskState, UpdateTaskData} from '../types';
 import {useNotifications} from "./NotificationContext.tsx";
@@ -8,6 +8,7 @@ import {IssueCreatedPayload} from "../types/notification.ts";
 const TaskContext = createContext<TaskState & {
     loadTasks: () => Promise<void>;
     updateTask: (id: string, updates: UpdateTaskData) => Promise<Task>;
+    updateTaskStatus: (id: string, newStatusId: string) => Promise<Task>;
     createTask: (taskData: CreateTaskData) => Promise<Task>;
     deleteTask: (id: string) => Promise<void>;
     setSelectedTask: (task: Task | null) => void;
@@ -167,6 +168,17 @@ export function TaskProvider({children, projectId}: TaskProviderProps) {
         }
     };
 
+    const handleUpdateTaskStatus = async (id: string, newStatusId: string): Promise<Task> => {
+        try {
+            const updatedTask = await updateTaskStatus(id, {newStatusId});
+            dispatch({type: ActionTypes.UPDATE_TASK, payload: updatedTask});
+            return updatedTask;
+        } catch (error) {
+            dispatch({type: ActionTypes.SET_ERROR, payload: (error as Error).message});
+            throw error;
+        }
+    };
+
     const handleCreateTask = async (taskData: CreateTaskData): Promise<Task> => {
         try {
             const newTask = await createTask(taskData);
@@ -204,6 +216,7 @@ export function TaskProvider({children, projectId}: TaskProviderProps) {
         ...state,
         loadTasks,
         updateTask: handleUpdateTask,
+        updateTaskStatus: handleUpdateTaskStatus,
         createTask: handleCreateTask,
         deleteTask: handleDeleteTask,
         setSelectedTask,

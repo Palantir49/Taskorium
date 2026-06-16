@@ -111,7 +111,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<IssueResponse>> UpdateIssueAsync([FromRoute] Guid issueId,
+    public async Task<ActionResult<IssueResponse>> UpdateIssueStatusAsync([FromRoute] Guid issueId,
         [FromBody] IssueUpdateStatusRequest request)
     {
         var command = new IssueUpdateStatusCommand(issueId, request.NewStatusId);
