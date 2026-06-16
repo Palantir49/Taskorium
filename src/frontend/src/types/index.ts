@@ -1,6 +1,7 @@
 
 // Экспорт DTO
 export * from './common';
+export * from './attachment';
 export * from './issue';
 export * from './issueStatus';
 export * from './project';
