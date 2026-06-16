@@ -21,10 +21,11 @@ import {getStableColorById} from "../utils/statusColor";
 
 interface KanbanBoardProps {
     projectId: string;
+    refreshKey?: number;
 }
 
 
-function KanbanBoard({projectId}: KanbanBoardProps) {
+function KanbanBoard({projectId, refreshKey = 0}: KanbanBoardProps) {
     const {tasks, filters, updateTask, setSelectedTask, selectedTask} = useTasks();
     const [activeTask, setActiveTask] = React.useState<Task | null>(null);
     const [statuses, setStatuses] = React.useState<IssueStatusResponse[]>([]);
@@ -46,7 +47,7 @@ function KanbanBoard({projectId}: KanbanBoardProps) {
         };
 
         loadStatuses();
-    }, [projectId]);
+    }, [projectId, refreshKey]);
 
     // Фильтрация задач
     const filteredTasks = React.useMemo(() => {

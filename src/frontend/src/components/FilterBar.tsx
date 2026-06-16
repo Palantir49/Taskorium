@@ -11,9 +11,10 @@ import './FilterBar.css';
 interface FilterBarProps {
   projectId: string;
   onCreateTask?: () => void;
+  onProjectSettingsClosed?: () => void;
 }
 
-function FilterBar({ projectId, onCreateTask }: FilterBarProps) {
+function FilterBar({ projectId, onCreateTask, onProjectSettingsClosed }: FilterBarProps) {
   const { filters, setFilter, resetFilters } = useTasks();
   const [users, setUsers] = React.useState<ProjectUserDto[]>([]);
   const [priorities, setPriorities] = React.useState<IssuePriorityResponse[]>([]);
@@ -53,6 +54,14 @@ function FilterBar({ projectId, onCreateTask }: FilterBarProps) {
 
   const handleFilterChange = (key: keyof typeof filters, value: string) => {
     setFilter(key, value);
+  };
+
+  const handleSettingsOpenChange = (open: boolean) => {
+    setIsSettingsOpen(open);
+
+    if (!open) {
+      onProjectSettingsClosed?.();
+    }
   };
 
   return (
@@ -159,7 +168,7 @@ function FilterBar({ projectId, onCreateTask }: FilterBarProps) {
 
       <ProjectSettingsModal
         open={isSettingsOpen}
-        onOpenChange={setIsSettingsOpen}
+        onOpenChange={handleSettingsOpenChange}
         projectId={projectId}
       />
     </div>
