@@ -2,9 +2,11 @@ import React, {useEffect, useRef, useState} from 'react';
 import {FaChevronDown, FaPaperclip, FaSearch, FaTimes as FaTimesCircle, FaTimes, FaUserPlus,} from 'react-icons/fa';
 import {useTasks} from '../context/TaskContext';
 import {createTaskInProject} from '../api/taskService';
+import {deleteAttachment} from '../api/attachmentService';
 import {fetchProjectById, fetchProjectMembers} from '../api/projectService';
 import {fetchIssuePriorities, fetchIssueTypes} from '../api/collectionService';
 import {
+    AttachmentResponse,
     IssueAssigneesDto,
     IssuePriorityResponse,
     IssueTypeResponse,
@@ -88,6 +90,7 @@ function TaskCreateForm({
     const [projectMembers, setProjectMembers] = useState<ProjectUserDto[]>([]);
     const [workspaceId, setWorkspaceId] = useState<string>('');
     const [attachments, setAttachments] = useState<File[]>([]);
+    const [existingAttachments, setExistingAttachments] = useState<AttachmentResponse[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [assigneeDropdownOpen, setAssigneeDropdownOpen] = useState(false);
     const [memberSearch, setMemberSearch] = useState('');
@@ -123,6 +126,9 @@ function TaskCreateForm({
                 setIssuePriorities(priorities);
                 setWorkspaceId(project.workspaceId);
                 setProjectMembers(membersResponse.members);
+                setExistingAttachments(mode === 'edit' && task?.attachments ? [...task.attachments] : []);
+                console.log('TaskCreateForm edit task:', task);
+                console.log('TaskCreateForm existing attachments:', mode === 'edit' ? task?.attachments : []);
 
                 setFormData(
                     mode === 'edit' && task
@@ -256,6 +262,18 @@ function TaskCreateForm({
 
     const handleRemoveAttachment = (indexToRemove: number) => {
         setAttachments(prev => prev.filter((_, i) => i !== indexToRemove));
+    };
+
+    const handleDeleteExistingAttachment = async (attachmentId: string) => {
+        if (!window.confirm('Удалить вложение?')) return;
+
+        try {
+            await deleteAttachment(attachmentId);
+            setExistingAttachments((prev) => prev.filter((attachment) => attachment.id !== attachmentId));
+        } catch (error) {
+            console.error('Ошибка удаления вложения:', error);
+            alert('Не удалось удалить файл');
+        }
     };
 
     const formatFileSize = (bytes: number): string => {
@@ -688,10 +706,27 @@ function TaskCreateForm({
                         </div>
                     </div>
 
-                    {/* Документы (только создание) */}
-                    {mode === 'create' && (
-                        <div className="form-group">
-                            <label>Документы</label>
+                    <div className="form-group">
+                        <label>Документы</label>
+
+                        {mode === 'edit' && existingAttachments.length > 0 && (
+                            <div className="attachments-list" style={{marginBottom: 12}}>
+                                {existingAttachments.map((attachment) => (
+                                    <div key={attachment.id} className="attachment-item">
+                                        <span className="attachment-name">{attachment.name}</span>
+                                        <button
+                                            type="button"
+                                            className="attachment-delete-btn"
+                                            onClick={() => handleDeleteExistingAttachment(attachment.id)}
+                                        >
+                                            Удалить
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {mode === 'create' && (
                             <div className="attachments-row" style={{alignItems: 'flex-start'}}>
                                 <div className="attachments-text" style={{flex: 1}}>
                                     {attachments.length > 0 ? (
@@ -717,8 +752,12 @@ function TaskCreateForm({
                                     <input type="file" multiple onChange={handleFileSelect} style={{display: 'none'}}/>
                                 </label>
                             </div>
-                        </div>
-                    )}
+                        )}
+
+                        {mode === 'edit' && existingAttachments.length === 0 && (
+                            <p className="attachments-text">Файлы не прикреплены</p>
+                        )}
+                    </div>
 
                     {/* Дедлайн */}
                     <div className="form-group">
