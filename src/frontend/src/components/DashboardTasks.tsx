@@ -29,6 +29,7 @@ function DashboardTasks({showHeader = true}: DashboardTasksProps) {
 
     const [showCreateForm, setShowCreateForm] = React.useState(false);
     const [createFormStatus, setCreateFormStatus] = React.useState<TaskStatus>('backlog');
+    const [boardRefreshKey, setBoardRefreshKey] = React.useState(0);
 
     const handleOpenCreateForm = (status: TaskStatus) => {
         setCreateFormStatus(status);
@@ -39,12 +40,20 @@ function DashboardTasks({showHeader = true}: DashboardTasksProps) {
         setShowCreateForm(false);
     };
 
+    const refreshBoard = () => {
+        setBoardRefreshKey((prev) => prev + 1);
+    };
+
     const content = (
         <>
             {activeTab === 'board' && (
                 <>
-                    <FilterBar projectId={projectId} onCreateTask={() => handleOpenCreateForm('backlog')}/>
-                    <KanbanBoard projectId={projectId}/>
+                    <FilterBar
+                        projectId={projectId}
+                        onCreateTask={() => handleOpenCreateForm('backlog')}
+                        onProjectSettingsClosed={refreshBoard}
+                    />
+                    <KanbanBoard projectId={projectId} refreshKey={boardRefreshKey}/>
                 </>
             )}
             {activeTab === 'analytics' && (

@@ -41,6 +41,10 @@ export interface UpdateIssueRequest {
     assignees?: IssueAssigneesDto[] | null;
 }
 
+export interface IssueUpdateStatusRequest {
+    newStatusId: string;
+}
+
 export interface IssueResponse {
     id: string;
     name: string;
