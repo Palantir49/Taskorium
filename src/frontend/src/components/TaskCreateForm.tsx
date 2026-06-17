@@ -747,12 +747,7 @@ function TaskCreateForm({
                                 {existingAttachments.map((attachment) => (
                                     <div key={attachment.id} className="attachment-item">
                                         <span className="attachment-name">{attachment.name}</span>
-                                        <button
-                                            type="button"
-                                            className="attachment-delete-btn"
-                                            onClick={() => handleDeleteExistingAttachment(attachment.id)}
-                                        >
-                                            Удалить
+                                        <button type="button" onClick={() => handleDeleteExistingAttachment(attachment.id)}>🗑️
                                         </button>
                                     </div>
                                 ))}
