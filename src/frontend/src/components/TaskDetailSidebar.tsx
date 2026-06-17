@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
     FaBug,
     FaCircle,
@@ -15,6 +15,7 @@ import {Task} from '../types';
 import TaskCreateForm from './TaskCreateForm';
 import { downloadAttachment } from '../api/attachmentService';
 import { fetchTaskById } from '../api/taskService';
+import {formatDateOnlyRu} from '../utils/dateOnly';
 import './TaskDetailSidebar.css';
 
 function TaskDetailSidebar() {
@@ -24,6 +25,24 @@ function TaskDetailSidebar() {
     const [fullTask, setFullTask] = useState<Task | null>(null);
     const [isLoadingTaskDetails, setIsLoadingTaskDetails] = useState(false);
     const selectedTaskId = selectedTask?.id ?? null;
+
+    const loadTaskDetails = useCallback(async (taskId: string, fallbackTask?: Task | null) => {
+        setIsLoadingTaskDetails(true);
+        try {
+            const task = await fetchTaskById(taskId);
+            console.log('TaskDetailSidebar fetched task:', task);
+            setFullTask(task);
+            return task;
+        } catch (error) {
+            console.error('Ошибка загрузки полной задачи:', error);
+            if (fallbackTask) {
+                setFullTask(fallbackTask);
+            }
+            return fallbackTask ?? null;
+        } finally {
+            setIsLoadingTaskDetails(false);
+        }
+    }, []);
 
     React.useEffect(() => {
         console.log('TaskDetailSidebar selectedTask:', selectedTask);
@@ -36,33 +55,17 @@ function TaskDetailSidebar() {
 
         let cancelled = false;
 
-        const loadTaskDetails = async () => {
-            setIsLoadingTaskDetails(true);
-            try {
-                const task = await fetchTaskById(selectedTaskId);
-                console.log('TaskDetailSidebar fetched task:', task);
-                if (!cancelled) {
-                    setFullTask(task);
-                }
-            } catch (error) {
-                console.error('Ошибка загрузки полной задачи:', error);
-                if (!cancelled) {
-                    setFullTask(selectedTask);
-                }
-            } finally {
-                if (!cancelled) {
-                    setIsLoadingTaskDetails(false);
-                }
-            }
-        };
-
         setFullTask(selectedTask);
-        loadTaskDetails();
+        loadTaskDetails(selectedTaskId, selectedTask).then((task) => {
+            if (!cancelled && task) {
+                setFullTask(task);
+            }
+        });
 
         return () => {
             cancelled = true;
         };
-    }, [selectedTask, selectedTaskId]);
+    }, [loadTaskDetails, selectedTask, selectedTaskId]);
 
     if (!selectedTask) return null;
 
@@ -204,11 +207,7 @@ function TaskDetailSidebar() {
                             <div className="detail-section">
                                 <label>Дедлайн</label>
                                 <p className="detail-text">
-                                    {new Date(taskDetails.dueDate).toLocaleDateString('ru-RU', {
-                                        day: 'numeric',
-                                        month: 'long',
-                                        year: 'numeric'
-                                    })}
+                                    {formatDateOnlyRu(taskDetails.dueDate)}
                                 </p>
                             </div>
                         )}
@@ -266,6 +265,7 @@ function TaskDetailSidebar() {
                 mode="edit"
                 task={taskForEdit}
                 onSaved={handleClose}
+                onAttachmentsChanged={() => selectedTaskId ? loadTaskDetails(selectedTaskId, taskDetails) : undefined}
             />
         </div>
     );

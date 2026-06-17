@@ -27,7 +27,7 @@ public static class IssueRequestToCommandMapping
             (IssueTypeDto)request.NumberIssueType,
             (IssuePriorityDto)request.NumberIssuePriority,
             request.Description,
-            request.DueDate?.ToUniversalTime(),
+            NormalizeDueDate(request.DueDate),
             attachments,
             request.Assignees
         );
@@ -41,9 +41,27 @@ public static class IssueRequestToCommandMapping
             request.IssueStatusId,
             Description: request.Description,
             NumberIssueType: request.NumberIssueType,
-            DueDate: request.DueDate?.ToUniversalTime(),
+            DueDate: NormalizeDueDate(request.DueDate),
             Assignees: request.Assignees
         );
+    }
+
+    private static DateTimeOffset? NormalizeDueDate(DateTimeOffset? dueDate)
+    {
+        if (!dueDate.HasValue)
+        {
+            return null;
+        }
+
+        var value = dueDate.Value;
+        return new DateTimeOffset(
+            value.Year,
+            value.Month,
+            value.Day,
+            0,
+            0,
+            0,
+            TimeSpan.Zero);
     }
 
     public static GetAllIssuesQuery ToCommand(this GetIssuesRequest reques)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.EntityFrameworkCore;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
@@ -12,7 +13,8 @@ namespace TaskService.Application.Features.Issues.Handler
     public class AddFilesHandler(
         TaskServiceDbContext context,
         FileStorageService fileStorageService,
-        ICurrentUserContext currentUser)
+        ICurrentUserContext currentUser,
+        HybridCache cache)
         : IRequestHandler<AddFilesCommand, IEnumerable<AttachmentResponce>>
     {
         public async Task<IEnumerable<AttachmentResponce>> Handle(AddFilesCommand request, CancellationToken cancellationToken = default)
@@ -50,6 +52,18 @@ namespace TaskService.Application.Features.Issues.Handler
                     attachments.Add(attachment);
                 }
                 await context.SaveChangesAsync(cancellationToken);
+
+                var projectId = await context.Issues
+                                    .Where(x => x.Id == request.IssueId)
+                                    .Select(x => (Guid?)x.ProjectId)
+                                    .FirstOrDefaultAsync(cancellationToken)
+                                ?? throw new KeyNotFoundException($"Задача с id: {request.IssueId} не найдена");
+
+                await cache.RemoveAsync($"issue_id_{request.IssueId}", cancellationToken);
+                await cache.RemoveAsync($"issue_id_v2_{request.IssueId}", cancellationToken);
+                await cache.RemoveAsync($"issues_by_project_id_{projectId}", cancellationToken);
+                await cache.RemoveAsync($"issues_by_project_id_v2_{projectId}", cancellationToken);
+
                 return attachments.Select(x => new AttachmentResponce(Id: x.Id, Name: x.FileName));
             }
             catch

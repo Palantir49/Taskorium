@@ -2,9 +2,10 @@ import React, {useEffect, useRef, useState} from 'react';
 import {FaChevronDown, FaPaperclip, FaSearch, FaTimes as FaTimesCircle, FaTimes, FaUserPlus,} from 'react-icons/fa';
 import {useTasks} from '../context/TaskContext';
 import {createTaskInProject} from '../api/taskService';
-import {deleteAttachment} from '../api/attachmentService';
+import {addAttachmentsToIssue, deleteAttachment} from '../api/attachmentService';
 import {fetchProjectById, fetchProjectMembers} from '../api/projectService';
 import {fetchIssuePriorities, fetchIssueTypes} from '../api/collectionService';
+import {getDateInputValue} from '../utils/dateOnly';
 import {
     AttachmentResponse,
     IssueAssigneesDto,
@@ -35,6 +36,21 @@ function getInitials(user: ProjectUserDto): string {
 
 function getDisplayName(user: ProjectUserDto): string {
     return user.userName || user.email || user.id;
+}
+
+function getAssigneeRole(assignee: IssueAssigneesDto): number {
+    return assignee.projectRolesDto ?? assignee.role ?? 0;
+}
+
+function assigneeToProjectUser(assignee: IssueAssigneesDto): ProjectUserDto {
+    return {
+        id: assignee.userId,
+        keycloakId: '',
+        role: getAssigneeRole(assignee),
+        joinedAt: '',
+        email: '',
+        userName: assignee.userName || assignee.userId,
+    };
 }
 
 const AVATAR_COLORS = [
@@ -87,6 +103,7 @@ function TaskCreateForm({
                             mode = 'create',
                             task = null,
                             onSaved,
+                            onAttachmentsChanged,
                         }: TaskCreateFormProps) {
     const {loadTasks, updateTask} = useTasks();
 
@@ -110,7 +127,7 @@ function TaskCreateForm({
         numberIssueType: 0,
         numberIssuePriority: 0,
         dueDate: '',
-        // Массив объектов { userId, role } — именно то что ждёт бэкенд
+        // Массив объектов { userId, projectRolesDto, userName } — именно то что ждёт бэкенд
         assignees: [] as IssueAssigneesDto[],
     });
 
@@ -143,12 +160,12 @@ function TaskCreateForm({
                             description: task.description || '',
                             numberIssueType: task.issueType?.number ?? (types[0]?.number ?? 0),
                             numberIssuePriority: task.issuePriority?.number ?? (priorities[0]?.number ?? 0),
-                            dueDate: task.dueDate ? task.dueDate.split('T')[0] : '',
-                            // task.assignees — ProjectUserDto[], собираем IssueAssigneesDto[]
-                            // role берём из самого assignee (его роль в проекте)
+                            dueDate: getDateInputValue(task.dueDate),
+                            // task.assignees приходит с backend как IssueAssigneesDto
+                            // роль в контракте называется projectRolesDto
                             assignees: task.assignees?.map((a: IssueAssigneesDto) => ({
                                 userId: a.userId,
-                                role: a.role as number,
+                                projectRolesDto: getAssigneeRole(a),
                                 userName: a.userName
                             })) ?? [],
                         }
@@ -198,8 +215,12 @@ function TaskCreateForm({
     // userId'ы выбранных — для быстрой проверки isSelected
     const selectedUserIds = new Set(formData.assignees.map(a => a.userId));
 
-    // Полные данные выбранных участников — для рендера тегов
-    const selectedAssignees = projectMembers.filter(m => selectedUserIds.has(m.id));
+    // Полные данные выбранных участников — для рендера тегов.
+    // Если исполнитель есть в задаче, но не пришёл в списке участников проекта,
+    // всё равно показываем его из formData.assignees по userName.
+    const selectedAssignees = formData.assignees.map(assignee => {
+        return projectMembers.find(member => member.id === assignee.userId) ?? assigneeToProjectUser(assignee);
+    });
 
     const filteredMembers = projectMembers.filter(m => {
         const q = memberSearch.toLowerCase().trim();
@@ -225,7 +246,7 @@ function TaskCreateForm({
         }));
     };
 
-    // Тоггл: добавляем { userId, role } или снимаем по userId.
+    // Тоггл: добавляем { userId, projectRolesDto } или снимаем по userId.
     // role берём из projectMembers — роль пользователя в проекте.
     const handleAssigneeToggle = (member: ProjectUserDto) => {
         setFormData(prev => {
@@ -240,7 +261,7 @@ function TaskCreateForm({
                 ...prev,
                 assignees: [
                     ...prev.assignees,
-                    {userId: member.id, role: member.role as number, userName: member.userName},
+                    {userId: member.id, projectRolesDto: member.role as number, userName: member.userName},
                 ],
             };
         });
@@ -276,6 +297,7 @@ function TaskCreateForm({
         try {
             await deleteAttachment(attachmentId);
             setExistingAttachments((prev) => prev.filter((attachment) => attachment.id !== attachmentId));
+            await onAttachmentsChanged?.();
         } catch (error) {
             console.error('Ошибка удаления вложения:', error);
             alert('Не удалось удалить файл');
@@ -303,7 +325,7 @@ function TaskCreateForm({
             if (mode === 'edit' && task) {
                 const updateAssigneesPayload: UpdateIssueAssigneePayload[] = formData.assignees.map((assignee) => ({
                     userId: assignee.userId,
-                    projectRolesDto: assignee.role,
+                    projectRolesDto: getAssigneeRole(assignee),
                     userName: assignee.userName,
                 }));
 
@@ -316,6 +338,12 @@ function TaskCreateForm({
                     dueDate: formData.dueDate || null,
                     assignees: updateAssigneesPayload as never,
                 });
+
+                if (attachments.length > 0) {
+                    await addAttachmentsToIssue(task.id, attachments);
+                    setAttachments([]);
+                    await onAttachmentsChanged?.();
+                }
             } else {
                 const taskFormData = new FormData();
                 taskFormData.append('name', formData.name.trim());
@@ -332,7 +360,7 @@ function TaskCreateForm({
 
                 formData.assignees.forEach((assignee, i) => {
                     taskFormData.append(`Assignees[${i}].UserId`, assignee.userId);
-                    taskFormData.append(`Assignees[${i}].ProjectRolesDto`, assignee.role.toString());
+                    taskFormData.append(`Assignees[${i}].ProjectRolesDto`, getAssigneeRole(assignee).toString());
                     taskFormData.append(`Assignees[${i}].UserName`, assignee.userName);
                 });
 
@@ -731,7 +759,7 @@ function TaskCreateForm({
                             </div>
                         )}
 
-                        {mode === 'create' && (
+                        {(mode === 'create' || mode === 'edit') && (
                             <div className="attachments-row" style={{alignItems: 'flex-start'}}>
                                 <div className="attachments-text" style={{flex: 1}}>
                                     {attachments.length > 0 ? (
@@ -759,7 +787,7 @@ function TaskCreateForm({
                             </div>
                         )}
 
-                        {mode === 'edit' && existingAttachments.length === 0 && (
+                        {mode === 'edit' && existingAttachments.length === 0 && attachments.length === 0 && (
                             <p className="attachments-text">Файлы не прикреплены</p>
                         )}
                     </div>

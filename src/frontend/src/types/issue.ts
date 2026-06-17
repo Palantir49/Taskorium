@@ -68,6 +68,7 @@ export interface IssuesResponse {
 
 export interface IssueAssigneesDto {
     userId: string;
-    role: number;
+    projectRolesDto: number;
+    role?: number;
     userName: string;
 }

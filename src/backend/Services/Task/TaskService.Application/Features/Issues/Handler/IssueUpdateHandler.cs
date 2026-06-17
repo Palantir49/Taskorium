@@ -21,7 +21,9 @@ public class IssueUpdateHandler(
     {
         await validator.ValidateAndThrowAsync(request, cancellationToken);
         var issue = await context.Issues.Where(element => element.Id == request.Id)
-                        .Include(element => element.IssueAssignees).FirstOrDefaultAsync(cancellationToken) ??
+                        .Include(element => element.IssueAssignees)
+                            .ThenInclude(element => element.User)
+                        .FirstOrDefaultAsync(cancellationToken) ??
                     throw new NullReferenceException($"Задача с id: {request.Id} не найдена");
 
         _ = await context.Projects.FindAsync([issue.ProjectId], cancellationToken) ??
@@ -41,10 +43,14 @@ public class IssueUpdateHandler(
         await context.SaveChangesAsync(cancellationToken);
         //Инвалидируем кэш:
         var issueCacheKey = $"issue_id_{issue.Id}";
+        var issueCacheKeyV2 = $"issue_id_v2_{issue.Id}";
         // 2. Список задач проекта
         var projectIssuesCacheKey = $"issues_by_project_id_{issue.ProjectId}";
+        var projectIssuesCacheKeyV2 = $"issues_by_project_id_v2_{issue.ProjectId}";
         await cache.RemoveAsync(issueCacheKey, cancellationToken);
+        await cache.RemoveAsync(issueCacheKeyV2, cancellationToken);
         await cache.RemoveAsync(projectIssuesCacheKey, cancellationToken);
+        await cache.RemoveAsync(projectIssuesCacheKeyV2, cancellationToken);
         return issue.ToResponse();
     }
 
