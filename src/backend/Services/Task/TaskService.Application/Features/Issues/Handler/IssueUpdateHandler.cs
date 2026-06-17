@@ -43,14 +43,10 @@ public class IssueUpdateHandler(
         await context.SaveChangesAsync(cancellationToken);
         //Инвалидируем кэш:
         var issueCacheKey = $"issue_id_{issue.Id}";
-        var issueCacheKeyV2 = $"issue_id_v2_{issue.Id}";
         // 2. Список задач проекта
         var projectIssuesCacheKey = $"issues_by_project_id_{issue.ProjectId}";
-        var projectIssuesCacheKeyV2 = $"issues_by_project_id_v2_{issue.ProjectId}";
         await cache.RemoveAsync(issueCacheKey, cancellationToken);
-        await cache.RemoveAsync(issueCacheKeyV2, cancellationToken);
         await cache.RemoveAsync(projectIssuesCacheKey, cancellationToken);
-        await cache.RemoveAsync(projectIssuesCacheKeyV2, cancellationToken);
         return issue.ToResponse();
     }
 
