@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
     FaBug,
     FaCircle,
@@ -26,6 +26,24 @@ function TaskDetailSidebar() {
     const [isLoadingTaskDetails, setIsLoadingTaskDetails] = useState(false);
     const selectedTaskId = selectedTask?.id ?? null;
 
+    const loadTaskDetails = useCallback(async (taskId: string, fallbackTask?: Task | null) => {
+        setIsLoadingTaskDetails(true);
+        try {
+            const task = await fetchTaskById(taskId);
+            console.log('TaskDetailSidebar fetched task:', task);
+            setFullTask(task);
+            return task;
+        } catch (error) {
+            console.error('Ошибка загрузки полной задачи:', error);
+            if (fallbackTask) {
+                setFullTask(fallbackTask);
+            }
+            return fallbackTask ?? null;
+        } finally {
+            setIsLoadingTaskDetails(false);
+        }
+    }, []);
+
     React.useEffect(() => {
         console.log('TaskDetailSidebar selectedTask:', selectedTask);
 
@@ -37,33 +55,17 @@ function TaskDetailSidebar() {
 
         let cancelled = false;
 
-        const loadTaskDetails = async () => {
-            setIsLoadingTaskDetails(true);
-            try {
-                const task = await fetchTaskById(selectedTaskId);
-                console.log('TaskDetailSidebar fetched task:', task);
-                if (!cancelled) {
-                    setFullTask(task);
-                }
-            } catch (error) {
-                console.error('Ошибка загрузки полной задачи:', error);
-                if (!cancelled) {
-                    setFullTask(selectedTask);
-                }
-            } finally {
-                if (!cancelled) {
-                    setIsLoadingTaskDetails(false);
-                }
-            }
-        };
-
         setFullTask(selectedTask);
-        loadTaskDetails();
+        loadTaskDetails(selectedTaskId, selectedTask).then((task) => {
+            if (!cancelled && task) {
+                setFullTask(task);
+            }
+        });
 
         return () => {
             cancelled = true;
         };
-    }, [selectedTask, selectedTaskId]);
+    }, [loadTaskDetails, selectedTask, selectedTaskId]);
 
     if (!selectedTask) return null;
 
@@ -263,6 +265,7 @@ function TaskDetailSidebar() {
                 mode="edit"
                 task={taskForEdit}
                 onSaved={handleClose}
+                onAttachmentsChanged={() => selectedTaskId ? loadTaskDetails(selectedTaskId, taskDetails) : undefined}
             />
         </div>
     );

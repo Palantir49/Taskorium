@@ -209,7 +209,7 @@ public class IssuesController(IDispatcher dispatcher) : Controller
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<IEnumerable<AttachmentResponce>>> AddedFilesAsync([FromRoute] Guid issueId,
-        [FromBody] AddFilesRequest addFilesRequest)
+        [FromForm] AddFilesRequest addFilesRequest)
     {
         var command = new AddFilesCommand(IssueId: issueId,
             Attachments: addFilesRequest.Attachments.Select(file => new AttachmentDto

@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {FaChevronDown, FaPaperclip, FaSearch, FaTimes as FaTimesCircle, FaTimes, FaUserPlus,} from 'react-icons/fa';
 import {useTasks} from '../context/TaskContext';
 import {createTaskInProject} from '../api/taskService';
-import {deleteAttachment} from '../api/attachmentService';
+import {addAttachmentsToIssue, deleteAttachment} from '../api/attachmentService';
 import {fetchProjectById, fetchProjectMembers} from '../api/projectService';
 import {fetchIssuePriorities, fetchIssueTypes} from '../api/collectionService';
 import {getDateInputValue} from '../utils/dateOnly';
@@ -103,6 +103,7 @@ function TaskCreateForm({
                             mode = 'create',
                             task = null,
                             onSaved,
+                            onAttachmentsChanged,
                         }: TaskCreateFormProps) {
     const {loadTasks, updateTask} = useTasks();
 
@@ -296,6 +297,7 @@ function TaskCreateForm({
         try {
             await deleteAttachment(attachmentId);
             setExistingAttachments((prev) => prev.filter((attachment) => attachment.id !== attachmentId));
+            await onAttachmentsChanged?.();
         } catch (error) {
             console.error('Ошибка удаления вложения:', error);
             alert('Не удалось удалить файл');
@@ -336,6 +338,12 @@ function TaskCreateForm({
                     dueDate: formData.dueDate || null,
                     assignees: updateAssigneesPayload as never,
                 });
+
+                if (attachments.length > 0) {
+                    await addAttachmentsToIssue(task.id, attachments);
+                    setAttachments([]);
+                    await onAttachmentsChanged?.();
+                }
             } else {
                 const taskFormData = new FormData();
                 taskFormData.append('name', formData.name.trim());
@@ -751,7 +759,7 @@ function TaskCreateForm({
                             </div>
                         )}
 
-                        {mode === 'create' && (
+                        {(mode === 'create' || mode === 'edit') && (
                             <div className="attachments-row" style={{alignItems: 'flex-start'}}>
                                 <div className="attachments-text" style={{flex: 1}}>
                                     {attachments.length > 0 ? (
@@ -779,7 +787,7 @@ function TaskCreateForm({
                             </div>
                         )}
 
-                        {mode === 'edit' && existingAttachments.length === 0 && (
+                        {mode === 'edit' && existingAttachments.length === 0 && attachments.length === 0 && (
                             <p className="attachments-text">Файлы не прикреплены</p>
                         )}
                     </div>

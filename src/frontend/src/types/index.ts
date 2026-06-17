@@ -108,6 +108,7 @@ export interface TaskCreateFormProps {
     mode?: 'create' | 'edit';
     task?: Task | null;
     onSaved?: () => void;
+    onAttachmentsChanged?: () => void | Promise<void>;
 }
 
 export interface AuthInfo {
