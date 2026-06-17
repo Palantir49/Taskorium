@@ -13,7 +13,7 @@ public class IssueGetByIdHandler(TaskServiceDbContext context, HybridCache cache
 {
     public async Task<IssueResponse> Handle(IssueGetByIdQuery request, CancellationToken cancellationToken = default)
     {
-        var cacheKey = $"issue_id_v2_{request.id}";
+        var cacheKey = $"issue_id_{request.id}";
 
         return await cache.GetOrCreateAsync(cacheKey, async _ =>
         {
