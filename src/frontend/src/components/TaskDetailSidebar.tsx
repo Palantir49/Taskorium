@@ -15,6 +15,7 @@ import {Task} from '../types';
 import TaskCreateForm from './TaskCreateForm';
 import { downloadAttachment } from '../api/attachmentService';
 import { fetchTaskById } from '../api/taskService';
+import {formatDateOnlyRu} from '../utils/dateOnly';
 import './TaskDetailSidebar.css';
 
 function TaskDetailSidebar() {
@@ -204,11 +205,7 @@ function TaskDetailSidebar() {
                             <div className="detail-section">
                                 <label>Дедлайн</label>
                                 <p className="detail-text">
-                                    {new Date(taskDetails.dueDate).toLocaleDateString('ru-RU', {
-                                        day: 'numeric',
-                                        month: 'long',
-                                        year: 'numeric'
-                                    })}
+                                    {formatDateOnlyRu(taskDetails.dueDate)}
                                 </p>
                             </div>
                         )}

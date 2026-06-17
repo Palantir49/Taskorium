@@ -14,7 +14,7 @@ public class IssueGetByProjectIdHandler(TaskServiceDbContext context, HybridCach
     public async Task<IEnumerable<IssueResponse>> Handle(IssueGetByProjectIdQuery request,
         CancellationToken cancellationToken = default)
     {
-        var cacheKey = $"issues_by_project_id_{request.projectId}";
+        var cacheKey = $"issues_by_project_id_v2_{request.projectId}";
 
         return await cache.GetOrCreateAsync(cacheKey, async _ =>
         {

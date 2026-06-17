@@ -5,6 +5,7 @@ import {createTaskInProject} from '../api/taskService';
 import {deleteAttachment} from '../api/attachmentService';
 import {fetchProjectById, fetchProjectMembers} from '../api/projectService';
 import {fetchIssuePriorities, fetchIssueTypes} from '../api/collectionService';
+import {getDateInputValue} from '../utils/dateOnly';
 import {
     AttachmentResponse,
     IssueAssigneesDto,
@@ -35,6 +36,21 @@ function getInitials(user: ProjectUserDto): string {
 
 function getDisplayName(user: ProjectUserDto): string {
     return user.userName || user.email || user.id;
+}
+
+function getAssigneeRole(assignee: IssueAssigneesDto): number {
+    return assignee.projectRolesDto ?? assignee.role ?? 0;
+}
+
+function assigneeToProjectUser(assignee: IssueAssigneesDto): ProjectUserDto {
+    return {
+        id: assignee.userId,
+        keycloakId: '',
+        role: getAssigneeRole(assignee),
+        joinedAt: '',
+        email: '',
+        userName: assignee.userName || assignee.userId,
+    };
 }
 
 const AVATAR_COLORS = [
@@ -110,7 +126,7 @@ function TaskCreateForm({
         numberIssueType: 0,
         numberIssuePriority: 0,
         dueDate: '',
-        // Массив объектов { userId, role } — именно то что ждёт бэкенд
+        // Массив объектов { userId, projectRolesDto, userName } — именно то что ждёт бэкенд
         assignees: [] as IssueAssigneesDto[],
     });
 
@@ -143,12 +159,12 @@ function TaskCreateForm({
                             description: task.description || '',
                             numberIssueType: task.issueType?.number ?? (types[0]?.number ?? 0),
                             numberIssuePriority: task.issuePriority?.number ?? (priorities[0]?.number ?? 0),
-                            dueDate: task.dueDate ? task.dueDate.split('T')[0] : '',
-                            // task.assignees — ProjectUserDto[], собираем IssueAssigneesDto[]
-                            // role берём из самого assignee (его роль в проекте)
+                            dueDate: getDateInputValue(task.dueDate),
+                            // task.assignees приходит с backend как IssueAssigneesDto
+                            // роль в контракте называется projectRolesDto
                             assignees: task.assignees?.map((a: IssueAssigneesDto) => ({
                                 userId: a.userId,
-                                role: a.role as number,
+                                projectRolesDto: getAssigneeRole(a),
                                 userName: a.userName
                             })) ?? [],
                         }
@@ -198,8 +214,12 @@ function TaskCreateForm({
     // userId'ы выбранных — для быстрой проверки isSelected
     const selectedUserIds = new Set(formData.assignees.map(a => a.userId));
 
-    // Полные данные выбранных участников — для рендера тегов
-    const selectedAssignees = projectMembers.filter(m => selectedUserIds.has(m.id));
+    // Полные данные выбранных участников — для рендера тегов.
+    // Если исполнитель есть в задаче, но не пришёл в списке участников проекта,
+    // всё равно показываем его из formData.assignees по userName.
+    const selectedAssignees = formData.assignees.map(assignee => {
+        return projectMembers.find(member => member.id === assignee.userId) ?? assigneeToProjectUser(assignee);
+    });
 
     const filteredMembers = projectMembers.filter(m => {
         const q = memberSearch.toLowerCase().trim();
@@ -225,7 +245,7 @@ function TaskCreateForm({
         }));
     };
 
-    // Тоггл: добавляем { userId, role } или снимаем по userId.
+    // Тоггл: добавляем { userId, projectRolesDto } или снимаем по userId.
     // role берём из projectMembers — роль пользователя в проекте.
     const handleAssigneeToggle = (member: ProjectUserDto) => {
         setFormData(prev => {
@@ -240,7 +260,7 @@ function TaskCreateForm({
                 ...prev,
                 assignees: [
                     ...prev.assignees,
-                    {userId: member.id, role: member.role as number, userName: member.userName},
+                    {userId: member.id, projectRolesDto: member.role as number, userName: member.userName},
                 ],
             };
         });
@@ -303,7 +323,7 @@ function TaskCreateForm({
             if (mode === 'edit' && task) {
                 const updateAssigneesPayload: UpdateIssueAssigneePayload[] = formData.assignees.map((assignee) => ({
                     userId: assignee.userId,
-                    projectRolesDto: assignee.role,
+                    projectRolesDto: getAssigneeRole(assignee),
                     userName: assignee.userName,
                 }));
 
@@ -332,7 +352,7 @@ function TaskCreateForm({
 
                 formData.assignees.forEach((assignee, i) => {
                     taskFormData.append(`Assignees[${i}].UserId`, assignee.userId);
-                    taskFormData.append(`Assignees[${i}].ProjectRolesDto`, assignee.role.toString());
+                    taskFormData.append(`Assignees[${i}].ProjectRolesDto`, getAssigneeRole(assignee).toString());
                     taskFormData.append(`Assignees[${i}].UserName`, assignee.userName);
                 });
 
