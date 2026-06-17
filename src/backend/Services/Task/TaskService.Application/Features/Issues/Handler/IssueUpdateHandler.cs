@@ -21,7 +21,9 @@ public class IssueUpdateHandler(
     {
         await validator.ValidateAndThrowAsync(request, cancellationToken);
         var issue = await context.Issues.Where(element => element.Id == request.Id)
-                        .Include(element => element.IssueAssignees).FirstOrDefaultAsync(cancellationToken) ??
+                        .Include(element => element.IssueAssignees)
+                            .ThenInclude(element => element.User)
+                        .FirstOrDefaultAsync(cancellationToken) ??
                     throw new NullReferenceException($"Задача с id: {request.Id} не найдена");
 
         _ = await context.Projects.FindAsync([issue.ProjectId], cancellationToken) ??

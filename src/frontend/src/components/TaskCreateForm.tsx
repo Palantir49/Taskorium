@@ -2,9 +2,12 @@ import React, {useEffect, useRef, useState} from 'react';
 import {FaChevronDown, FaPaperclip, FaSearch, FaTimes as FaTimesCircle, FaTimes, FaUserPlus,} from 'react-icons/fa';
 import {useTasks} from '../context/TaskContext';
 import {createTaskInProject} from '../api/taskService';
+import {addAttachmentsToIssue, deleteAttachment} from '../api/attachmentService';
 import {fetchProjectById, fetchProjectMembers} from '../api/projectService';
 import {fetchIssuePriorities, fetchIssueTypes} from '../api/collectionService';
+import {getDateInputValue} from '../utils/dateOnly';
 import {
+    AttachmentResponse,
     IssueAssigneesDto,
     IssuePriorityResponse,
     IssueTypeResponse,
@@ -12,6 +15,12 @@ import {
     TaskCreateFormProps,
 } from '../types';
 import './TaskDetailSidebar.css';
+
+type UpdateIssueAssigneePayload = {
+    userId: string;
+    projectRolesDto: number;
+    userName: string;
+};
 
 // ─── Вспомогательные функции ──────────────────────────────────────────────────
 
@@ -27,6 +36,21 @@ function getInitials(user: ProjectUserDto): string {
 
 function getDisplayName(user: ProjectUserDto): string {
     return user.userName || user.email || user.id;
+}
+
+function getAssigneeRole(assignee: IssueAssigneesDto): number {
+    return assignee.projectRolesDto ?? assignee.role ?? 0;
+}
+
+function assigneeToProjectUser(assignee: IssueAssigneesDto): ProjectUserDto {
+    return {
+        id: assignee.userId,
+        keycloakId: '',
+        role: getAssigneeRole(assignee),
+        joinedAt: '',
+        email: '',
+        userName: assignee.userName || assignee.userId,
+    };
 }
 
 const AVATAR_COLORS = [
@@ -79,6 +103,7 @@ function TaskCreateForm({
                             mode = 'create',
                             task = null,
                             onSaved,
+                            onAttachmentsChanged,
                         }: TaskCreateFormProps) {
     const {loadTasks, updateTask} = useTasks();
 
@@ -88,6 +113,7 @@ function TaskCreateForm({
     const [projectMembers, setProjectMembers] = useState<ProjectUserDto[]>([]);
     const [workspaceId, setWorkspaceId] = useState<string>('');
     const [attachments, setAttachments] = useState<File[]>([]);
+    const [existingAttachments, setExistingAttachments] = useState<AttachmentResponse[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [assigneeDropdownOpen, setAssigneeDropdownOpen] = useState(false);
     const [memberSearch, setMemberSearch] = useState('');
@@ -101,7 +127,7 @@ function TaskCreateForm({
         numberIssueType: 0,
         numberIssuePriority: 0,
         dueDate: '',
-        // Массив объектов { userId, role } — именно то что ждёт бэкенд
+        // Массив объектов { userId, projectRolesDto, userName } — именно то что ждёт бэкенд
         assignees: [] as IssueAssigneesDto[],
     });
 
@@ -123,6 +149,9 @@ function TaskCreateForm({
                 setIssuePriorities(priorities);
                 setWorkspaceId(project.workspaceId);
                 setProjectMembers(membersResponse.members);
+                setExistingAttachments(mode === 'edit' && task?.attachments ? [...task.attachments] : []);
+                console.log('TaskCreateForm edit task:', task);
+                console.log('TaskCreateForm existing attachments:', mode === 'edit' ? task?.attachments : []);
 
                 setFormData(
                     mode === 'edit' && task
@@ -131,12 +160,12 @@ function TaskCreateForm({
                             description: task.description || '',
                             numberIssueType: task.issueType?.number ?? (types[0]?.number ?? 0),
                             numberIssuePriority: task.issuePriority?.number ?? (priorities[0]?.number ?? 0),
-                            dueDate: task.dueDate ? task.dueDate.split('T')[0] : '',
-                            // task.assignees — ProjectUserDto[], собираем IssueAssigneesDto[]
-                            // role берём из самого assignee (его роль в проекте)
+                            dueDate: getDateInputValue(task.dueDate),
+                            // task.assignees приходит с backend как IssueAssigneesDto
+                            // роль в контракте называется projectRolesDto
                             assignees: task.assignees?.map((a: IssueAssigneesDto) => ({
                                 userId: a.userId,
-                                role: a.role as number,
+                                projectRolesDto: getAssigneeRole(a),
                                 userName: a.userName
                             })) ?? [],
                         }
@@ -186,8 +215,12 @@ function TaskCreateForm({
     // userId'ы выбранных — для быстрой проверки isSelected
     const selectedUserIds = new Set(formData.assignees.map(a => a.userId));
 
-    // Полные данные выбранных участников — для рендера тегов
-    const selectedAssignees = projectMembers.filter(m => selectedUserIds.has(m.id));
+    // Полные данные выбранных участников — для рендера тегов.
+    // Если исполнитель есть в задаче, но не пришёл в списке участников проекта,
+    // всё равно показываем его из formData.assignees по userName.
+    const selectedAssignees = formData.assignees.map(assignee => {
+        return projectMembers.find(member => member.id === assignee.userId) ?? assigneeToProjectUser(assignee);
+    });
 
     const filteredMembers = projectMembers.filter(m => {
         const q = memberSearch.toLowerCase().trim();
@@ -213,7 +246,7 @@ function TaskCreateForm({
         }));
     };
 
-    // Тоггл: добавляем { userId, role } или снимаем по userId.
+    // Тоггл: добавляем { userId, projectRolesDto } или снимаем по userId.
     // role берём из projectMembers — роль пользователя в проекте.
     const handleAssigneeToggle = (member: ProjectUserDto) => {
         setFormData(prev => {
@@ -228,7 +261,7 @@ function TaskCreateForm({
                 ...prev,
                 assignees: [
                     ...prev.assignees,
-                    {userId: member.id, role: member.role as number, userName: member.userName},
+                    {userId: member.id, projectRolesDto: member.role as number, userName: member.userName},
                 ],
             };
         });
@@ -258,6 +291,19 @@ function TaskCreateForm({
         setAttachments(prev => prev.filter((_, i) => i !== indexToRemove));
     };
 
+    const handleDeleteExistingAttachment = async (attachmentId: string) => {
+        if (!window.confirm('Удалить вложение?')) return;
+
+        try {
+            await deleteAttachment(attachmentId);
+            setExistingAttachments((prev) => prev.filter((attachment) => attachment.id !== attachmentId));
+            await onAttachmentsChanged?.();
+        } catch (error) {
+            console.error('Ошибка удаления вложения:', error);
+            alert('Не удалось удалить файл');
+        }
+    };
+
     const formatFileSize = (bytes: number): string => {
         if (bytes < 1024) return `${bytes} Б`;
         if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`;
@@ -277,6 +323,12 @@ function TaskCreateForm({
         setIsLoading(true);
         try {
             if (mode === 'edit' && task) {
+                const updateAssigneesPayload: UpdateIssueAssigneePayload[] = formData.assignees.map((assignee) => ({
+                    userId: assignee.userId,
+                    projectRolesDto: getAssigneeRole(assignee),
+                    userName: assignee.userName,
+                }));
+
                 await updateTask(task.id, {
                     name: formData.name.trim(),
                     description: formData.description.trim() || undefined,
@@ -284,11 +336,14 @@ function TaskCreateForm({
                     numberIssueType: formData.numberIssueType,
                     numberIssuePriority: formData.numberIssuePriority,
                     dueDate: formData.dueDate || null,
-                    // UpdateIssueRequest.assigneeIds — string[] | null
-                    assignees: formData.assignees.length > 0
-                        ? formData.assignees
-                        : null,
+                    assignees: updateAssigneesPayload as never,
                 });
+
+                if (attachments.length > 0) {
+                    await addAttachmentsToIssue(task.id, attachments);
+                    setAttachments([]);
+                    await onAttachmentsChanged?.();
+                }
             } else {
                 const taskFormData = new FormData();
                 taskFormData.append('name', formData.name.trim());
@@ -303,13 +358,9 @@ function TaskCreateForm({
                     taskFormData.append('dueDate', formData.dueDate);
                 }
 
-                // IssueCreateCommand.AssigneeDtos — List<IssueAssigneesDto>
-                // Передаём как JSON-строку или indexed форм-поля в зависимости от бэка.
-                // Судя по IssueCreateHandler — это application/x-www-form-urlencoded,
-                // поэтому сериализуем каждый объект индексированно:
                 formData.assignees.forEach((assignee, i) => {
                     taskFormData.append(`Assignees[${i}].UserId`, assignee.userId);
-                    taskFormData.append(`Assignees[${i}].ProjectRolesDto`, assignee.role.toString());
+                    taskFormData.append(`Assignees[${i}].ProjectRolesDto`, getAssigneeRole(assignee).toString());
                     taskFormData.append(`Assignees[${i}].UserName`, assignee.userName);
                 });
 
@@ -688,10 +739,22 @@ function TaskCreateForm({
                         </div>
                     </div>
 
-                    {/* Документы (только создание) */}
-                    {mode === 'create' && (
-                        <div className="form-group">
-                            <label>Документы</label>
+                    <div className="form-group">
+                        <label>Документы</label>
+
+                        {mode === 'edit' && existingAttachments.length > 0 && (
+                            <div className="attachments-list" style={{marginBottom: 12}}>
+                                {existingAttachments.map((attachment) => (
+                                    <div key={attachment.id} className="attachment-item">
+                                        <span className="attachment-name">{attachment.name}</span>
+                                        <button type="button" onClick={() => handleDeleteExistingAttachment(attachment.id)}>🗑️
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {(mode === 'create' || mode === 'edit') && (
                             <div className="attachments-row" style={{alignItems: 'flex-start'}}>
                                 <div className="attachments-text" style={{flex: 1}}>
                                     {attachments.length > 0 ? (
@@ -717,8 +780,12 @@ function TaskCreateForm({
                                     <input type="file" multiple onChange={handleFileSelect} style={{display: 'none'}}/>
                                 </label>
                             </div>
-                        </div>
-                    )}
+                        )}
+
+                        {mode === 'edit' && existingAttachments.length === 0 && attachments.length === 0 && (
+                            <p className="attachments-text">Файлы не прикреплены</p>
+                        )}
+                    </div>
 
                     {/* Дедлайн */}
                     <div className="form-group">

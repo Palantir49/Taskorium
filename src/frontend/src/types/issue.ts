@@ -1,4 +1,5 @@
 // Auto-generated DTO types for TaskService API
+import type { AttachmentResponse } from './attachment';
 
 export interface IssuePriorityResponse {
     number: number;
@@ -41,6 +42,10 @@ export interface UpdateIssueRequest {
     assignees?: IssueAssigneesDto[] | null;
 }
 
+export interface IssueUpdateStatusRequest {
+    newStatusId: string;
+}
+
 export interface IssueResponse {
     id: string;
     name: string;
@@ -54,6 +59,7 @@ export interface IssueResponse {
     dueDate?: string | null;
     resolvedDate?: string | null;
     assignees?: IssueAssigneesDto[] | null;
+    attachments?: AttachmentResponse[] | null;
 }
 
 export interface IssuesResponse {
@@ -62,6 +68,7 @@ export interface IssuesResponse {
 
 export interface IssueAssigneesDto {
     userId: string;
-    role: number;
+    projectRolesDto: number;
+    role?: number;
     userName: string;
 }

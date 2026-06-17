@@ -1,4 +1,5 @@
-﻿using TaskService.Application.Features.Attachments.Dto;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskService.Application.Features.Attachments.Dto;
 using TaskService.Application.Mediator;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
@@ -11,7 +12,7 @@ public class AttachmentDownloadHandler(TaskServiceDbContext context,
 {
     public async Task<AttachmentDto> Handle(AttachmentDownloadQuery request, CancellationToken cancellationToken = default)
     {
-        Attachment attachment = await context.Attachments.FindAsync([request.Id], cancellationToken) ??
+        Attachment attachment = await context.Attachments.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken) ??
                   throw new KeyNotFoundException($"Приложение с id: {request.Id} не найдено");
 
         var memory = await fileStorageService.DownloadAsync(attachment.StoragePath);

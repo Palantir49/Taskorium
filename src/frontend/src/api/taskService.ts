@@ -1,4 +1,4 @@
-import {CreateTaskData, Task, UpdateTaskData, User} from '../types';
+import {CreateTaskData, IssueUpdateStatusRequest, Task, UpdateTaskData, User} from '../types';
 import {api} from "./axios.ts";
 
 
@@ -46,6 +46,22 @@ export const updateTask = async (id: string, updates: UpdateTaskData): Promise<T
         return response.data;
     } catch (error) {
         console.error('updateTask error:', error);
+        throw error;
+    }
+};
+
+/**
+ * Обновить только статус задачи через PATCH /Issues/{id}
+ * Соответствует backend IssuesController.UpdateIssueStatusAsync + IssueUpdateStatusRequest.
+ */
+export const updateTaskStatus = async (id: string, request: IssueUpdateStatusRequest): Promise<Task> => {
+    console.log('updateTaskStatus called:', id, 'request:', request);
+    try {
+        const response = await api.patch(`/Issues/${id}`, request);
+        console.log('updateTaskStatus:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('updateTaskStatus error:', error);
         throw error;
     }
 };

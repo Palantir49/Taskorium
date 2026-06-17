@@ -21,11 +21,12 @@ import {getStableColorById} from "../utils/statusColor";
 
 interface KanbanBoardProps {
     projectId: string;
+    refreshKey?: number;
 }
 
 
-function KanbanBoard({projectId}: KanbanBoardProps) {
-    const {tasks, filters, updateTask, setSelectedTask, selectedTask} = useTasks();
+function KanbanBoard({projectId, refreshKey = 0}: KanbanBoardProps) {
+    const {tasks, filters, updateTaskStatus, setSelectedTask, selectedTask} = useTasks();
     const [activeTask, setActiveTask] = React.useState<Task | null>(null);
     const [statuses, setStatuses] = React.useState<IssueStatusResponse[]>([]);
     const [loadingStatuses, setLoadingStatuses] = React.useState(false);
@@ -46,7 +47,7 @@ function KanbanBoard({projectId}: KanbanBoardProps) {
         };
 
         loadStatuses();
-    }, [projectId]);
+    }, [projectId, refreshKey]);
 
     // Фильтрация задач
     const filteredTasks = React.useMemo(() => {
@@ -69,17 +70,6 @@ function KanbanBoard({projectId}: KanbanBoardProps) {
 
         return groups;
     }, [filteredTasks, statuses]);
-
-    const getUpdatePayload = (task: Task, issueStatusId: string) => ({
-        name: task.name,
-        issueStatusId,
-        numberIssueType: task.issueType.number,
-        numberIssuePriority: task.issuePriority.number,
-        description: task.description,
-        dueDate: task.dueDate ?? null,
-        assignees: task.assignees
-
-    });
 
     // Настройка сенсоров для drag-and-drop
     const sensors = useSensors(
@@ -116,7 +106,7 @@ function KanbanBoard({projectId}: KanbanBoardProps) {
             const newStatusId = over.data.current.statusId;
             if (activeTask.taskStatusId !== newStatusId) {
                 try {
-                    await updateTask(activeTask.id, getUpdatePayload(activeTask, newStatusId));
+                    await updateTaskStatus(activeTask.id, newStatusId);
                 } catch (error) {
                     console.error('Ошибка при обновлении задачи:', error);
                 }
@@ -127,7 +117,7 @@ function KanbanBoard({projectId}: KanbanBoardProps) {
             const overTask = over.data.current.task;
             if (activeTask.taskStatusId !== overTask.taskStatusId) {
                 try {
-                    await updateTask(activeTask.id, getUpdatePayload(activeTask, overTask.taskStatusId));
+                    await updateTaskStatus(activeTask.id, overTask.taskStatusId);
                 } catch (error) {
                     console.error('Ошибка при обновлении задачи:', error);
                 }
@@ -171,7 +161,7 @@ function KanbanBoard({projectId}: KanbanBoardProps) {
                 </div>
                 <DragOverlay>
                     {activeTask ? (
-                        <div style={{opacity: 0.8, transform: 'rotate(5deg)'}}>
+                        <div style={{opacity: 0.8}}>
                             <TaskCard task={activeTask} onClick={() => {
                             }}/>
                         </div>

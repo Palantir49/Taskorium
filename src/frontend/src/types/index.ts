@@ -1,6 +1,7 @@
 
 // Экспорт DTO
 export * from './common';
+export * from './attachment';
 export * from './issue';
 export * from './issueStatus';
 export * from './project';
@@ -107,6 +108,7 @@ export interface TaskCreateFormProps {
     mode?: 'create' | 'edit';
     task?: Task | null;
     onSaved?: () => void;
+    onAttachmentsChanged?: () => void | Promise<void>;
 }
 
 export interface AuthInfo {

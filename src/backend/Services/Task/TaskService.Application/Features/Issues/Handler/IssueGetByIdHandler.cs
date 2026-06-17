@@ -17,9 +17,12 @@ public class IssueGetByIdHandler(TaskServiceDbContext context, HybridCache cache
 
         return await cache.GetOrCreateAsync(cacheKey, async _ =>
         {
-            var issue = await context.Issues.Include(x => x.Attachments)
-            .FirstOrDefaultAsync(x => x.Id == request.id, cancellationToken)
-            ?? throw new KeyNotFoundException($"задача с id: {request.id} не найдена");
+            var issue = await context.Issues
+                .Include(x => x.Attachments)
+                .Include(x => x.IssueAssignees)
+                    .ThenInclude(x => x.User)
+                .FirstOrDefaultAsync(x => x.Id == request.id, cancellationToken)
+                ?? throw new KeyNotFoundException($"задача с id: {request.id} не найдена");
 
             return issue.ToResponse();
         }, cancellationToken: cancellationToken);
