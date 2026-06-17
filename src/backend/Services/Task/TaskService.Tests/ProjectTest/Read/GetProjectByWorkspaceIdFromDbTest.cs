@@ -7,20 +7,20 @@ using TaskService.Application.Features.Users.Read.GetUserByKeycloakId;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mapping;
 using TaskService.Domain.Entities;
+using TaskService.Domain.Entities.Enums;
 using TaskService.Infrastructure.Persistence;
 
 namespace TaskService.Tests.ProjectTest.Read;
 
 public class GetProjectByWorkspaceIdFromDbTest : IDisposable
 {
-    private readonly Fixture _fixture;
-    private bool _disposed;
-
     private readonly TaskServiceDbContext _context;
     private readonly FakeHybridCache _fakeCache;
+    private readonly Fixture _fixture;
     private readonly GetProjectByWorkspaceIdHandler _handler;
     private readonly User _user;
     private readonly Mock<ICurrentUserContext> _userContext;
+    private bool _disposed;
 
     public GetProjectByWorkspaceIdFromDbTest()
     {
@@ -31,14 +31,14 @@ public class GetProjectByWorkspaceIdFromDbTest : IDisposable
 
         _fixture.Register(() =>
             Project.Create(
-                name: _fixture.Create<string>(),
-                description: _fixture.Create<string>(),
-                abbreviation: "ttt",
-                workspaceId: _fixture.Create<Guid>()
-                ));
+                _fixture.Create<string>(),
+                _fixture.Create<string>(),
+                "ttt",
+                _fixture.Create<Guid>()
+            ));
 
         var options = new DbContextOptionsBuilder<TaskServiceDbContext>()
-            .UseInMemoryDatabase(databaseName: $"TestDb_{Guid.NewGuid()}")
+            .UseInMemoryDatabase($"TestDb_{Guid.NewGuid()}")
             .Options;
 
         _context = new TaskServiceDbContext(options);
@@ -49,18 +49,18 @@ public class GetProjectByWorkspaceIdFromDbTest : IDisposable
             .Returns(true);
 
         _user = User.Create(
-            keycloakId: Guid.CreateVersion7(),
-            userName: "nenene",
-            email: "memememe",
-            fullName: "neneneMEMEME");
+            Guid.CreateVersion7(),
+            "nenene",
+            "memememe",
+            "neneneMEMEME");
 
         _userContext
             .Setup(x => x.User)
-            .Returns(new GetUserByKeycloakIdResult(Id: _user.Id, KeycloakId: _user.KeycloakId, ProjectMembers: null, WorkSpaceMembers: null));
+            .Returns(new GetUserByKeycloakIdResult(_user.Id, _user.KeycloakId, null, null));
 
         _fakeCache = new FakeHybridCache();
 
-        _handler = new GetProjectByWorkspaceIdHandler(_context, _fakeCache, _userContext.Object);
+        _handler = new GetProjectByWorkspaceIdHandler(_context, /*_fakeCache,*/ _userContext.Object);
     }
 
     public void Dispose()
@@ -71,11 +71,16 @@ public class GetProjectByWorkspaceIdFromDbTest : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (_disposed) return;
+        if (_disposed)
+        {
+            return;
+        }
+
         if (disposing)
         {
             _context?.Dispose();
         }
+
         _disposed = true;
     }
 
@@ -87,16 +92,16 @@ public class GetProjectByWorkspaceIdFromDbTest : IDisposable
         _context.Workspaces.Add(workspace);
 
         var project1 = Project.Create(
-            name: _fixture.Create<string>(),
-            description: _fixture.Create<string>(),
-            abbreviation: "tttБ",
-            workspaceId: workspace.Id);
+            _fixture.Create<string>(),
+            _fixture.Create<string>(),
+            "tttБ",
+            workspace.Id);
 
         var project2 = Project.Create(
-            name: _fixture.Create<string>(),
-            description: _fixture.Create<string>(),
-            abbreviation: "tttА",
-            workspaceId: workspace.Id);
+            _fixture.Create<string>(),
+            _fixture.Create<string>(),
+            "tttА",
+            workspace.Id);
 
         _context.Projects.AddRange(project1, project2);
 
@@ -109,23 +114,24 @@ public class GetProjectByWorkspaceIdFromDbTest : IDisposable
     }
 
     [Fact]
-    public async Task GetProjectGetProjectByWorkspaceIdFromDb_WhenWorkspaceIdExistAndProjectMembersNotExists_ReturnEmptyResult()
+    public async Task
+        GetProjectGetProjectByWorkspaceIdFromDb_WhenWorkspaceIdExistAndProjectMembersNotExists_ReturnEmptyResult()
     {
         // ARRANGE
         var workspace = Workspace.Create("Тестовый тест");
         _context.Workspaces.Add(workspace);
 
         var project1 = Project.Create(
-            name: _fixture.Create<string>(),
-            description: _fixture.Create<string>(),
-            abbreviation: "tttБ",
-            workspaceId: workspace.Id);
+            _fixture.Create<string>(),
+            _fixture.Create<string>(),
+            "tttБ",
+            workspace.Id);
 
         var project2 = Project.Create(
-            name: _fixture.Create<string>(),
-            description: _fixture.Create<string>(),
-            abbreviation: "tttА",
-            workspaceId: workspace.Id);
+            _fixture.Create<string>(),
+            _fixture.Create<string>(),
+            "tttА",
+            workspace.Id);
 
         _context.Projects.AddRange(project1, project2);
 
@@ -146,24 +152,24 @@ public class GetProjectByWorkspaceIdFromDbTest : IDisposable
         _context.Workspaces.Add(workspace);
 
         var project1 = Project.Create(
-            name: _fixture.Create<string>(),
-            description: _fixture.Create<string>(),
-            abbreviation: "tttБ",
-            workspaceId: workspace.Id);
+            _fixture.Create<string>(),
+            _fixture.Create<string>(),
+            "tttБ",
+            workspace.Id);
 
         var project2 = Project.Create(
-            name: _fixture.Create<string>(),
-            description: _fixture.Create<string>(),
-            abbreviation: "tttА",
-            workspaceId: workspace.Id);
+            _fixture.Create<string>(),
+            _fixture.Create<string>(),
+            "tttА",
+            workspace.Id);
 
         _context.Projects.AddRange(project1, project2);
 
         var member1 = ProjectMember.Create(
-            projectId: project1.Id,
-            userId: _user.Id,
-            role: Domain.Entities.Enums.ProjectRoles.Creator,
-            joinedAt: _fixture.Create<DateTimeOffset>());
+            project1.Id,
+            _user.Id,
+            ProjectRoles.Creator,
+            _fixture.Create<DateTimeOffset>());
 
         _context.ProjectMembers.Add(member1);
 

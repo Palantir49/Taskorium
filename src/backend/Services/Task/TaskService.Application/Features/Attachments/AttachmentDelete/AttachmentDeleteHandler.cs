@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
-﻿using TaskService.Application.Mediator;
+using TaskService.Application.Mediator;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
 using TaskService.Infrastructure.Services;

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-﻿using TaskService.Application.Features.Attachments.Dto;
+using TaskService.Application.Features.Attachments.Dto;
 using TaskService.Application.Mediator;
 using TaskService.Domain.Entities;
 using TaskService.Infrastructure.Persistence;
