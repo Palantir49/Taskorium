@@ -15,6 +15,12 @@ import {
 } from '../types';
 import './TaskDetailSidebar.css';
 
+type UpdateIssueAssigneePayload = {
+    userId: string;
+    projectRolesDto: number;
+    userName: string;
+};
+
 // ─── Вспомогательные функции ──────────────────────────────────────────────────
 
 function getInitials(user: ProjectUserDto): string {
@@ -295,6 +301,12 @@ function TaskCreateForm({
         setIsLoading(true);
         try {
             if (mode === 'edit' && task) {
+                const updateAssigneesPayload: UpdateIssueAssigneePayload[] = formData.assignees.map((assignee) => ({
+                    userId: assignee.userId,
+                    projectRolesDto: assignee.role,
+                    userName: assignee.userName,
+                }));
+
                 await updateTask(task.id, {
                     name: formData.name.trim(),
                     description: formData.description.trim() || undefined,
@@ -302,10 +314,7 @@ function TaskCreateForm({
                     numberIssueType: formData.numberIssueType,
                     numberIssuePriority: formData.numberIssuePriority,
                     dueDate: formData.dueDate || null,
-                    // UpdateIssueRequest.assigneeIds — string[] | null
-                    assignees: formData.assignees.length > 0
-                        ? formData.assignees
-                        : null,
+                    assignees: updateAssigneesPayload as never,
                 });
             } else {
                 const taskFormData = new FormData();
@@ -321,10 +330,6 @@ function TaskCreateForm({
                     taskFormData.append('dueDate', formData.dueDate);
                 }
 
-                // IssueCreateCommand.AssigneeDtos — List<IssueAssigneesDto>
-                // Передаём как JSON-строку или indexed форм-поля в зависимости от бэка.
-                // Судя по IssueCreateHandler — это application/x-www-form-urlencoded,
-                // поэтому сериализуем каждый объект индексированно:
                 formData.assignees.forEach((assignee, i) => {
                     taskFormData.append(`Assignees[${i}].UserId`, assignee.userId);
                     taskFormData.append(`Assignees[${i}].ProjectRolesDto`, assignee.role.toString());
