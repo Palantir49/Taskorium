@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using TaskService.Application.Features.Issues.Command;
 using TaskService.Application.Interfaces;
 using TaskService.Application.Mediator;
