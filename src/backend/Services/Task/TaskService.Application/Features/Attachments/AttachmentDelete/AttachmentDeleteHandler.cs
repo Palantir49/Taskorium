@@ -5,7 +5,7 @@ using TaskService.Infrastructure.Services;
 
 namespace TaskService.Application.Features.Attachments.AttachmentDelete;
 
-internal class AttachmentDeleteHandler(TaskServiceDbContext context,
+public class AttachmentDeleteHandler(TaskServiceDbContext context,
     FileStorageService fileStorageService) : IRequestHandler<AttachmentDeleteQuery, bool>
 {
     public async Task<bool> Handle(AttachmentDeleteQuery request, CancellationToken cancellationToken = default)
