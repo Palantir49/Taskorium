@@ -1,6 +1,7 @@
 import React from 'react';
 import {FaBug, FaCircle, FaLightbulb, FaRocket} from 'react-icons/fa';
 import {TaskCardProps} from '../types';
+import {formatDateOnlyRu} from '../utils/dateOnly';
 import './TaskCard.css';
 
 function TaskCard({task, onClick}: TaskCardProps) {
@@ -16,13 +17,6 @@ function TaskCard({task, onClick}: TaskCardProps) {
             default:
                 return <FaCircle className="task-type-icon"/>;
         }
-    };
-
-    // Форматирование даты
-    const formatDate = (date: string | null | undefined): string | null => {
-        if (!date) return null;
-        const d = new Date(date);
-        return d.toLocaleDateString('ru-RU', {day: 'numeric', month: 'short'});
     };
 
     // Проверка просроченности дедлайна
@@ -65,7 +59,7 @@ function TaskCard({task, onClick}: TaskCardProps) {
             <div className="task-footer">
                 {task.dueDate && (
                     <div className={`task-deadline ${isOverdue ? 'overdue' : ''}`}>
-                        {formatDate(task.dueDate)}
+                        {formatDateOnlyRu(task.dueDate)}
                     </div>
                 )}
             </div>
